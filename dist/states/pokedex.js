@@ -75,14 +75,20 @@ project.Pokedex.prototype = {
       game.load.spritesheet('spritesheet', spritesheet.src, spritesheet.x, spritesheet.y, maxpokes);
       game.load.script('menu','/js/menubuttons.js');
     },
-  text: function(obj, text = "", fontsize = 12, color = 0x000000, newx = 0, newy = 0) {
-      obj.setText(text);
-      // obj.font = fontsize+"px Extra-Cool";
-      obj.style.fill = hexstring(color);
-      obj.x = newx;
-      obj.y = newy;
-      obj.anchor.setTo(0, 0);
-      return obj;
+  // text: function(obj, text = "", fontsize = 12, color = 0x000000, newx = 0, newy = 0) {
+  text: function(obj, text, fontsize, color, newx, newy) {
+    if (!text) text = "";
+    if (!fontsize) fontsize = 12;
+    if(!color) color = 0x000000;
+    if(!newx) newx = 0;
+    if(!newy) newy = 0;
+    obj.setText(text);
+    // obj.font = fontsize+"px Extra-Cool";
+    obj.style.fill = hexstring(color);
+    obj.x = newx;
+    obj.y = newy;
+    obj.anchor.setTo(0, 0);
+    return obj;
     },
 
   create: function(){

@@ -242,7 +242,8 @@ var selector = {
   sprite: function(group, game, options) {
     return game.add.sprite(options.x, options.y, options.id);
   },
-  set: function(group, value = 1){
+  set: function(group, value){
+    if (!value) value = 1;
     group[0].setText(pokedex[parseInt(value)-1].Pokemon);
     group[1].frame = parseInt(value)-1;
     group[2].setText(value);
