@@ -150,7 +150,7 @@ var numberButton = {
 var textInput = {
   label: function(group, game, options){
     var style = {
-      backgroundColor: Presets.bgcolor,
+      backgroundColor: 'transparent',
       fill: Presets.fill,
       fillAlpha: 1,
       font: Presets.font,
@@ -159,7 +159,10 @@ var textInput = {
       textAlign: 'left',
       stroke: 0
     };
-    return game.add.text(options.x+options.margin, options.y, options.label+':', style)
+    var temp = game.add.text(options.x, options.y, options.label+':', style);
+    temp.x -= temp.getBounds().width;
+    // temp.anchor.setTo(0, 0.5);
+    return temp;
   },
   input: function(group, game, options){
     return game.add.inputField(options.x+options.margin+options.divider, options.y, inputform(options.placeholder, options.charwidth, options.type));

@@ -50,10 +50,10 @@ project.Raffle.prototype = {
       spinspeed -= spinslow;
       if (spinspeed == 0) this.winraffle(spinusername.text);
 
-    if (displaygroup.children.length > 1)
-      spinuser.frame = displaygroup.children[Math.floor(displaygroup.children.length / 2)].frame;
-    for (user in usersraffle) {
-      if (spinuser.frame/4 == usersraffle[user].displayicon) spinusername.setText(usersraffle[user].id);
+    if (displaygroup.children.length > 1) {
+      var showcurrent = Math.floor(displaygroup.children.length / 2);
+      spinuser.frame = displaygroup.children[showcurrent].frame;
+      spinusername.setText(displaygroup.children[showcurrent].username);
     }
 
     if (displaygroup.children.length > 2)
@@ -280,7 +280,6 @@ project.Raffle.prototype = {
       // socket.emit('enter raffle', 'joey', 37);
       // socket.emit('enter raffle', 'george', 133);
       // socket.emit('enter raffle', 'someone', 715);
-      // socket.emit('won raffle', 'joey');
       socket.emit('send raffle');
 
       spinuser = game.add.sprite(winnercircle.getBounds().x+winnercircle.getBounds().width*1.5, winnercircle.getBounds().y, 'playersprite');

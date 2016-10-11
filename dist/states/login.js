@@ -16,25 +16,25 @@ project.Login.prototype = {
     var
     margin = Presets.padding,
     divider = Presets.width / 6,
-    x = Presets.width / 3 - divider / 2,
+    x = this.world.centerX,
     y = {spacing: 64, next: 0};
 
     form = [];
     focused = 0;
 
     this.game.stage.backgroundColor = Presets.bgcolor;
-    textInput.define(form[form.length] = this.add.group(), this, {label: 'Twitch user name', placeholder: 'Username', type: 'text', margin: Presets.padding, divider: divider, x: x+margin, y: 0, charwidth: 24});
+    textInput.define(form[form.length] = this.add.group(), this, {label: 'Twitch user name', placeholder: 'Username', type: 'text', margin: Presets.padding, divider: Presets.padding, x: x+margin, y: 0, charwidth: 24});
     y.next++;
-    textInput.define(form[form.length] = this.add.group(), this, {label: 'In game name', placeholder: 'in game name', type: 'text', margin: Presets.padding, divider: divider, x: x+margin, y: y.spacing*y.next, charwidth: 12});
+    textInput.define(form[form.length] = this.add.group(), this, {label: 'In game name', placeholder: 'in game name', type: 'text', margin: Presets.padding, divider: Presets.padding, x: x+margin, y: y.spacing*y.next, charwidth: 12});
     y.next++;
-    textInput.define(form[form.length] = this.add.group(), this, {label: '3DS friend code', placeholder: 'fc', type: 'number', margin: Presets.padding, divider: divider, x: x+margin, y: y.spacing*y.next, charwidth: 4});
-    textInput.define(form[form.length] = this.add.group(), this, {type: 'number', margin: Presets.padding, divider: divider, x: x+form[2].children[0].width+margin, y: y.spacing*y.next, charwidth: 4});
-    textInput.define(form[form.length] = this.add.group(), this, {type: 'number', margin: Presets.padding, divider: divider, x: x+form[2].children[0].width*2+margin, y: y.spacing*y.next, charwidth: 4});
+    textInput.define(form[form.length] = this.add.group(), this, {label: '3DS friend code', placeholder: 'fc', type: 'number', margin: Presets.padding, divider: Presets.padding, x: x+margin, y: y.spacing*y.next, charwidth: 4});
+    textInput.define(form[form.length] = this.add.group(), this, {type: 'number', margin: Presets.padding, divider: Presets.padding, x: x+form[2].children[0].width+margin, y: y.spacing*y.next, charwidth: 4});
+    textInput.define(form[form.length] = this.add.group(), this, {type: 'number', margin: Presets.padding, divider: Presets.padding, x: x+form[2].children[0].width*2+margin, y: y.spacing*y.next, charwidth: 4});
     y.next++;
 
+    selector.define(form[form.length] = this.add.group(), this, {x:x-divider, y:y.spacing*y.next, id: 'spritesheet'});
     selector.define(form[form.length] = this.add.group(), this, {x:x, y:y.spacing*y.next, id: 'spritesheet'});
     selector.define(form[form.length] = this.add.group(), this, {x:x+divider, y:y.spacing*y.next, id: 'spritesheet'});
-    selector.define(form[form.length] = this.add.group(), this, {x:x+divider*2, y:y.spacing*y.next, id: 'spritesheet'});
 
     y.next++;
     y.next++;
