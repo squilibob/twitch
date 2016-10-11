@@ -25,117 +25,6 @@ project.Raffle.prototype = {
       game.load.script('menu','/js/menubuttons.js')
       game.load.spritesheet('playersprite', playersprite.src, playersprite.x, playersprite.y, maxpokes*4);
     },
-    create: function(){
-      cards = JSON.parse(game.storage.getItem('cards'));
-      spinspeed = 24;
-      radian = Math.PI * 2;
-      donutchartradius = Presets.height / 4 <  Presets.width / 4 ?  Presets.height / 4 :  Presets.width / 4;
-
-      game.stage.backgroundColor = Presets.bgcolor;
-
-      displaygroup = this.add.group();
-      queuegroup = this.add.group();
-      donutchart = this.add.group();
-      winnercircle = this.add.group();
-      menu = this.add.group();
-      menu.addMultiple(menubuttons);
-      yoffset = buttonstyle.horizontalorientation ?  menu.getBounds().height+Presets.padding : 0;
-
-      var padding = 32;
-      var textstyle =  {
-        backgroundColor: 'transparent',
-        fill: Presets.fill,
-        fillAlpha: 1,
-        font: Presets.font,
-        fontSize: Presets.fontsize.toString() + 'px ',
-        fontWeight: 'Bold',
-        textAlign: 'left',
-        stroke: 0
-      };
-      // textstyle.backgroundColor = hexstring(sectioncolors[1]);
-
-      previouswinner = '';
-      spinslow = 0;
-
-      winner = [];
-      winner[0] = game.add.graphics(0, 0);
-      winner[0]
-        .beginFill(sectioncolors[1], 1)
-        .drawRoundedRect(padding * 0.75, yoffset + padding / 2 + spritesheet.y * 1.5, 512, 160, padding)
-        .endFill();
-      winner[1] = game.add.graphics(0, 0);
-      winner[2] = game.add.text(padding * 0.75, yoffset + padding / 2 + spritesheet.y * 1.5, 'Current Winner:', textstyle);
-      winner[1]
-        .beginFill(sectioncolors[1], 1)
-        .drawRoundedRect(padding / 4, yoffset + spritesheet.y * 1.5, winner[2].getBounds().width + padding, winner[2].getBounds().height + padding, padding)
-        .endFill();
-      winner[3] = game.add.text(winner[0].getBounds().width/2 + winner[0].getBounds().x, winner[0].getBounds().height/2 + winner[0].getBounds().y, previouswinner, {
-        backgroundColor: 'transparent',
-        fill: Presets.fill,
-        fillAlpha: 1,
-        font: Presets.font,
-        fontSize: '48px ',
-        fontWeight: 'Bold',
-        textAlign: 'left',
-        stroke: 0
-      });
-      winner[3].anchor.setTo(0.5);
-
-      winnercircle.addMultiple(winner);
-      // winnercircle.setAll('tint', Presets.normalstate);
-
-      textButton.define(enterbutton = game.add.group(), game, 'enter ' + (team_name ? team_name : 'raffle'), 8, winnercircle.getBounds().y + winnercircle.getBounds().height + 32 , sectioncolors[0])
-       .onChildInputDown.add(this.enterraffle, this);
-      textButton.define(leavebutton = game.add.group(), game, 'leave raffle', enterbutton.getBounds().x + enterbutton.getBounds().width + 16, winnercircle.getBounds().y + winnercircle.getBounds().height + 32, sectioncolors[3])
-       .onChildInputDown.add(this.leaveraffle, this);
-      if (Presets.allowroll) {
-        textButton.define(rollbutton = game.add.group(), game, 'roll raffle', leavebutton.getBounds().x + leavebutton.getBounds().width + 16, winnercircle.getBounds().y + winnercircle.getBounds().height + 32, sectioncolors[1])
-         .onChildInputDown.add(this.rollraffle, this);
-        textButton.define(clearbutton = game.add.group(), game, 'clear raffle', rollbutton.getBounds().x + rollbutton.getBounds().width + 16, winnercircle.getBounds().y + winnercircle.getBounds().height + 32, sectioncolors[4])
-         .onChildInputDown.add(this.clearraffle, this);
-     }
-
-      // previouswinner
-
-      if (socket.hasListeners('receive raffle') == false) socket.on('receive raffle', function(fullraffle) {
-        usersraffle = [];
-          for (user in fullraffle){
-            if (fullraffle[user].winner == true) {
-              winnercircle.children[3].setText(fullraffle[user].id);
-              previouswinner = fullraffle[user].id;
-            }
-          }
-          for (user in fullraffle){
-            if (fullraffle[user].entered == true) {
-              usersraffle.push(fullraffle[user]);
-            }
-          }
-          this.fillraffle(fullraffle);
-          this.fillchart(fullraffle);
-      });
-
-      // socket.emit('enter raffle', 'joey', 37);
-      // socket.emit('enter raffle', 'george', 133);
-      // socket.emit('enter raffle', 'someone', 715);
-      // socket.emit('won raffle', 'joey');
-      socket.emit('send raffle');
-
-      spinuser = game.add.sprite(winnercircle.getBounds().x+winnercircle.getBounds().width*1.5, winnercircle.getBounds().y, 'playersprite');
-      spinuser.anchor.setTo(0.5, 0);
-      spinuser.scale.setTo (2.5);
-      spinusername = game.add.text(spinuser.x, spinuser.y+spinuser.getBounds().height*2, '', {
-        backgroundColor: 'transparent',
-        fill: Presets.fill,
-        fillAlpha: 1,
-        font: Presets.font,
-        fontSize: '60px ',
-        fontWeight: 'Bold',
-        textAlign: 'left',
-        stroke: 0
-      });
-      spinusername.anchor.setTo(0.5, 0);
-
-  },
   winraffle: function(person){
     socket.emit('won raffle', person);
   },
@@ -295,6 +184,115 @@ project.Raffle.prototype = {
         // add  first queuegroup item into displaygroup -- function
 
   },
+    create: function(){
+      cards = JSON.parse(game.storage.getItem('cards'));
+      spinspeed = 24;
+      radian = Math.PI * 2;
+      donutchartradius = Presets.height / 4 <  Presets.width / 4 ?  Presets.height / 4 :  Presets.width / 4;
 
+      game.stage.backgroundColor = Presets.bgcolor;
+
+      displaygroup = this.add.group();
+      queuegroup = this.add.group();
+      donutchart = this.add.group();
+      winnercircle = this.add.group();
+      menu = this.add.group();
+      menu.addMultiple(menubuttons);
+      yoffset = buttonstyle.horizontalorientation ?  menu.getBounds().height+Presets.padding : 0;
+
+      var padding = 32;
+      var textstyle =  {
+        backgroundColor: 'transparent',
+        fill: Presets.fill,
+        fillAlpha: 1,
+        font: Presets.font,
+        fontSize: Presets.fontsize.toString() + 'px ',
+        fontWeight: 'Bold',
+        textAlign: 'left',
+        stroke: 0
+      };
+      // textstyle.backgroundColor = hexstring(sectioncolors[1]);
+
+      previouswinner = '';
+      spinslow = 0;
+
+      winner = [];
+      winner[0] = game.add.graphics(0, 0);
+      winner[0]
+        .beginFill(sectioncolors[1], 1)
+        .drawRoundedRect(padding * 0.75, yoffset + padding / 2 + spritesheet.y * 1.5, 512, 160, padding)
+        .endFill();
+      winner[1] = game.add.graphics(0, 0);
+      winner[2] = game.add.text(padding * 0.75, yoffset + padding / 2 + spritesheet.y * 1.5, 'Current Winner:', textstyle);
+      winner[1]
+        .beginFill(sectioncolors[1], 1)
+        .drawRoundedRect(padding / 4, yoffset + spritesheet.y * 1.5, winner[2].getBounds().width + padding, winner[2].getBounds().height + padding, padding)
+        .endFill();
+      winner[3] = game.add.text(winner[0].getBounds().width/2 + winner[0].getBounds().x, winner[0].getBounds().height/2 + winner[0].getBounds().y, previouswinner, {
+        backgroundColor: 'transparent',
+        fill: Presets.fill,
+        fillAlpha: 1,
+        font: Presets.font,
+        fontSize: '48px ',
+        fontWeight: 'Bold',
+        textAlign: 'left',
+        stroke: 0
+      });
+      winner[3].anchor.setTo(0.5);
+
+      winnercircle.addMultiple(winner);
+      // winnercircle.setAll('tint', Presets.normalstate);
+
+      textButton.define(enterbutton = game.add.group(), game, 'enter ' + (team_name ? team_name : 'raffle'), 8, winnercircle.getBounds().y + winnercircle.getBounds().height + 32 , sectioncolors[0])
+       .onChildInputDown.add(this.enterraffle, this);
+      textButton.define(leavebutton = game.add.group(), game, 'leave raffle', enterbutton.getBounds().x + enterbutton.getBounds().width + 16, winnercircle.getBounds().y + winnercircle.getBounds().height + 32, sectioncolors[3])
+       .onChildInputDown.add(this.leaveraffle, this);
+      if (Presets.allowroll) {
+        textButton.define(rollbutton = game.add.group(), game, 'roll raffle', leavebutton.getBounds().x + leavebutton.getBounds().width + 16, winnercircle.getBounds().y + winnercircle.getBounds().height + 32, sectioncolors[1])
+         .onChildInputDown.add(this.rollraffle, this);
+        textButton.define(clearbutton = game.add.group(), game, 'clear raffle', rollbutton.getBounds().x + rollbutton.getBounds().width + 16, winnercircle.getBounds().y + winnercircle.getBounds().height + 32, sectioncolors[4])
+         .onChildInputDown.add(this.clearraffle, this);
+     }
+
+      // previouswinner
+
+      if (socket.hasListeners('receive raffle') == false) socket.on('receive raffle', function(fullraffle) {
+        usersraffle = [];
+          for (user in fullraffle){
+            if (fullraffle[user].winner == true) {
+              winnercircle.children[3].setText(fullraffle[user].id);
+              previouswinner = fullraffle[user].id;
+            }
+          }
+          for (user in fullraffle){
+            if (fullraffle[user].entered == true) {
+              usersraffle.push(fullraffle[user]);
+            }
+          }
+          this.fillraffle(fullraffle);
+          this.fillchart(fullraffle);
+      });
+
+      // socket.emit('enter raffle', 'joey', 37);
+      // socket.emit('enter raffle', 'george', 133);
+      // socket.emit('enter raffle', 'someone', 715);
+      // socket.emit('won raffle', 'joey');
+      socket.emit('send raffle');
+
+      spinuser = game.add.sprite(winnercircle.getBounds().x+winnercircle.getBounds().width*1.5, winnercircle.getBounds().y, 'playersprite');
+      spinuser.anchor.setTo(0.5, 0);
+      spinuser.scale.setTo (2.5);
+      spinusername = game.add.text(spinuser.x, spinuser.y+spinuser.getBounds().height*2, '', {
+        backgroundColor: 'transparent',
+        fill: Presets.fill,
+        fillAlpha: 1,
+        font: Presets.font,
+        fontSize: '60px ',
+        fontWeight: 'Bold',
+        textAlign: 'left',
+        stroke: 0
+      });
+      spinusername.anchor.setTo(0.5, 0);
+  },
 }
 
