@@ -355,7 +355,7 @@ function sendUserPokes (username) {
 			});
 	}
 
-	function raffleChangeUser(username, defaultchance, entered, displayicon = 1){
+	function raffleChangeUser(username, defaultchance, entered, displayicon){
 		r.db('Users').table('Raffle').get(username)
 		.run(conn, function(err, result) {
 			if (err) throw err;
