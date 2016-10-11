@@ -97,7 +97,7 @@ project.Raffle.prototype = {
 
       // previouswinner
 
-      if (socket.hasListeners('receive raffle') == false) socket.on('receive raffle', (fullraffle) => {
+      if (socket.hasListeners('receive raffle') == false) socket.on('receive raffle', function(fullraffle) {
         usersraffle = [];
           for (user in fullraffle){
             if (fullraffle[user].winner == true) {

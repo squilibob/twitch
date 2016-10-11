@@ -6,7 +6,7 @@ socket.on('Receive pokedex', function(payload){
   game.storage.setItem("pokedex", JSON.stringify(pokedex));
 });
 
-socket.on('Receive typechart', (payload) => {
+socket.on('Receive typechart', function(payload){
   typechart.push(payload);
   game.storage.setItem("typechart", JSON.stringify(typechart));
 });

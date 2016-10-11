@@ -1,4 +1,4 @@
-if (socket.hasListeners('login accepted') == false) socket.on('login accepted', (user) => {
+if (socket.hasListeners('login accepted') == false) socket.on('login accepted', function(user) {
     // console.log('good, set up complete', user);
     game.storage.setItem("id", user.id);
     game.storage.setItem("fcleft", user.fc[0]);
@@ -10,7 +10,7 @@ if (socket.hasListeners('login accepted') == false) socket.on('login accepted', 
     game.state.start('Teams', Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
 });
 
-if (socket.hasListeners('user pokes') == false) socket.on('user pokes', (payload) => {
+if (socket.hasListeners('user pokes') == false) socket.on('user pokes', function(payload) {
     console.log('payload from user pokes', payload);
     game.storage.setItem("externalteams", JSON.stringify(payload));
 });
