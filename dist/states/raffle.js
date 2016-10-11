@@ -17,6 +17,7 @@ project.Raffle = function(game) {
     radian,
     yoffset,
     previouswinner,
+    winnercircle,
     menu;
 };
 
@@ -142,7 +143,10 @@ project.Raffle.prototype = {
         .addGroup(percent)
         .pivot.setTo(0.5);
       donutchart.x = Presets.width - spritesheet.x - donutchart.getBounds().width /2;
-      donutchart.y = yoffset + playersprite.y + donutchart.getBounds().height / 2 ;
+      if (game.world.height < donutchart.getBounds().height+winnercircle.getBounds().height)
+        donutchart.y = yoffset + playersprite.y + donutchart.getBounds().height / 2;
+      else
+        donutchart.y = game.world.height - donutchart.getBounds().height;
     }
   },
   fillraffle: function(members) {

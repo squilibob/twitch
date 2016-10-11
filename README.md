@@ -1,4 +1,4 @@
-# Flipmon source for pokemon live streams
+# Squilibob's twitch program source for pokemon live streams
 
 ## Installation
 
