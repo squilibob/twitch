@@ -75,20 +75,20 @@ project.Pokedex.prototype = {
       game.load.spritesheet('spritesheet', spritesheet.src, spritesheet.x, spritesheet.y, maxpokes);
       game.load.script('menu','/js/menubuttons.js');
     },
-  // text: function(obj, text = "", fontsize = 12, color = 0x000000, newx = 0, newy = 0) {
-  text: function(obj, text, fontsize, color, newx, newy) {
-    if (!text) text = "";
-    if (!fontsize) fontsize = 12;
-    if(!color) color = 0x000000;
-    if(!newx) newx = 0;
-    if(!newy) newy = 0;
-    obj.setText(text);
-    // obj.font = fontsize+"px Extra-Cool";
-    obj.style.fill = hexstring(color);
-    obj.x = newx;
-    obj.y = newy;
-    obj.anchor.setTo(0, 0);
-    return obj;
+  // text: function(obj, text: "", fontsize: 12, color: 0x000000, newx: 0, newy: 0) {
+  text: function(params) {
+    if (!params.text) params.text = "";
+    if (!params.fontsize) params.fontsize = 12;
+    if(!params.color) params.color = 0x000000;
+    if(!params.newx) params.newx = 0;
+    if(!params.newy) params.newy = 0;
+    params.obj.setText(params.text);
+    // params.obj.font = fontsize+"px Extra-Cool";
+    params.obj.style.fill = hexstring(params.color);
+    params.obj.x = params.newx;
+    params.obj.y = params.newy;
+    params.obj.anchor.setTo(0, 0);
+    return params.obj;
     },
 
   create: function(){
@@ -298,7 +298,7 @@ project.Pokedex.prototype = {
       var x = pokedexoptions.dex.x;
       var y = pokedexoptions.dex.y;
 
-      pokemonname = this.text(obj = pokemonname, text = dexinfo["Pokemon"].toLowerCase(), fontsize = scale/4, color = brightcolor, newx = x+textoffset, newy = y);
+      pokemonname = this.text({obj : pokemonname, text : dexinfo["Pokemon"].toLowerCase(), fontsize : scale/4, color : brightcolor, newx : x+textoffset, newy : y});
       y += pokemonname.getBounds().height;
       pokemonsprite.x = x;
       pokemonsprite.y = y;
@@ -306,41 +306,42 @@ project.Pokedex.prototype = {
       pokemonsprite.scaleX =  scale / dexspritesheetx;
       pokemonsprite.scaleY =  scale / dexspritesheety;
       y += scale;
-      tierlabel = this.text(obj = tierlabel, text = "tier ", fontsize = scale/4, color = brightcolor, newx = x, newy = y);
-      tier = this.text(obj = tier, text = dexinfo["Tier"], fontsize = scale/4, color = brightcolor, newx = x+tierlabel.getBounds().width, newy = y);
+      tierlabel = this.text({obj : tierlabel, text : "tier ", fontsize : scale/4, color : brightcolor, newx : x, newy : y});
+      tier = this.text({obj : tier, text : dexinfo["Tier"], fontsize : scale/4, color : brightcolor, newx : x+tierlabel.getBounds().width, newy : y});
       y += tierlabel.getBounds().height*0.9;
       typebg.anchor.setTo(0.5, 0.5);
       type2bg.anchor.setTo(0.5, 0.5);
       type2bg.clear()
       if (dexinfo.Secondary) {
-        type2 = this.text(obj = type2, text = dexinfo["Secondary"].toLowerCase(), fontsize = scale/4, color = textcolor, newx = x+textoffset, newy = y);
+        type2 = this.text({obj : type2, text : dexinfo["Secondary"].toLowerCase(), fontsize : scale/4, color : textcolor, newx : x+textoffset, newy : y});
         Object.keys(colors).forEach(function(element, index) {
           if (element == dexinfo["Secondary"]) type2bg.beginFill(colors[element]).drawRoundedRect(x,y+type2.getBounds().height,scale*0.9,scale/4,scale/8).endFill();
         });
       }
       else {
         span=2;
-        type2 = this.text(obj = type2, text = "");
+        type2 = this.text({obj : type2, text : ""});
       }
       Object.keys(colors).forEach(function(element, index) {
       if (element == dexinfo["Type"]) typebg.clear().beginFill(colors[element]).drawRoundedRect(x,y,scale*0.9,span*scale/4,scale/8).endFill();});
-      type1 = this.text(obj = type1, text = dexinfo["Type"].toLowerCase(), fontsize = scale/4, color = textcolor, newx = x+textoffset, newy = y+(span-1)*type2.getBounds().height/2);
+      type1 = this.text({obj : type1, text : dexinfo["Type"].toLowerCase(), fontsize : scale/4, color : textcolor, newx : x+textoffset, newy : y+(span-1)*type2.getBounds().height/2});
       type2.y = y+type1.getBounds().height;
       //    // this.setState({maxstatvalue: statmax}) ;
       //   // this.setState({statvalue: statmax});
       y += Math.floor(scale/4);
       x = pokedexoptions.dex.x;
       y += Math.floor(scale/4);
-      weaklabel = this.text(obj = weaklabel, text = "weak to ", fontsize = scale/4, color = softcolor, newx = x, newy = y+textoffset);
+      weaklabel = this.text({obj : weaklabel, text : "weak to ", fontsize : scale/4, color : softcolor, newx : x, newy : y+textoffset});
       x += scale;
       var weaktoindex = -1;
+      var contextthis = this;
       Object.keys(typechart).forEach(function(elementindex, index) {
         if (typechart[elementindex][dexinfo["Type"]] * (dexinfo["Secondary"] == "" ? 1 : typechart[elementindex][dexinfo["Secondary"]]) > 1) {
           weaktoindex++;
           Object.keys(colors).forEach(function(element, index) {
             if (element == typechart[elementindex]["Type"]) weakto[weaktoindex].beginFill(colors[element]).drawRoundedRect(x,y+8,scale,scale/4,scale/8).endFill();
           });
-          weaktolabel[weaktoindex] = this.text(obj = weaktolabel[weaktoindex], text = typechart[elementindex]["Type"].toLowerCase(), fontsize = scale/4, color = textcolor, newx = x+textoffset, newy = y+textoffset);
+          weaktolabel[weaktoindex] = contextthis.text({obj: weaktolabel[weaktoindex], text: typechart[elementindex]["Type"].toLowerCase(), fontsize: scale/4, color: textcolor, newx: x+textoffset, newy: y+textoffset});
           x += scale;
         }
       });
@@ -350,21 +351,22 @@ project.Pokedex.prototype = {
       }
       for (clearlist = weaktoindex + 1; clearlist < weakto.length; clearlist++){
         weakto[clearlist].clear();
-        weaktolabel[clearlist] = this.text(obj = weaktolabel[clearlist], text ='');
+        weaktolabel[clearlist] = this.text({obj : weaktolabel[clearlist], text :''});
       }
       x = pokedexoptions.dex.x;
       y += Math.floor(scale/4)+textoffset;
-      resistslabel = this.text(obj = resistslabel, text = "resists ", fontsize = scale/4, color = softcolor, newx = x, newy = y+textoffset);
+      resistslabel = this.text({obj : resistslabel, text : "resists ", fontsize : scale/4, color : softcolor, newx : x, newy : y+textoffset});
       x += scale;
 
       var resistanttoindex = -1;
+      var contextthis = this;
       Object.keys(typechart).forEach(function(elementindex, index) {
         if (typechart[elementindex][dexinfo["Type"]] * (dexinfo["Secondary"] == "" ? 1 : typechart[elementindex][dexinfo["Secondary"]]) < 1 && typechart[elementindex][dexinfo["Type"]] * (dexinfo["Secondary"] == "" ? 1 : typechart[elementindex][dexinfo["Secondary"]]) > 0) {
           resistanttoindex++;
           Object.keys(colors).forEach(function(element, index) {
             if (element == typechart[elementindex]["Type"]) resistantto[resistanttoindex].beginFill(colors[element]).drawRoundedRect(x,y+8,scale,scale/4,scale/8);
           });
-          resistanttolabel[resistanttoindex] = this.text(obj = resistanttolabel[resistanttoindex], text = typechart[elementindex]["Type"].toLowerCase(), fontsize = scale/4, color = textcolor, newx = x+textoffset, newy = y+textoffset);
+          resistanttolabel[resistanttoindex] = contextthis.text({obj : resistanttolabel[resistanttoindex], text : typechart[elementindex]["Type"].toLowerCase(), fontsize : scale/4, color : textcolor, newx : x+textoffset, newy : y+textoffset});
           x += scale;
         }
       });
@@ -374,12 +376,12 @@ project.Pokedex.prototype = {
       }
         for (clearlist = resistanttoindex + 1; clearlist < resistantto.length; clearlist++){
         resistantto[clearlist].clear();
-        resistanttolabel[clearlist] = this.text(obj = resistanttolabel[clearlist], text ='');
+        resistanttolabel[clearlist] = this.text({obj : resistanttolabel[clearlist], text :''});
       }
 
       x = pokedexoptions.dex.x;
       y += Math.floor(scale/4)+textoffset;
-      immunelabel = this.text(obj = immunelabel, text = "immune ", fontsize = scale/4, color = softcolor, newx = x, newy = y+textoffset);
+      immunelabel = this.text({obj : immunelabel, text : "immune ", fontsize : scale/4, color : softcolor, newx : x, newy : y+textoffset});
       x += scale;
       var immunetoindex = -1;
       Object.keys(typechart).forEach(function(elementindex, index) {
@@ -388,7 +390,7 @@ project.Pokedex.prototype = {
           Object.keys(colors).forEach(function(element, index) {
             if (element == typechart[elementindex]["Type"]) immuneto[immunetoindex].beginFill(colors[element]).drawRoundedRect(x,y+textoffset,scale,scale/4,scale/8);
           });
-          immunetolabel[immunetoindex] = this.text(obj = immunetolabel[immunetoindex], text = typechart[elementindex]["Type"].toLowerCase(), fontsize = scale/4, color = textcolor, newx = x+textoffset, newy = y+textoffset);
+          immunetolabel[immunetoindex] = this.text({obj : immunetolabel[immunetoindex], text : typechart[elementindex]["Type"].toLowerCase(), fontsize : scale/4, color : textcolor, newx : x+textoffset, newy : y+textoffset});
           x += scale;
           }
       });
@@ -398,7 +400,7 @@ project.Pokedex.prototype = {
       }
       for (clearlist = immunetoindex + 1; clearlist < immuneto.length; clearlist++){
         immuneto[clearlist].clear();
-        immunetolabel[clearlist] = this.text(obj = immunetolabel[clearlist], text ='');
+        immunetolabel[clearlist] = this.text({obj : immunetolabel[clearlist], text :''});
       }
       // infocontainer.cache(bounds.x, bounds.y, bounds.width*2, bounds.height*2);
       x = pokedexoptions.dex.x;
@@ -407,41 +409,41 @@ project.Pokedex.prototype = {
       // if (this.state.scrollfrequency < this.props.freq / 2)      {
       recommendedcontainer.visible = true;
       misccontainer.visible = false;
-      recommendedlabel = this.text(obj = recommendedlabel, text = "recommended ", fontsize = scale/4, color = brightcolor, newx = x, newy = y);
+      recommendedlabel = this.text({obj : recommendedlabel, text : "recommended ", fontsize : scale/4, color : brightcolor, newx : x, newy : y});
       y += Math.floor(scale/4);
-      abilitylabel = this.text(obj = abilitylabel, text = "ability ", fontsize = scale/4, color = softcolor, newx = x, newy = y);
+      abilitylabel = this.text({obj : abilitylabel, text : "ability ", fontsize : scale/4, color : softcolor, newx : x, newy : y});
       abilitylabel.visible = (dexinfo["Ability"].toLowerCase() != '' );
       x += scale;
-      ability = this.text(obj = ability, text = dexinfo["Ability"].toLowerCase(), fontsize = scale/4, color = brightcolor, newx = x, newy = y);
+      ability = this.text({obj : ability, text : dexinfo["Ability"].toLowerCase(), fontsize : scale/4, color : brightcolor, newx : x, newy : y});
       ability.visible = (dexinfo["Ability"].toLowerCase() != '' );
       if (dexinfo["Item"] != "") {
         x = pokedexoptions.dex.x;
         y += Math.floor(scale/4);
 
-        itemlabel = this.text(obj = itemlabel, text = "item ", fontsize = scale/4, color = softcolor, newx = x, newy = y);
+        itemlabel = this.text({obj : itemlabel, text : "item ", fontsize : scale/4, color : softcolor, newx : x, newy : y});
         x += scale;
-        item = this.text(obj = item, text = dexinfo["Item"].toLowerCase(), fontsize = scale/4, color = brightcolor, newx = x, newy = y);
+        item = this.text({obj : item, text : dexinfo["Item"].toLowerCase(), fontsize : scale/4, color : brightcolor, newx : x, newy : y});
       }
       itemlabel.visible = (dexinfo["Item"].toLowerCase() != '' );
       item.visible = (dexinfo["Item"].toLowerCase() != '' );
       if (dexinfo["Move1"] != "") {
         x = pokedexoptions.dex.x;
         y += Math.floor(scale/4);
-        moveslabel = this.text(obj = moveslabel, text = "moves ", fontsize = scale/4, color = softcolor, newx = x, newy = y);
+        moveslabel = this.text({obj : moveslabel, text : "moves ", fontsize : scale/4, color : softcolor, newx : x, newy : y});
         moveslabel.visible = true;
 
         x += scale;
-        move1 = this.text(obj = move1, text = dexinfo["Move1"].toLowerCase(), fontsize = scale/4, color = brightcolor, newx = x, newy = y);
+        move1 = this.text({obj : move1, text : dexinfo["Move1"].toLowerCase(), fontsize : scale/4, color : brightcolor, newx : x, newy : y});
         move1.visible = true;
         x += scale*2;
-        move2 = this.text(obj = move2, text = dexinfo["Move2"].toLowerCase(), fontsize = scale/4, color = brightcolor, newx = x, newy = y);
+        move2 = this.text({obj : move2, text : dexinfo["Move2"].toLowerCase(), fontsize : scale/4, color : brightcolor, newx : x, newy : y});
         move2.visible = (dexinfo["Move2"] != undefined);
         x -= scale*2;
         y += Math.floor(scale/4);
-        move3 = this.text(obj = move3, text = dexinfo["Move3"].toLowerCase(), fontsize = scale/4, color = brightcolor, newx = x, newy = y);
+        move3 = this.text({obj : move3, text : dexinfo["Move3"].toLowerCase(), fontsize : scale/4, color : brightcolor, newx : x, newy : y});
         move3.visible = (dexinfo["Move3"] != undefined);
         x += scale*2;
-        move4 = this.text(obj = move4, text = dexinfo["Move4"].toLowerCase(), fontsize = scale/4, color = brightcolor, newx = x, newy = y);
+        move4 = this.text({obj : move4, text : dexinfo["Move4"].toLowerCase(), fontsize : scale/4, color : brightcolor, newx : x, newy : y});
         move4.visible = (dexinfo["Move4"] != undefined);
       }
       else {
@@ -481,7 +483,7 @@ project.Pokedex.prototype = {
 
       gender.visible = true;
       gendertext = (Math.sign((50-dexinfo["Gender"])*-2) < 0 ? "male "+(100-dexinfo["Gender"]) : "female " + dexinfo["Gender"]) + "%";
-      genderlabel = this.text(obj = genderlabel, text = gendertext, fontsize = scale/4, color = textcolor, newy = y);
+      genderlabel = this.text({obj : genderlabel, text : gendertext, fontsize : scale/4, color : textcolor, newy : y});
       genderlabel.x = genderwidth/2 - genderlabel.getBounds().width/2;
       genderlabel.y = y;
       genderlabel.visible = true;
@@ -491,7 +493,7 @@ project.Pokedex.prototype = {
         gender.visible = false;
         genderlabel.visible = false;
       }
-      evslabel = this.text(obj = evslabel, text = "evs: ", fontsize = scale/4, color = softcolor, newx = x, newy = y);
+      evslabel = this.text({obj: evslabel, text: "evs: ", fontsize: scale/4, color: softcolor, newx: x, newy: y});
       var evlist = "";
       if (dexinfo["EVHP"] > 0) evlist += "hp ";
       if (dexinfo["EVHP"] > 1) evlist += "x" + dexinfo["EVHP"] + " ";
@@ -505,26 +507,26 @@ project.Pokedex.prototype = {
       if (dexinfo["SpD"] > 1) evlist += "x" + dexinfo["SpD"] + " ";
       if (dexinfo["Spe"] > 0) evlist += "speed ";
       if (dexinfo["Spe"] > 1) evlist += "x" + dexinfo["Spe"] + " ";
-      ev = this.text(obj = ev, text = evlist, fontsize = scale/4, color = brightcolor, newx = x+textoffset+evslabel.getBounds().width, newy = y);
+      ev = this.text({obj: ev, text: evlist, fontsize: scale/4, color: brightcolor, newx: x+textoffset+evslabel.getBounds().width, newy: y});
       x = pokedexoptions.dex.x;
       y += scale/4;
-      explabel = this.text(obj = explabel, text = "base xp: ", fontsize = scale/4, color = softcolor, newx = x, newy = y);
-      expv = this.text(obj = expv, text = dexinfo["EXPV"], fontsize = scale/4, color = brightcolor, newx = x+scale, newy = y);
+      explabel = this.text({obj: explabel, text: "base xp: ", fontsize: scale/4, color: softcolor, newx: x, newy: y});
+      expv = this.text({obj: expv, text: dexinfo["EXPV"], fontsize: scale/4, color: brightcolor, newx: x+scale, newy: y});
       x += scale*2;
-      masslabel = this.text(obj = masslabel, text = "Mass: ", fontsize = scale/4, color = softcolor, newx = x, newy = y);
-      mass = this.text(obj = mass, text = dexinfo["Mass"].toLowerCase(), fontsize = scale/4, color = brightcolor, newx = x+scale, newy = y);
+      masslabel = this.text({obj: masslabel, text: "Mass: ", fontsize: scale/4, color: softcolor, newx: x, newy: y});
+      mass = this.text({obj: mass, text: dexinfo["Mass"].toLowerCase(), fontsize: scale/4, color: brightcolor, newx: x+scale, newy: y});
       x += scale*2;
-      catchlabel = this.text(obj = catchlabel, text = "catch ", fontsize = scale/4, color = softcolor, newx = x, newy = y);
+      catchlabel = this.text({obj: catchlabel, text: "catch ", fontsize: scale/4, color: softcolor, newx: x, newy: y});
       catchlabel.visible = (dexinfo["Catch"] > 0);
-      catchr = this.text(obj = catchr, text = dexinfo["Catch"], fontsize = scale/4, color = brightcolor, newx = x+scale, newy = y);
+      catchr = this.text({obj: catchr, text: dexinfo["Catch"], fontsize: scale/4, color: brightcolor, newx: x+scale, newy: y});
       catchr.visible = (dexinfo["Catch"] > 0);
       x = pokedexoptions.dex.x;
       y +=scale/4;
       if (dexinfo["Hatch"]) {
         hatchlabel.visible = true;
         hatch.visible = true;
-        hatchlabel = this.text(obj = hatchlabel, text = "hatch ", fontsize = scale/4, color = softcolor, newx = x, newy = y);
-        hatch = this.text(obj = hatch, text = dexinfo["Hatch"], fontsize = scale/4, color = brightcolor, newx = x+scale, newy = y);
+        hatchlabel = this.text({obj: hatchlabel, text: "hatch ", fontsize: scale/4, color: softcolor, newx: x, newy: y});
+        hatch = this.text({obj: hatch, text: dexinfo["Hatch"], fontsize: scale/4, color: brightcolor, newx: x+scale, newy: y});
         x += scale*2;
       }
       else {
@@ -534,8 +536,8 @@ project.Pokedex.prototype = {
       if (dexinfo["Egg Group I"]) {
         egglabel.visible = true;
         egg.visible = true;
-        egglabel = this.text(obj = egglabel, text = "egg ", fontsize = scale/4, color = softcolor, newx = x, newy = y);
-        egg = this.text(obj = egg, text = dexinfo["Egg Group I"].toLowerCase() + "   " + dexinfo["Egg Group II"].toLowerCase(), fontsize = scale/4, color = brightcolor, newx = x+scale, newy = y);
+        egglabel = this.text({obj: egglabel, text: "egg ", fontsize: scale/4, color: softcolor, newx: x, newy: y});
+        egg = this.text({obj: egg, text: dexinfo["Egg Group I"].toLowerCase() + "   " + dexinfo["Egg Group II"].toLowerCase(), fontsize: scale/4, color: brightcolor, newx: x+scale, newy: y});
       }
       else {
         egglabel.visible = false;
@@ -544,9 +546,9 @@ project.Pokedex.prototype = {
         x = pokedexoptions.dex.x;
         y +=scale/4;
         if (dexinfo["Evolve"] != "0" && dexinfo["Evolve"].toLowerCase() != 'n') {
-        evolvelabel = this.text(obj = evolvelabel, text = "evolves: ", fontsize = scale/4, color = softcolor, newx = x, newy = y);
+        evolvelabel = this.text({obj: evolvelabel, text: "evolves: ", fontsize: scale/4, color: softcolor, newx: x, newy: y});
         evolvelabel.visible = true;
-        evolve = this.text(obj = evolve, text = dexinfo["Evolve"].toLowerCase(), fontsize = scale/4, color = brightcolor, newx = x+scale, newy = y);
+        evolve = this.text({obj: evolve, text: dexinfo["Evolve"].toLowerCase(), fontsize: scale/4, color: brightcolor, newx: x+scale, newy: y});
         evolve.visible = true;
         x = pokedexoptions.dex.x;
         y +=scale/4;
@@ -556,9 +558,9 @@ project.Pokedex.prototype = {
         evolve.visible = false;
       }
       if (dexinfo["locationORAS"] != "") {
-        loclabel = this.text(obj = loclabel, text = "location: ", fontsize = scale/4, color = softcolor, newx = x, newy = y);
+        loclabel = this.text({obj: loclabel, text: "location: ", fontsize: scale/4, color: softcolor, newx: x, newy: y});
         loclabel.visible = true;
-        loc = this.text(obj = loc, text = dexinfo["locationORAS"].toLowerCase(), fontsize = scale/4, color = brightcolor, newx = x+scale, newy = y);
+        loc = this.text({obj: loc, text: dexinfo["locationORAS"].toLowerCase(), fontsize: scale/4, color: brightcolor, newx: x+scale, newy: y});
         loc.visible = true;
       }
       else {
@@ -585,7 +587,7 @@ project.Pokedex.prototype = {
       y += Math.floor(scale/4);
       if (stat.length > 9) stat = stat.substring(0,1) + stat.substring(4,5);
       else stat = stat.substring(0,3);
-      statname[statcount] = this.text(obj = statname[statcount], text = stat, fontsize = scale/4, color = textcolor, newx = x, newy = y);
+      statname[statcount] = this.text({obj: statname[statcount], text: stat, fontsize: scale/4, color: textcolor, newx: x, newy: y});
       if (statvalue[statcount] < statmax[statcount]) statvalue[statcount]++;
       statbar[statcount]
         .clear()
@@ -593,9 +595,9 @@ project.Pokedex.prototype = {
         .beginFill(statcolor)
         .drawRect(statname[statcount].x,statname[statcount].y, span*statvalue[statcount], scale/4)
         .endFill();
-      statvaluelabel[statcount] = this.text(obj = statvaluelabel[statcount], text = statvalue[statcount], fontsize = scale/4, color = statcolor, newx = statbar[statcount].getBounds().width, newy = 0);
+      statvaluelabel[statcount] = this.text({obj: statvaluelabel[statcount], text: statvalue[statcount], fontsize: scale/4, color: statcolor, newx: statbar[statcount].getBounds().width, newy: 0});
       }
-      stattotal = this.text(obj = stattotal, text = dexinfo["Attack"]+dexinfo["Defense"]+dexinfo["Sp. Attack"]+dexinfo["Sp. Defense"]+dexinfo["Speed"]+"  total", fontsize = scale/4, color = brightcolor, newx = x+textoffset, newy = y+scale/4+textoffset/2);
+      stattotal = this.text({obj: stattotal, text: dexinfo["Attack"]+dexinfo["Defense"]+dexinfo["Sp. Attack"]+dexinfo["Sp. Defense"]+dexinfo["Speed"]+"  total", fontsize: scale/4, color: brightcolor, newx: x+textoffset, newy: y+scale/4+textoffset/2});
     },
   update: function(){
     for (var statcount = 0; statcount <= 5; statcount++) {
