@@ -1,0 +1,12 @@
+        @font-face {
+            font-family: 'Extra-Cool';
+            src: url('/extra-cool.ttf');
+        }
+    body {
+        background: #1c0f0c;
+        color: #dedede;
+    }
+    span {
+      white-space: nowrap;
+    }
+
