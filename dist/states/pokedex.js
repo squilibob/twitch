@@ -384,13 +384,14 @@ project.Pokedex.prototype = {
       immunelabel = this.text({obj : immunelabel, text : "immune ", fontsize : scale/4, color : softcolor, newx : x, newy : y+textoffset});
       x += scale;
       var immunetoindex = -1;
+      var contextthis = this;
       Object.keys(typechart).forEach(function(elementindex, index) {
         if (typechart[elementindex][dexinfo["Type"]] * (dexinfo["Secondary"] == "" ? 1 : typechart[elementindex][dexinfo["Secondary"]]) == 0) {
           immunetoindex++;
           Object.keys(colors).forEach(function(element, index) {
             if (element == typechart[elementindex]["Type"]) immuneto[immunetoindex].beginFill(colors[element]).drawRoundedRect(x,y+textoffset,scale,scale/4,scale/8);
           });
-          immunetolabel[immunetoindex] = this.text({obj : immunetolabel[immunetoindex], text : typechart[elementindex]["Type"].toLowerCase(), fontsize : scale/4, color : textcolor, newx : x+textoffset, newy : y+textoffset});
+          immunetolabel[immunetoindex] = contextthis.text({obj : immunetolabel[immunetoindex], text : typechart[elementindex]["Type"].toLowerCase(), fontsize : scale/4, color : textcolor, newx : x+textoffset, newy : y+textoffset});
           x += scale;
           }
       });

@@ -255,7 +255,7 @@ project.Raffle.prototype = {
      }
 
       // previouswinner
-
+      var contextthis = this;
       if (socket.hasListeners('receive raffle') == false) socket.on('receive raffle', function(fullraffle) {
         usersraffle = [];
           for (user in fullraffle){
@@ -269,8 +269,8 @@ project.Raffle.prototype = {
               usersraffle.push(fullraffle[user]);
             }
           }
-          this.fillraffle(fullraffle);
-          this.fillchart(fullraffle);
+          contextthis.fillraffle(fullraffle);
+          contextthis.fillchart(fullraffle);
       });
 
       // socket.emit('enter raffle', 'joey', 37);
