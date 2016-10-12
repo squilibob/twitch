@@ -71,7 +71,7 @@ project.Pokedex = function(game) {
 
 project.Pokedex.prototype = {
   preload: function(){
-      game.load.spritesheet('dexspritesheet', 'img/pikafan2000.png', 109, 117, maxpokes);
+      game.load.spritesheet('dexspritesheet', dexspritesheet.src, dexspritesheet.x, dexspritesheet.y, maxpokes);
       game.load.spritesheet('spritesheet', spritesheet.src, spritesheet.x, spritesheet.y, maxpokes);
       game.load.script('menu','/js/menubuttons.js');
     },
@@ -288,7 +288,7 @@ project.Pokedex.prototype = {
       thepokemon = which.frame;
       var dexinfo = pokedex[thepokemon];
       var alphacolor = 1;
-      scale = dexspritesheety*1;
+      scale = dexspritesheet.y*1;
       var span = 1;
       var textoffset = 8;
       var textcolor = 0x000000;
@@ -303,8 +303,8 @@ project.Pokedex.prototype = {
       pokemonsprite.x = x;
       pokemonsprite.y = y;
       pokemonsprite.frame = thepokemon;
-      // pokemonsprite.scaleX =  scale / dexspritesheetx;
-      // pokemonsprite.scaleY =  scale / dexspritesheety;
+      pokemonsprite.scaleX =  scale / dexspritesheet.x;
+      pokemonsprite.scaleY =  scale / dexspritesheet.y;
       y += scale;
       tierlabel = this.text({obj : tierlabel, text : "tier ", fontsize : scale/4, color : brightcolor, newx : x, newy : y});
       tier = this.text({obj : tier, text : dexinfo["Tier"], fontsize : scale/4, color : brightcolor, newx : x+tierlabel.getBounds().width, newy : y});

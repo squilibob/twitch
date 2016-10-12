@@ -27,13 +27,17 @@ const playersprite = {
   x: 32,
   y: 32,
 }
+
+const dexspritesheet = {
+  src: "/img/pikafan2000.png",
+  x: 109,
+  y: 117,
+}
+
 const maxpokes = 719;
 
 const Tiers = ['lc','pu','bl4','nu','bl3','ru','bl2','uu','bl','ou','uber'];
 
-// const dexspritesheet = "pikafan2000.png";
-const dexspritesheetx = 109;
-const dexspritesheety = 117;
 const dexspritesheetrowlen = 25;
 const dexmaxpokes = 720;
 const HPcolor =0xFF0000;
