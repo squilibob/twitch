@@ -88,7 +88,7 @@ project.Init.prototype = {
   loadUpdate: function(){
     // if (redgraphics.angle > -1)
     // loader_elements.redgraphics.angle = this.load.progress*1.8;
-    game.add.tween(loader_elements.redgraphics).to({angle:this.load.progress*1.8}, 16, Phaser.Easing.Linear.None,true);
+    loader_elements.tween = game.add.tween(loader_elements.redgraphics).to({angle:this.load.progress*1.8}, 100, Phaser.Easing.Linear.None,true);
     if (this.load.progress == 100) loader_elements.graphics.destroy(true);
   },
 
