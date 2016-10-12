@@ -68,8 +68,8 @@ project.Init.prototype = {
     game.scale.setUserScale(scale, scale, 0, 0);
   },
   preload: function () {
-    game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;//Phaser.ScaleManager.EXACT_FIT;
-    game.scale.setResizeCallback(this.gameResized, this);
+    // game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;//Phaser.ScaleManager.SHOW_ALL;//Phaser.ScaleManager.EXACT_FIT;//
+    // game.scale.setResizeCallback(this.gameResized, this);
 
     pokeball_loader();
 

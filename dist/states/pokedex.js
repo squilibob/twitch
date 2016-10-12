@@ -265,7 +265,13 @@ project.Pokedex.prototype = {
         textButton.define(totalscore = game.add.group(), game, this.total(), rated.getBounds().x+rated.getBounds().width+Presets.padding*2, rated.getBounds().y+Presets.padding*2, sectioncolors[1])
         totalscore.onChildInputDown.add(this.submit, this);
         setScale(totalscore, (rated.getBounds().height+bonusgroup.getBounds().height*bonusgroup.scale.y-Presets.padding)/totalscore.getBounds().height);
-        this.toggle();
+        if (Presets.externalteams) {
+          pokemoncontainer.visible = !pokemoncontainer.visible;
+          statcontainer.visible = !statcontainer.visible;
+          infocontainer.visible = !infocontainer.visible;
+          recommendedcontainer.visible = !recommendedcontainer.visible;
+          misccontainer.visible = !misccontainer.visible;
+          }
       }
     },
     total: function(){

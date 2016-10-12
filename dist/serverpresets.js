@@ -1,6 +1,6 @@
 const Presets = {
-  'width': window.innerWidth-32-494,
-  'height': window.innerHeight-32-92,
+  'width': 900*2,
+  'height': 475*2,
   bgcolor: '#1c0f0c',
   selectedcolor: '#604040',
   font: 'Extra-Cool',
@@ -45,8 +45,8 @@ const preloadscripts = [
       y : 0,
     },
     team : {
-      x : 896,
-      y : 528,
+      x : 1002,
+      y : 620,
     },
   };
 
