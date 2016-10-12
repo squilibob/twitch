@@ -314,6 +314,15 @@ io.on('connection', function(socket){
 				});
 			});
 	});
+	socket.on('clear leaderboard', function() {
+		r.db('Users').table('Leaderboard').delete()
+		.run(conn, function(err, result) {
+			if (err) throw err;
+			if (result) {
+				if (result.errors) console.log(result.first_error);
+			}
+		});
+	});
 });
 function sendUserPokes (username) {
 	r.table('Users').filter(r.row('id').eq(username.toLowerCase()))

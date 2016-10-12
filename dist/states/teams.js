@@ -43,12 +43,14 @@ project.Teams.prototype = {
   },
   positionteams: function(){
     var horizontal = spritesheet.x;
-    var vertical =  spritesheet.y*2.5*scale+48;
+    // var vertical =  spritesheet.y*2.5*scale+48;
+    var vertical =  saveteam.getBounds().y+saveteam.getBounds().height*1.5+Presets.padding;
+    // var vertical =  teamname.y + teamname.getBounds().height*1.5+Presets.padding;
 
     for (var teamcounter = 0; teamcounter < teamlist.length; teamcounter++) {
       if (horizontal + teamlist[teamcounter].getBounds().width > Presets.width) {
         horizontal = spritesheet.x;
-        vertical += spritesheet.y+24;
+        vertical += teamlist[0].getBounds().height;
       }
       teamlist[teamcounter].x = horizontal;
       teamlist[teamcounter].y = vertical;

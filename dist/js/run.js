@@ -3,70 +3,74 @@ var game = new Phaser.Game(Presets.width, Presets.height, Phaser.AUTO, "content"
 var project = {};
 var teams;
 var team_name;
+var loader_elements = {};
+function pokeball_loader(){
+  var radius = game.world.height /4;
+
+  loader_elements.graphics = game.add.group();
+
+  loader_elements.redgraphics = game.add.graphics(0,0);
+  loader_elements.redgraphics
+    .clear()
+    .beginFill(0xeb485b)
+    .arc(0,0, radius, 3.14, 0, true, 360)
+    .endFill();
+    loader_elements.redgraphics.anchor.setTo(0.5);
+    loader_elements.redgraphics.x = game.world.centerX;
+    loader_elements.redgraphics.y = radius;
+
+  loader_elements.whitegraphics = game.add.graphics(0,0);
+  loader_elements.whitegraphics
+    .clear()
+    .beginFill(0xffffff)
+    .arc(0,0, radius, 3.14, 0, true, 360)
+    .endFill();
+    loader_elements.whitegraphics.anchor.setTo(0.5);
+    loader_elements.whitegraphics.x = game.world.centerX;
+    loader_elements.whitegraphics.y = radius;
+
+  loader_elements.blackgraphics = game.add.graphics(0,0);
+ loader_elements. blackgraphics
+    .clear()
+    .beginFill(0x000000)
+    .drawCircle(0,0, radius*0.75)
+    .endFill();
+    loader_elements.blackgraphics.anchor.setTo(0.5);
+    loader_elements.blackgraphics.x = game.world.centerX;
+    loader_elements.blackgraphics.y = radius;
+
+  loader_elements.smallgraphics = game.add.graphics(0,0);
+  loader_elements.smallgraphics
+    .clear()
+    .beginFill(0xffffff)
+    .drawCircle(0,0, radius/2)
+    .endFill();
+    loader_elements.smallgraphics.anchor.setTo(0.5);
+    loader_elements.smallgraphics.x = game.world.centerX;
+    loader_elements.smallgraphics.y = radius;
+
+    loader_elements.graphics.addChild(loader_elements.redgraphics);
+    loader_elements.graphics.addChild(loader_elements.whitegraphics);
+    loader_elements.graphics.addChild(loader_elements.blackgraphics);
+    loader_elements.graphics.addChild(loader_elements.smallgraphics);
+
+}
 
 project.Init = function () {
   states = {};
-  var
-  graphics,
-  redgraphics,
-  whitegraphics,
-  blackgraphics,
-  smallgraphics;
 };
 
 project.Init.prototype = {
 
+  gameResized: function()  {
+    var scale = Math.min(window.innerWidth / this.game.width, window.innerHeight / this.game.height);
+    game.scale.setUserScale(scale, scale, 0, 0);
+  },
   preload: function () {
-    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    var radius = game.world.height /4;
+    game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
+    game.scale.setResizeCallback(this.gameResized, this);
 
-    graphics = this.add.group();
-
-    redgraphics = game.add.graphics(0,0);
-    redgraphics
-      .clear()
-      .beginFill(0xeb485b)
-      .arc(0,0, radius, 3.14, 0, true, 360)
-      .endFill();
-      redgraphics.anchor.setTo(0.5);
-      redgraphics.x = game.world.centerX;
-      redgraphics.y = radius;
-
-    whitegraphics = game.add.graphics(0,0);
-    whitegraphics
-      .clear()
-      .beginFill(0xffffff)
-      .arc(0,0, radius, 3.14, 0, true, 360)
-      .endFill();
-      whitegraphics.anchor.setTo(0.5);
-      whitegraphics.x = game.world.centerX;
-      whitegraphics.y = radius;
-
-    blackgraphics = game.add.graphics(0,0);
-    blackgraphics
-      .clear()
-      .beginFill(0x000000)
-      .drawCircle(0,0, radius*0.75)
-      .endFill();
-      blackgraphics.anchor.setTo(0.5);
-      blackgraphics.x = game.world.centerX;
-      blackgraphics.y = radius;
-
-    smallgraphics = game.add.graphics(0,0);
-    smallgraphics
-      .clear()
-      .beginFill(0xffffff)
-      .drawCircle(0,0, radius/2)
-      .endFill();
-      smallgraphics.anchor.setTo(0.5);
-      smallgraphics.x = game.world.centerX;
-      smallgraphics.y = radius;
-
-      graphics.addChild(redgraphics);
-      graphics.addChild(whitegraphics);
-      graphics.addChild(blackgraphics);
-      graphics.addChild(smallgraphics);
-
+    pokeball_loader();
 
     var script;
     for (testscript in preloadscripts) {
@@ -83,8 +87,9 @@ project.Init.prototype = {
 
   loadUpdate: function(){
     // if (redgraphics.angle > -1)
-    redgraphics.angle = this.load.progress*1.8;
-    if (this.load.progress == 100) graphics.destroy(true);
+    // loader_elements.redgraphics.angle = this.load.progress*1.8;
+    game.add.tween(loader_elements.redgraphics).to({angle:this.load.progress*1.8}, 16, Phaser.Easing.Linear.None,true);
+    if (this.load.progress == 100) loader_elements.graphics.destroy(true);
   },
 
   create: function () {

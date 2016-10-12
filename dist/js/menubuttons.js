@@ -1,4 +1,5 @@
 var menubuttons = [];
+// var menugroup = game.add.group();
 
 menubuttons.prototype = {
   onClick: function(name){
@@ -18,6 +19,9 @@ menubuttons.prototype = {
       this.addButton(statename, sectioncolors[nextcolor], statename);
       nextcolor = (nextcolor + 1) % sectioncolors.length;
     }
+      // menugroup.addMultiple(menubuttons);
+      // console.log(game.world.width/menugroup.getBounds().width);
+      // menugroup.scale.set(game.world.width/menugroup.getBounds().width);
   },
 }
 

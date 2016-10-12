@@ -42,22 +42,10 @@ project.Login.prototype = {
     y.next++;
 
     formbutton = this.add.group();
-    button = this.add.text(this.world.centerX, y.spacing*y.next, "Save these details",  {
-  backgroundColor: Presets.bgcolor,
-  fill: Presets.fill,
-  fillAlpha: 1,
-  font: Presets.font,
-  fontSize: Presets.fontsize.toString() + 'px ',
-  fontWeight: 'Bold',
-  textAlign: 'left',
-  stroke: 0
-});
-    button.anchor.setTo(0.5);
-    buttonbox = this.add.graphics(0, 0);
-    formbutton.addMultiple([button, buttonbox]);
-
-    button.inputEnabled = true;
-    button.events.onInputDown.add(this.connect, this);
+    textButton.define(button = this.add.group(), game, "Save these details", game.world.centerX, y.spacing*y.next, sectioncolors[1]);
+    // button = this.add.text(this.world.centerX, y.spacing*y.next, "Save these details",  {
+    button.onChildInputDown.add(this.connect, this);
+    button.x -= button.getBounds().width/2;
 
     form[0].children[0].setText(game.storage.getItem("id"));
     form[1].children[0].setText(game.storage.getItem("ign"));
@@ -103,7 +91,7 @@ project.Login.prototype = {
     }
   },
   changestate: function (login) {
-    button.setText('Password check');
+    button.children[1].setText('Password check');
     socket.emit('request to connect', login);
   },
 
@@ -141,8 +129,6 @@ project.Login.prototype = {
     };
     if (form[0].children[0].value && form[1].children[0].value) {
       formbutton.visible = true;
-      buttonbox.lineStyle(1, buttonborder, 1);
-      buttonbox.drawRect(button.position.x -Presets.padding - button.width / 2, button.position.y -Presets.padding - button.height / 2, button.width+Presets.padding*2, button.height+Presets.padding*2);
     }
     else formbutton.visible = false;
   }

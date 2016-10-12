@@ -4,7 +4,7 @@ const Presets = {
   bgcolor: '#1c0f0c',
   selectedcolor: '#604040',
   font: 'Extra-Cool',
-  fontsize: 24,//window.innerWidth/75,
+  fontsize: 60,//window.innerWidth/75,
   fill: '#ffffff',
   pressedstate: 0xffffff,
   normalstate: 0x888888,
@@ -35,11 +35,11 @@ const preloadscripts = [
     scoring: false,
     dex : {
       x : 0,
-      y : 128,
+      y : Presets.fontsize*1.5+40,
     },
     team : {
       x : 0,
-      y : 64,
+      y : Presets.fontsize*1.5,
     },
   };
 

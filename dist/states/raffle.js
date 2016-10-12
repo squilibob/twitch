@@ -222,16 +222,16 @@ project.Raffle.prototype = {
 
       winner = [];
       winner[0] = game.add.graphics(0, 0);
-      winner[0]
-        .beginFill(sectioncolors[1], 1)
-        .drawRoundedRect(padding * 0.75, yoffset + padding / 2 + spritesheet.y * 1.5, 512, 160, padding)
-        .endFill();
       winner[1] = game.add.graphics(0, 0);
       winner[2] = game.add.text(padding * 0.75, yoffset + padding / 2 + spritesheet.y * 1.5, 'Current Winner:', textstyle);
       winner[1]
         .beginFill(sectioncolors[1], 1)
         .drawRoundedRect(padding / 4, yoffset + spritesheet.y * 1.5, winner[2].getBounds().width + padding, winner[2].getBounds().height + padding, padding)
         .endFill();
+        winner[0]
+          .beginFill(sectioncolors[1], 1)
+          .drawRoundedRect(padding * 0.75, yoffset + padding / 2 + spritesheet.y * 1.5, winner[1].getBounds().width*1.5, winner[1].getBounds().height*2, padding)
+          .endFill();
       winner[3] = game.add.text(winner[0].getBounds().width/2 + winner[0].getBounds().x, winner[0].getBounds().height/2 + winner[0].getBounds().y, previouswinner, {
         backgroundColor: 'transparent',
         fill: Presets.fill,

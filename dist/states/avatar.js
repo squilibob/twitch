@@ -13,7 +13,9 @@ project.Avatar.prototype = {
     rot = 0.45;
     hover = -1;
     var nextx = Useravatars.x/4;
-    var nexty = Useravatars.y/(buttonstyle.horizontalorientation ? 2 : 4);
+    // var nexty = Presets.padding + Useravatars.y/(buttonstyle.horizontalorientation ? 2 : 4);
+    console.log(menubuttons[0].getBounds());
+    var nexty = Presets.padding + (buttonstyle.horizontalorientation ? menubuttons[0].getBounds().height : 0) + Useravatars.y/4;
 
     game.stage.backgroundColor = Presets.bgcolor;
 
@@ -21,7 +23,7 @@ project.Avatar.prototype = {
     menu.addMultiple(menubuttons);
 
     avatars = this.add.group();
-    chosen = game.add.sprite(Useravatars.x/2, Useravatars.y*0.75, 'avatar', 0);
+    chosen = game.add.sprite(Useravatars.x/2, Presets.padding + (buttonstyle.horizontalorientation ? menubuttons[0].getBounds().height : 0) + Useravatars.y/2, 'avatar', 0);
     chosen.mask = this.addmask(chosen, 1);
     if (game.storage.getItem("avatar")) if (parseInt(game.storage.getItem("avatar")) >=0 && parseInt(game.storage.getItem("avatar")) < Useravatars.total) chosen.frame = 1 + parseInt(game.storage.getItem("avatar"));
     // for (var nextavatar = 0; nextavatar < Math.floor(Presets.width / (Useravatars.x/2 - 1)); nextavatar++) {

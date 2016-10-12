@@ -1,5 +1,6 @@
 project.Battle = function(game) {
   var
+  clearleaderboard,
   menu;
 };
 
@@ -65,7 +66,6 @@ project.Battle.prototype = {
         stroke: 0
       };
 
-
       if (socket.hasListeners('receive leaderboard') == false)  socket.on('receive leaderboard', function(payload){
         var bg = game.add.graphics(0,0);
         var leaderboardlabel = game.add.text(Presets.padding, buttonstyle.horizontalorientation ?  menu.getBounds().height+Presets.padding*2 : 0, 'leaderboard', textstyle);
@@ -85,7 +85,7 @@ project.Battle.prototype = {
           .setAll('tint', Presets.highlightedstate);
           temp[3] = game.add.graphics(0, 0);
           temp[2].x = temp[0].x + temp[0].getBounds().width+Presets.padding*4;
-          temp[2].y = currentline+Presets.padding*2;
+          temp[2].y = temp[1].y+temp[2].getBounds().height/2;
           temp[4] = game.add.text(temp[2].getBounds().x + temp[2].getBounds().width +Presets.padding*2, currentline, payload[entry].score, textstyle);
           // textButton.define(temp[2] = game.add.group(), game, payload[entry].score, temp[1].getBounds().x + temp[1].getBounds().width +Presets.padding*2, currentline,  0x0e92f0);
           temp[3].beginFill(0x0e92f0);
@@ -106,19 +106,17 @@ project.Battle.prototype = {
           bg.drawRect(dim.x, dim.y, dim.width, dim.height);
           bg.endFill();
 
-
+        }
+        if (pokedexoptions.scoring) {
+          clearleaderboard = game.add.group()
+          textButton.define(clearleaderboard, game, 'clear', dim.x, dim.y+dim.height+60, sectioncolors[4]);
+          // console.log(clearleaderboard);
+          clearleaderboard.onChildInputDown.add(function (){
+            socket.emit('clear leaderboard');
+            game.state.restart();
+          }, this);
         }
       });
       socket.emit('send leaderboard');
-
-      // socket.emit('update leaderboard',
-      // {
-
-      //     "id": "test" ,
-      //     "score": 700 ,
-      //     "teamname": "rain team",
-      //     "team": teams[team_name]
-
-      // });
-    }
+    },
   }

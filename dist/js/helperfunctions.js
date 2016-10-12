@@ -11,7 +11,7 @@ function inputform(placeHolder, max, InputType) {
     cursorColor: '#ffff00',
     fill: Presets.fill,
     fillAlpha: 1,
-    font: '24px Arial' + Presets.font,
+    font: (Presets.fontsize/2) + 'px Arial' + Presets.font,
     // font: Presets.fontsize.toString() + 'px ' + Presets.font,
     // fontSize: Presets.fontsize.toString() + 'px ',
     height: 32,
@@ -21,7 +21,7 @@ function inputform(placeHolder, max, InputType) {
     stroke: 0,
     textAlign: 'left',
     // type: Fabrique.InputType[InputType],
-    width: max*16,//Presets.fontsize/1.25,
+    width: max*Presets.fontsize/2.5,
     zoom: true
   }
 };
@@ -161,7 +161,7 @@ var textInput = {
     };
     var temp = game.add.text(options.x, options.y, options.label+':', style);
     temp.x -= temp.getBounds().width;
-    // temp.anchor.setTo(0, 0.5);
+    temp.anchor.setTo(0, 0.1);
     return temp;
   },
   input: function(group, game, options){
@@ -170,7 +170,10 @@ var textInput = {
   create: function (group, game, options) {
     var fields = [];
     fields.push(this.input(group, game, options));
-    if (options.label) fields.push(this.label(group, game, options));
+    if (options.label) {
+      fields.push(this.label(group, game, options));
+      fields[fields.length-1].y = fields[fields.length-2].y;
+    }
     return fields;
   },
   define: function(group, game, options) {
@@ -329,7 +332,6 @@ function drawteam(group, members, name, color){
     textAlign: 'left',
     stroke: 0
   };
-  textstyle.backgroundColor = hexstring(color);
   var buttontext = game.add.text(spritesheet.x*members.length, 0, name.toLowerCase(), textstyle);
   buttontext.anchor.setTo(0, 0.5);
   var tiertext = game.add.text(spritesheet.x*(members.length+0.5) + buttontext.getBounds().width, 0, Tiers[TeamTier], textstyle);
@@ -337,7 +339,8 @@ function drawteam(group, members, name, color){
 
   var buttonelement = game.add.graphics(0, 0);
   buttonelement.beginFill(color, 1)
-    .drawRoundedRect(-spritesheet.x/2-8, -spritesheet.y/2-8, spritesheet.x*(1.5+members.length)+buttontext.getBounds().width+tiertext.getBounds().width+16, spritesheet.y+16)
+    // .drawRoundedRect(-spritesheet.x/2-8, -spritesheet.y/2-8, spritesheet.x*(1.5+members.length)+buttontext.getBounds().width+tiertext.getBounds().width+16, spritesheet.y+16)
+    .drawRoundedRect(-spritesheet.x/2-8, buttontext.getBounds().y, spritesheet.x*(1.5+members.length)+buttontext.getBounds().width+tiertext.getBounds().width+16, buttontext.getBounds().height)
     .endFill()
     .inputEnabled = true;
 

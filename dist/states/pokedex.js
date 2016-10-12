@@ -105,7 +105,7 @@ project.Pokedex.prototype = {
         fill: Presets.fill,
         fillAlpha: 1,
         font: Presets.font,
-        fontSize: Presets.fontsize.toString() + 'px ',
+        fontSize: '24px ',
         fontWeight: 'Bold',
         textAlign: 'left',
         stroke: 0
