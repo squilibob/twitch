@@ -67,7 +67,7 @@ project.Init.prototype = {
     game.scale.setUserScale(scale, scale, 0, 0);
   },
   preload: function () {
-    game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
+    game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;//Phaser.ScaleManager.USER_SCALE;
     game.scale.setResizeCallback(this.gameResized, this);
 
     pokeball_loader();
@@ -88,7 +88,7 @@ project.Init.prototype = {
   loadUpdate: function(){
     // if (redgraphics.angle > -1)
     // loader_elements.redgraphics.angle = this.load.progress*1.8;
-    loader_elements.tween = game.add.tween(loader_elements.redgraphics).to({angle:this.load.progress*1.8}, 100, Phaser.Easing.Linear.None,true);
+    loader_elements.tween = game.add.tween(loader_elements.redgraphics).to({angle:this.load.progress*1.8}, 250, Phaser.Easing.Linear.None,true);
     if (this.load.progress == 100) loader_elements.graphics.destroy(true);
   },
 

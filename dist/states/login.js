@@ -59,6 +59,13 @@ project.Login.prototype = {
     form[0].children[0].startFocus();
     form[0].children[0].focus = true;
 
+    formgroup = game.add.group()
+    formgroup.addMultiple(form);
+    // game.camera.setPosition(formgroup.getBounds().x, formgroup.getBounds().y);
+    // game.camera.setSize(formgroup.getBounds().width, formgroup.getBounds().height);
+    // game.camera.focusOn(formgroup);
+    // console.log(game.camera);
+
   },
   validatefc: function(digits){
     return ('0000' + (digits == undefined ? '0' : digits)).substr(-4);

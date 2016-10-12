@@ -230,7 +230,7 @@ project.Raffle.prototype = {
         .endFill();
         winner[0]
           .beginFill(sectioncolors[1], 1)
-          .drawRoundedRect(padding * 0.75, yoffset + padding / 2 + spritesheet.y * 1.5, winner[1].getBounds().width*1.5, winner[1].getBounds().height*2, padding)
+          .drawRoundedRect(padding * 0.75, yoffset + padding / 2 + spritesheet.y * 1.5, winner[1].getBounds().width*2, winner[1].getBounds().height*2, padding)
           .endFill();
       winner[3] = game.add.text(winner[0].getBounds().width/2 + winner[0].getBounds().x, winner[0].getBounds().height/2 + winner[0].getBounds().y, previouswinner, {
         backgroundColor: 'transparent',
