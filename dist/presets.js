@@ -1,6 +1,6 @@
 const Presets = {
   'width': window.innerWidth-32,
-  'height': window.innerHeight-32,
+  'height': (window.innerHeight-32 < window.innerWidth-32 ? window.innerHeight-32 : window.innerWidth-32),
   bgcolor: '#1c0f0c',
   selectedcolor: '#604040',
   font: 'Extra-Cool',
