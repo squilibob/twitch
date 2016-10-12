@@ -4,6 +4,7 @@ var project = {};
 var teams;
 var team_name;
 var loader_elements = {};
+
 function pokeball_loader(){
   var radius = game.world.height /4;
 
@@ -67,7 +68,7 @@ project.Init.prototype = {
     game.scale.setUserScale(scale, scale, 0, 0);
   },
   preload: function () {
-    game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;//Phaser.ScaleManager.USER_SCALE;
+    game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;//Phaser.ScaleManager.EXACT_FIT;
     game.scale.setResizeCallback(this.gameResized, this);
 
     pokeball_loader();
