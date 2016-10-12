@@ -6,7 +6,8 @@ if (socket.hasListeners('login accepted') == false) socket.on('login accepted', 
     game.storage.setItem("fcright", user.fc[2]);
     game.storage.setItem("avatar", user.avatar);
     game.storage.setItem("cards", JSON.stringify(user.cards));
-    teams = user.teams;
+    teams = Array.isArray(user.teams) ? {'default': user.teams} : user.teams;
+    console.log(teams, user.teams);
     game.state.start('Teams', Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
 });
 
