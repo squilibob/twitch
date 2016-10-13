@@ -142,11 +142,11 @@ project.Raffle.prototype = {
         .addGroup(mask)
         .addGroup(percent)
         .pivot.setTo(0.5);
-      donutchart.x = Presets.width - spritesheet.x - donutchart.getBounds().width /2;
-      if (game.world.height < donutchart.getBounds().height+winnercircle.getBounds().height)
-        donutchart.y = yoffset + playersprite.y + donutchart.getBounds().height / 2;
-      else
-        donutchart.y = game.world.height - donutchart.getBounds().height;
+      donutchart.x = donutchart.getBounds().width /2;
+      // if (game.world.height < donutchart.getBounds().height+winnercircle.getBounds().height)
+      //   donutchart.y = yoffset + playersprite.y + donutchart.getBounds().height / 2;
+      // else
+      donutchart.y = leavebutton.getBounds().y+leavebutton.getBounds().height+donutchart.getBounds().height/2;
     }
   },
   fillraffle: function(members) {

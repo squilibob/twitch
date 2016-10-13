@@ -93,11 +93,11 @@ io.on('connection', function(socket){
 		}
 	});
 
-	socket.on('log chat', function(payload){
-		fs.appendFile('public/chatlog.html', '<li>'  + payload + '<li>\n', (err) => {
-			if (err) console.log(err);
-		});
-	});
+	// socket.on('log chat', function(payload){
+	// 	fs.appendFile('public/chatlog.html', '<li>'  + payload + '<li>\n', (err) => {
+	// 		if (err) console.log(err);
+	// 	});
+	// });
 
 	function createanewuser(payload) {
 		var starter = [198, 313, 314, 546, 661, 300, 431, 509, 677, 52, 352, 335, 619, 86, 283, 211, 296, 615, 165 , 167, 88];
@@ -195,9 +195,29 @@ io.on('connection', function(socket){
 		});
 	});
 
+	socket.on('request badge', function(user) {
+		var username = user.username;
+		r.table('Users').filter(r.row('id').eq(username.toLowerCase()))
+		.getField('badge')
+		.run(conn, function(err, cursor) {
+			cursor.toArray(function(err, result) {
+				if (err || result[0] == undefined || result == []) {
+					console.log(result);
+				}
+				else socket.emit('receive badge', username, result[0]);
+			});
+		});
+	});
+
 	socket.on('update avatar', function(username, newavatar) {
 		username = username.toLowerCase();
 		r.table('Users').get(username).update({"avatar": newavatar})
+		.run(conn, null)
+	});
+
+	socket.on('update badge', function(username, newbadge) {
+		username = username.toLowerCase();
+		r.table('Users').get(username).update({"badge": newbadge})
 		.run(conn, null)
 	});
 

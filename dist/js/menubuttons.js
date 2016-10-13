@@ -3,7 +3,9 @@ var menubuttons = [];
 
 menubuttons.prototype = {
   onClick: function(name){
-    game.state.start(this.toString(), Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
+    Presets.externalteams
+    ? game.state.start(this.toString(), Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight)
+    : game.state.start(this.toString());
   },
   addButton: function(text, color, nextstate){
     var x = buttonstyle.x;

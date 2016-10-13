@@ -1,5 +1,5 @@
 project.Avatar = function(game) {
-  var menu, av, rot, avatars, chosen, hover;
+  var menu, av, rot, avatars, chosen, hover, sunicon, moonicon;
 };
 
 project.Avatar.prototype = {
@@ -7,6 +7,8 @@ project.Avatar.prototype = {
     game.load.script('menu','/js/menubuttons.js');
     game.load.crossOrigin = 'anonymous';
     game.load.spritesheet('avatar', Useravatars.src, Useravatars.x, Useravatars.y, Useravatars.total);
+    game.load.image('sun', '/img/sun.png');
+    game.load.image('moon', '/img/moon.png');
   },
   create: function(){
     av = [];
@@ -14,13 +16,27 @@ project.Avatar.prototype = {
     hover = -1;
     var nextx = Useravatars.x/4;
     // var nexty = Presets.padding + Useravatars.y/(buttonstyle.horizontalorientation ? 2 : 4);
-    console.log(menubuttons[0].getBounds());
     var nexty = Presets.padding + (buttonstyle.horizontalorientation ? menubuttons[0].getBounds().height : 0) + Useravatars.y/4;
 
     game.stage.backgroundColor = Presets.bgcolor;
 
     menu = this.add.group();
     menu.addMultiple(menubuttons);
+
+    if (!pokedexoptions.externalteams) {
+      sunicon = game.add.sprite(menubuttons[menubuttons.length-1].getBounds().x+menubuttons[menubuttons.length-1].getBounds().width, 0, 'sun');
+      sunicon.scale.setTo(0.05);
+      sunicon.tint = Presets.normalstate;
+      sunicon.inputEnabled = true;
+      sunicon.events.onInputDown.add(this.badge, this);
+      moonicon = game.add.sprite(sunicon.x+sunicon.width, 0, 'moon');
+      moonicon.scale.setTo(0.05);
+      moonicon.tint = Presets.normalstate;
+      moonicon.inputEnabled = true;
+      moonicon.events.onInputDown.add(this.badge, this);
+      if (game.storage.getItem("badge") == 'sun') sunicon.tint = Presets.highlightedstate;
+      if (game.storage.getItem("badge") == 'moon') moonicon.tint = Presets.highlightedstate;
+    }
 
     avatars = this.add.group();
     chosen = game.add.sprite(Useravatars.x/2, Presets.padding + (buttonstyle.horizontalorientation ? menubuttons[0].getBounds().height : 0) + Useravatars.y/2, 'avatar', 0);
@@ -68,6 +84,12 @@ project.Avatar.prototype = {
     chosen.frame = avatars.getChildIndex(avatar);
     socket.emit('update avatar', game.storage.getItem("id"), chosen.frame-1);
     game.storage.setItem("avatar", chosen.frame-1);
+  },
+  badge: function (sprite) {
+    socket.emit('update badge', game.storage.getItem("id"), sprite.key);
+    console.log(sprite.key);
+    sunicon.tint = (sprite.key == sunicon.key) ? Presets.highlightedstate : Presets.normalstate;
+    moonicon.tint = (sprite.key == moonicon.key) ? Presets.highlightedstate : Presets.normalstate;
   },
   rotate: function(avatar){
     avatar.rotation = Math.sin(rot)/16;

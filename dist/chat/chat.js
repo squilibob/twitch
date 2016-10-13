@@ -1,8 +1,9 @@
+function chat () {
 // const chatwidth = 400;
 const chatheight= 720;
 
-
 var useravatars = {},
+	userbadges = {},
 	fadeDelay = 5000, // Set to false to disable chat fade
 	showChannel = true, // Show repespective channels if the channels is longer than 1
 	useColor = true, // Use chatters' colors or to inherit
@@ -139,7 +140,7 @@ function formatEmotes(text, emotes) {
 	return htmlEntities(splitText).join('')
 }
 
-function badges(chan, user, isBot) {
+function badges(chan, user, isBot, custom) {
 
 	function createBadge(name) {
 		var badge = document.createElement('div');
@@ -149,6 +150,9 @@ function badges(chan, user, isBot) {
 
 	var chatBadges = document.createElement('span');
 	chatBadges.className = 'chat-badges';
+
+console.log(userbadges[user.username]);
+	if(userbadges[user.username]) chatBadges.appendChild(createBadge(userbadges[user.username]));
 
 	if(user.username == dehash(chan)) {
 		chatBadges.appendChild(createBadge('broadcaster'));
@@ -306,6 +310,8 @@ function handleChat(channel, user, message, self) {
 
 	if (useravatars[user.username] == undefined) {
 		socket.emit('request avatar', channel, user, message, self);
+		socket.emit('request badge', user);
+		console.log('send badge');
 	}
 	else {
 		if (useravatars[user.username] < 0) {
@@ -313,7 +319,6 @@ function handleChat(channel, user, message, self) {
 				client.api({
 					url: 'https://api.twitch.tv/kraken/users/'+user.username+'?client_id='+clientid
 				}, function(err, res, body) {
-					// console.log(err, res, body);
 					if (body.logo)
 						checkImageExists(body.logo, function(existsImage) {
 							if (existsImage) {
@@ -384,6 +389,7 @@ function handleChat(channel, user, message, self) {
 			if (message.toLowerCase().indexOf('reload me') >= 0) {
 				delete useravatars[user.username];
 				socket.emit('request avatar', chan, user, user.username + ': reloaded avatar image', self);
+				socket.emit('request badge', user);
 			}
 			if (message.toLowerCase().indexOf('!password') >= 0)  {
 				socket.emit("resend password", user.username);
@@ -537,6 +543,7 @@ function putChat(chan, user, message, self, avatar, image) {
 		chatAlignment = document.createElement('div'),
 		chatChannel = document.createElement('div'),
 		chatName = document.createElement('span'),
+		chatBadge,
 		chatColon = document.createElement('span'),
 		chatTime = document.createElement('span'),
 		chatContainer = document.createElement('div'),
@@ -589,27 +596,27 @@ function putChat(chan, user, message, self, avatar, image) {
 	else {
 		var chatAvatar = document.createElement('span');
 		chatAvatar.className =  'avs';
-		var xpos = 64*(((useravatars[name]+1) % 7)+1);
-		var ypos = 64+64*Math.floor((useravatars[name] +1) / 7);
-		chatAvatar.style = 'background-position: right '+ xpos + 'px bottom '+ ypos + 'px;">';
-		// chatAvatar.style = 'background-position: '+ 0 + 'px '+ 64 +'px;">';
-		// console.log(useravatars[name], (64*Math.floor((useravatars[name] +1) / 7)));
+		var xpos = 64*((Useravatars.total-(useravatars[name]+1) % 7));
+		var ypos = 64*(Useravatars.total-Math.floor((useravatars[name] +1) / 7));
+		chatAvatar.style = 'background-position:  '+ xpos + 'px  '+ ypos + 'px';
 	}
-
 
 	chatTime.className = 'chat-time';
 	chatTime.innerHTML = String.fromCodePoint(date.getHours() > 12 ? 128323 + date.getHours()  : (date.getHours() < 1 ? 128347 : 128335 + date.getHours()))  + ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2);//(not using seconds right now) + '.' + ('0' + date.getSeconds()).slice(-2) ;
-
-	chatAlignment.className = 'chat-align';
-	chatAlignment.appendChild(chatName);
-	if(showBadges) chatAlignment.appendChild(badges(chan, user, self));
-	chatAlignment.appendChild(chatTime);
-	chatLine.appendChild(chatAlignment);
 
 	chatName.className = 'chat-name';
 	// chatName.style.color = color;
 	chatName.innerHTML = user['display-name'] || name;
 	// chatName.innerHTML = chatName.innerHTML.replace(/[^a-z+]+/gi, '');
+
+	chatAlignment.className = 'chat-align';
+	chatAlignment.appendChild(chatName);
+	if(showBadges) {
+		chatBadge = badges(chan, user, self)
+		chatAlignment.appendChild(chatBadge);
+	}
+	chatAlignment.appendChild(chatTime);
+	chatLine.appendChild(chatAlignment);
 
 	chatColon.className = 'chat-colon-hide';
 	chatColon.style.color = color;
@@ -655,6 +662,8 @@ function putChat(chan, user, message, self, avatar, image) {
 			chatLine.dataset.faded = '';
 			chatMessage.dataset.faded = '';
 			chatAvatar.dataset.faded = '';
+			chatName.dataset.faded = '';
+			if (chatBadge) chatBadge.dataset.faded = '';
 			chatTime.dataset.faded = '';
 			chatImage.dataset.faded = '';
 		}, fadeDelay);
@@ -807,7 +816,6 @@ client.addListener('join', function (channel, username) {
 client.addListener('part', function (channel, username) {
 		var index = joinAccounced.indexOf(channel);
 		if(index > -1) {
-			// if(showConnectionNotices) chatNotice('Parted ' + capitalize(dehash(channel)), 1000, -1, 'chat-room-part');
 			joinAccounced.splice(joinAccounced.indexOf(channel), 1)
 		}
 	});
@@ -830,7 +838,11 @@ socket.on('user fc', function(user) {
 socket.on('receive avatar', function(channel, user, message, self, avatar) {
 	useravatars[user.username] = avatar;
 	handleChat(channel, user, message, self, avatar);
-	// submitchat(message);
+});
+
+socket.on('receive badge', function(username, badge) {
+	console.log('receive', badge);
+	userbadges[username] = badge;
 });
 
 socket.on('user pokes', function(teamname) {
@@ -860,3 +872,4 @@ socket.on('someone signed up', function(name){
 });
 
 window.setInterval(getViewers(channels[0]),24000);
+}

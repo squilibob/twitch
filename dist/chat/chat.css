@@ -161,10 +161,12 @@ ul {
 .chat-line.chat-name, .chat-name {
 	font-family: 'Gill Sans MT';
 	font-size: 36px;
+	transition: all 0.5s ease-out;
 }
-.chat-name {
+.chat-line.chat-name[data-faded], .chat-name[data-faded] {
 	font-family: 'Gill Sans MT';
 	font-size: 24px;
+	transition: all 0.5s ease-out;
 }
 .chat-colon {
 	height:24px;
@@ -262,13 +264,20 @@ ul {
 .chat-badges > div {
 	margin-bottom: 1px;
 	border-radius: 2px;
-	height: 1em;
+	width: 36px;
+	height: 36px;
 	min-width: 1em;
 	display: inline-block;
 	vertical-align: middle;
 	background-size: contain;
 	background-repeat: no-repeat;
 	margin-right: .3em;
+	transition: all 0.5s ease-out;
+}
+.chat-badges[data-faded] > div {
+	width: 24px;
+	height: 24px;
+	transition: all 0.5s ease-out;
 }
 
 .chat-badge-mod {
@@ -295,6 +304,12 @@ ul {
 }
 .chat-badge-bot {
 	background-image: url(https://cdn.betterttv.net/tags/bot.png);
+}
+.chat-badge-sun {
+	background-image: url(/img/sun.png);
+}
+.chat-badge-moon {
+	background-image: url(/img/moon.png);
 }
 
 
@@ -358,7 +373,6 @@ ul {
 	border-radius: 32px;
 	margin: 0;
 	padding: 0;
-     	vertical-align: middle;
 	height: 64px;
 	width: 64px;
 	position: relative;
@@ -411,6 +425,11 @@ ul {
 	z-index:4;
 }
 .chat-time {
+      font: 36px "Extra-cool", "Haettenschweiler", "HelveticaNeue";
+      color:#ddd;
+	transition: all 0.5s ease-out;
+}
+.chat-time[data-faded] {
       font: 22px "Extra-cool", "Haettenschweiler", "HelveticaNeue";
       color:#ddd;
 	transition: all 0.5s ease-out;

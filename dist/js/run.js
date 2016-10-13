@@ -136,6 +136,7 @@ project.Init.prototype = {
   },
 
   ready: function() {
+    if (pokedexoptions.scoring) chat();
     game.state.start('Login', Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
     // game.state.start('Cards');
   },
