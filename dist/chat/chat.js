@@ -1,6 +1,4 @@
-function chat (pokedex, typechart) {
-	console.log(pokedex);
-	console.log(typechart);
+function chat () {
 // const chatwidth = 400;
 const chatheight= 720;
 
@@ -448,7 +446,7 @@ function handleChat(channel, user, message, self) {
 				for (var i = 0; i < command.length; i++) {
 					command[i] = command[i].toLowerCase();
 					if (command[i] == 'pokemon') {
-							for (var pokes = 0; pokes <= maxpokes; pokes++) {
+							for (var pokes = 0; pokes < maxpokes; pokes++) {
 								if (message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) dexno = pokes;
 							}
 					}
