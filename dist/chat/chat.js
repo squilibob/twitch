@@ -1,4 +1,6 @@
 function chat (pokedex, typechart) {
+	console.log(pokedex);
+	console.log(typechart);
 // const chatwidth = 400;
 const chatheight= 720;
 
