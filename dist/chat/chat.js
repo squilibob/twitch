@@ -1,4 +1,4 @@
-function chat () {
+function chat (pokedex, typechart) {
 // const chatwidth = 400;
 const chatheight= 720;
 
@@ -151,7 +151,6 @@ function badges(chan, user, isBot, custom) {
 	var chatBadges = document.createElement('span');
 	chatBadges.className = 'chat-badges';
 
-console.log(userbadges[user.username]);
 	if(userbadges[user.username]) chatBadges.appendChild(createBadge(userbadges[user.username]));
 
 	if(user.username == dehash(chan)) {
@@ -311,7 +310,6 @@ function handleChat(channel, user, message, self) {
 	if (useravatars[user.username] == undefined) {
 		socket.emit('request avatar', channel, user, message, self);
 		socket.emit('request badge', user);
-		console.log('send badge');
 	}
 	else {
 		if (useravatars[user.username] < 0) {
@@ -841,7 +839,6 @@ socket.on('receive avatar', function(channel, user, message, self, avatar) {
 });
 
 socket.on('receive badge', function(username, badge) {
-	console.log('receive', badge);
 	userbadges[username] = badge;
 });
 

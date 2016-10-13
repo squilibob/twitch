@@ -87,7 +87,6 @@ project.Avatar.prototype = {
   },
   badge: function (sprite) {
     socket.emit('update badge', game.storage.getItem("id"), sprite.key);
-    console.log(sprite.key);
     sunicon.tint = (sprite.key == sunicon.key) ? Presets.highlightedstate : Presets.normalstate;
     moonicon.tint = (sprite.key == moonicon.key) ? Presets.highlightedstate : Presets.normalstate;
   },
