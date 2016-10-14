@@ -262,13 +262,17 @@ var selector = {
     }
     return child.parent;
   },
+  overlay: function (which) {
+    overlayselect.create(which, 'A');
+  },
   create: function (group, game, options) {
     var fields = [];
     fields.push(this.textinput(group, game, options));
     fields.push(this.sprite(group, game, options));
-    fields[1].inputEnabled = false;
+    fields[1].inputEnabled = true;
     fields[1].width = fields[1].height = fields[0].width;
     fields[1].y += fields[0].height;
+    fields[1].events.onInputDown.add(this.overlay, this);
     fields.push(this.numberinput(group, game, options));
     fields[2].y += fields[0].height + fields[1].height;
     return fields;
@@ -351,6 +355,96 @@ function drawteam(group, members, name, color){
   group.setAll('tint', Presets.normalstate);
   return group;
 }
+
+function alphabeticalpokelist(requestedletter)  {
+    var namelist = {};
+    for (poke in pokedex) {
+      var current = pokedex[poke].Pokemon.substr(0, 1);
+      if (!namelist[current]) namelist[current] = [];
+      namelist[current].push(pokedex[poke]);
+    }
+    for (letter in namelist) {
+      namelist[letter].sort();
+      if (requestedletter == letter) return namelist[letter];
+    }
+    return namelist;
+}
+
+var overlayselect = {
+  // originx: 0, originy: 0, maxwidth: 0,
+  renew: function (which) {
+    var letter = which.parent.letter;
+    destination = which.parent.parent.destination;
+    which.parent.parent.destroy(true);
+    this.create(destination, letter);
+  },
+  send: function (which) {
+    selector.set(which.parent.destination.parent.children, which.frame+1)
+    which.parent.destroy(true);
+  },
+  create: function (destination, show) {
+    var overlaygraphic = game.add.graphics(0, 0);
+    var overlayletters = [];
+    var group = game.add.group();
+    var pokemongroup = game.add.group();
+    var maxwidth = 0;
+
+    overlaycurrentposition = {x: 0, y: 0};
+
+    var alphabet = [];
+    for (letter in alphabeticalpokelist()){
+      if (!show) show = letter;
+      alphabet.push(letter);
+    }
+    alphabet.sort();
+    for (letter in alphabet) {
+      textButton.define(overlayletters[overlayletters.length] = game.add.group(), game, '  ' + alphabet[letter] + '  ', overlaycurrentposition.x, overlaycurrentposition.y, sectioncolors[5]);
+      overlaycurrentposition.x+=overlayletters[overlayletters.length-1].getBounds().width+Presets.padding;
+      if (overlaycurrentposition.x > maxwidth) maxwidth = overlaycurrentposition.x;
+      if (overlaycurrentposition.x+overlayletters[overlayletters.length-1].getBounds().width+Presets.padding > game.world.width){
+          overlaycurrentposition.x = 0;
+          overlaycurrentposition.y += overlayletters[overlayletters.length-1].getBounds().height+Presets.padding;
+      }
+      overlayletters[overlayletters.length-1].letter = alphabet[letter];
+      overlayletters[overlayletters.length-1].onChildInputDown.add(this.renew, this);
+    }
+    overlaycurrentposition.y += overlayletters[overlayletters.length-1].getBounds().height+Presets.padding;
+    group.nextposition = overlaycurrentposition;
+    pokemongroup = this.list(pokemongroup, 0, overlaycurrentposition.y, show, maxwidth);
+    overlaycurrentposition.y = pokemongroup.getBounds().y+pokemongroup.getBounds().height;
+
+    overlaygraphic.beginFill(0xffffff);
+    overlaygraphic.drawRect(0,0,overlaycurrentposition.x, overlaycurrentposition.y);
+    overlaygraphic.endFill();
+
+    group.addChild(overlaygraphic);
+    group.addMultiple(overlayletters);
+    group.addMultiple(pokemongroup);
+    group.destination = destination;
+    return group;
+  },
+  list: function (group, originx, originy, letter, maxwidth) {
+      var list = [];
+      var pokemon = alphabeticalpokelist(letter);
+      var x = originx;
+      var y = originy;
+      for (poke in pokemon) {
+        list[list.length] = game.add.sprite(x, y, 'spritesheet');
+        list[list.length-1].frame = pokemon[poke].id-1;
+        list[list.length-1].inputEnabled = true;
+        list[list.length-1].events.onInputDown.add(this.send, this);
+        x += list[list.length-1].width+Presets.padding;
+        if (x+list[list.length-1].width+Presets.padding > maxwidth){
+          x = originx;
+          y += list[list.length-1].height+Presets.padding;
+        }
+      }
+      y += list[list.length-1].height+Presets.padding;
+        group.addMultiple(list);
+        return group;
+  }
+}
+
 
 Math.sign = Math.sign || function(x) {
   x = +x; // convert to a number

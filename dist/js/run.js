@@ -87,10 +87,8 @@ project.Init.prototype = {
   },
 
   loadUpdate: function(){
-    // if (redgraphics.angle > -1)
-    // loader_elements.redgraphics.angle = this.load.progress*1.8;
     loader_elements.tween = game.add.tween(loader_elements.redgraphics).to({angle:this.load.progress*1.8}, 250, Phaser.Easing.Linear.None,true);
-    if (this.load.progress == 100) loader_elements.graphics.destroy(true);
+    // if (this.load.progress == 100) loader_elements.graphics.destroy(true);
   },
 
   create: function () {
@@ -137,8 +135,8 @@ project.Init.prototype = {
 
   ready: function() {
     if (pokedexoptions.scoring) chat();
+    loader_elements.graphics.destroy(true);
     game.state.start('Login', Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
-    // game.state.start('Cards');
   },
 
   filename: function(string){

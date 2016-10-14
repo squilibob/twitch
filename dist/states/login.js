@@ -61,10 +61,6 @@ project.Login.prototype = {
 
     formgroup = game.add.group()
     formgroup.addMultiple(form);
-    // game.camera.setPosition(formgroup.getBounds().x, formgroup.getBounds().y);
-    // game.camera.setSize(formgroup.getBounds().width, formgroup.getBounds().height);
-    // game.camera.focusOn(formgroup);
-    // console.log(game.camera);
 
   },
   validatefc: function(digits){
