@@ -286,6 +286,7 @@ project.Pokedex.prototype = {
       return runningtotal + parseInt(rated.children[1].text);
     },
     change: function(which){
+      if (!pokemoncontainer.visible) return this;
       thepokemon = which.frame;
       var dexinfo = pokedex[thepokemon];
       var alphacolor = 1;
@@ -409,8 +410,8 @@ project.Pokedex.prototype = {
       y += Math.floor(scale/4)+textoffset*2;
 
       // if (this.state.scrollfrequency < this.props.freq / 2)      {
-      recommendedcontainer.visible = true;
-      misccontainer.visible = false;
+      // recommendedcontainer.visible = true;
+      // misccontainer.visible = false;
       recommendedlabel = this.text({obj : recommendedlabel, text : "recommended ", fontsize : scale/4, color : brightcolor, newx : x, newy : y});
       y += Math.floor(scale/4);
       abilitylabel = this.text({obj : abilitylabel, text : "ability ", fontsize : scale/4, color : softcolor, newx : x, newy : y});
@@ -462,7 +463,7 @@ project.Pokedex.prototype = {
 
       // else {
       // recommendedcontainer.visible = false;
-      misccontainer.visible = true;
+      // misccontainer.visible = true;
       if (dexinfo["Gender"] >= 0) {
       var genderwidth = scale*2 - textoffset;
       var genderbalance = [];

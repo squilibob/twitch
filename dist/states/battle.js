@@ -85,7 +85,7 @@ project.Battle.prototype = {
           .setAll('tint', Presets.highlightedstate);
           temp[3] = game.add.graphics(0, 0);
           temp[2].x = temp[0].x + temp[0].getBounds().width+Presets.padding*4;
-          temp[2].y = temp[1].y+temp[2].getBounds().height/2;
+          temp[2].y = temp[0].getBounds().y+temp[0].getBounds().height/2;
           temp[4] = game.add.text(temp[2].getBounds().x + temp[2].getBounds().width +Presets.padding*2, currentline, payload[entry].score, textstyle);
           // textButton.define(temp[2] = game.add.group(), game, payload[entry].score, temp[1].getBounds().x + temp[1].getBounds().width +Presets.padding*2, currentline,  0x0e92f0);
           temp[3].beginFill(0x0e92f0);
@@ -96,14 +96,12 @@ project.Battle.prototype = {
           board[board.length-1].addMultiple(temp);
 
           var dim = {x:leaderboardlabel.x-Presets.padding, y:leaderboardlabel.y-Presets.padding, width:0, height:leaderboardlabel.getBounds().height+Presets.padding};
-          if (dim) {
-            for (grp in board) {
-              dim.width = dim.width < board[grp].getBounds().width ? board[grp].getBounds().width : dim.width;
-              dim.height += board[grp].getBounds().height;
-            }
-            dim.width += Presets.padding*2;
-            dim.height += Presets.padding*2;
+          for (grp in board) {
+            dim.width = dim.width < board[grp].getBounds().width ? board[grp].getBounds().width : dim.width;
+            dim.height += board[grp].getBounds().height;
           }
+          dim.width += Presets.padding*2;
+          dim.height += Presets.padding*2;
           bg.beginFill(0x435a6a);
           bg.drawRect(dim.x, dim.y, dim.width, dim.height);
           bg.endFill();
