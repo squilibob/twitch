@@ -7,10 +7,13 @@ if (socket.hasListeners('login accepted') == false) socket.on('login accepted', 
     game.storage.setItem("avatar", user.avatar);
     game.storage.setItem("badge", user.badge);
     game.storage.setItem("cards", JSON.stringify(user.cards));
+    migrateteam =  Array.isArray(user.teams);
     teams = Array.isArray(user.teams) ? {'default': user.teams} : user.teams;
     game.state.start('Teams', Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
 });
 
 if (socket.hasListeners('user pokes') == false) socket.on('user pokes', function(payload) {
     game.storage.setItem("externalteams", JSON.stringify(payload));
+    teams = payload;
+    team_name = payload.active;
 });

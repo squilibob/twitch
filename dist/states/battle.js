@@ -96,12 +96,14 @@ project.Battle.prototype = {
           board[board.length-1].addMultiple(temp);
 
           var dim = {x:leaderboardlabel.x-Presets.padding, y:leaderboardlabel.y-Presets.padding, width:0, height:leaderboardlabel.getBounds().height+Presets.padding};
-          for (grp in board) {
-            dim.width = dim.width < board[grp].getBounds().width ? board[grp].getBounds().width : dim.width;
-            dim.height += board[grp].getBounds().height;
+          if (dim) {
+            for (grp in board) {
+              dim.width = dim.width < board[grp].getBounds().width ? board[grp].getBounds().width : dim.width;
+              dim.height += board[grp].getBounds().height;
+            }
+            dim.width += Presets.padding*2;
+            dim.height += Presets.padding*2;
           }
-          dim.width += Presets.padding*2;
-          dim.height += Presets.padding*2;
           bg.beginFill(0x435a6a);
           bg.drawRect(dim.x, dim.y, dim.width, dim.height);
           bg.endFill();
@@ -109,7 +111,7 @@ project.Battle.prototype = {
         }
         if (pokedexoptions.scoring) {
           clearleaderboard = game.add.group()
-          textButton.define(clearleaderboard, game, 'clear', dim.x, dim.y+dim.height+60, sectioncolors[4]);
+          if (dim) textButton.define(clearleaderboard, game, 'clear', dim.x, dim.y+dim.height+60, sectioncolors[4]);
           // console.log(clearleaderboard);
           clearleaderboard.onChildInputDown.add(function (){
             socket.emit('clear leaderboard');

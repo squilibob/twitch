@@ -28,6 +28,7 @@ project.Raffle.prototype = {
     },
   winraffle: function(person){
     socket.emit('won raffle', person);
+    socket.emit('request user pokes', person);
   },
   rollraffle: function(){
     spinslow += 1;

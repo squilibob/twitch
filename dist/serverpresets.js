@@ -21,7 +21,7 @@ const preloadscripts = [
   '/js/dex',
   '/js/phaser-input',
   '/js/helperfunctions',
-  // {'Login': '/states/login'},
+  {'Login': '/states/login'},
   // {'Avatar': '/states/avatar'},
   {'Teams': '/states/teams'},
   {'Raffle': '/states/raffle'},
@@ -40,7 +40,7 @@ const preloadscripts = [
   '/chat/chat'
   ];
 
-  const firststate = 'Blank';
+  const firststate = 'Login';
 
   const pokedexoptions = {
     scoring: true,

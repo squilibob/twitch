@@ -2,6 +2,7 @@ var game = new Phaser.Game(Presets.width, Presets.height, Phaser.AUTO, "content"
 
 var project = {};
 var teams;
+var migrateteam = false;
 var team_name;
 var loader_elements = {};
 

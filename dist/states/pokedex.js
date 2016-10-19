@@ -240,14 +240,16 @@ project.Pokedex.prototype = {
           this.change(teamarray[0]);
 
       team_to_rate = [];
-      if(teams)
+      if(teams) {
         if(teams[team_name])
           for (thismember in teams[team_name])
             team_to_rate.push(pokedex[teams[team_name][thismember]]);
+        else if (Array.isArray(teams)) team_to_rate = teams;
+      }
 
       if(pokedexoptions.scoring) {
         // rated = game.add.text(fullteam.getBounds().x+fullteam.getBounds().width, fullteam.getBounds().y, ' = ' + rate(team_to_rate), textstyle);
-        textButton.define(rated = game.add.group(), game, rate(team_to_rate), fullteam.getBounds().x+fullteam.getBounds().width+8, fullteam.getBounds().y+8, sectioncolors[4])
+        textButton.define(rated = game.add.group(), game, ('000' + rate(team_to_rate)).slice(-3), fullteam.getBounds().x+fullteam.getBounds().width+8, fullteam.getBounds().y+8, sectioncolors[4])
         rated.onChildInputDown.add(this.toggle, this);
 
         bonusgroup = this.add.group();
@@ -262,7 +264,7 @@ project.Pokedex.prototype = {
         bonusgroup.x = fullteam.getBounds().x+Presets.padding;
         bonusgroup.y = fullteam.getBounds().y+fullteam.getBounds().height+Presets.padding;
         setScale(bonusgroup, 0.8);
-        textButton.define(totalscore = game.add.group(), game, this.total(), rated.getBounds().x+rated.getBounds().width+Presets.padding*2, rated.getBounds().y+Presets.padding*2, sectioncolors[1])
+        textButton.define(totalscore = game.add.group(), game, ('000' + this.total()).substr(-4), rated.getBounds().x+rated.getBounds().width+Presets.padding*2, rated.getBounds().y+Presets.padding*2, sectioncolors[1])
         totalscore.onChildInputDown.add(this.submit, this);
         setScale(totalscore, (rated.getBounds().height+bonusgroup.getBounds().height*bonusgroup.scale.y-Presets.padding)/totalscore.getBounds().height);
       }

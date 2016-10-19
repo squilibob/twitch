@@ -111,6 +111,7 @@ project.Teams.prototype = {
       teamlist[teamlist.length-1].onChildInputDown.add(this.onClick, this);
     }
     this.positionteams();
+    if (migrateteam) this.updatedb();
   },
     checkname: function(teamtocheck){
       for (member in teamlist) if (teamlist[member].children[1].text == teamtocheck) return member;
@@ -157,10 +158,9 @@ project.Teams.prototype = {
      return this;
   },
    setteam: function() {
-      if (this.checkname(teamname.value) >= 0) {
+      if (this.checkname(teamname.value) >= 0) if (teams[team_name]) {
         team_name = teamname.value.trim().toLowerCase();
         socket.emit('set current team', game.storage.getItem("id"), team_name);
-        console.log(team_name);
       }
     return this;
   },

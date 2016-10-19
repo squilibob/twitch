@@ -310,6 +310,7 @@ function rate (assess) {
         for (checktier in Tiers){
           if (Tiers[checktier] == assess[member].Tier) teamscore += 144/(parseInt(checktier)+1)+
             540-(assess[member]['HP']+assess[member]['Attack']+assess[member]['Defense']+assess[member]['Sp. Attack']+assess[member]['Sp. Defense']+assess[member]['Speed']);
+          console.log(teamscore);
         }
       }
   return Math.floor(teamscore);

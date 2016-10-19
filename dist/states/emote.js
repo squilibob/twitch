@@ -9,7 +9,6 @@ project.Emote.prototype = {
       game.load.spritesheet('pokemotevulpix', '/img/pokemotions.png', 206, 236, 10);
     },
     sendemote: function(picture){
-      console.log(picture.frame);
       socket.emit('send emote', {message:game.storage.getItem('id')+'s pokemotion', picture:picture.frame});
     },
     create: function(){
