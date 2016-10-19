@@ -1,6 +1,7 @@
 function chat () {
 // const chatwidth = 400;
-const chatheight= 720;
+const chatheight= 900;
+const defaultavatar = 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png';
 
 var useravatars = {},
 	userbadges = {},
@@ -81,19 +82,19 @@ function pokify(text) {
 	location = text.toLowerCase().indexOf('mewtwo');
 	if (location >= 0) {
 		var xpos = spritesheet.rowlen*spritesheet.x-((149 % spritesheet.rowlen) * spritesheet.x),
-			ypos = Math.ceil(maxpokes-1/spritesheet.rowlen)*spritesheet.y-(Math.floor(149 / spritesheet.rowlen)* spritesheet.y);
+			ypos = Math.ceil(pokedex.length/spritesheet.rowlen)*spritesheet.y-(Math.floor(149 / spritesheet.rowlen)* spritesheet.y);
 		text = text.slice(0,location) + '<span class="w3-tooltip sprsheet" style="background-position: '+ xpos + 'px '+ ypos+'px;"><span class="w3-text">M&#8203;ewtwo</span></span>' + text.slice(location+6);
 	}
 	location = text.toLowerCase().indexOf('nature');
 	if (location >= 0) {
 		skippoke = 177;
 	}
-	for (var pokes = maxpokes-1; pokes >= 0; pokes--)
+	for (var pokes = pokedex.length-1; pokes >= 0; pokes--)
 		if (pokes != skippoke-1 && text.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) {
 		var location = text.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()),
 			namelength = pokedex[pokes].Pokemon.length;
 			var xpos = spritesheet.rowlen*spritesheet.x-((pokes % spritesheet.rowlen) * spritesheet.x),
-				ypos = Math.ceil(maxpokes-1/spritesheet.rowlen)*spritesheet.y-(Math.floor(pokes / spritesheet.rowlen)* spritesheet.y);
+				ypos = Math.ceil(pokedex.length/spritesheet.rowlen)*spritesheet.y-(Math.floor(pokes / spritesheet.rowlen)* spritesheet.y);
 			text = text.slice(0,location) + '<span class="w3-tooltip sprsheet" style="background-position: '+ xpos + 'px '+ ypos+'px;"><span class="w3-text">'+ pokedex[pokes].Pokemon.slice(0, pokedex[pokes].Pokemon.length-1) +'&#8203;' + pokedex[pokes].Pokemon.slice(pokedex[pokes].Pokemon.length-1, pokedex[pokes].Pokemon.length) +'</span></span>' + text.slice(location+namelength,text.length);
 			pokes++;
 		}
@@ -107,7 +108,6 @@ function ffz(text) {
 				if (parseInt(size) > sizeurl) sizeurl = size;
 			var thisemote = ffzemotes.sets[set].emoticons[emote].name;
 			if (text.indexOf(thisemote) >= 0) text = text.slice(0, text.indexOf(thisemote)) + '<img class="emoticon" src="http:' + ffzemotes.sets[set].emoticons[emote].urls[sizeurl] + '"/>' + text.slice(text.indexOf(thisemote)+thisemote.length);
-			// console.log(ffzemotes.sets[set].emoticons[emote].name, 'http:' + ffzemotes.sets[set].emoticons[emote].urls[sizeurl]);
 		}
 	return text;
 }
@@ -176,7 +176,6 @@ function badges(chan, user, isBot, custom) {
 // 	client.api({
 // 	    url: 'http://tmi.twitch.tv/group/user/'+channel+'/chatters'
 // 	}, function(err, res, body) {
-// 	    console.log({ viewers: body.data.chatters.viewers, total: body.data.chatters.viewers.length }, 'inside');
 // 	    return { viewers: body.data.chatters.viewers, total: body.data.chatters.viewers.length } ;
 // 	});
 // }
@@ -336,7 +335,7 @@ function handleChat(channel, user, message, self) {
 		var question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which'];//'who ', 'why ', 'did ',
 		var containsquestion = false;
 
-		if (self == true)	{
+		if (self == true || user.username == dehash(channel))	{
 			if (message.toLowerCase().indexOf('!raid') >= 0) {
 				var target = message.slice(message.toLowerCase().indexOf('!raid')).split(' ');
 				target = target[1];
@@ -535,7 +534,6 @@ function handleChat(channel, user, message, self) {
 }
 
 function putChat(chan, user, message, self, avatar, image) {
-
 	var name=user.username,
 		chatLine = document.createElement('li'),
 		chatAlignment = document.createElement('div'),
@@ -589,7 +587,7 @@ function putChat(chan, user, message, self, avatar, image) {
 		var chatAvatar = document.createElement('img');
 		chatAvatar.className = 'chat-avatar';
 		chatAvatar.dataset.hide = '';
-		chatAvatar.src = (avatar == null || avatar == -1 ? 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png' : avatar);
+		chatAvatar.src = (avatar == null || avatar == -1 ? defaultavatar : avatar);
 	}
 	else {
 		var chatAvatar = document.createElement('span');
@@ -603,9 +601,9 @@ function putChat(chan, user, message, self, avatar, image) {
 	chatTime.innerHTML = String.fromCodePoint(date.getHours() > 12 ? 128323 + date.getHours()  : (date.getHours() < 1 ? 128347 : 128335 + date.getHours()))  + ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2);//(not using seconds right now) + '.' + ('0' + date.getSeconds()).slice(-2) ;
 
 	chatName.className = 'chat-name';
-	// chatName.style.color = color;
+	chatName.style.color = color;
 	chatName.innerHTML = user['display-name'] || name;
-	// chatName.innerHTML = chatName.innerHTML.replace(/[^a-z+]+/gi, '');
+	chatName.innerHTML = chatName.innerHTML.replace(/[^a-z+]+/gi, '');
 
 	chatAlignment.className = 'chat-align';
 	chatAlignment.appendChild(chatName);
@@ -638,13 +636,7 @@ function putChat(chan, user, message, self, avatar, image) {
 			chatImage.className = 'chat-image';
 			chatImage.onload = function() {chatMessage.appendChild(chatImage);};
 		}
-		//else chatMessage.innerHTML += ' error: <a href="' + image + '">'+image+'</a>';
 	});
-
-	// if (chatMessage.innerHTML.length > 256) {
-	// 	var newmsg = chatMessage.innerHTML.substr(0, 255);
-	// 	putChat(chan, user, chatMessage.innerHTML.substr(255), self, avatar, image);
-	// }
 
 	chatContainer.appendChild(chatMessage);
 
@@ -654,6 +646,7 @@ function putChat(chan, user, message, self, avatar, image) {
 	chatLine.appendChild(chatContainer);
 
 	chatAvatar.onload = chat.appendChild(chatLine);
+	// chatAvatar.onload = chatAvatar.src ? (chatAvatar.src != defaultavatar ? temp = (btoa(chatAvatar)) : null) : null ;
 
 	if(typeof fadeDelay == 'number') {
 		setTimeout(function() {
@@ -661,6 +654,7 @@ function putChat(chan, user, message, self, avatar, image) {
 			chatMessage.dataset.faded = '';
 			chatAvatar.dataset.faded = '';
 			chatName.dataset.faded = '';
+			chatName.style.color = '#ffffff';
 			if (chatBadge) chatBadge.dataset.faded = '';
 			chatTime.dataset.faded = '';
 			chatImage.dataset.faded = '';
@@ -747,25 +741,25 @@ function clearChat(channel) {
 	}
 	chatNotice('Chat was cleared in channel ' + capitalize(dehash(channel)), 1000, 1, 'chat-delete-clear')
 }
-function hosting(channel, target, viewers, unhost) {
+function hosting(channel, target, total, unhost) {
 	if(!showHosting) return false;
-	if(viewers == '-') viewers = 0;
+	if(total == '-') total = 0;
 	var chan = dehash(channel);
 	chan = capitalize(chan);
 	if(!unhost) {
 		var targ = capitalize(target);
-		chatNotice(chan + ' is now hosting ' + targ + ' for ' + viewers + ' viewer' + (viewers !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes');
+		chatNotice(chan + ' is now hosting ' + targ + ' for ' + total + ' viewer' + (total !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes');
 	}
 	else {
 		chatNotice(chan + ' is no longer hosting.', null, null, 'chat-hosting-no');
 	}
 }
 
-client.on("hosted", function (channel, username, viewers) {
+client.on("hosted", function (channel, username, total) {
 	var chan = dehash(channel);
 	chan = capitalize(chan);
-	if (typeof(viewers) == 'number')
-	chatNotice(username + ' is now hosting ' + chan + ' for ' + viewers + ' viewer' + (viewers !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes');
+	if (typeof(total) == 'number')
+	chatNotice(username + ' is now hosting ' + chan + ' for ' + total + ' viewer' + (total !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes');
 	else chatNotice(username + ' is now hosting ' + chan + '.', null, null, 'chat-hosting-yes');
 });
 
@@ -868,5 +862,5 @@ socket.on('someone signed up', function(name){
 	chatNotice(name + " has created an account", 10000, 1);
 });
 
-window.setInterval(getViewers(channels[0]),24000);
+// window.setInterval(getViewers,24000,channels[0]);
 }

@@ -27,9 +27,12 @@ const preloadscripts = [
   {'Teams': '/states/teams'},
   {'Raffle': '/states/raffle'},
   {'Battle': '/states/battle'},
+  {'Vote': '/states/vote'},
   {'Cards': '/states/cards'},
   {'Pokedex': '/states/pokedex'},
   ];
+
+  const firststate = 'Login';
 
   const pokedexoptions = {
     scoring: false,

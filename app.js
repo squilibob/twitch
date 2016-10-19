@@ -54,6 +54,15 @@ function connect() {
 
 connect().then((c) => {
     conn = c;
+	r.table('Vote').changes().run(conn, function(err, cursor) {
+     if (err) throw err;
+     else {
+	     cursor.each(function(err, result) {
+      		if (err) throw err;
+          		sendVoteUpdate();
+		});
+          }
+	});
 	r.table('Raffle').changes().run(conn, function(err, cursor) {
      if (err) throw err;
      else {
@@ -163,6 +172,29 @@ io.on('connection', function(socket){
 			if (err) throw err;
 			console.log(JSON.stringify(result, null, 2));
 		});
+	});
+
+	socket.on("Send vote", function(payload){
+		r.table('Vote')
+		.get(payload.id)
+		.replace({id: payload.id, vote: payload.vote}).
+		run(conn, function(err, result) {
+			if (err) throw err;
+		});
+	});
+
+	socket.on('Request vote', function() {
+		var current = [];
+		r.db('Users').table('Vote')
+			.run(conn, function(err, cursor) {
+				cursor.toArray(function(err, result) {
+					if (err) console.log('error not found');
+					else {
+						if (result[0] == undefined || result == []) current = [];
+						else socket.emit('receive vote', result);
+					}
+				});
+			});
 	});
 
 	socket.on('request user fc', function(username) {
@@ -368,6 +400,21 @@ function sendUserPokes (username) {
 		});
 	});
 }
+
+	function sendVoteUpdate(){
+		var current = [];
+		r.db('Users').table('Vote')
+			.run(conn, function(err, cursor) {
+				cursor.toArray(function(err, result) {
+					if (err) console.log('error not found');
+					else {
+						if (result[0] == undefined || result == []) current = [];
+						else current = result;
+						io.emit('receive vote', current);
+					}
+				});
+			});
+	}
 
 	function sendRaffleUpdate(){
 		var current = [];

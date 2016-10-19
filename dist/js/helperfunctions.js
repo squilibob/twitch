@@ -409,12 +409,11 @@ var overlayselect = {
       overlayletters[overlayletters.length-1].onChildInputDown.add(this.renew, this);
     }
     overlaycurrentposition.y += overlayletters[overlayletters.length-1].getBounds().height+Presets.padding;
-    group.nextposition = overlaycurrentposition;
     pokemongroup = this.list(pokemongroup, 0, overlaycurrentposition.y, show, maxwidth);
     overlaycurrentposition.y = pokemongroup.getBounds().y+pokemongroup.getBounds().height;
 
     overlaygraphic.beginFill(0xffffff);
-    overlaygraphic.drawRect(0,0,overlaycurrentposition.x, overlaycurrentposition.y);
+    overlaygraphic.drawRect(0, 0, maxwidth, overlaycurrentposition.y);
     overlaygraphic.endFill();
 
     group.addChild(overlaygraphic);

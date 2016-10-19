@@ -63,16 +63,9 @@ project.Init = function () {
 
 project.Init.prototype = {
 
-  gameResized: function()  {
-    var scale = Math.min(window.innerWidth / this.game.width, window.innerHeight / this.game.height);
-    game.scale.setUserScale(scale, scale, 0, 0);
-  },
   preload: function () {
-    // game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;//Phaser.ScaleManager.SHOW_ALL;//Phaser.ScaleManager.EXACT_FIT;//
-    // game.scale.setResizeCallback(this.gameResized, this);
-
+    game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
     pokeball_loader();
-
     var script;
     for (testscript in preloadscripts) {
       if (typeof(preloadscripts[testscript]) == 'object')
@@ -136,7 +129,7 @@ project.Init.prototype = {
   ready: function() {
     if (pokedexoptions.scoring) chat();
     loader_elements.graphics.destroy(true);
-    game.state.start('Login', Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
+    game.state.start(firststate, Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
   },
 
   filename: function(string){
