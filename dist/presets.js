@@ -28,6 +28,7 @@ const preloadscripts = [
   {'Raffle': '/states/raffle'},
   {'Battle': '/states/battle'},
   {'Vote': '/states/vote'},
+  {'Emote': '/states/emote'},
   {'Cards': '/states/cards'},
   {'Pokedex': '/states/pokedex'},
   ];

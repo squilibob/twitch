@@ -22,7 +22,7 @@ project.Vote.prototype = {
         fill: Presets.fill,
         fillAlpha: 1,
         font: Presets.font,
-        fontSize: '36px ',
+        fontSize: Presets.fontsize + 'px ',
         fontWeight: 'Bold',
         textAlign: 'left',
         stroke: 0

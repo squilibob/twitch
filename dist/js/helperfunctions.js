@@ -22,7 +22,7 @@ function inputform(placeHolder, max, InputType) {
     textAlign: 'left',
     // type: Fabrique.InputType[InputType],
     width: max*Presets.fontsize/1.5,
-    zoom: true
+    zoom: false
   }
 };
 
@@ -200,7 +200,7 @@ var selector = {
     placeHolder: ' ',
     textAlign: 'center',
     width: 100,
-    zoom: true
+    zoom: false
   });
   },
   numberinput: function(group, game, options){
@@ -222,7 +222,7 @@ var selector = {
     textAlign: 'center',
     type: Fabrique.InputType['number'],
     width: 100,
-    zoom: true
+    zoom: false
   });
   },
   validatename: function(name){

@@ -32,6 +32,9 @@ project.Pokemotions.prototype = {
       // socket.emit("Send vote", {id:'system', vote:'best eeveelution'});
       // this.drawvotes('best eeveelution', [{name: 'Flareon', tally: 10}, {name: 'Leafeon', tally: 10}, {name:'Espeon', tally: 19}, {name: 'Jolteon', tally: 12}, {name:'Vaporeon', tally: 5}, {name: 'Umbreon', tally: 10}, {name: 'Sylveon', tally: 10}, {name: 'Glaceon', tally: 10}]);
       // this.drawvotes('who will your starter be in Sun/Moon?', [{name: 'Litten', tally: 1},{name: 'Rowlet', tally: 2},{name: 'Popplio', tally: 0}]);
+      if (socket.hasListeners('receive emote') == false) socket.on('receive emote', function (payload) {
+        _this.footertext(payload);
+      });
       if (socket.hasListeners('receive vote') == false) socket.on('receive vote', function (payload) {
         _this.composevote(payload);
       });
@@ -111,7 +114,9 @@ project.Pokemotions.prototype = {
       console.log(game.storage.getItem("id"), which.text.substr(0,which.text.indexOf(' -')));
     socket.emit("Send vote", {id: game.storage.getItem("id"), vote:which.text.substr(0,which.text.indexOf(' -'))})
     },
-    footertext: function(message, picture){
+    footertext: function(payload){
+      var message = payload.message;
+      var picture = payload.picture;
       test = {
         backgroundColor: 'transparent',
         fill: "#ffffff",

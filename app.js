@@ -341,6 +341,10 @@ io.on('connection', function(socket){
 		sendRaffleUpdate();
 	});
 
+	socket.on('send emote', function(payload) {
+		socket.broadcast.emit('receive emote', payload);
+	});
+
 	socket.on('update leaderboard', function(entry) {
 		r.db('Users').table('Leaderboard').get(entry.id)
 		.replace(entry).run(conn, function(err, result) {
