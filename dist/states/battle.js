@@ -6,7 +6,8 @@ project.Battle = function(game) {
 
 project.Battle.prototype = {
     preload: function(){
-      game.load.script('menu','/js/menubuttons.js')
+      game.load.script('menu','/js/menubuttons.js');
+      game.load.spritesheet('spritesheet', spritesheet.src, spritesheet.x, spritesheet.y, maxpokes);
     },
     // drawteam: function(group, members, name, color){
     //   var textstyle =  {

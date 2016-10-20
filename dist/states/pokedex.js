@@ -235,6 +235,8 @@ project.Pokedex.prototype = {
       var x = pokedexoptions.dex.x;
       var y = pokedexoptions.dex.y;
 
+      if (!pokemonsprite) pokemonsprite = game.add.sprite(0, 0, 'dexspritesheet', 0);
+
       pokemonname = this.text({obj : pokemonname, text : dexinfo["Pokemon"].toLowerCase(), fontsize : scale/4, color : brightcolor, newx : x+textoffset, newy : y});
       y += pokemonname.getBounds().height;
       pokemonsprite.x = x;
@@ -622,8 +624,6 @@ project.Pokedex.prototype = {
 
     bg1fade = game.add.graphics(0, 0);
     bg2fade = game.add.graphics(0, 0);
-
-    pokemonsprite = game.add.sprite(0, 0, 'dexspritesheet', 0);
 
     pokemoncontainer.addChild(pokemonname);
     pokemoncontainer.addChild(pokemonsprite);
