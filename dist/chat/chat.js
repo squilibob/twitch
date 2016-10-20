@@ -334,8 +334,8 @@ function handleChat(channel, user, message, self) {
 		};
 		var question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which'];//'who ', 'why ', 'did ',
 		var containsquestion = false;
-
-		if (self == true || user.username == dehash(channel))	{
+		if (message.toLowerCase().indexOf('!raid') >= 0) if(user.username == dehash(channel)) self = true;
+		if (self == true)	{
 			if (message.toLowerCase().indexOf('!raid') >= 0) {
 				var target = message.slice(message.toLowerCase().indexOf('!raid')).split(' ');
 				target = target[1];
@@ -354,7 +354,7 @@ function handleChat(channel, user, message, self) {
 					message = message.slice(0, message.indexOf(checkall[i])) + message.slice(message.indexOf(checkall[i])+checkall[i].length+1);
 				}
 				for (var word = 0; word < question.length; word++) {
-					if (checkall[i].indexOf(question[word]) >= 0) containsquestion = true;
+					if (checkall[i].toLowerCase().indexOf(question[word]) >= 0) containsquestion = true;
 				}
 			}
 			if (containsquestion == true) if (message.toLowerCase().indexOf('tm') >=0) {
@@ -822,6 +822,7 @@ socket.on('whisper password', function(user, password) {
 	var temptext = "Your password is " + pokedex[password[0]-1].Pokemon + " - " + pokedex[password[1]-1].Pokemon + " - " + pokedex[password[2]-1].Pokemon;
 	client.whisper(user, temptext);
 });
+
 socket.on('user fc', function(user) {
 	if (typeof(user) == 'string') submitchat(user);
 	else submitchat(user.id +"'s friend code is " + user.fc[0] + "-" + user.fc[1] + "-"+ user.fc[2] + " IGN " + user.ign);
