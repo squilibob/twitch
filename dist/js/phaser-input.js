@@ -184,7 +184,7 @@ var Fabrique;
             this.addChild(this.selection);
             if (inputOptions.placeHolder && inputOptions.placeHolder.length > 0) {
                 this.placeHolder = new Phaser.Text(game, this.inputOptions.padding, this.inputOptions.padding, inputOptions.placeHolder, {
-                    font: inputOptions.font || '14px Arial',
+                    font: inputOptions.font || '16px Arial',
                     fontWeight: inputOptions.fontWeight || 'normal',
                     fill: inputOptions.placeHolderColor || '#bfbebd'
                 });
@@ -192,21 +192,21 @@ var Fabrique;
                 this.addChild(this.placeHolder);
             }
             this.cursor = new Phaser.Text(game, this.inputOptions.padding, this.inputOptions.padding - 2, '|', {
-                font: inputOptions.font || '14px Arial',
+                font: inputOptions.font || '16px Arial',
                 fontWeight: inputOptions.fontWeight || 'normal',
                 fill: inputOptions.cursorColor || '#000000'
             });
             this.cursor.visible = false;
             this.addChild(this.cursor);
             this.text = new Phaser.Text(game, this.inputOptions.padding, this.inputOptions.padding, '', {
-                font: inputOptions.font || '14px Arial',
+                font: inputOptions.font || '16px Arial',
                 fontWeight: inputOptions.fontWeight || 'normal',
                 fill: inputOptions.fill || '#000000'
             });
             this.text.mask = this.textMask;
             this.addChild(this.text);
             this.offscreenText = new Phaser.Text(game, this.inputOptions.padding, this.inputOptions.padding, '', {
-                font: inputOptions.font || '14px Arial',
+                font: inputOptions.font || '16px Arial',
                 fontWeight: inputOptions.fontWeight || 'normal',
                 fill: inputOptions.fill || '#000000'
             });
