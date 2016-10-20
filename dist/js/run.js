@@ -82,8 +82,6 @@ project.Init.prototype = {
       game.load.script(this.filename(script), script + '.js');
     }
 
-    game.input.onDown.add(zoomout(), this);
-
     // game.load.json('userJSON', 'https://api.twitch.tv/kraken/users/'+localStorage.getItem("id"));
   },
 
@@ -95,6 +93,7 @@ project.Init.prototype = {
   create: function () {
     game.plugins.add(Fabrique.Plugins.InputField);
     game.plugins.add(Fabrique.Plugins.SuperStorage);
+    game.input.onDown.add(zoomout(), this);
     for (statename in states)
       game.state.add(statename, project[statename]);
     this.socketready = new Phaser.Signal();
