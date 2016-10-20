@@ -13,7 +13,7 @@ function inputform(placeHolder, max, InputType) {
     fillAlpha: 1,
     font: Presets.fontsize + 'px Arial' + Presets.font,
     // font: Presets.fontsize.toString() + 'px ' + Presets.font,
-    // fontSize: Presets.fontsize.toString() + 'px ',
+    fontSize: Presets.fontsize.toString() + 'px ',
     height: 32,
     max: max,//(InputType != 'number' ? max : Math.pow(10, max)-1),
     padding: Presets.padding,
@@ -43,7 +43,7 @@ var textButton = {
         fill: Presets.fill,
         fillAlpha: 1,
         font: Presets.font,
-        // fontSize: Presets.fontsize.toString() + 'px ',
+        fontSize: Presets.fontsize.toString() + 'px ',
         fontWeight: 'Bold',
         textAlign: 'left',
         stroke: 0
@@ -88,7 +88,7 @@ var numberButton = {
         fill: Presets.fill,
         fillAlpha: 1,
         font: Presets.font,
-        // fontSize: Presets.fontsize.toString() + 'px ',
+        fontSize: Presets.fontsize.toString() + 'px ',
         fontWeight: 'Bold',
         textAlign: 'left',
         stroke: 0
@@ -154,7 +154,7 @@ var textInput = {
       fill: Presets.fill,
       fillAlpha: 1,
       font: Presets.font,
-      // fontSize: Presets.fontsize.toString() + 'px ',
+      fontSize: Presets.fontsize.toString() + 'px ',
       fontWeight: 'Bold',
       textAlign: 'left',
       stroke: 0
@@ -423,7 +423,7 @@ var overlayselect = {
     group.addMultiple(overlayletters);
     group.addMultiple(pokemongroup);
     group.destination = destination;
-    group.scale = gamescale;
+    group.scale.setTo(gamescale);
     return group;
   },
   list: function (group, originx, originy, letter, maxwidth) {
