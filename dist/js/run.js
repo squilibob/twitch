@@ -68,12 +68,12 @@ project.Init.prototype = {
 
   preload: function () {
     // game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    if (game.device.iOS == true) console.log('this is running iOS');
+    if (game.device.iOS == true) gamescale = 3;
     game.scale.scaleMode = Phaser.ScaleManager.RESIZE ;
     game.scale.pageAlignHorizontally = true;
     game.scale.pageAlignVertically = true;
-    game.canvas.style.width=width+'px';
-    game.canvas.style.height=height+'px';
+    game.canvas.style.width = '100%';
+    game.canvas.style.height = '100%';
     game.scale.refresh();
     pokeball_loader();
     var script;

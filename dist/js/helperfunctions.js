@@ -423,6 +423,7 @@ var overlayselect = {
     group.addMultiple(overlayletters);
     group.addMultiple(pokemongroup);
     group.destination = destination;
+    group.scale = gamescale;
     return group;
   },
   list: function (group, originx, originy, letter, maxwidth) {
