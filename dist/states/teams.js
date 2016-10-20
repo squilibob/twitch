@@ -9,6 +9,7 @@ deleteteam,
 teamlist,
 teampadding,
 putonteam,
+maker,
 scale,
 menu;
 };
@@ -85,6 +86,7 @@ project.Teams.prototype = {
     menu.addMultiple(menubuttons);
     scaleup(menu);
 
+    maker = this.add.group();
     teampadding = {height: buttonstyle.horizontalorientation ?  menu.getBounds().height+Presets.padding : 0, width: 256};
 
     selector.define(selectnew = this.add.group(), this, {x:16, y:teampadding.height, id: 'spritesheet'});
@@ -103,6 +105,14 @@ project.Teams.prototype = {
     .onChildInputDown.add(this.deleteteam, this);
     textButton.define(useteam = game.add.group(), game, 'use for battle', teampadding.width+12+teamname.getBounds().width, selectnew.getBounds().y+Presets.padding, sectioncolors[3])
     .onChildInputDown.add(this.setteam, this);
+
+    maker.addChild(selectnew);
+    maker.addChild(teamname);
+    maker.addChild(putonteam);
+    maker.addChild(saveteam);
+    maker.addChild(deleteteam);
+    maker.addChild(useteam);
+    // scaleup(maker);
 
     for (var name in teams) {
       if (!team_name) team_name = name;

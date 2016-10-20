@@ -15,14 +15,6 @@ project.Avatar.prototype = {
 
     menu = this.add.group();
     menu.addMultiple(menubuttons);
-    scaleup(menu);
-
-    av = [];
-    rot = 0.45;
-    hover = -1;
-    var nextx = Useravatars.x/4;
-    // var nexty = Presets.padding + Useravatars.y/(buttonstyle.horizontalorientation ? 2 : 4);
-    var nexty = Presets.padding + (buttonstyle.horizontalorientation ? menu.getBounds().height : 0) + Useravatars.y/4;
 
     if (!pokedexoptions.externalteams) {
       sunicon = game.add.sprite(menubuttons[menubuttons.length-1].getBounds().x+menubuttons[menubuttons.length-1].getBounds().width, 0, 'sun');
@@ -37,7 +29,17 @@ project.Avatar.prototype = {
       moonicon.events.onInputDown.add(this.badge, this);
       if (game.storage.getItem("badge") == 'sun') sunicon.tint = Presets.highlightedstate;
       if (game.storage.getItem("badge") == 'moon') moonicon.tint = Presets.highlightedstate;
+      menu.addChild(sunicon);
+      menu.addChild(moonicon);
+      scaleup(menu);
     }
+
+    av = [];
+    rot = 0.45;
+    hover = -1;
+    var nextx = Useravatars.x/4;
+    // var nexty = Presets.padding + Useravatars.y/(buttonstyle.horizontalorientation ? 2 : 4);
+    var nexty = Presets.padding + (buttonstyle.horizontalorientation ? menu.getBounds().height : 0) + Useravatars.y/4;
 
     avatars = this.add.group();
     chosen = game.add.sprite(Useravatars.x/2, Presets.padding + (buttonstyle.horizontalorientation ? menubuttons[0].getBounds().height : 0) + Useravatars.y/2, 'avatar', 0);

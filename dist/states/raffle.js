@@ -18,6 +18,7 @@ project.Raffle = function(game) {
     yoffset,
     previouswinner,
     winnercircle,
+    allraffle,
     menu;
 };
 
@@ -215,6 +216,7 @@ project.Raffle.prototype = {
       queuegroup = this.add.group();
       donutchart = this.add.group();
       winnercircle = this.add.group();
+      allraffle = this.add.group();
       menu = this.add.group();
       menu.addMultiple(menubuttons);
       scaleup(menu);
@@ -315,6 +317,12 @@ project.Raffle.prototype = {
         stroke: 0
       });
       spinusername.anchor.setTo(0.5, 0);
+
+      allraffle.addChild(winnercircle);
+      allraffle.addChild(spinuser);
+      allraffle.addChild(spinusername);
+      // scaleup(allraffle);
+
   },
 }
 
