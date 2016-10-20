@@ -1,7 +1,7 @@
 var game = new Phaser.Game(Presets.width, Presets.height, Phaser.AUTO, "content");
 
 var project = {};
-var gamescale = 1;
+var mobile = false;
 var teams;
 var migrateteam = false;
 var lastraffleuser;
@@ -68,7 +68,7 @@ project.Init.prototype = {
 
   preload: function () {
     // game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    if (game.device.iOS == true) gamescale = 3;
+    if (game.device.iOS == true) mobile = true;
     game.scale.scaleMode = Phaser.ScaleManager.RESIZE ;
     game.scale.pageAlignHorizontally = true;
     game.scale.pageAlignVertically = true;

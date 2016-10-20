@@ -2,6 +2,10 @@ function hexstring(color) {
  return '#' + ('000000' + color.toString(16)).substr(-6);
 }
 
+function scaleup (group) {
+  group.scale.setTo(game.world.width/group.getBounds().width < game.world.height/group.getBounds().height ? game.world.width/group.getBounds().width : game.world.height/group.getBounds().height);
+}
+
 function inputform(placeHolder, max, InputType) {
   return {
     backgroundColor: 'transparent',
@@ -423,7 +427,7 @@ var overlayselect = {
     group.addMultiple(overlayletters);
     group.addMultiple(pokemongroup);
     group.destination = destination;
-    group.scale.setTo(gamescale);
+    if (group.getBounds().width < game.world.width) scaleup(group);
     return group;
   },
   list: function (group, originx, originy, letter, maxwidth) {

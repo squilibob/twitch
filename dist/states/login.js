@@ -16,7 +16,7 @@ project.Login.prototype = {
     var
     margin = Presets.padding,
     divider = Presets.width / 6,
-    x = this.world.centerX,
+    x = 0,
     y = {spacing: 64, next: 0};
 
     form = [];
@@ -41,11 +41,9 @@ project.Login.prototype = {
     y.next++;
     y.next++;
 
-    formbutton = this.add.group();
-    textButton.define(button = this.add.group(), game, "Save these details", game.world.centerX, y.spacing*y.next, sectioncolors[1]);
-    // button = this.add.text(this.world.centerX, y.spacing*y.next, "Save these details",  {
+    textButton.define(button = this.add.group(), game, "Save these details", 0, y.spacing*y.next, sectioncolors[1]);
     button.onChildInputDown.add(this.connect, this);
-    button.x -= button.getBounds().width/2;
+    // button.x -= button.getBounds().width/2;
 
     form[0].children[0].setText(game.storage.getItem("id"));
     form[1].children[0].setText(game.storage.getItem("ign"));
@@ -61,7 +59,10 @@ project.Login.prototype = {
 
     formgroup = game.add.group()
     formgroup.addMultiple(form);
-
+    formgroup.addChild(button);
+    // formgroup.scale.setTo(game.world.width/formgroup.getBounds().width < game.world.height/formgroup.getBounds().height ? game.world.width/formgroup.getBounds().width : game.world.height/formgroup.getBounds().height);
+    scaleup(formgroup);
+    formgroup.x = formgroup.getBounds().width/2;
   },
   validatefc: function(digits){
     return ('0000' + (digits == undefined ? '0' : digits)).substr(-4);
@@ -131,8 +132,8 @@ project.Login.prototype = {
       form[focused].children[0].placeHolder.visible = false;
     };
     if (form[0].children[0].value && form[1].children[0].value) {
-      formbutton.visible = true;
+      button.visible = true;
     }
-    else formbutton.visible = false;
+    else button.visible = false;
   }
 }
