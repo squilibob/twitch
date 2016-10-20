@@ -68,14 +68,13 @@ project.Battle.prototype = {
         textAlign: 'left',
         stroke: 0
       };
-
-      if (socket.hasListeners('receive leaderboard') == false)  socket.on('receive leaderboard', function(payload){
+     if (socket.hasListeners('receive leaderboard')) socket.removeListener('receive leaderboard');
+      socket.on('receive leaderboard', function(payload){
         var bg = game.add.graphics(0,0);
         var leaderboardlabel = game.add.text(Presets.padding, buttonstyle.horizontalorientation ?  menu.getBounds().height+Presets.padding*2 : 0, 'leaderboard', textstyle);
         var currentline = leaderboardlabel.y+leaderboardlabel.getBounds().height+Presets.padding;
         var board = [];
         for (entry in payload) {
-          console.log(payload[entry]);
           payload.sort(function(a, b){
               return b.score-a.score
           });

@@ -153,7 +153,6 @@ project.Pokedex.prototype = {
         totalscore.onChildInputDown.add(this.submit, this);
         setScale(totalscore, (rated.getBounds().height+bonusgroup.getBounds().height*bonusgroup.scale.y-Presets.padding)/totalscore.getBounds().height);
       }
-      console.log(team_to_rate);
     },
     total: function(){
       var runningtotal = 0;
