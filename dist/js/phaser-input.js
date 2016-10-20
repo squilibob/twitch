@@ -256,9 +256,9 @@ var Fabrique;
                 if (null !== this.placeHolder) {
                     this.placeHolder.visible = false;
                 }
-                // if (this.inputOptions.zoom && !Fabrique.Plugins.InputField.Zoomed) {
-                //     this.zoomIn();
-                // }
+                if (this.inputOptions.zoom && !Fabrique.Plugins.InputField.Zoomed) {
+                    this.zoomIn();
+                }
                 this.startFocus();
             }
             else {
@@ -465,22 +465,22 @@ var Fabrique;
                 this.selection.clear();
             }
         };
-        // InputField.prototype.zoomIn = function () {
-        //     if (Fabrique.Plugins.InputField.Zoomed) {
-        //         return;
-        //     }
-        //     var bounds = this.getBounds();
-        //     if (window.innerHeight > window.innerWidth) {
-        //         this.windowScale = this.game.width / (bounds.width * 1.5);
-        //     }
-        //     else {
-        //         this.windowScale = (this.game.width / 2) / (bounds.width * 1.5);
-        //     }
-        //     var offsetX = ((this.game.width - bounds.width * 1.5) / 2) / this.windowScale;
-        //     this.game.world.scale.set(this.game.world.scale.x * this.windowScale, this.game.world.scale.y * this.windowScale);
-        //     this.game.world.pivot.set(bounds.x - offsetX, bounds.y - this.inputOptions.padding * 2);
-        //     Fabrique.Plugins.InputField.Zoomed = true;
-        // };
+        InputField.prototype.zoomIn = function () {
+            if (Fabrique.Plugins.InputField.Zoomed) {
+                return;
+            }
+            var bounds = this.getBounds();
+            if (window.innerHeight > window.innerWidth) {
+                this.windowScale = this.game.width / (bounds.width * 1.5);
+            }
+            else {
+                this.windowScale = (this.game.width / 2) / (bounds.width * 1.5);
+            }
+            var offsetX = ((this.game.width - bounds.width * 1.5) / 2) / this.windowScale;
+            this.game.world.scale.set(this.game.world.scale.x * this.windowScale, this.game.world.scale.y * this.windowScale);
+            this.game.world.pivot.set(bounds.x - offsetX, bounds.y - this.inputOptions.padding * 2);
+            Fabrique.Plugins.InputField.Zoomed = true;
+        };
         InputField.prototype.zoomOut = function () {
             if (!Fabrique.Plugins.InputField.Zoomed) {
                 return;
