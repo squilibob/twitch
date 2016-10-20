@@ -217,6 +217,7 @@ project.Raffle.prototype = {
       winnercircle = this.add.group();
       menu = this.add.group();
       menu.addMultiple(menubuttons);
+      scaleup(menu);
       yoffset = buttonstyle.horizontalorientation ?  menu.getBounds().height+Presets.padding : 0;
 
       var padding = 32;

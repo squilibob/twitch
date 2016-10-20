@@ -39,11 +39,11 @@ const preloadscripts = [
     scoring: false,
     dex : {
       x : 0,
-      y : Presets.fontsize*2+40,
+      y : 300,
     },
     team : {
       x : 0,
-      y : Presets.fontsize*2,
+      y : 256,
     },
   };
 

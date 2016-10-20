@@ -96,6 +96,7 @@ project.Pokedex.prototype = {
 
       menu = this.add.group();
       menu.addMultiple(menubuttons);
+      scaleup(menu);
 
       statvalue = [0,0,0,0,0,0];
       statmax = [0,0,0,0,0,0]

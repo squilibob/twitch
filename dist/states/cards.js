@@ -21,6 +21,8 @@ project.Cards.prototype = {
 
     menu = this.add.group();
     menu.addMultiple(menubuttons);
+    scaleup(menu);
+
 
     var MAXHEIGHT = 384;
     var LINEWIDTH = 8;

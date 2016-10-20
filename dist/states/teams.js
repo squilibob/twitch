@@ -83,6 +83,7 @@ project.Teams.prototype = {
 
     menu = this.add.group();
     menu.addMultiple(menubuttons);
+    scaleup(menu);
 
     teampadding = {height: buttonstyle.horizontalorientation ?  menu.getBounds().height+Presets.padding : 0, width: 256};
 

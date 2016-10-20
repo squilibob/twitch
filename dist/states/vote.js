@@ -17,6 +17,7 @@ project.Vote.prototype = {
 
       menu = this.add.group();
       menu.addMultiple(menubuttons);
+      scaleup(menu);
       txtstyle =  {
         backgroundColor: 'transparent',
         fill: Presets.fill,

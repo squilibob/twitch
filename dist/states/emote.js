@@ -16,6 +16,8 @@ project.Emote.prototype = {
 
       menu = this.add.group();
       menu.addMultiple(menubuttons);
+      scaleup(menu);
+
       poke = [];
       var width =206+Presets.padding;
       var height = 236+Presets.padding;

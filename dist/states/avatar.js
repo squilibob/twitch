@@ -11,17 +11,18 @@ project.Avatar.prototype = {
     game.load.image('moon', '/img/moon.png');
   },
   create: function(){
+    game.stage.backgroundColor = Presets.bgcolor;
+
+    menu = this.add.group();
+    menu.addMultiple(menubuttons);
+    scaleup(menu);
+
     av = [];
     rot = 0.45;
     hover = -1;
     var nextx = Useravatars.x/4;
     // var nexty = Presets.padding + Useravatars.y/(buttonstyle.horizontalorientation ? 2 : 4);
-    var nexty = Presets.padding + (buttonstyle.horizontalorientation ? menubuttons[0].getBounds().height : 0) + Useravatars.y/4;
-
-    game.stage.backgroundColor = Presets.bgcolor;
-
-    menu = this.add.group();
-    menu.addMultiple(menubuttons);
+    var nexty = Presets.padding + (buttonstyle.horizontalorientation ? menu.getBounds().height : 0) + Useravatars.y/4;
 
     if (!pokedexoptions.externalteams) {
       sunicon = game.add.sprite(menubuttons[menubuttons.length-1].getBounds().x+menubuttons[menubuttons.length-1].getBounds().width, 0, 'sun');

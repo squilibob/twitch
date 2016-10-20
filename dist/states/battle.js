@@ -54,7 +54,9 @@ project.Battle.prototype = {
 
       menu = this.add.group();
       menu.addMultiple(menubuttons);
+      scaleup(menu);
 
+      var entireleaderboard = this.add.group();
       var textstyle =  {
         backgroundColor: 'transparent',
         fill: Presets.fill,
@@ -117,6 +119,10 @@ project.Battle.prototype = {
             game.state.restart();
           }, this);
         }
+        entireleaderboard.addChild(bg);
+        entireleaderboard.addMultiple(board);
+        entireleaderboard.addChild(leaderboardlabel);
+        scaleup(entireleaderboard);
       });
       socket.emit('send leaderboard');
     },
