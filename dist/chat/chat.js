@@ -837,22 +837,22 @@ socket.on('receive badge', function(username, badge) {
 	userbadges[username] = badge;
 });
 
-// socket.on('user pokes', function(teamname) {
+// socket.on('user pokes', function(name, team) {
 // 	var TeamTier = 0;
 // 	for (var j=0; j < 6; j++) {
 // 		for (var check=0; check < Tiers.length; check++){
-// 			if (pokedex[teamname[j]].Tier == Tiers[check] && check > TeamTier) TeamTier = check;
+// 			if (pokedex[team[j]].Tier == Tiers[check] && check > TeamTier) TeamTier = check;
 // 		}
 // 	}
-// 	var replyText = '';
+// 	var replyText = name + ' is ';
 // 	var total = 0;
-// 	for (var poke = 0; poke < teamname.length; poke++){
-// 		total += teamname[poke];
-// 		replyText = replyText + pokedex[teamname[poke]].Pokemon + ' ';
-// 		if (Tiers[TeamTier] != pokedex[teamname[poke]].Tier) replyText = replyText + ' (' + pokedex[teamname[poke]].Tier + ') ';
+// 	for (var poke = 0; poke < team.length; poke++){
+// 		total += team[poke];
+// 		replyText = replyText + pokedex[team[poke]].Pokemon + ' ';
+// 		if (Tiers[TeamTier] != pokedex[team[poke]].Tier) replyText = replyText + ' (' + pokedex[team[poke]].Tier + ') ';
 // 	}
 // 	replyText = Tiers[TeamTier] + replyText;
-// 	if (total > 21) submitchat('team is ' + replyText);
+// 	if (total > 21) submitchat(replyText);
 // });
 
 socket.on('raffle winner', function(person) {

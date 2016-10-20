@@ -13,8 +13,8 @@ if (socket.hasListeners('login accepted') == false) socket.on('login accepted', 
 });
 
 // if (socket.hasListeners('user pokes') == false)
-socket.on('user pokes', function(payload) {
-    console.log(payload);
+socket.on('user pokes', function(teamname, payload) {
     game.storage.setItem("externalteams", JSON.stringify(payload));
+    team_name = teamname;
     teams = payload;
 });

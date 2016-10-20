@@ -8,47 +8,47 @@ project.Battle.prototype = {
     preload: function(){
       game.load.script('menu','/js/menubuttons.js')
     },
-    drawteam: function(group, members, name, color){
-      var textstyle =  {
-        backgroundColor: 'transparent',
-        fill: Presets.fill,
-        fillAlpha: 1,
-        font: Presets.font,
-        fontSize: Presets.fontsize.toString() + 'px ',
-        fontWeight: 'Bold',
-        textAlign: 'left',
-        stroke: 0
-      };
+    // drawteam: function(group, members, name, color){
+    //   var textstyle =  {
+    //     backgroundColor: 'transparent',
+    //     fill: Presets.fill,
+    //     fillAlpha: 1,
+    //     font: Presets.font,
+    //     fontSize: Presets.fontsize.toString() + 'px ',
+    //     fontWeight: 'Bold',
+    //     textAlign: 'left',
+    //     stroke: 0
+    //   };
 
-      var team = [];
-      var TeamTier = 0;
-      for (var currentmember = 0; currentmember < members.length; currentmember++){
-        team.push(game.add.sprite(spritesheet.x*currentmember, 0, 'spritesheet', members[currentmember]));
-        team[team.length-1].anchor.setTo(0.5);
-          for (var check=0; check < Tiers.length; check++){
-            if (pokedex[members[currentmember]].Tier == Tiers[check] && check > TeamTier) TeamTier = check;
-          }
-      }
+    //   var team = [];
+    //   var TeamTier = 0;
+    //   for (var currentmember = 0; currentmember < members.length; currentmember++){
+    //     team.push(game.add.sprite(spritesheet.x*currentmember, 0, 'spritesheet', members[currentmember]));
+    //     team[team.length-1].anchor.setTo(0.5);
+    //       for (var check=0; check < Tiers.length; check++){
+    //         if (pokedex[members[currentmember]].Tier == Tiers[check] && check > TeamTier) TeamTier = check;
+    //       }
+    //   }
 
-      textstyle.backgroundColor = hexstring(color);
-      var buttontext = game.add.text(spritesheet.x*members.length, 0, name.toLowerCase(), textstyle);
-      buttontext.anchor.setTo(0, 0.5);
-      var tiertext = game.add.text(spritesheet.x*(members.length+0.5) + buttontext.getBounds().width, 0, Tiers[TeamTier], textstyle);
-      tiertext.anchor.setTo(0, 0.5);
+    //   textstyle.backgroundColor = hexstring(color);
+    //   var buttontext = game.add.text(spritesheet.x*members.length, 0, name.toLowerCase(), textstyle);
+    //   buttontext.anchor.setTo(0, 0.5);
+    //   var tiertext = game.add.text(spritesheet.x*(members.length+0.5) + buttontext.getBounds().width, 0, Tiers[TeamTier], textstyle);
+    //   tiertext.anchor.setTo(0, 0.5);
 
-      var buttonelement = game.add.graphics(0, 0);
-      buttonelement.beginFill(color, 1)
-        .drawRoundedRect(-spritesheet.x/2-8, -spritesheet.y/2-8, spritesheet.x*(1.5+members.length)+buttontext.getBounds().width+tiertext.getBounds().width+16, spritesheet.y+16)
-        .endFill()
-        .inputEnabled = true;
+    //   var buttonelement = game.add.graphics(0, 0);
+    //   buttonelement.beginFill(color, 1)
+    //     .drawRoundedRect(-spritesheet.x/2-8, -spritesheet.y/2-8, spritesheet.x*(1.5+members.length)+buttontext.getBounds().width+tiertext.getBounds().width+16, spritesheet.y+16)
+    //     .endFill()
+    //     .inputEnabled = true;
 
-      group.addGroup(buttonelement)
-        .addGroup(buttontext)
-        .addGroup(tiertext)
-        .addGroup(team);
-      group.setAll('tint', Presets.normalstate);
-      return this;
-    },
+    //   group.addGroup(buttonelement)
+    //     .addGroup(buttontext)
+    //     .addGroup(tiertext)
+    //     .addGroup(team);
+    //   group.setAll('tint', Presets.normalstate);
+    //   return this;
+    // },
     create: function(){
       game.stage.backgroundColor = Presets.bgcolor;
 
@@ -72,6 +72,7 @@ project.Battle.prototype = {
         var currentline = leaderboardlabel.y+leaderboardlabel.getBounds().height+Presets.padding;
         var board = [];
         for (entry in payload) {
+          console.log(payload[entry]);
           payload.sort(function(a, b){
               return b.score-a.score
           });

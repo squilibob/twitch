@@ -408,24 +408,22 @@ function sendUserPokes (username) {
 	r.table('Users').filter(r.row('id').eq(username.toLowerCase()))
 	.without('pokevalues')
 	.getField('active')
-	.run(conn, function(err, cursor) {
-		cursor.toArray(function(err, active) {
-			if (err || active[0] == undefined || active == [] || active == -1) socket.emit('no user active team found');
-			else {
-				r.table('Users').filter(r.row('id').eq(username.toLowerCase()))
-				.without('pokevalues')
-				.getField('teams')
-				.run(conn, function(err, cursor) {
-					cursor.toArray(function(err, result) {
-						if (err || result[0] == undefined || result == []) socket.emit('user not found');
-						else {
-							console.log(result[0]);
-							io.emit('user pokes', result[0][active]);
-						}
-					});
+	.run(conn, function(err, active) {
+		if (err || active[0] == undefined || active == [] || active == -1) io.emit('no user active team found');
+		else if (result) {
+			r.table('Users').filter(r.row('id').eq(username.toLowerCase()))
+			.without('pokevalues')
+			.getField('teams')
+			.run(conn, function(err, cursor) {
+				cursor.toArray(function(err, result) {
+					if (err || result[0] == undefined || result == []) io.emit('user not found');
+					else {
+						console.log(result[0]);
+						io.emit('user pokes', active, result[0][active]);
+					}
 				});
-			}
-		});
+			});
+		}
 	});
 }
 

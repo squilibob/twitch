@@ -100,122 +100,7 @@ project.Pokedex.prototype = {
       statvalue = [0,0,0,0,0,0];
       statmax = [0,0,0,0,0,0]
 
-      var textstyle =  {
-        backgroundColor: 'transparent',
-        fill: Presets.fill,
-        fillAlpha: 1,
-        font: Presets.font,
-        fontSize: '24px ',
-        fontWeight: 'Bold',
-        textAlign: 'left',
-        stroke: 0
-      };
-
-      pokemoncontainer = this.add.group();
-      pokemonname = game.add.text(0, 0, '', textstyle);
-      tierlabel = game.add.text(0, 0, '', textstyle);
-      tier = game.add.text(0, 0, '', textstyle);
-      type2bg = game.add.graphics(0, 0);
-      type2 = game.add.text(0, 0, '', textstyle);
-      typebg = game.add.graphics(0, 0);
-      type1 = game.add.text(0, 0, '', textstyle);
-      statcontainer = this.add.group();
-      statbar = [game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0)];
-      statvaluelabel = [game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle)];
-      statname = [game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle)];
-      stattotal = game.add.text(0, 0, '', textstyle);
-      infocontainer = this.add.group();
-      weaklabel = game.add.text(0, 0, '', textstyle);
-      weakto = [game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0)];
-      weaktolabel = [game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle)];
-      resistslabel = game.add.text(0, 0, '', textstyle);
-      resistantto = [game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0)];
-      resistanttolabel = [game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle)];
-      immunelabel = game.add.text(0, 0, '', textstyle);
-      immuneto = [game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0)];
-      immunetolabel = [game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle)];
-      recommendedcontainer = this.add.group();
-      recommendedlabel = game.add.text(0, 0, '', textstyle);
-      abilitylabel = game.add.text(0, 0, '', textstyle);
-      ability = game.add.text(0, 0, '', textstyle);
-      itemlabel = game.add.text(0, 0, '', textstyle);
-      item = game.add.text(0, 0, '', textstyle);
-      moveslabel = game.add.text(0, 0, '', textstyle);
-      move1 = game.add.text(0, 0, '', textstyle);
-      move2 = game.add.text(0, 0, '', textstyle);
-      move3 = game.add.text(0, 0, '', textstyle);
-      move4 = game.add.text(0, 0, '', textstyle);
-      misccontainer = this.add.group();
-      gender = game.add.sprite(0, 0, null);
-      genderlabel = game.add.text(0, 0, '', textstyle);
-      evslabel = game.add.text(0, 0, '', textstyle);
-      ev = game.add.text(0, 0, '', textstyle);
-      explabel = game.add.text(0, 0, '', textstyle);
-      expv = game.add.text(0, 0, '', textstyle);
-      masslabel = game.add.text(0, 0, '', textstyle);
-      mass = game.add.text(0, 0, '', textstyle);
-      catchlabel = game.add.text(0, 0, '', textstyle);
-      catchr = game.add.text(0, 0, '', textstyle);
-      hatchlabel = game.add.text(0, 0, '', textstyle);
-      hatch = game.add.text(0, 0, '', textstyle);
-      egglabel = game.add.text(0, 0, '', textstyle);
-      egg = game.add.text(0, 0, '', textstyle);
-      evolvelabel = game.add.text(0, 0, '', textstyle);
-      evolve = game.add.text(0, 0, '', textstyle);
-      loclabel = game.add.text(0, 0, '', textstyle);
-      loc = game.add.text(0, 0, '', textstyle);
-
-      bg1fade = game.add.graphics(0, 0);
-      bg2fade = game.add.graphics(0, 0);
-
-      pokemonsprite = game.add.sprite(0, 0, 'dexspritesheet', 0);
-
-      pokemoncontainer.addChild(pokemonname);
-      pokemoncontainer.addChild(pokemonsprite);
-      pokemoncontainer.addChild(tierlabel);
-      pokemoncontainer.addChild(tier);
-      pokemoncontainer.addChild(type2bg);
-      pokemoncontainer.addChild(typebg);
-      pokemoncontainer.addChild(type1);
-      pokemoncontainer.addChild(type2);
-      for (var statcount = 0; statcount <= 5; statcount++) {
-        statcontainer
-        .addChild(statbar[statcount])
-        .addChild(statname[statcount])
-        .addChild(statvaluelabel[statcount]);
-      }
-      statcontainer.addChild(stattotal);
-      infocontainer.addChild(weaklabel);
-      infocontainer.addChild(resistslabel);
-      infocontainer.addChild(immunelabel);
-      recommendedcontainer.addChild(recommendedlabel);
-      recommendedcontainer.addChild(abilitylabel);
-      recommendedcontainer.addChild(ability);
-      recommendedcontainer.addChild(itemlabel);
-      recommendedcontainer.addChild(item);
-      recommendedcontainer.addChild(moveslabel);
-      recommendedcontainer.addChild(move1);
-      recommendedcontainer.addChild(move2);
-      recommendedcontainer.addChild(move3);
-      recommendedcontainer.addChild(move4);
-      misccontainer.addChild(gender);
-      misccontainer.addChild(genderlabel);
-      misccontainer.addChild(evslabel);
-      misccontainer.addChild(ev);
-      misccontainer.addChild(explabel);
-      misccontainer.addChild(expv);
-      misccontainer.addChild(masslabel);
-      misccontainer.addChild(mass);
-      misccontainer.addChild(catchlabel);
-      misccontainer.addChild(catchr);
-      misccontainer.addChild(hatchlabel);
-      misccontainer.addChild(hatch);
-      misccontainer.addChild(egglabel);
-      misccontainer.addChild(egg);
-      misccontainer.addChild(evolvelabel);
-      misccontainer.addChild(evolve);
-      misccontainer.addChild(loclabel);
-      misccontainer.addChild(loc);
+      this.init();
 
       fullteam = this.add.group();
 
@@ -284,6 +169,55 @@ project.Pokedex.prototype = {
       }
       // console.log(thisbonus, runningtotal);
       return runningtotal + parseInt(rated.children[1].text);
+    },
+    toggle: function(){
+      var can_change = true;
+      for (max in statmax) {
+        if (statvalue[max] != statmax[max]) can_change = false;
+      }
+      if (can_change) {
+        pokemoncontainer.visible = !pokemoncontainer.visible;
+        statcontainer.visible = !statcontainer.visible;
+        infocontainer.visible = !infocontainer.visible;
+        recommendedcontainer.visible = !recommendedcontainer.visible;
+        misccontainer.visible = !misccontainer.visible;
+      }
+    },
+
+    redraw: function(statcount){
+      switch (statcount) {
+        case 0: stat = "HP"; statcolor = HPcolor; break;
+        case 1: stat = "Attack"; statcolor = Attcolor;  break;
+        case 2: stat = "Defense"; statcolor = Defcolor;  break;
+        case 3: stat = "Sp. Attack"; statcolor = SpAttcolor;  break;
+        case 4: stat = "Sp. Defense"; statcolor = SpDefcolor;  break;
+        case 5: stat = "Speed"; statcolor = Specolor;  break;
+      }
+      statbar[statcount]
+      .clear()
+      .beginFill(statcolor)
+      .drawRect(statname[statcount].x,statname[statcount].y, 2*statvalue[statcount], scale/4)
+      .endFill();
+      statvaluelabel[statcount].x = statbar[statcount].getBounds().width;
+      statvaluelabel[statcount].setText(statvalue[statcount]);
+    },
+    gradient: function(options){
+      var myBitmap = game.add.bitmapData(0, 0);
+      var grd=myBitmap.context.createLinearGradient(0,0,options.length,0);
+      grd.addColorStop(options.balance[0],hexstring(options.start));
+      grd.addColorStop(options.balance[1],hexstring(options.end));
+      myBitmap.context.fillStyle=grd;
+      myBitmap.context.fillRect(0,0,options.length,options.height);
+      return myBitmap;
+    },
+    submit: function(){
+      console.log(teams[team_name],team_name);
+      socket.emit('update leaderboard',  {
+          "id": lastraffleuser ? lastraffleuser : game.storage.getItem("id"),
+          "score": this.total(),
+          "teamname": team_name,
+          "team": teams[team_name]
+        });
     },
     change: function(which){
       if (!pokemoncontainer.visible) return this;
@@ -618,52 +552,123 @@ project.Pokedex.prototype = {
     if (pokedexoptions.scoring) totalscore.children[1].setText(this.total());
 
   },
-  toggle: function(){
-    var can_change = true;
-    for (max in statmax) {
-      if (statvalue[max] != statmax[max]) can_change = false;
-    }
-    if (can_change) {
-      pokemoncontainer.visible = !pokemoncontainer.visible;
-      statcontainer.visible = !statcontainer.visible;
-      infocontainer.visible = !infocontainer.visible;
-      recommendedcontainer.visible = !recommendedcontainer.visible;
-      misccontainer.visible = !misccontainer.visible;
-    }
-  },
+  init: function(){
+    var textstyle =  {
+      backgroundColor: 'transparent',
+      fill: Presets.fill,
+      fillAlpha: 1,
+      font: Presets.font,
+      fontSize: '24px ',
+      fontWeight: 'Bold',
+      textAlign: 'left',
+      stroke: 0
+    };
 
-  redraw: function(statcount){
-    switch (statcount) {
-      case 0: stat = "HP"; statcolor = HPcolor; break;
-      case 1: stat = "Attack"; statcolor = Attcolor;  break;
-      case 2: stat = "Defense"; statcolor = Defcolor;  break;
-      case 3: stat = "Sp. Attack"; statcolor = SpAttcolor;  break;
-      case 4: stat = "Sp. Defense"; statcolor = SpDefcolor;  break;
-      case 5: stat = "Speed"; statcolor = Specolor;  break;
+
+    pokemoncontainer = this.add.group();
+    pokemonname = game.add.text(0, 0, '', textstyle);
+    tierlabel = game.add.text(0, 0, '', textstyle);
+    tier = game.add.text(0, 0, '', textstyle);
+    type2bg = game.add.graphics(0, 0);
+    type2 = game.add.text(0, 0, '', textstyle);
+    typebg = game.add.graphics(0, 0);
+    type1 = game.add.text(0, 0, '', textstyle);
+    statcontainer = this.add.group();
+    statbar = [game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0)];
+    statvaluelabel = [game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle)];
+    statname = [game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle)];
+    stattotal = game.add.text(0, 0, '', textstyle);
+    infocontainer = this.add.group();
+    weaklabel = game.add.text(0, 0, '', textstyle);
+    weakto = [game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0)];
+    weaktolabel = [game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle)];
+    resistslabel = game.add.text(0, 0, '', textstyle);
+    resistantto = [game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0)];
+    resistanttolabel = [game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle)];
+    immunelabel = game.add.text(0, 0, '', textstyle);
+    immuneto = [game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0), game.add.graphics(0, 0)];
+    immunetolabel = [game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle), game.add.text(0, 0, '', textstyle)];
+    recommendedcontainer = this.add.group();
+    recommendedlabel = game.add.text(0, 0, '', textstyle);
+    abilitylabel = game.add.text(0, 0, '', textstyle);
+    ability = game.add.text(0, 0, '', textstyle);
+    itemlabel = game.add.text(0, 0, '', textstyle);
+    item = game.add.text(0, 0, '', textstyle);
+    moveslabel = game.add.text(0, 0, '', textstyle);
+    move1 = game.add.text(0, 0, '', textstyle);
+    move2 = game.add.text(0, 0, '', textstyle);
+    move3 = game.add.text(0, 0, '', textstyle);
+    move4 = game.add.text(0, 0, '', textstyle);
+    misccontainer = this.add.group();
+    gender = game.add.sprite(0, 0, null);
+    genderlabel = game.add.text(0, 0, '', textstyle);
+    evslabel = game.add.text(0, 0, '', textstyle);
+    ev = game.add.text(0, 0, '', textstyle);
+    explabel = game.add.text(0, 0, '', textstyle);
+    expv = game.add.text(0, 0, '', textstyle);
+    masslabel = game.add.text(0, 0, '', textstyle);
+    mass = game.add.text(0, 0, '', textstyle);
+    catchlabel = game.add.text(0, 0, '', textstyle);
+    catchr = game.add.text(0, 0, '', textstyle);
+    hatchlabel = game.add.text(0, 0, '', textstyle);
+    hatch = game.add.text(0, 0, '', textstyle);
+    egglabel = game.add.text(0, 0, '', textstyle);
+    egg = game.add.text(0, 0, '', textstyle);
+    evolvelabel = game.add.text(0, 0, '', textstyle);
+    evolve = game.add.text(0, 0, '', textstyle);
+    loclabel = game.add.text(0, 0, '', textstyle);
+    loc = game.add.text(0, 0, '', textstyle);
+
+    bg1fade = game.add.graphics(0, 0);
+    bg2fade = game.add.graphics(0, 0);
+
+    pokemonsprite = game.add.sprite(0, 0, 'dexspritesheet', 0);
+
+    pokemoncontainer.addChild(pokemonname);
+    pokemoncontainer.addChild(pokemonsprite);
+    pokemoncontainer.addChild(tierlabel);
+    pokemoncontainer.addChild(tier);
+    pokemoncontainer.addChild(type2bg);
+    pokemoncontainer.addChild(typebg);
+    pokemoncontainer.addChild(type1);
+    pokemoncontainer.addChild(type2);
+    for (var statcount = 0; statcount <= 5; statcount++) {
+      statcontainer
+      .addChild(statbar[statcount])
+      .addChild(statname[statcount])
+      .addChild(statvaluelabel[statcount]);
     }
-    statbar[statcount]
-    .clear()
-    .beginFill(statcolor)
-    .drawRect(statname[statcount].x,statname[statcount].y, 2*statvalue[statcount], scale/4)
-    .endFill();
-    statvaluelabel[statcount].x = statbar[statcount].getBounds().width;
-    statvaluelabel[statcount].setText(statvalue[statcount]);
-  },
-  gradient: function(options){
-    var myBitmap = game.add.bitmapData(0, 0);
-    var grd=myBitmap.context.createLinearGradient(0,0,options.length,0);
-    grd.addColorStop(options.balance[0],hexstring(options.start));
-    grd.addColorStop(options.balance[1],hexstring(options.end));
-    myBitmap.context.fillStyle=grd;
-    myBitmap.context.fillRect(0,0,options.length,options.height);
-    return myBitmap;
-  },
-  submit: function(){
-    socket.emit('update leaderboard',  {
-        "id": game.storage.getItem("id"),
-        "score": this.total(),
-        "teamname": team_name,
-        "team": teams[team_name]
-      });
-  },
+    statcontainer.addChild(stattotal);
+    infocontainer.addChild(weaklabel);
+    infocontainer.addChild(resistslabel);
+    infocontainer.addChild(immunelabel);
+    recommendedcontainer.addChild(recommendedlabel);
+    recommendedcontainer.addChild(abilitylabel);
+    recommendedcontainer.addChild(ability);
+    recommendedcontainer.addChild(itemlabel);
+    recommendedcontainer.addChild(item);
+    recommendedcontainer.addChild(moveslabel);
+    recommendedcontainer.addChild(move1);
+    recommendedcontainer.addChild(move2);
+    recommendedcontainer.addChild(move3);
+    recommendedcontainer.addChild(move4);
+    misccontainer.addChild(gender);
+    misccontainer.addChild(genderlabel);
+    misccontainer.addChild(evslabel);
+    misccontainer.addChild(ev);
+    misccontainer.addChild(explabel);
+    misccontainer.addChild(expv);
+    misccontainer.addChild(masslabel);
+    misccontainer.addChild(mass);
+    misccontainer.addChild(catchlabel);
+    misccontainer.addChild(catchr);
+    misccontainer.addChild(hatchlabel);
+    misccontainer.addChild(hatch);
+    misccontainer.addChild(egglabel);
+    misccontainer.addChild(egg);
+    misccontainer.addChild(evolvelabel);
+    misccontainer.addChild(evolve);
+    misccontainer.addChild(loclabel);
+    misccontainer.addChild(loc);
+  }
 }

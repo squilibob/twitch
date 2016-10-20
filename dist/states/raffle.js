@@ -30,6 +30,7 @@ project.Raffle.prototype = {
     socket.emit('won raffle', person);
     // socket.emit('request user pokes', person);
     socket.emit('request user fc', person);
+    lastraffleuser = person;
   },
   rollraffle: function(){
     spinslow += 1;
@@ -46,6 +47,7 @@ project.Raffle.prototype = {
     if (team_name) socket.emit('leave raffle', game.storage.getItem("id"), 0, '', team_name);
   },
   clearraffle: function() {
+    socket.emit('clear raffle');
     this.respin();
   },
   respin: function(){
