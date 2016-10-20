@@ -30,7 +30,7 @@ var Fabrique;
             this.element.style.position = 'absolute';
             this.element.style.top = (-100).toString() + 'px';
             this.element.style.left = (-100).toString() + 'px';
-            this.element.style.font = '16px Arial';
+            this.element.style.font = '18px Arial';
             this.element.value = this.value;
             this.element.type = InputType[type];
             this.element.addEventListener('focusin', function () {

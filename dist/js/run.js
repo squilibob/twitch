@@ -70,7 +70,10 @@ project.Init = function () {
 project.Init.prototype = {
 
   preload: function () {
-    game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    game.scale.pageAlignHorizontally = true;
+    game.scale.pageAlignVertically = true;
+    game.scale.setScreenSize(true);
     pokeball_loader();
     var script;
     for (testscript in preloadscripts) {
