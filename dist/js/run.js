@@ -66,7 +66,7 @@ project.Init = function () {
 project.Init.prototype = {
 
   preload: function () {
-    game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+    // game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
     pokeball_loader();
     var script;
     for (testscript in preloadscripts) {
