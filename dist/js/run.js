@@ -1,7 +1,7 @@
 var game = new Phaser.Game(Presets.width, Presets.height, Phaser.AUTO, "content");
 
 var project = {};
-var mobile = false;
+var mobile = true;
 var teams;
 var migrateteam = false;
 var lastraffleuser;
