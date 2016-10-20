@@ -43,7 +43,7 @@ var textButton = {
         fill: Presets.fill,
         fillAlpha: 1,
         font: Presets.font,
-        fontSize: Presets.fontsize.toString() + 'px ',
+        // fontSize: Presets.fontsize.toString() + 'px ',
         fontWeight: 'Bold',
         textAlign: 'left',
         stroke: 0
@@ -88,7 +88,7 @@ var numberButton = {
         fill: Presets.fill,
         fillAlpha: 1,
         font: Presets.font,
-        fontSize: Presets.fontsize.toString() + 'px ',
+        // fontSize: Presets.fontsize.toString() + 'px ',
         fontWeight: 'Bold',
         textAlign: 'left',
         stroke: 0
@@ -154,7 +154,7 @@ var textInput = {
       fill: Presets.fill,
       fillAlpha: 1,
       font: Presets.font,
-      fontSize: Presets.fontsize.toString() + 'px ',
+      // fontSize: Presets.fontsize.toString() + 'px ',
       fontWeight: 'Bold',
       textAlign: 'left',
       stroke: 0
