@@ -221,15 +221,15 @@ project.Pokedex.prototype = {
 
       if (Presets.externalteams) {
         if (game.storage.getItem("externalteams")) {
-          members = JSON.parse(game.storage.getItem("externalteams"));
+          team_to_rate = JSON.parse(game.storage.getItem("externalteams"));
         }
       };
-      if (!members) var members = teams[team_name] || [0,3,6];
+      if (!team_to_rate) var team_to_rate = teams[team_name] || [0,3,6];
       var teamarray = [];
       totalbonuses = 0;
 
-      for (var currentmember = 0; currentmember < members.length; currentmember++){
-        teamarray.push(game.add.sprite(spritesheet.x*currentmember, 0, 'spritesheet', members[currentmember]));
+      for (var currentmember = 0; currentmember < team_to_rate.length; currentmember++){
+        teamarray.push(game.add.sprite(spritesheet.x*currentmember, 0, 'spritesheet', team_to_rate[currentmember]));
         teamarray[teamarray.length-1].inputEnabled = true;
       }
 
@@ -239,13 +239,12 @@ project.Pokedex.prototype = {
       fullteam.onChildInputDown.add(this.change, this);
           this.change(teamarray[0]);
 
-      team_to_rate = [];
-      if(teams) {
-        if(teams[team_name])
-          for (thismember in teams[team_name])
-            team_to_rate.push(pokedex[teams[team_name][thismember]]);
-        else if (Array.isArray(teams)) team_to_rate = teams;
-      }
+      // if(teams) {
+      //   if(teams[team_name])
+      //     for (thismember in teams[team_name])
+      //       team_to_rate.push(pokedex[teams[team_name][thismember]]);
+      //   else if (Array.isArray(teams)) team_to_rate = teams;
+      // }
 
       if(pokedexoptions.scoring) {
         // rated = game.add.text(fullteam.getBounds().x+fullteam.getBounds().width, fullteam.getBounds().y, ' = ' + rate(team_to_rate), textstyle);
@@ -268,6 +267,7 @@ project.Pokedex.prototype = {
         totalscore.onChildInputDown.add(this.submit, this);
         setScale(totalscore, (rated.getBounds().height+bonusgroup.getBounds().height*bonusgroup.scale.y-Presets.padding)/totalscore.getBounds().height);
       }
+      console.log(team_to_rate);
     },
     total: function(){
       var runningtotal = 0;

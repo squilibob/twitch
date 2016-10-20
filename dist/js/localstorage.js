@@ -12,8 +12,9 @@ if (socket.hasListeners('login accepted') == false) socket.on('login accepted', 
     game.state.start('Teams', Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
 });
 
-if (socket.hasListeners('user pokes') == false) socket.on('user pokes', function(payload) {
+// if (socket.hasListeners('user pokes') == false)
+socket.on('user pokes', function(payload) {
+    console.log(payload);
     game.storage.setItem("externalteams", JSON.stringify(payload));
     teams = payload;
-    team_name = payload.active;
 });

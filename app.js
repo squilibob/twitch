@@ -136,20 +136,44 @@ io.on('connection', function(socket){
 	socket.on('new user', function(payload){
 		createanewuser(payload)
 	});
-	socket.on ("Ask for pokedex", function(number){
-		number = parseInt(number);
-			// console.log("sending pokedex", number);
-			r.db('Users').table('Pokedex').get(number).run(conn, function(err, result) {
-				if (err) throw err;
-				socket.emit("Receive pokedex" , result);
+	socket.on ("Ask for pokedex", function(){
+		r.db('Users').table('Pokedex')
+			.run(conn, function(err, cursor) {
+				cursor.toArray(function(err, result) {
+					if (err || result[0] == undefined || result == []) socket.emit('dex not found');
+					else {
+						socket.emit("Receive pokedex" , result);
+					}
+				});
 			});
-		});
-	socket.on ("Ask for typechart", function(number){
-		r.db('Users').table('TypeChart').nth(number).run(conn, function(err, result) {
-			if (err) throw err;
-			socket.emit("Receive typechart" , result);
-		});
+
 	});
+	// socket.on ("Ask for pokedex", function(number){
+	// 	number = parseInt(number);
+	// 		// console.log("sending pokedex", number);
+	// 		r.db('Users').table('Pokedex').get(number).run(conn, function(err, result) {
+	// 			if (err) throw err;
+	// 			socket.emit("Receive pokedex" , result);
+	// 		});
+	// 	});
+	socket.on ("Ask for typechart", function(){
+		r.db('Users').table('TypeChart')
+			.run(conn, function(err, cursor) {
+				cursor.toArray(function(err, result) {
+					if (err || result[0] == undefined || result == []) socket.emit('typechart not found');
+					else {
+						socket.emit("Receive typechart" , result);
+					}
+				});
+			});
+
+	});
+	// socket.on ("Ask for typechart", function(number){
+	// 	r.db('Users').table('TypeChart').nth(number).run(conn, function(err, result) {
+	// 		if (err) throw err;
+	// 		socket.emit("Receive typechart" , result);
+	// 	});
+	// });
 	socket.on("resend password", function(username){
 		r.table('Users').filter(r.row('id').eq(username.toLowerCase()))
 		.pluck('pokevalues')
@@ -319,12 +343,12 @@ io.on('connection', function(socket){
 		rafflewinner(person);
 	});
 
-	socket.on('enter raffle', function(username, displayicon) {
-		raffleChangeUser(username.toLowerCase(), 12, true, displayicon);
+	socket.on('enter raffle', function(username, displayicon, team_name) {
+		raffleChangeUser(username.toLowerCase(), 12, true, displayicon, team_name);
 	});
 
-	socket.on('leave raffle', function(username, displayicon) {
-		raffleChangeUser(username.toLowerCase(), 12, false, displayicon);
+	socket.on('leave raffle', function(username, displayicon, team_name) {
+		raffleChangeUser(username.toLowerCase(), 12, false, displayicon, team_name);
 	});
 
 	socket.on('clear raffle', function() {
@@ -386,7 +410,7 @@ function sendUserPokes (username) {
 	.getField('active')
 	.run(conn, function(err, cursor) {
 		cursor.toArray(function(err, active) {
-			if (err || active[0] == undefined || active == []) socket.emit('no user active team found');
+			if (err || active[0] == undefined || active == [] || active == -1) socket.emit('no user active team found');
 			else {
 				r.table('Users').filter(r.row('id').eq(username.toLowerCase()))
 				.without('pokevalues')
@@ -435,7 +459,7 @@ function sendUserPokes (username) {
 			});
 	}
 
-	function raffleChangeUser(username, defaultchance, entered, displayicon){
+	function raffleChangeUser(username, defaultchance, entered, displayicon, team_name){
 		r.db('Users').table('Raffle').get(username)
 		.run(conn, function(err, result) {
 			if (err) throw err;

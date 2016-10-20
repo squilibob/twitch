@@ -28,20 +28,29 @@ project.Raffle.prototype = {
     },
   winraffle: function(person){
     socket.emit('won raffle', person);
-    socket.emit('request user pokes', person);
+    // socket.emit('request user pokes', person);
+    socket.emit('request user fc', person);
   },
   rollraffle: function(){
     spinslow += 1;
   },
   enterraffle: function() {
-    if (team_name) socket.emit('enter raffle', game.storage.getItem("id"), cards[0].poke, team_name);
+    if (team_name) {
+      if (teams[team_name]) {
+        socket.emit('set current team', game.storage.getItem("id"), team_name);
+        socket.emit('enter raffle', game.storage.getItem("id"), cards[0].poke, team_name);
+      }
+    }
   },
   leaveraffle: function() {
-    socket.emit('leave raffle', game.storage.getItem("id"), 0, '');
+    if (team_name) socket.emit('leave raffle', game.storage.getItem("id"), 0, '', team_name);
   },
   clearraffle: function() {
-    socket.emit('clear raffle');
-    game.state.restart();
+    this.respin();
+  },
+  respin: function(){
+    console.log('restarting');
+    spinspeed = 24;
   },
   update: function() {
     winnercircle.children[3].setText(previouswinner);
@@ -49,7 +58,10 @@ project.Raffle.prototype = {
     displaygroup.subAll('x', spinspeed);
     if (spinspeed > 0) {
       spinspeed -= spinslow;
-      if (spinspeed == 0) this.winraffle(spinusername.text);
+      if (spinspeed == 0) {
+        this.winraffle(spinusername.text);
+        spinslow = 0;
+      };
 
     if (displaygroup.children.length > 1) {
       var showcurrent = Math.floor(displaygroup.children.length / 2);
@@ -245,7 +257,13 @@ project.Raffle.prototype = {
       });
       winner[3].anchor.setTo(0.5);
 
+      winner[0].inputEnabled = true;
+      winner[1].inputEnabled = true;
+      winner[2].inputEnabled = true;
+      winner[3].inputEnabled = true;
       winnercircle.addMultiple(winner);
+      winnercircle.inputEnableChildren = true;  // does NOT work
+      winnercircle.onChildInputDown.add(this.respin, this);
       // winnercircle.setAll('tint', Presets.normalstate);
 
       textButton.define(enterbutton = game.add.group(), game, 'enter ' + (team_name ? team_name : 'raffle'), 8, winnercircle.getBounds().y + winnercircle.getBounds().height + 32 , sectioncolors[0])
@@ -278,9 +296,6 @@ project.Raffle.prototype = {
           contextthis.fillchart(fullraffle);
       });
 
-      // socket.emit('enter raffle', 'joey', 37);
-      // socket.emit('enter raffle', 'george', 133);
-      // socket.emit('enter raffle', 'someone', 715);
       socket.emit('send raffle');
 
       spinuser = game.add.sprite(winnercircle.getBounds().x+winnercircle.getBounds().width*1.5, winnercircle.getBounds().y, 'playersprite');

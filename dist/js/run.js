@@ -92,7 +92,7 @@ project.Init.prototype = {
       game.state.add(statename, project[statename]);
     this.socketready = new Phaser.Signal();
     this.socketready.add(this.ready, this);
-    pokedex = JSON.parse(game.storage.getItem("pokedex"));
+    // pokedex = JSON.parse(game.storage.getItem("pokedex"));
     typechart = JSON.parse(game.storage.getItem("typechart"));
     if (pokedex && typechart) {
       if (typechart.length != 19) this.populatetypechart();
@@ -116,15 +116,15 @@ project.Init.prototype = {
   },
 
   populatetypechart: function(){
-    for (var i=0; i <= 18; i++) {
-      socket.emit('Ask for typechart',i);
-    }
+    // for (var i=0; i <= 18; i++) {
+      socket.emit('Ask for typechart');
+    // }
   },
 
   populatedata: function(){
-    for (var i=1; i <= maxpokes; i++) {
-      socket.emit('Ask for pokedex',i);
-    }
+    // for (var i=1; i <= maxpokes; i++) {
+      socket.emit('Ask for pokedex');
+    // }
   },
 
   ready: function() {
