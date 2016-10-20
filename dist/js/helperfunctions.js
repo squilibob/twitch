@@ -3,7 +3,7 @@ function hexstring(color) {
 }
 
 function scaleup (group) {
-  group.scale.setTo(game.world.width/group.getBounds().width < game.world.height/group.getBounds().height ? game.world.width/group.getBounds().width : game.world.height/group.getBounds().height);
+  if (Presets.scalingallowed) group.scale.setTo(game.world.width/group.getBounds().width < game.world.height/group.getBounds().height ? game.world.width/group.getBounds().width : game.world.height/group.getBounds().height);
 }
 
 function inputform(placeHolder, max, InputType) {

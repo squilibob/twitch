@@ -13,6 +13,7 @@ const Presets = {
   showdonutchart: false,
   allowroll: true,
   externalteams:true,
+  scalingallowed: false,
 };
 const preloadscripts = [
   'consts',
