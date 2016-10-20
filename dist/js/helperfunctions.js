@@ -408,7 +408,7 @@ var overlayselect = {
       textButton.define(overlayletters[overlayletters.length] = game.add.group(), game, '  ' + alphabet[letter] + '  ', overlaycurrentposition.x, overlaycurrentposition.y, sectioncolors[5]);
       overlaycurrentposition.x+=overlayletters[overlayletters.length-1].getBounds().width+Presets.padding;
       if (overlaycurrentposition.x > maxwidth) maxwidth = overlaycurrentposition.x;
-      if (overlaycurrentposition.x+overlayletters[overlayletters.length-1].getBounds().width+Presets.padding > game.world.width){
+      if (overlaycurrentposition.x+overlayletters[overlayletters.length-1].getBounds().width+Presets.padding > mobile ? 320 : game.world.width){
           overlaycurrentposition.x = 0;
           overlaycurrentposition.y += overlayletters[overlayletters.length-1].getBounds().height+Presets.padding;
       }
