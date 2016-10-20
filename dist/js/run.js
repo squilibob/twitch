@@ -1,3 +1,7 @@
+document.documentElement.addEventListener('touchmove', function (event) {
+    event.preventDefault();
+}, false);
+
 var game = new Phaser.Game(Presets.width, Presets.height, Phaser.AUTO, "content");
 
 var project = {};
