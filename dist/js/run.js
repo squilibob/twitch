@@ -82,7 +82,7 @@ project.Init.prototype = {
       game.load.script(this.filename(script), script + '.js');
     }
 
-    game.input.onDown.add(zoomout, this);
+    game.input.onDown.add(zoomout(), this);
 
     // game.load.json('userJSON', 'https://api.twitch.tv/kraken/users/'+localStorage.getItem("id"));
   },
