@@ -66,9 +66,12 @@ project.Init = function () {
 project.Init.prototype = {
 
   preload: function () {
-    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    // game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    game.scale.scaleMode = Phaser.ScaleManager.RESIZE ;
     game.scale.pageAlignHorizontally = true;
     game.scale.pageAlignVertically = true;
+    game.canvas.style.width=width+'px';
+    game.canvas.style.height=height+'px';
     game.scale.refresh();
     pokeball_loader();
     var script;
