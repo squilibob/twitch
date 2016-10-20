@@ -93,7 +93,6 @@ project.Init.prototype = {
   create: function () {
     game.plugins.add(Fabrique.Plugins.InputField);
     game.plugins.add(Fabrique.Plugins.SuperStorage);
-    game.input.onDown.add(zoomout, this);
     for (statename in states)
       game.state.add(statename, project[statename]);
     this.socketready = new Phaser.Signal();

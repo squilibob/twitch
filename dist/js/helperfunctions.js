@@ -2,10 +2,6 @@ function hexstring(color) {
  return '#' + ('000000' + color.toString(16)).substr(-6);
 }
 
-function zoomout () {
-  this.game.scale.setGameSize(Presets.width, Presets.height);
-}
-
 function inputform(placeHolder, max, InputType) {
   return {
     backgroundColor: 'transparent',
@@ -26,7 +22,7 @@ function inputform(placeHolder, max, InputType) {
     textAlign: 'left',
     // type: Fabrique.InputType[InputType],
     width: max*Presets.fontsize/1.5,
-    zoom: false
+    zoom: true
   }
 };
 
@@ -204,7 +200,7 @@ var selector = {
     placeHolder: ' ',
     textAlign: 'center',
     width: 100,
-    zoom: false
+    zoom: true
   });
   },
   numberinput: function(group, game, options){
@@ -226,7 +222,7 @@ var selector = {
     textAlign: 'center',
     type: Fabrique.InputType['number'],
     width: 100,
-    zoom: false
+    zoom: true
   });
   },
   validatename: function(name){

@@ -171,7 +171,7 @@ var Fabrique;
             this.inputOptions.height = inputOptions.height || 14;
             this.inputOptions.fillAlpha = (inputOptions.fillAlpha === undefined) ? 1 : inputOptions.fillAlpha;
             this.inputOptions.selectionColor = inputOptions.selectionColor || 'rgba(179, 212, 253, 0.8)';
-            this.inputOptions.zoom = false;
+            this.inputOptions.zoom = (!game.device.desktop) ? inputOptions.zoom || false : false;
             //create the input box
             this.box = new Fabrique.InputBox(this.game, inputOptions);
             this.setTexture(this.box.generateTexture());
