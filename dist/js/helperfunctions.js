@@ -2,6 +2,10 @@ function hexstring(color) {
  return '#' + ('000000' + color.toString(16)).substr(-6);
 }
 
+function zoomout () {
+  this.game.scale.setGameSize(Presets.width, Presets.height);
+}
+
 function inputform(placeHolder, max, InputType) {
   return {
     backgroundColor: 'transparent',
@@ -446,7 +450,6 @@ var overlayselect = {
         return group;
   }
 }
-
 
 Math.sign = Math.sign || function(x) {
   x = +x; // convert to a number

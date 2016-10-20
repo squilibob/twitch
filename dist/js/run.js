@@ -1,7 +1,3 @@
-document.documentElement.addEventListener('touchmove', function (event) {
-    event.preventDefault();
-}, false);
-
 var game = new Phaser.Game(Presets.width, Presets.height, Phaser.AUTO, "content");
 
 var project = {};
@@ -85,6 +81,9 @@ project.Init.prototype = {
       else script = preloadscripts[testscript];
       game.load.script(this.filename(script), script + '.js');
     }
+
+    game.input.onDown.add(zoomout, this);
+
     // game.load.json('userJSON', 'https://api.twitch.tv/kraken/users/'+localStorage.getItem("id"));
   },
 
