@@ -77,24 +77,19 @@ ul {
 	transition: all 0.5s cubic-bezier(.36,-0.64,.34,1.76);
 	transform: translate3d(16px, 1200px, 0);
 }
-.chat-line[data-hide] {
-  	font-size: 0px;
-	position: relative;
-	opacity: 0.5;
-	margin: 0;
-	padding:0;
-	display: block;
-	transition: all 0.5s cubic-bezier(.36,-0.64,.34,1.76);
-	transform: scale(0);
-	transform-origin: bottom left;
-}
-
 .chat-input {
 	position: absolute;
 	top: 2px;
 	right: 2px;
 	padding: .5em 1em;
 	z-index:3;
+}
+.chat-line[data-hide] {
+	position: relative;
+	margin: 0;
+	padding:0;
+	display: block;
+	transform-origin: bottom left;
 }
 .chat-line[data-faded],  .chat-line[data-faded] .sprsheet{
 	opacity: .67;
@@ -214,18 +209,23 @@ ul {
 .chat-message
 {
 	flex:1;
-	font-family:'Trocchi';
-	font-size: 24px;
+	font-family:'Extra-cool';
+	font-size: 28px;
 	font: #fff;
 	text-rendering: optimizeLegibility;
-	max-height: 300px;
 	max-width: 380px;
+	text-shadow:
+		-1px -1px 0 #555,
+		1px -1px 0 #000,
+		-1px 1px 0 #555,
+		1px 1px 0 #000;
 	transition: all 0.5s cubic-bezier(.36,-0.64,.34,1.76);
 }
 .chat-message[data-faded]
 {
+	opacity: 1 !important;
 	position: relative;
-	font-size: 18px;
+	font-size: 20px;
 	max-height: 300px;
 	max-width:400px;
 	transition: all 0.5s ease-out;

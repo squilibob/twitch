@@ -60,7 +60,7 @@ project.Pokedex = function(game) {
   bg1fade,
   bg2fade,
   bonusgroup,
-  pokemonsprite;
+  winner;
 
   var
   scale,
@@ -71,8 +71,8 @@ project.Pokedex = function(game) {
 
 project.Pokedex.prototype = {
   preload: function(){
-      game.load.spritesheet('dexspritesheet', dexspritesheet.src, dexspritesheet.x, dexspritesheet.y, maxpokes);
       game.load.spritesheet('spritesheet', spritesheet.src, spritesheet.x, spritesheet.y, maxpokes);
+      game.load.spritesheet('dexspritesheet', dexspritesheet.src, dexspritesheet.x, dexspritesheet.y, maxpokes);
       game.load.script('menu','/js/menubuttons.js');
     },
   // text: function(obj, text: "", fontsize: 12, color: 0x000000, newx: 0, newy: 0) {
@@ -107,7 +107,9 @@ project.Pokedex.prototype = {
 
       if (Presets.externalteams) {
         if (game.storage.getItem("externalteams")) {
-          team_to_rate = JSON.parse(game.storage.getItem("externalteams"));
+          winner = JSON.parse(game.storage.getItem("externalteams"));
+          console.log(winner);
+          team_to_rate = winner.team;
         }
       };
       if (!team_to_rate) var team_to_rate = teams[team_name] || [0,3,6];
@@ -176,6 +178,7 @@ project.Pokedex.prototype = {
         if (statvalue[max] != statmax[max]) can_change = false;
       }
       if (can_change) {
+        // pokemonsprite.visible = !pokemonsprite.visible;
         pokemoncontainer.visible = !pokemoncontainer.visible;
         statcontainer.visible = !statcontainer.visible;
         infocontainer.visible = !infocontainer.visible;
@@ -211,12 +214,11 @@ project.Pokedex.prototype = {
       return myBitmap;
     },
     submit: function(){
-      console.log(teams[team_name],team_name);
-      socket.emit('update leaderboard',  {
+      if (winner) socket.emit('update leaderboard',  {
           "id": lastraffleuser ? lastraffleuser : game.storage.getItem("id"),
           "score": this.total(),
-          "teamname": team_name,
-          "team": teams[team_name]
+          "teamname": winner.team_name,
+          "team": winner.team
         });
     },
     change: function(which){
@@ -236,11 +238,15 @@ project.Pokedex.prototype = {
 
       pokemonname = this.text({obj : pokemonname, text : dexinfo["Pokemon"].toLowerCase(), fontsize : scale/4, color : brightcolor, newx : x+textoffset, newy : y});
       y += pokemonname.getBounds().height;
+
+      var pokemonsprite = game.add.sprite(0, 0, 'dexspritesheet');
+
       pokemonsprite.x = x;
       pokemonsprite.y = y;
       pokemonsprite.frame = thepokemon;
       pokemonsprite.scaleX =  scale / dexspritesheet.x;
       pokemonsprite.scaleY =  scale / dexspritesheet.y;
+      pokemoncontainer.addChild(pokemonsprite);
       y += scale;
       tierlabel = this.text({obj : tierlabel, text : "tier ", fontsize : scale/4, color : brightcolor, newx : x, newy : y});
       tier = this.text({obj : tier, text : dexinfo["Tier"], fontsize : scale/4, color : brightcolor, newx : x+tierlabel.getBounds().width, newy : y});
@@ -564,7 +570,6 @@ project.Pokedex.prototype = {
       stroke: 0
     };
 
-
     pokemoncontainer = this.add.group();
     pokemonname = game.add.text(0, 0, '', textstyle);
     tierlabel = game.add.text(0, 0, '', textstyle);
@@ -622,10 +627,7 @@ project.Pokedex.prototype = {
     bg1fade = game.add.graphics(0, 0);
     bg2fade = game.add.graphics(0, 0);
 
-    pokemonsprite = game.add.sprite(0, 0, 'dexspritesheet', 0);
-
     pokemoncontainer.addChild(pokemonname);
-    pokemoncontainer.addChild(pokemonsprite);
     pokemoncontainer.addChild(tierlabel);
     pokemoncontainer.addChild(tier);
     pokemoncontainer.addChild(type2bg);

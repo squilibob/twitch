@@ -34,18 +34,19 @@ project.Raffle.prototype = {
     lastraffleuser = person;
   },
   rollraffle: function(){
+    spinspeed = 200;
     spinslow += 1;
   },
   enterraffle: function() {
     if (team_name) {
       if (teams[team_name]) {
-        socket.emit('set current team', game.storage.getItem("id"), team_name);
-        socket.emit('enter raffle', game.storage.getItem("id"), cards[0].poke, team_name);
+        socket.emit('set current team', game.storage.getItem("id"), team_name, teams[team_name]);
+        socket.emit('enter raffle', game.storage.getItem("id"), cards[0].poke, team_name, teams[team_name]);
       }
     }
   },
   leaveraffle: function() {
-    if (team_name) socket.emit('leave raffle', game.storage.getItem("id"), 0, '', team_name);
+    if (team_name) socket.emit('leave raffle', game.storage.getItem("id"), 0, '');
   },
   clearraffle: function() {
     socket.emit('clear raffle');
@@ -297,8 +298,16 @@ project.Raffle.prototype = {
               usersraffle.push(fullraffle[user]);
             }
           }
-          contextthis.fillraffle(fullraffle);
-          contextthis.fillchart(fullraffle);
+          contextthis.fillraffle(usersraffle);
+          contextthis.fillchart(usersraffle);
+          game.storage.setItem("participants", JSON.stringify(usersraffle));
+          if (Presets.externalteams) {
+            // game.storage.setItem("externalteams", false);
+            for (member in fullraffle) {
+                if (fullraffle[member].winner)
+                    game.storage.setItem("externalteams", JSON.stringify({team: fullraffle[member].team, team_name: fullraffle[member].team_name}));
+            }
+        }
       });
 
       socket.emit('send raffle');

@@ -31,7 +31,6 @@ var chatcontainer = document.getElementById('chat'),
 
 	var commandlist = {
 		'!battle' : ' Viewer Battles: put your 3ds FC in test server http://192.241.226.10/ ',
-		'raffle' : ' to enter the raffle put your 3ds FC in test server http://192.241.226.10/ ',
 		'!ship' : 'I ship me with someone. It is now canon!',
 		'disable music': 'this code NTAW-WWWW-WW2Y-M2PT in Vs Recorder',
 		'check level': 'http://mikuia.tv/levels/squilibob',
@@ -44,7 +43,8 @@ var chatcontainer = document.getElementById('chat'),
 		'weak': '',
 		'resist': '',
 		'strong': '',
-		'effective': ''
+		'effective': '',
+		'!raffle' : ''
 	};
 
 function dehash(channel) {
@@ -335,7 +335,7 @@ function handleChat(channel, user, message, self) {
 		var question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which'];//'who ', 'why ', 'did ',
 		var containsquestion = false;
 		if (message.toLowerCase().indexOf('!raid') >= 0) if(user.username == dehash(channel)) self = true;
-		if (self == true)	{
+		if (self == true || user["message-type"] == 'whisper')	{
 			if (message.toLowerCase().indexOf('!raid') >= 0) {
 				var target = message.slice(message.toLowerCase().indexOf('!raid')).split(' ');
 				target = target[1];
@@ -455,6 +455,13 @@ function handleChat(channel, user, message, self) {
 				if (exists) {
 					// if (checkDelay(channel,command[0],10)) {
 					// 	setDelay(channel, command[0]);
+					if (command[0] == '!raffle'){
+						response = 'In the raffle: ';
+						var participants = (JSON.parse(localStorage.getItem("participants")));//.join(', ');
+						for (person in participants)
+							if (participants[person].entered) response = response + participants[person].id;
+					console.log(response);
+					}
 					if (containsquestion == true) if (command[0] == 'weak'){
 						message.split(' ').forEach((weak, index) => {
 							var list = weakTo(weak);
@@ -652,6 +659,7 @@ function putChat(chan, user, message, self, avatar, image) {
 		setTimeout(function() {
 			chatLine.dataset.faded = '';
 			chatMessage.dataset.faded = '';
+			// chatMessage.style.opacity = 1;
 			chatAvatar.dataset.faded = '';
 			chatName.dataset.faded = '';
 			chatName.style.color = '#ffffff';
@@ -853,6 +861,9 @@ socket.on('receive badge', function(username, badge) {
 // 	}
 // 	replyText = Tiers[TeamTier] + replyText;
 // 	if (total > 21) submitchat(replyText);
+// });
+// socket.on('receive raffle', function(current) {
+// 	raffleresult = current;
 // });
 
 socket.on('raffle winner', function(person) {

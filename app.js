@@ -296,7 +296,6 @@ io.on('connection', function(socket){
 
 	socket.on('set current team', function(name, payload){
 		name = name.toLowerCase();
-		console.log(payload, name);
 		// r.db('Users').table('Users').get(name).update({"teams" : payload})
 		r.db('Users').table('Users').get(name).replace(function (row) {
 		    return row
@@ -314,7 +313,6 @@ io.on('connection', function(socket){
 
 	socket.on('save user pokes', function(name, payload){
 		name = name.toLowerCase();
-		console.log(payload, name);
 		// r.db('Users').table('Users').get(name).update({"teams" : payload})
 		r.db('Users').table('Users').get(name).replace(function (row) {
 		    return row
@@ -343,12 +341,12 @@ io.on('connection', function(socket){
 		rafflewinner(person);
 	});
 
-	socket.on('enter raffle', function(username, displayicon, team_name) {
-		raffleChangeUser(username.toLowerCase(), 12, true, displayicon, team_name);
+	socket.on('enter raffle', function(username, displayicon, team_name, team) {
+		raffleChangeUser(username.toLowerCase(), 12, true, displayicon, team_name, team);
 	});
 
 	socket.on('leave raffle', function(username, displayicon, team_name) {
-		raffleChangeUser(username.toLowerCase(), 12, false, displayicon, team_name);
+		raffleChangeUser(username.toLowerCase(), 12, false, displayicon, '', [0]);
 	});
 
 	socket.on('clear raffle', function() {
@@ -457,16 +455,16 @@ function sendUserPokes (username) {
 			});
 	}
 
-	function raffleChangeUser(username, defaultchance, entered, displayicon, team_name){
+	function raffleChangeUser(username, defaultchance, entered, displayicon, team_name, team){
 		r.db('Users').table('Raffle').get(username)
 		.run(conn, function(err, result) {
 			if (err) throw err;
 			if (result) {
 				if (result.errors) console.log(result.first_error);
-				else modifyRaffleUser(username, result.chance, entered, displayicon);
+				else modifyRaffleUser(username, result.chance, entered, displayicon, team_name, team);
 			}
 			else {
-				modifyRaffleUser(username, defaultchance, entered, displayicon);
+				modifyRaffleUser(username, defaultchance, entered, displayicon, team_name, team);
 			}
 		});
 	}
@@ -479,7 +477,7 @@ function sendUserPokes (username) {
 				if (result.errors) console.log(result.first_error);
 				else {
 					sendUserPokes (result.id);
-					r.db('Users').table('Raffle').get(result.id).replace({id: result.id, chance: 1, entered: false, displayicon: result.displayicon, winner: true})
+					r.db('Users').table('Raffle').get(result.id).update({id: result.id, chance: 1, entered: false, displayicon: result.displayicon, winner: true})
 					.run(conn, function(err, result) {
 						if (err) throw err;
 						if (result.errors) console.log(result.first_error);
@@ -487,7 +485,7 @@ function sendUserPokes (username) {
 						.run(conn, function(err, cursor) {
 							cursor.toArray(function(err, result) {
 								for (loser in result)
-								r.db('Users').table('Raffle').get(result[loser].id).update({winner: false, chance: result[loser].chance * 2}).run(conn, function(err, temp) {
+								r.db('Users').table('Raffle').get(result[loser].id).update({winner: false, chance: result[loser].chance *  result[loser].entered ? 2 : 1}).run(conn, function(err, temp) {
 									if (err) throw err;
 								});
 							});
@@ -499,8 +497,15 @@ function sendUserPokes (username) {
 		});
 	}
 
-	 function modifyRaffleUser(username, chance, entered, displayicon) {
-		r.db('Users').table('Raffle').get(username).replace({id: username, chance: chance, entered: entered, displayicon:displayicon})
+	 function modifyRaffleUser(username, chance, entered, displayicon, team_name, team) {
+		r.db('Users').table('Raffle').get(username).replace({
+			id: username,
+			chance: chance,
+			entered: entered,
+			displayicon:displayicon,
+			team_name: team_name,
+			team: team
+		})
 		.run(conn, function(err, result) {
 			if (err) throw err;
 			if (result.errors) console.log(result.first_error);

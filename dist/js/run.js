@@ -114,7 +114,6 @@ project.Init.prototype = {
       this.populatetypechart();
       this.populatedata();
     }
-
       // var userJSON = game.cache.getJSON('userJSON');
       // localStorage.setItem('twitchlogo', userJSON.logo);
   },
