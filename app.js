@@ -484,10 +484,12 @@ function sendUserPokes (username) {
 						r.db('Users').table('Raffle').filter(r.row('id').ne(username))
 						.run(conn, function(err, cursor) {
 							cursor.toArray(function(err, result) {
-								for (loser in result)
-								r.db('Users').table('Raffle').get(result[loser].id).update({winner: false, chance: result[loser].chance *  result[loser].entered ? 2 : 1}).run(conn, function(err, temp) {
-									if (err) throw err;
-								});
+								for (loser in result){
+									var chance  = result[loser].entered ? 2 : 1;
+									r.db('Users').table('Raffle').get(result[loser].id).update({winner: false, chance: chance*2}).run(conn, function(err, temp) {
+										if (err) throw err;
+									});
+								}
 							});
 						});
 						sendRaffleUpdate();

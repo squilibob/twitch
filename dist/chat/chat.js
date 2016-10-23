@@ -301,6 +301,8 @@ function effective(type) {
 }
 
 function handleChat(channel, user, message, self) {
+	if (user["message-type"] != 'chat' && user["message-type"] != 'action') return false;
+
 	var chan = dehash(channel),
 	image,
 	response,
@@ -335,7 +337,7 @@ function handleChat(channel, user, message, self) {
 		var question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which'];//'who ', 'why ', 'did ',
 		var containsquestion = false;
 		if (message.toLowerCase().indexOf('!raid') >= 0) if(user.username == dehash(channel)) self = true;
-		if (self == true || user["message-type"] == 'whisper')	{
+		if (self == true)	{
 			if (message.toLowerCase().indexOf('!raid') >= 0) {
 				var target = message.slice(message.toLowerCase().indexOf('!raid')).split(' ');
 				target = target[1];
@@ -453,14 +455,18 @@ function handleChat(channel, user, message, self) {
 				}
 
 				if (exists) {
-					// if (checkDelay(channel,command[0],10)) {
-					// 	setDelay(channel, command[0]);
+					if (checkDelay(channel,command[0],10)) {
+						setDelay(channel, command[0]);
 					if (command[0] == '!raffle'){
 						response = 'In the raffle: ';
 						var participants = (JSON.parse(localStorage.getItem("participants")));//.join(', ');
-						for (person in participants)
-							if (participants[person].entered) response = response + participants[person].id;
-					console.log(response);
+						var totalraffle = 0;
+						for (person in participants){
+							totalraffle += participants[person].chance;
+						}
+						for (person in participants){
+							if (participants[person].entered) response = response + participants[person].id + ' (' + Math.floor(participants[person].chance/totalraffle*10000)/100 + '%) ';
+						}
 					}
 					if (containsquestion == true) if (command[0] == 'weak'){
 						message.split(' ').forEach((weak, index) => {
@@ -533,6 +539,7 @@ function handleChat(channel, user, message, self) {
 						if (reply != message && reply != '') response = reply;
 
 				}
+			}
 			}
 		}
 		putChat(channel, user, message, self, useravatars[user.username], image);

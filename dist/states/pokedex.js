@@ -108,7 +108,6 @@ project.Pokedex.prototype = {
       if (Presets.externalteams) {
         if (game.storage.getItem("externalteams")) {
           winner = JSON.parse(game.storage.getItem("externalteams"));
-          console.log(winner);
           team_to_rate = winner.team;
         }
       };
@@ -215,7 +214,7 @@ project.Pokedex.prototype = {
     },
     submit: function(){
       if (winner) socket.emit('update leaderboard',  {
-          "id": lastraffleuser ? lastraffleuser : game.storage.getItem("id"),
+          "id": lastraffleuser ? lastraffleuser : ' ',
           "score": this.total(),
           "teamname": winner.team_name,
           "team": winner.team

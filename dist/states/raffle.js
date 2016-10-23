@@ -28,10 +28,10 @@ project.Raffle.prototype = {
       game.load.spritesheet('playersprite', playersprite.src, playersprite.x, playersprite.y, maxpokes*4);
     },
   winraffle: function(person){
+    lastraffleuser = person;
     socket.emit('won raffle', person);
     // socket.emit('request user pokes', person);
     socket.emit('request user fc', person);
-    lastraffleuser = person;
   },
   rollraffle: function(){
     spinspeed = 200;
@@ -53,13 +53,11 @@ project.Raffle.prototype = {
     this.respin();
   },
   respin: function(){
-    console.log('restarting');
     spinspeed = 24;
   },
   update: function() {
     winnercircle.children[3].setText(previouswinner);
 
-    displaygroup.subAll('x', spinspeed);
     if (spinspeed > 0) {
       spinspeed -= spinslow;
       if (spinspeed == 0) {
@@ -67,19 +65,24 @@ project.Raffle.prototype = {
         spinslow = 0;
       };
 
-    if (displaygroup.children.length > 1) {
-      var showcurrent = Math.floor(displaygroup.children.length / 2);
-      spinuser.frame = displaygroup.children[showcurrent].frame;
-      spinusername.setText(displaygroup.children[showcurrent].username);
-    }
+    for (var movement = 0; movement < spinspeed; movement++){
 
-    if (displaygroup.children.length > 2)
-    if (displaygroup.children[0])
-      for (member in displaygroup.children) {
-        if (displaygroup.children[member].x < -playersprite.x) {
-          queuegroup.addChild(displaygroup.children[member]);
-          displaygroup.addChild(queuegroup.children[0]);
-          displaygroup.children[displaygroup.children.length-1].x = displaygroup.children[displaygroup.children.length-2].x + displaygroup.children[displaygroup.children.length-1].width;
+      displaygroup.subAll('x', 1);
+
+      if (displaygroup.children.length > 1) {
+        var showcurrent = Math.floor(displaygroup.children.length / 2);
+        spinuser.frame = displaygroup.children[showcurrent].frame;
+        spinusername.setText(displaygroup.children[showcurrent].username);
+      }
+
+      if (displaygroup.children.length > 2)
+      if (displaygroup.children[0])
+        for (member in displaygroup.children) {
+          if (displaygroup.children[member].x < -playersprite.x) {
+            queuegroup.addChild(displaygroup.children[member]);
+            displaygroup.addChild(queuegroup.children[0]);
+            displaygroup.children[displaygroup.children.length-1].x = displaygroup.children[displaygroup.children.length-2].x + displaygroup.children[displaygroup.children.length-1].width;
+          }
         }
       }
     }
