@@ -4,7 +4,7 @@ const Presets = {
   bgcolor: '#1c0f0c',
   selectedcolor: '#604040',
   font: 'Extra-Cool',
-  fontsize: 24,//window.innerWidth/75,
+  fontsize: 24,
   fill: '#ffffff',
   pressedstate: 0xffffff,
   normalstate: 0x888888,

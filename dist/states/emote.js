@@ -1,5 +1,10 @@
 project.Emote = function(game) {
   var
+  gameTimer,
+  startTime,
+  totalTime,
+  timeElapsed,
+  canSend,
   menu;
 };
 
@@ -9,7 +14,23 @@ project.Emote.prototype = {
       game.load.spritesheet('pokemotevulpix', '/img/pokemotions.png', 206, 236, 10);
     },
     sendemote: function(picture){
-      socket.emit('send emote', {message:game.storage.getItem('id')+'s pokemotion', picture:picture.frame});
+      console.log(canSend);
+      if (canSend == true){
+        canSend = false;
+        socket.emit('send emote', {message:game.storage.getItem('id')+'s pokemotion', picture:picture.frame});
+      }
+    },
+    updateTimer: function(){
+        var currentTime = new Date();
+        var timeDifference = startTime.getTime() - currentTime.getTime();
+        timeElapsed = Math.abs(timeDifference / 1000);
+    },
+    update: function () {
+      if(timeElapsed >= totalTime){
+          canSend = true;
+          timeElapsed = 0;
+          startTime = new Date();
+      }
     },
     create: function(){
       game.stage.backgroundColor = Presets.bgcolor;
@@ -17,6 +38,16 @@ project.Emote.prototype = {
       menu = this.add.group();
       menu.addMultiple(menubuttons);
       scaleup(menu);
+
+      canSend = true;
+      startTime = new Date();
+      totalTime = 12;
+      timeElapsed = 0;
+
+      var me = this;
+      gameTimer = game.time.events.loop(100, function(){
+          me.updateTimer();
+      });
 
       poke = [];
       var width =206+Presets.padding;
