@@ -20,6 +20,7 @@ var chatcontainer = document.getElementById('chat'),
 	defaultColors = ['rgb(255, 0, 0)','rgb(0, 0, 255)','rgb(0, 128, 0)','rgb(178, 34, 34)','rgb(255, 127, 80)','rgb(154, 205, 50)','rgb(255, 69, 0)','rgb(46, 139, 87)','rgb(218, 165, 32)','rgb(210, 105, 30)','rgb(95, 158, 160)','rgb(30, 144, 255)','rgb(255, 105, 180)','rgb(138, 43, 226)','rgb(0, 255, 127)'],
 	randomColorsChosen = {},
 	client = new tmi.client(clientOptions),
+	followers = [],
 	viewers = [],
 	started,
 	total = 0,
@@ -300,6 +301,67 @@ function effective(type) {
 	return effectiveness;
 }
 
+function checkfollowers (username, hidenotify, url) {
+	var maxcursor = 100;
+	var cursor = url ? url : 'https://api.twitch.tv/kraken/channels/'+username+'/follows?limit=100';
+	client.api({
+		url: cursor+'&client_id='+clientid
+	}, function(err, res, body) {
+		if (body) {
+			if (body.follows.length == maxcursor) checkfollowers(username, hidenotify, body._links.next);
+			for (viewer in body.follows)
+				if (followers.indexOf(body.follows[viewer].user.name) < 0) {
+					followers.push(body.follows[viewer].user.name);
+					if (!hidenotify) chatNotice(body.follows[viewer].user.name + " is now following", 10000, 1);
+				}
+		}
+	});
+}
+function displaystreamer (username, banner, followers, views, url) {
+	if (followers < 12) return false;
+	var chatLine = document.createElement('li');
+	var chatLineBanner = document.createElement('li');
+	var chatBanner = document.createElement('img');
+	var chatStreamerName = document.createElement('div');
+	var chatStreamerFollowers = document.createElement('div');
+	var chatStreamerViews = document.createElement('div');
+	chatLine.ondblclick = function() {
+		this.className = 'chat-kill';
+		setTimeout(this.remove(), 2000);
+	};
+	chatLine.className = 'chat-line';
+	chatStreamerName.className = 'chat-shoutout';
+	chatStreamerFollowers.className = 'chat-shoutout';
+	chatStreamerViews.className = 'chat-shoutout';
+	chatLineBanner.appendChild(chatBanner);
+	chatBanner.className = 'chat-image';
+	chatBanner.src = banner;
+	chatStreamerName.innerHTML = username;
+	chatStreamerFollowers.innerHTML = followers + ' followers';
+	chatStreamerViews.innerHTML = views + ' views';
+	chatLine.appendChild(chatStreamerName);
+	chatLine.appendChild(chatStreamerFollowers);
+	chatLine.appendChild(chatStreamerViews);
+	chatBanner.onload = function () {
+		chat.appendChild(chatLineBanner);
+		chat.appendChild(chatLine);
+		client.say(channels[0], 'check out ' + username + ' at ' + url);
+	}
+	console.log(chatLine);
+}
+
+
+function checkstreamer (username) {
+	client.api({
+		url: 'https://api.twitch.tv/kraken/channels/'+username+'?client_id='+clientid
+	}, function(err, res, body) {
+		if (body) {
+			console.log(body);
+			displaystreamer(username, body.profile_banner ? body.profile_banner : body.logo, body.followers, body.views, body.url);
+		}
+	});
+}
+
 function handleChat(channel, user, message, self) {
 	if (user["message-type"] != 'chat' && user["message-type"] != 'action') return false;
 
@@ -311,6 +373,8 @@ function handleChat(channel, user, message, self) {
 	if (useravatars[user.username] == undefined) {
 		socket.emit('request avatar', channel, user, message, self);
 		socket.emit('request badge', user);
+		// checkfollowers(user.username);
+		checkstreamer(user.username);
 	}
 	else {
 		if (useravatars[user.username] < 0) {
@@ -804,6 +868,7 @@ client.addListener('connectfail', function () {
 client.addListener('connected', function (address, port) {
 		if(showConnectionNotices) chatNotice('Connected', 1000, -2, 'chat-connection-good-connected');
 		joinAccounced = [];
+		checkfollowers(dehash(channels[0]), true);
 	});
 client.addListener('disconnected', function (reason) {
 		if(showConnectionNotices) chatNotice('Disconnected: ' + (reason || ''), 3000, 2, 'chat-connection-bad-disconnected');
