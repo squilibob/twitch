@@ -75,12 +75,10 @@ connect().then((c) => {
 });
 
 io.on('connection', function(socket){
-	console.log('a user connected', socket.id);
 	socket.on('disconnect', function(){
 		console.log('user disconnected', socket.id);
 	});
 	socket.on('request to connect', function(msg){
-		console.log('receiving...');
 		if (msg.id != '' && msg.id != undefined && msg.pokevalues[0] > 0 && msg.pokevalues[1] > 0 && msg.pokevalues[2] > 0) {
 			console.log('user: ' + msg.id, 'connecting...');
 			r.table('Users').filter(r.row('id').eq(msg.id.toLowerCase()))
@@ -134,7 +132,7 @@ io.on('connection', function(socket){
 	}
 
 	socket.on('new user', function(payload){
-		createanewuser(payload)
+		createanewuser(payload);
 	});
 	socket.on ("Ask for pokedex", function(){
 		r.db('Users').table('Pokedex')
@@ -329,7 +327,6 @@ io.on('connection', function(socket){
 
 	socket.on('validate fc', function(username) {
 		var starter = [191, 298, 401, 010, 013, 265, 280, 129, 349, 664, 011, 014, 172, 266, 268, 174, 194, 236, 665, 161, 173, 261, 270, 273, 440, 412];
-		console.log(username);
 		r.db('Users').table('Users').get(username).update({cards: [{'poke': starter[Math.floor(Math.random()*starter.length)], 'level': 1}], validated: true})
 		.run(conn, function(err, result) {
 			if (err) throw err;
@@ -372,9 +369,6 @@ io.on('connection', function(socket){
 		.replace(entry).run(conn, function(err, result) {
 			if (err) throw err;
 			if (result.errors) console.log(result.first_error);
-			else {
-				console.log('added to leaderboard', entry);
-			}
 		});
 	});
 
@@ -416,7 +410,6 @@ function sendUserPokes (username) {
 				cursor.toArray(function(err, result) {
 					if (err || result[0] == undefined || result == []) io.emit('user not found');
 					else {
-						console.log(result[0]);
 						io.emit('user pokes', active, result[0][active]);
 					}
 				});

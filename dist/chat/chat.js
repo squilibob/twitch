@@ -1,6 +1,7 @@
 function chat () {
 // const chatwidth = 400;
 const chatheight= 720;
+const minfollowerstoshoutout = 100;
 const defaultavatar = 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png';
 
 var useravatars = {},
@@ -23,7 +24,6 @@ var chatcontainer = document.getElementById('chat'),
 	followers = [],
 	viewers = [],
 	started,
-	total = 0,
 	cmdTimestamps = {},
 	stockavatar = [],
 	chat = document.createElement('ul');
@@ -172,28 +172,19 @@ function badges(chan, user, isBot, custom) {
 	return chatBadges;
 }
 
-// function getChatlist(chan) {
-// 	channel = dehash(chan);
-// 	client.api({
-// 	    url: 'http://tmi.twitch.tv/group/user/'+channel+'/chatters'
-// 	}, function(err, res, body) {
-// 	    return { viewers: body.data.chatters.viewers, total: body.data.chatters.viewers.length } ;
-// 	});
-// }
-
 function getViewers(chan) {
 	channel = dehash(chan);
-	client.api({url: 'http://tmi.twitch.tv/group/user/'+channel+'/chatters'+'?client_id='+clientid}, function(err, res, body) {
+	client.api({url: 'http://tmi.twitch.tv/group/user/'+channel+'/chatters'+clientid}, function(err, res, body) {
 			// document.getElementById('viewers').value = typeof(body.data.chatter_count) == 'number' ? body.data.chatter_count : 0;
 			viewers = body.data.chatters.viewers;
-			total = body.data.chatters.viewers.length;
+			console.log(body, viewers);
 	});
 }
 
 function getStart(chan) {
 	channel = dehash(chan);
 	client.api({
-			url: 'https://api.twitch.tv/kraken/streams/'+channel+'?client_id='+clientid
+			url: 'https://api.twitch.tv/kraken/streams/'+channel+clientid
 	}, function(err, res, body) {
 		if (body.stream) {
 				started = new Date(body.stream.created_at);
@@ -305,7 +296,7 @@ function checkfollowers (username, hidenotify, url) {
 	var maxcursor = 100;
 	var cursor = url ? url : 'https://api.twitch.tv/kraken/channels/'+username+'/follows?limit=100';
 	client.api({
-		url: cursor+'&client_id='+clientid
+		url: cursor+'&'+clientid.substr(1)
 	}, function(err, res, body) {
 		if (body) {
 			if (body.follows.length == maxcursor) checkfollowers(username, hidenotify, body._links.next);
@@ -316,9 +307,10 @@ function checkfollowers (username, hidenotify, url) {
 				}
 		}
 	});
+
 }
 function displaystreamer (username, banner, followers, views, url) {
-	if (followers < 12) return false;
+	if (followers < minfollowerstoshoutout) return false;
 	var chatLine = document.createElement('li');
 	var chatLineBanner = document.createElement('li');
 	var chatBanner = document.createElement('img');
@@ -353,10 +345,9 @@ function displaystreamer (username, banner, followers, views, url) {
 
 function checkstreamer (username) {
 	client.api({
-		url: 'https://api.twitch.tv/kraken/channels/'+username+'?client_id='+clientid
+		url: 'https://api.twitch.tv/kraken/channels/'+username+clientid
 	}, function(err, res, body) {
 		if (body) {
-			console.log(body);
 			displaystreamer(username, body.profile_banner ? body.profile_banner : body.logo, body.followers, body.views, body.url);
 		}
 	});
@@ -373,14 +364,13 @@ function handleChat(channel, user, message, self) {
 	if (useravatars[user.username] == undefined) {
 		socket.emit('request avatar', channel, user, message, self);
 		socket.emit('request badge', user);
-		// checkfollowers(user.username);
-		checkstreamer(user.username);
+		if (user.username != chan && !self) checkstreamer(user.username);
 	}
 	else {
 		if (useravatars[user.username] < 0) {
 			if (typeof useravatars[user.username] == "number")
 				client.api({
-					url: 'https://api.twitch.tv/kraken/users/'+user.username+'?client_id='+clientid
+					url: 'https://api.twitch.tv/kraken/users/'+user.username+clientid
 				}, function(err, res, body) {
 					if (body.logo)
 						checkImageExists(body.logo, function(existsImage) {
@@ -394,7 +384,7 @@ function handleChat(channel, user, message, self) {
 
 		var substitutions = {
 			' me ' : ' ' +  user.username +' ',
-			'someone' : viewers[Math.ceil(Math.random()*total)-1]
+			'someone' : viewers[Math.ceil(Math.random()*viewers.length)-1]
 			// number random
 			// link to someone's twitch stream
 		};
@@ -835,7 +825,11 @@ function hosting(channel, target, total, unhost) {
 }
 
 client.on("hosted", function (channel, username, total) {
+
 	var chan = dehash(channel);
+	// client.api({url: 'https://tmi.twitch.tv/hosts?include_logins=1&target='+body._id+'&'+clientid.substr(1)}, function(err, res, repl) {
+	// 		console.log(repl);
+	// });
 	chan = capitalize(chan);
 	if (typeof(total) == 'number')
 	chatNotice(username + ' is now hosting ' + chan + ' for ' + total + ' viewer' + (total !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes');
@@ -947,4 +941,5 @@ socket.on('someone signed up', function(name){
 });
 
 // window.setInterval(getViewers,24000,channels[0]);
+window.setInterval(checkfollowers,180000,dehash(channels[0]));
 }
