@@ -46,8 +46,8 @@ const preloadscripts = [
   const pokedexoptions = {
     scoring: true,
     dex : {
-      x : 0,
-      y : 0,
+      x : 8,
+      y : 8,
     },
     team : {
       x : 1002,

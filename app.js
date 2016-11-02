@@ -6,6 +6,8 @@ var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var r = require('rethinkdb');
+var pokedex;
+var typechart;
 
 app.set('port', (process.env.PORT || 80));
 
@@ -79,7 +81,8 @@ io.on('connection', function(socket){
 		console.log('user disconnected', socket.id);
 	});
 	socket.on('request to connect', function(msg){
-		if (msg.id != '' && msg.id != undefined && msg.pokevalues[0] > 0 && msg.pokevalues[1] > 0 && msg.pokevalues[2] > 0) {
+		// if (msg.id != '' && msg.id != undefined && msg.pokevalues[0] > 0 && msg.pokevalues[1] > 0 && msg.pokevalues[2] > 0) {
+		if (msg.id != '' && msg.id != undefined) {
 			console.log('user: ' + msg.id, 'connecting...');
 			r.table('Users').filter(r.row('id').eq(msg.id.toLowerCase()))
 			.run(conn, function(err, cursor) {
@@ -87,10 +90,10 @@ io.on('connection', function(socket){
 				else cursor.toArray(function(err, result) {
 					if (err || result[0] == undefined || result == []) createanewuser(msg);
 					else {
-						if (result[0].pokevalues[0] == msg.pokevalues[0] && result[0].pokevalues[1] == msg.pokevalues[1] && result[0].pokevalues[2] == msg.pokevalues[2]) {
+						// if (result[0].pokevalues[0] == msg.pokevalues[0] && result[0].pokevalues[1] == msg.pokevalues[1] && result[0].pokevalues[2] == msg.pokevalues[2]) {
 							socket.emit('login accepted',result[0]);
-						}
-						else socket.emit('wrong password');
+						// }
+						// else socket.emit('wrong password');
 					}
 				});
 			});
@@ -108,7 +111,8 @@ io.on('connection', function(socket){
 
 	function createanewuser(payload) {
 		var starter = [198, 313, 314, 546, 661, 300, 431, 509, 677, 52, 352, 335, 619, 86, 283, 211, 296, 615, 165 , 167, 88];
-		if (payload.id != '' && payload.id != undefined && payload.pokevalues[0] > 0 && payload.pokevalues[1] > 0 && payload.pokevalues[2] > 0 && payload.fc[0] >0 && payload.fc[0] < 10000 && payload.fc[1] >0 && payload.fc[1] < 10000  && payload.fc[2] >0 && payload.fc[2] < 10000  && payload.ign != '' && payload.ign != undefined) {
+		// if (payload.id != '' && payload.id != undefined && payload.pokevalues[0] > 0 && payload.pokevalues[1] > 0 && payload.pokevalues[2] > 0 && payload.fc[0] >0 && payload.fc[0] < 10000 && payload.fc[1] >0 && payload.fc[1] < 10000  && payload.fc[2] >0 && payload.fc[2] < 10000  && payload.ign != '' && payload.ign != undefined) {
+		if (payload.id != '' && payload.id != undefined && payload.fc[0] >0 && payload.fc[0] < 10000 && payload.fc[1] >0 && payload.fc[1] < 10000  && payload.fc[2] >0 && payload.fc[2] < 10000  && payload.ign != '' && payload.ign != undefined) {
 			// payload.id = payload.id.split(' ')[0];
 			payload.id = payload.id.trim();
 			r.table('Users').insert(payload).run(conn, function(err, result) {
@@ -134,17 +138,20 @@ io.on('connection', function(socket){
 	socket.on('new user', function(payload){
 		createanewuser(payload);
 	});
-	socket.on ("Ask for pokedex", function(){
-		r.db('Users').table('Pokedex')
-			.run(conn, function(err, cursor) {
-				cursor.toArray(function(err, result) {
-					if (err || result[0] == undefined || result == []) socket.emit('dex not found');
-					else {
-						socket.emit("Receive pokedex" , result);
-					}
-				});
-			});
 
+	socket.on ("Ask for pokedex", function(){
+		if (!pokedex)
+			r.db('Users').table('Pokedex')
+				.run(conn, function(err, cursor) {
+					cursor.toArray(function(err, result) {
+						if (err || result[0] == undefined || result == []) socket.emit('dex not found');
+						else {
+							socket.emit("Receive pokedex", result);
+							pokedex = result;
+						}
+					});
+				});
+		else socket.emit("Receive pokedex", pokedex);
 	});
 	// socket.on ("Ask for pokedex", function(number){
 	// 	number = parseInt(number);
@@ -155,16 +162,18 @@ io.on('connection', function(socket){
 	// 		});
 	// 	});
 	socket.on ("Ask for typechart", function(){
+	  if (!typechart)
 		r.db('Users').table('TypeChart')
 			.run(conn, function(err, cursor) {
 				cursor.toArray(function(err, result) {
 					if (err || result[0] == undefined || result == []) socket.emit('typechart not found');
 					else {
-						socket.emit("Receive typechart" , result);
+						socket.emit("Receive typechart", result);
+						typechart = result;
 					}
 				});
 			});
-
+	  else socket.emit("Receive typechart", typechart);
 	});
 	// socket.on ("Ask for typechart", function(number){
 	// 	r.db('Users').table('TypeChart').nth(number).run(conn, function(err, result) {

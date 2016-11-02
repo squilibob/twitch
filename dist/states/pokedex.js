@@ -57,6 +57,7 @@ project.Pokedex = function(game) {
   evolve,
   loclabel,
   loc,
+  bg,
   bg1fade,
   bg2fade,
   bonusgroup,
@@ -178,6 +179,7 @@ project.Pokedex.prototype = {
       }
       if (can_change) {
         // pokemonsprite.visible = !pokemonsprite.visible;
+        bgcontainer.visible = !bgcontainer.visible
         pokemoncontainer.visible = !pokemoncontainer.visible;
         statcontainer.visible = !statcontainer.visible;
         infocontainer.visible = !infocontainer.visible;
@@ -204,12 +206,13 @@ project.Pokedex.prototype = {
       statvaluelabel[statcount].setText(statvalue[statcount]);
     },
     gradient: function(options){
-      var myBitmap = game.add.bitmapData(0, 0);
-      var grd=myBitmap.context.createLinearGradient(0,0,options.length,0);
+      var myBitmap = game.add.bitmapData(options.length, options.height);
+      var grd=myBitmap.context.createLinearGradient(0,0,options.length,1);
       grd.addColorStop(options.balance[0],hexstring(options.start));
       grd.addColorStop(options.balance[1],hexstring(options.end));
       myBitmap.context.fillStyle=grd;
       myBitmap.context.fillRect(0,0,options.length,options.height);
+      console.log(grd, myBitmap);
       return myBitmap;
     },
     submit: function(){
@@ -222,6 +225,20 @@ project.Pokedex.prototype = {
     },
     change: function(which){
       if (!pokemoncontainer.visible) return this;
+
+      var color = {
+        Green: 0x00ff00,
+        Red: 0xff0000,
+        Blue: 0x0000ff,
+        White: 0xffffff,
+        Brown: 0xaf7500,
+        Yellow: 0xffff00,
+        Purple: 0x7f00ff,
+        Pink: 0xff00ff,
+        Gray: 0xafafaf,
+        Black: 0xafafaf
+      }
+
       thepokemon = which.frame;
       var dexinfo = pokedex[thepokemon];
       var alphacolor = 1;
@@ -232,8 +249,10 @@ project.Pokedex.prototype = {
       var softcolor = 0x7f7f7f;
       var brightcolor = 0xffffff;
 
-      var x = pokedexoptions.dex.x;
-      var y = pokedexoptions.dex.y;
+      pokemoncontainer.x = pokedexoptions.dex.x;
+      pokemoncontainer.y = pokedexoptions.dex.y;
+      var x = 0;
+      var y = 0;
 
       pokemonname = this.text({obj : pokemonname, text : dexinfo["Pokemon"].toLowerCase(), fontsize : scale/4, color : brightcolor, newx : x+textoffset, newy : y});
       y += pokemonname.getBounds().height;
@@ -270,8 +289,10 @@ project.Pokedex.prototype = {
       //    // this.setState({maxstatvalue: statmax}) ;
       //   // this.setState({statvalue: statmax});
       y += Math.floor(scale/4);
-      x = pokedexoptions.dex.x;
-      y += Math.floor(scale/4);
+      infocontainer.x = pokedexoptions.dex.x;
+      infocontainer.y = pokemoncontainer.getBounds().y + pokemoncontainer.getBounds().height;
+      x = 0;
+      y = 0;
       weaklabel = this.text({obj : weaklabel, text : "weak to ", fontsize : scale/4, color : softcolor, newx : x, newy : y+textoffset});
       x += scale;
       var weaktoindex = -1;
@@ -351,6 +372,11 @@ project.Pokedex.prototype = {
       // if (this.state.scrollfrequency < this.props.freq / 2)      {
       // recommendedcontainer.visible = true;
       // misccontainer.visible = false;
+      recommendedcontainer.x = pokedexoptions.dex.x;
+      recommendedcontainer.y = infocontainer.getBounds().y + infocontainer.getBounds().height;
+      x = 0;
+      y = 0;
+
       recommendedlabel = this.text({obj : recommendedlabel, text : "recommended ", fontsize : scale/4, color : brightcolor, newx : x, newy : y});
       y += Math.floor(scale/4);
       abilitylabel = this.text({obj : abilitylabel, text : "ability ", fontsize : scale/4, color : softcolor, newx : x, newy : y});
@@ -403,6 +429,11 @@ project.Pokedex.prototype = {
       // else {
       // recommendedcontainer.visible = false;
       // misccontainer.visible = true;
+      misccontainer.x = pokedexoptions.dex.x;
+      misccontainer.y = recommendedcontainer.getBounds().y + recommendedcontainer.getBounds().height;
+      x = 0;
+      y = 0;
+
       if (dexinfo["Gender"] >= 0) {
       var genderwidth = scale*2 - textoffset;
       var genderbalance = [];
@@ -411,17 +442,12 @@ project.Pokedex.prototype = {
       else genderbalance.push(0);
       if (Math.sign((50-dexinfo["Gender"])*-2) < 0 ) genderbalance.push(1-(50-dexinfo["Gender"])*2/100);
       else genderbalance.push(1);
-      // gender.clear().beginLinearGradientFill([Femalecolor, Malecolor], genderbalance, 0,0,genderwidth+2*textoffset,0).drawRect(x,y,genderwidth,scale/4);
-      // var myBitmap = game.add.bitmapData(0, 0);
-      // var grd=myBitmap.context.createLinearGradient(0,0,genderwidth,0);
-      // grd.addColorStop(0,hexstring(Femalecolor));
-      // grd.addColorStop(1,hexstring(Malecolor));
-      // myBitmap.context.fillStyle=grd;
-      // myBitmap.context.fillRect(0,0,genderwidth,scale/4);
       gender.loadTexture(this.gradient({length: genderwidth, height: scale/4, balance: genderbalance, start: Femalecolor, end: Malecolor}));
-      gender.x = x;
-      gender.y = y;
-      gender.sendToBack();
+      console.log(gender);
+      // gender.x = x;
+      // gender.y = y;
+
+      // gender.sendToBack();
 
       gender.visible = true;
       gendertext = (Math.sign((50-dexinfo["Gender"])*-2) < 0 ? "male "+(100-dexinfo["Gender"]) : "female " + dexinfo["Gender"]) + "%";
@@ -510,8 +536,11 @@ project.Pokedex.prototype = {
         loc.visible = false;
       }
 
-      x += scale;
-      y = pokedexoptions.dex.y;
+      statcontainer.x = x+scale;
+      statcontainer.y = pokedexoptions.dex.y;
+      x = 0;
+      y = 0;
+
 
       span = 2;
       var stat, statcolor;
@@ -540,6 +569,29 @@ project.Pokedex.prototype = {
       statvaluelabel[statcount] = this.text({obj: statvaluelabel[statcount], text: statvalue[statcount], fontsize: scale/4, color: statcolor, newx: statbar[statcount].getBounds().width, newy: 0});
       }
       stattotal = this.text({obj: stattotal, text: dexinfo["Attack"]+dexinfo["Defense"]+dexinfo["Sp. Attack"]+dexinfo["Sp. Defense"]+dexinfo["Speed"]+"  total", fontsize: scale/4, color: brightcolor, newx: x+textoffset, newy: y+scale/4+textoffset/2});
+      bg[2]
+      .clear()
+      .beginFill(0x000000)
+      .drawRect(pokemoncontainer.getBounds().x, pokemoncontainer.getBounds().y, infocontainer.getBounds().width >  misccontainer.getBounds().width ?  infocontainer.getBounds().width :  misccontainer.getBounds().width, pokemoncontainer.getBounds().height+infocontainer.getBounds().height+recommendedcontainer.getBounds().height+misccontainer.getBounds().height)
+      .endFill();
+      bg[1]
+      .clear()
+      .beginFill(0xffffff)
+      .drawRect(bg[2].getBounds().x-4, bg[2].getBounds().y-4, bg[2].getBounds().width+8, bg[2].getBounds().height+8)
+      .endFill();
+      bg[0].x = (bg[bg.length-1].getBounds().width-bg[bg.length-1].getBounds().x+4)/2
+      bg[0].y = (bg[bg.length-1].getBounds().height+bg[bg.length-1].getBounds().y+4)/2
+      var bordercolor = color[dexinfo.Color] || 0xffffff;
+      bg[0]
+        .clear()
+        .beginFill(bordercolor)
+        .arc(0, 0, bg[bg.length-1].getBounds().width, 0, -Math.PI/8, true)
+        .arc(0, 0, bg[bg.length-1].getBounds().width, Math.PI, Math.PI-Math.PI/8, true)
+        .arc(0, 0, bg[bg.length-1].getBounds().width, Math.PI/2, Math.PI/2-Math.PI/8, true)
+        .arc(0, 0, bg[bg.length-1].getBounds().width, Math.PI+Math.PI/2, Math.PI+Math.PI/2-Math.PI/8, true)
+        .endFill();
+        bg[0].mask = bg[1];
+
     },
   update: function(){
     for (var statcount = 0; statcount <= 5; statcount++) {
@@ -555,7 +607,7 @@ project.Pokedex.prototype = {
       }
     }
     if (pokedexoptions.scoring) totalscore.children[1].setText(this.total());
-
+    bg[0].angle+=0.4;
   },
   init: function(){
     var textstyle =  {
@@ -568,6 +620,15 @@ project.Pokedex.prototype = {
       textAlign: 'left',
       stroke: 0
     };
+
+    bgcontainer = this.add.group();
+    bg = [];
+
+    bg[0] = game.add.graphics(0, 0);
+    bg[1] = game.add.graphics(0, 0);
+    bg[2] = game.add.graphics(0, 0);
+
+    bgcontainer.addMultiple(bg);
 
     pokemoncontainer = this.add.group();
     pokemonname = game.add.text(0, 0, '', textstyle);
@@ -604,7 +665,7 @@ project.Pokedex.prototype = {
     move3 = game.add.text(0, 0, '', textstyle);
     move4 = game.add.text(0, 0, '', textstyle);
     misccontainer = this.add.group();
-    gender = game.add.sprite(0, 0, null);
+    gender = game.add.sprite(0, 0);
     genderlabel = game.add.text(0, 0, '', textstyle);
     evslabel = game.add.text(0, 0, '', textstyle);
     ev = game.add.text(0, 0, '', textstyle);
@@ -622,9 +683,6 @@ project.Pokedex.prototype = {
     evolve = game.add.text(0, 0, '', textstyle);
     loclabel = game.add.text(0, 0, '', textstyle);
     loc = game.add.text(0, 0, '', textstyle);
-
-    bg1fade = game.add.graphics(0, 0);
-    bg2fade = game.add.graphics(0, 0);
 
     pokemoncontainer.addChild(pokemonname);
     pokemoncontainer.addChild(tierlabel);

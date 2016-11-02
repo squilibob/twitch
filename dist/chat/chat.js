@@ -177,7 +177,7 @@ function getViewers(chan) {
 	client.api({url: 'http://tmi.twitch.tv/group/user/'+channel+'/chatters'+clientid}, function(err, res, body) {
 			// document.getElementById('viewers').value = typeof(body.data.chatter_count) == 'number' ? body.data.chatter_count : 0;
 			viewers = body.data.chatters.viewers;
-			console.log(body, viewers);
+			// console.log(body, viewers);
 	});
 }
 
@@ -941,5 +941,5 @@ socket.on('someone signed up', function(name){
 });
 
 // window.setInterval(getViewers,24000,channels[0]);
-window.setInterval(checkfollowers,180000,dehash(channels[0]));
+window.setInterval(checkfollowers,180000, dehash(channels[0]), false);
 }
