@@ -38,6 +38,7 @@ project.Raffle.prototype = {
     spinslow += 1;
   },
   enterraffle: function() {
+    if (!team_name) if (teams) if (teams["default"]) team_name = "default";
     if (team_name) {
       if (teams[team_name]) {
         socket.emit('set current team', game.storage.getItem("id"), team_name, teams[team_name]);
@@ -304,13 +305,12 @@ project.Raffle.prototype = {
           contextthis.fillraffle(usersraffle);
           contextthis.fillchart(usersraffle);
           game.storage.setItem("participants", JSON.stringify(usersraffle));
-          if (Presets.externalteams) {
-            // game.storage.setItem("externalteams", false);
-            for (member in fullraffle) {
-                if (fullraffle[member].winner)
-                    game.storage.setItem("externalteams", JSON.stringify({team: fullraffle[member].team, team_name: fullraffle[member].team_name}));
-            }
-        }
+          // if (Presets.externalteams) {
+          //   for (member in fullraffle) {
+          //       if (fullraffle[member].winner)
+          //           game.storage.setItem("externalteams", JSON.stringify({team: fullraffle[member].team, team_name: fullraffle[member].team_name}));
+          //   }
+          // }
       });
 
       socket.emit('send raffle');

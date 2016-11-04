@@ -12,11 +12,11 @@ if (socket.hasListeners('login accepted') == false) socket.on('login accepted', 
     game.state.start('Teams', Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
 });
 
-// if (socket.hasListeners('receive raffle') == false) socket.on('receive raffle', function(payload) {
+if (socket.hasListeners('user pokes') == false) socket.on('user pokes', function(payload) {
 //     for (winner in payload)
 //         if (winner.winner) {
-//             game.storage.setItem("externalteams", JSON.stringify(winner.team));
-//             team_name = winner.team_name;
-//             teams = winner.team;
+            game.storage.setItem("externalteams", JSON.stringify(payload));
+            team_name = payload.name;
+            // teams = winner.team;
 //         }
-// });
+});

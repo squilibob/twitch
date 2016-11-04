@@ -27,11 +27,11 @@ const preloadscripts = [
   {'Avatar': '/states/avatar'},
   {'Teams': '/states/teams'},
   {'Raffle': '/states/raffle'},
-  {'Battle': '/states/battle'},
+  // {'Battle': '/states/battle'},
   {'Vote': '/states/vote'},
   {'Emote': '/states/emote'},
-  {'Cards': '/states/cards'},
-  {'Pokedex': '/states/pokedex'},
+  // {'Cards': '/states/cards'},
+  // {'Pokedex': '/states/pokedex'},
   ];
 
   const firststate = 'Login';

@@ -45,7 +45,8 @@ var chatcontainer = document.getElementById('chat'),
 		'resist': '',
 		'strong': '',
 		'effective': '',
-		'!raffle' : ''
+		'!raffle' : '',
+		'!sign': ''
 	};
 
 function dehash(channel) {
@@ -444,6 +445,9 @@ function handleChat(channel, user, message, self) {
 				socket.emit('request avatar', chan, user, user.username + ': reloaded avatar image', self);
 				socket.emit('request badge', user);
 			}
+			if (message.toLowerCase().indexOf('!enter') >= 0)  {
+				socket.emit("manually enter raffle", user.username, Math.floor(Math.random()*719));
+			}
 			if (message.toLowerCase().indexOf('!password') >= 0)  {
 				socket.emit("resend password", user.username);
 			}
@@ -511,6 +515,35 @@ function handleChat(channel, user, message, self) {
 				if (exists) {
 					if (checkDelay(channel,command[0],10)) {
 						setDelay(channel, command[0]);
+					if (command[0] == '!sign'){
+						var fc = [];
+						var validfc = true;
+						if (message.toLowerCase().indexOf('-') >= 0) {
+							var ign;
+							var fcindex = message.indexOf('-')-4;
+							var fccode = message.substr(fcindex,14);
+							var parseign = message.substr(0, message.indexOf(fccode)) + message.substr(message.indexOf(fccode)+fccode.length);
+							parseign.trim(' ').split(' ').forEach((name, index) => {
+								if(name.indexOf('!') < 0 && name.toLowerCase() != 'fc' && name.toLowerCase() != 'ign' && name.toLowerCase() != 'name') ign = name;
+							});
+							fccode.split('-').forEach((fcnumber, index) => {
+								fc.push(fcnumber);
+							});
+							if (fc.length != 3) validfc = false;
+							for (number in fc) {
+								if (!(fc[number] > 0 && fc[number] < 10000)) validfc = false;
+							}
+							if (!ign) validfc = false;
+							payload = {
+								id: 'testuser', //user.username,
+								ign: ign,
+								fc: fc
+							}
+							if (validfc) socket.emit('new user', payload);
+							else response = fc.join('-') + ' ' + ign + ' is invalid combination of fc and ign';
+						}
+						else response = message + ' invalid please include your ign and fc';
+					}
 					if (command[0] == '!raffle'){
 						response = 'In the raffle: ';
 						var participants = (JSON.parse(localStorage.getItem("participants")));//.join(', ');
@@ -671,7 +704,7 @@ function putChat(chan, user, message, self, avatar, image) {
 	chatName.className = 'chat-name';
 	chatName.style.color = color;
 	chatName.innerHTML = user['display-name'] || name;
-	chatName.innerHTML = chatName.innerHTML.replace(/[^a-z+]+/gi, '');
+	// chatName.innerHTML = chatName.innerHTML.replace(/[^a-z+]+/gi, '');
 
 	chatAlignment.className = 'chat-align';
 	chatAlignment.appendChild(chatName);
@@ -911,7 +944,9 @@ socket.on('receive badge', function(username, badge) {
 	userbadges[username] = badge;
 });
 
-// socket.on('user pokes', function(name, team) {
+// socket.on('user pokes', function(payload) {
+// 	var name = payload.name;
+// 	var team = payload.team;
 // 	var TeamTier = 0;
 // 	for (var j=0; j < 6; j++) {
 // 		for (var check=0; check < Tiers.length; check++){
@@ -928,9 +963,6 @@ socket.on('receive badge', function(username, badge) {
 // 	replyText = Tiers[TeamTier] + replyText;
 // 	if (total > 21) submitchat(replyText);
 // });
-// socket.on('receive raffle', function(current) {
-// 	raffleresult = current;
-// });
 
 socket.on('raffle winner', function(person) {
 	submitchat(person + ' has won the raffle');
@@ -938,6 +970,10 @@ socket.on('raffle winner', function(person) {
 
 socket.on('someone signed up', function(name){
 	chatNotice(name + " has created an account", 10000, 1);
+});
+
+socket.on('invalid raffle user', function(username){
+	submitchat(username + ' tried to enter the raffle but has not registered a FC and IGN (use !signup)');
 });
 
 // window.setInterval(getViewers,24000,channels[0]);

@@ -112,7 +112,7 @@ project.Pokedex.prototype = {
           team_to_rate = winner.team;
         }
       };
-      if (!team_to_rate) var team_to_rate = teams[team_name] || [0,3,6];
+      if (!team_to_rate) var team_to_rate = teams ? teams[team_name] : [0,3,6];
       var teamarray = [];
       totalbonuses = 0;
 

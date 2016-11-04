@@ -123,11 +123,21 @@ io.on('connection', function(socket){
 					r.table('Users').get(payload.id).update({
 						validated: false,
 						cards: [{'poke': starter[Math.floor(Math.random()*starter.length)], 'level': 1}],
-						active: -1,
-						avatar: -1
+						active: "default",
+						avatar: -1,
+						teams: {
+						    "default": [
+						        0 ,
+						        1 ,
+						        2 ,
+						        3 ,
+						        4 ,
+						        5
+						    ]}
 					}).run(conn, function(err, result) {
 						if (err) throw err;
 						if (result.errors) console.log(result.first_error);
+						// else socket.emit('login accepted', result[0]);
 					});
 					socket.broadcast.emit('someone signed up',payload.id);
 				}
@@ -136,7 +146,19 @@ io.on('connection', function(socket){
 	}
 
 	socket.on('new user', function(payload){
-		createanewuser(payload);
+		r.table('Users').filter(r.row('id').eq(payload.id.toLowerCase()))
+		.run(conn, function(err, cursor) {
+			if (err) createanewuser(payload);
+			else {
+				r.table('Users').get(payload.id).update({
+					ign: payload.ign,
+					fc: payload.fc
+				}).run(conn, function(err, result) {
+					if (err) throw err;
+					if (result.errors) console.log(result.first_error);
+				});
+			}
+		});
 	});
 
 	socket.on ("Ask for pokedex", function(){
@@ -347,6 +369,16 @@ io.on('connection', function(socket){
 		rafflewinner(person);
 	});
 
+	socket.on('manually enter raffle', function(username, displayicon) {
+		r.table('Users').get(username)
+		.run(conn, function(err, result) {
+			if (err) socket.emit('invalid raffle user', username);
+			else {
+				raffleChangeUser(username.toLowerCase(), 12, true, result.cards[0].poke);
+			}
+		});
+	});
+
 	socket.on('enter raffle', function(username, displayicon, team_name, team) {
 		raffleChangeUser(username.toLowerCase(), 12, true, displayicon, team_name, team);
 	});
@@ -419,7 +451,7 @@ function sendUserPokes (username) {
 				cursor.toArray(function(err, result) {
 					if (err || result[0] == undefined || result == []) io.emit('user not found');
 					else {
-						io.emit('user pokes', active, result[0][active]);
+						io.emit('user pokes', {name: active, team: result[0][active]});
 					}
 				});
 			});
@@ -457,16 +489,16 @@ function sendUserPokes (username) {
 			});
 	}
 
-	function raffleChangeUser(username, defaultchance, entered, displayicon, team_name, team){
+	function raffleChangeUser(username, defaultchance, entered, displayicon){
 		r.db('Users').table('Raffle').get(username)
 		.run(conn, function(err, result) {
 			if (err) throw err;
 			if (result) {
 				if (result.errors) console.log(result.first_error);
-				else modifyRaffleUser(username, result.chance, entered, displayicon, team_name, team);
+				else modifyRaffleUser(username, result.chance, entered, displayicon);
 			}
 			else {
-				modifyRaffleUser(username, defaultchance, entered, displayicon, team_name, team);
+				modifyRaffleUser(username, defaultchance, entered, displayicon);
 			}
 		});
 	}
@@ -501,14 +533,12 @@ function sendUserPokes (username) {
 		});
 	}
 
-	 function modifyRaffleUser(username, chance, entered, displayicon, team_name, team) {
+	 function modifyRaffleUser(username, chance, entered, displayicon) {
 		r.db('Users').table('Raffle').get(username).replace({
 			id: username,
 			chance: chance,
 			entered: entered,
 			displayicon:displayicon,
-			team_name: team_name,
-			team: team
 		})
 		.run(conn, function(err, result) {
 			if (err) throw err;
