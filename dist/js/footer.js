@@ -1,5 +1,4 @@
 var footergame = new Phaser.Game(1480, 220, Phaser.AUTO, "footer");
-
 var project = {};
 var teams;
 var team_name;
@@ -33,6 +32,7 @@ project.Footer.prototype = {
   },
 
   create: function () {
+    footergame.stage.disableVisibilityChange = true;
     footergame.state.add('Pokemotions', project.Pokemotions);
     footergame.state.start('Pokemotions');
   },

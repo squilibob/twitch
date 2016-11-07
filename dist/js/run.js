@@ -96,6 +96,7 @@ project.Init.prototype = {
   },
 
   create: function () {
+    game.stage.disableVisibilityChange = true;
     game.plugins.add(Fabrique.Plugins.InputField);
     game.plugins.add(Fabrique.Plugins.SuperStorage);
     for (statename in states)

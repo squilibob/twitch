@@ -45,11 +45,11 @@ project.Login.prototype = {
     button.onChildInputDown.add(this.connect, this);
     // button.x -= button.getBounds().width/2;
 
-    form[0].children[0].setText(game.storage.getItem("id"));
-    form[1].children[0].setText(game.storage.getItem("ign"));
-    form[2].children[0].setText(game.storage.getItem("fcleft"));
-    form[3].children[0].setText(game.storage.getItem("fcmid"));
-    form[4].children[0].setText(game.storage.getItem("fcright"));
+    if (game.storage.getItem("id")) form[0].children[0].setText(game.storage.getItem("id"));
+    if (game.storage.getItem("ign")) form[1].children[0].setText(game.storage.getItem("ign"));
+    if (game.storage.getItem("fcleft")) form[2].children[0].setText(game.storage.getItem("fcleft"));
+    if (game.storage.getItem("fcmid")) form[3].children[0].setText(game.storage.getItem("fcmid"));
+    if (game.storage.getItem("fcright")) form[4].children[0].setText(game.storage.getItem("fcright"));
     // selector.set(form[5].children, game.storage.getItem("pokevalues0"));
     // selector.set(form[6].children, game.storage.getItem("pokevalues1"));
     // selector.set(form[7].children, game.storage.getItem("pokevalues2"));

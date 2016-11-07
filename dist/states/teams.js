@@ -1,17 +1,17 @@
 project.Teams = function(game) {
-var
-currentTeam,
-teamname,
-selectnew,
-useteam,
-saveteam,
-deleteteam,
-teamlist,
-teampadding,
-putonteam,
-maker,
-scale,
-menu;
+  var
+    currentTeam,
+    teamname,
+    selectnew,
+    useteam,
+    saveteam,
+    deleteteam,
+    teamlist,
+    teampadding,
+    putonteam,
+    maker,
+    scale,
+    menu;
 };
 
 project.Teams.prototype = {

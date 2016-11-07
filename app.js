@@ -459,90 +459,90 @@ function sendUserPokes (username) {
 	});
 }
 
-	function sendVoteUpdate(){
-		var current = [];
-		r.db('Users').table('Vote')
-			.run(conn, function(err, cursor) {
-				cursor.toArray(function(err, result) {
-					if (err) console.log('error not found');
-					else {
-						if (result[0] == undefined || result == []) current = [];
-						else current = result;
-						io.emit('receive vote', current);
-					}
-				});
-			});
-	}
-
-	function sendRaffleUpdate(){
-		var current = [];
-		r.db('Users').table('Raffle')
-			.run(conn, function(err, cursor) {
-				cursor.toArray(function(err, result) {
-					if (err) console.log('error not found');
-					else {
-						if (result[0] == undefined || result == []) current = [];
-						else current = result;
-						io.emit('receive raffle', current);
-					}
-				});
-			});
-	}
-
-	function raffleChangeUser(username, defaultchance, entered, displayicon){
-		r.db('Users').table('Raffle').get(username)
-		.run(conn, function(err, result) {
-			if (err) throw err;
-			if (result) {
-				if (result.errors) console.log(result.first_error);
-				else modifyRaffleUser(username, result.chance, entered, displayicon);
-			}
-			else {
-				modifyRaffleUser(username, defaultchance, entered, displayicon);
-			}
-		});
-	}
-
-	function rafflewinner(username){
-		r.db('Users').table('Raffle').get(username)
-		.run(conn, function(err, result) {
-			if (err) throw err;
-			if (result) {
-				if (result.errors) console.log(result.first_error);
+function sendVoteUpdate(){
+	var current = [];
+	r.db('Users').table('Vote')
+		.run(conn, function(err, cursor) {
+			cursor.toArray(function(err, result) {
+				if (err) console.log('error not found');
 				else {
-					sendUserPokes (result.id);
-					r.db('Users').table('Raffle').get(result.id).update({id: result.id, chance: 1, entered: false, displayicon: result.displayicon, winner: true})
-					.run(conn, function(err, result) {
-						if (err) throw err;
-						if (result.errors) console.log(result.first_error);
-						r.db('Users').table('Raffle').filter(r.row('id').ne(username))
-						.run(conn, function(err, cursor) {
-							cursor.toArray(function(err, result) {
-								for (loser in result){
-									if (result[loser].entered)
-										r.db('Users').table('Raffle').get(result[loser].id).update({winner: false, chance: result[loser].chance*2}).run(conn, function(err, temp) {
-										if (err) throw err;
-									});
-								}
-							});
-						});
-						sendRaffleUpdate();
-					});
+					if (result[0] == undefined || result == []) current = [];
+					else current = result;
+					io.emit('receive vote', current);
 				}
-			}
+			});
 		});
-	}
+}
 
-	 function modifyRaffleUser(username, chance, entered, displayicon) {
-		r.db('Users').table('Raffle').get(username).replace({
-			id: username,
-			chance: chance,
-			entered: entered,
-			displayicon:displayicon,
-		})
-		.run(conn, function(err, result) {
-			if (err) throw err;
-			if (result.errors) console.log(result.first_error);
+function sendRaffleUpdate(){
+	var current = [];
+	r.db('Users').table('Raffle')
+		.run(conn, function(err, cursor) {
+			cursor.toArray(function(err, result) {
+				if (err) console.log('error not found');
+				else {
+					if (result[0] == undefined || result == []) current = [];
+					else current = result;
+					io.emit('receive raffle', current);
+				}
+			});
 		});
-	}
+}
+
+function raffleChangeUser(username, defaultchance, entered, displayicon){
+	r.db('Users').table('Raffle').get(username)
+	.run(conn, function(err, result) {
+		if (err) throw err;
+		if (result) {
+			if (result.errors) console.log(result.first_error);
+			else modifyRaffleUser(username, result.chance, entered, displayicon);
+		}
+		else {
+			modifyRaffleUser(username, defaultchance, entered, displayicon);
+		}
+	});
+}
+
+function rafflewinner(username){
+	r.db('Users').table('Raffle').get(username)
+	.run(conn, function(err, result) {
+		if (err) throw err;
+		if (result) {
+			if (result.errors) console.log(result.first_error);
+			else {
+				sendUserPokes (result.id);
+				r.db('Users').table('Raffle').get(result.id).update({id: result.id, chance: 1, entered: false, displayicon: result.displayicon, winner: true})
+				.run(conn, function(err, result) {
+					if (err) throw err;
+					if (result.errors) console.log(result.first_error);
+					r.db('Users').table('Raffle').filter(r.row('id').ne(username))
+					.run(conn, function(err, cursor) {
+						cursor.toArray(function(err, result) {
+							for (loser in result){
+								if (result[loser].entered)
+									r.db('Users').table('Raffle').get(result[loser].id).update({winner: false, chance: result[loser].chance*2}).run(conn, function(err, temp) {
+									if (err) throw err;
+								});
+							}
+						});
+					});
+					sendRaffleUpdate();
+				});
+			}
+		}
+	});
+}
+
+function modifyRaffleUser(username, chance, entered, displayicon) {
+r.db('Users').table('Raffle').get(username).replace({
+	id: username,
+	chance: chance,
+	entered: entered,
+	displayicon:displayicon,
+})
+.run(conn, function(err, result) {
+	if (err) throw err;
+	if (result.errors) console.log(result.first_error);
+});
+}
 
