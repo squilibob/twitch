@@ -448,6 +448,37 @@ function chat() {
        }
       }
      }
+     if (message.toLowerCase().indexOf('!sign') >= 0) {
+      var fc = [];
+      var validfc = true;
+      if (message.toLowerCase().indexOf('-') >= 0) {
+       var ign;
+       var fcindex = message.indexOf('-') - 4;
+       var fccode = message.substr(fcindex, 14);
+       var parseign = message.substr(0, message.indexOf(fccode)) + message.substr(message.indexOf(fccode) + fccode.length);
+       parseign.trim(' ').split(' ').forEach((name, index) => {
+        if (name.indexOf('!') < 0 && name.toLowerCase() != 'fc' && name.toLowerCase() != 'ign' && name.toLowerCase() != 'name') ign = name;
+       });
+       fccode.split('-').forEach((fcnumber, index) => {
+        fc.push(fcnumber);
+       });
+       if (fc.length != 3) validfc = false;
+       validfcloop: for (number in fc) {
+        if (!(fc[number] > 0 && fc[number] < 10000)) validfc = false;
+       }
+       if (!ign) validfc = false;
+       payload = {
+        id: user.username,
+        ign: ign,
+        fc: fc
+       }
+       if (validfc) {
+        socket.emit('new user', payload);
+        response ='create: twitch username: ' + user.username + ' IGN: ' + ign + ' fc: '+ fc.join('-');
+       }
+       else response = fc.join('-') + ' ' + ign + ' is invalid combination of fc and ign';
+      } else response = message + ' invalid please include your ign and fc';
+     }
     if (message.toLowerCase().indexOf('fc') >= 0) {
      var notyou = null;
      fcloop: for (person in useravatars)
@@ -528,34 +559,6 @@ function chat() {
      if (exists) {
       if (checkDelay(channel, command[0], 10)) {
        setDelay(channel, command[0]);
-       if (command[0] == '!sign') {
-        var fc = [];
-        var validfc = true;
-        if (message.toLowerCase().indexOf('-') >= 0) {
-         var ign;
-         var fcindex = message.indexOf('-') - 4;
-         var fccode = message.substr(fcindex, 14);
-         var parseign = message.substr(0, message.indexOf(fccode)) + message.substr(message.indexOf(fccode) + fccode.length);
-         parseign.trim(' ').split(' ').forEach((name, index) => {
-          if (name.indexOf('!') < 0 && name.toLowerCase() != 'fc' && name.toLowerCase() != 'ign' && name.toLowerCase() != 'name') ign = name;
-         });
-         fccode.split('-').forEach((fcnumber, index) => {
-          fc.push(fcnumber);
-         });
-         if (fc.length != 3) validfc = false;
-         validfcloop: for (number in fc) {
-          if (!(fc[number] > 0 && fc[number] < 10000)) validfc = false;
-         }
-         if (!ign) validfc = false;
-         payload = {
-          id: user.username,
-          ign: ign,
-          fc: fc
-         }
-         if (validfc) socket.emit('new user', payload);
-         else response = fc.join('-') + ' ' + ign + ' is invalid combination of fc and ign';
-        } else response = message + ' invalid please include your ign and fc';
-       }
        if (command[0] == '!raffle') {
         response = 'In the raffle: ';
         var participants = (JSON.parse(localStorage.getItem("participants"))); //.join(', ');

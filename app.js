@@ -119,7 +119,6 @@ io.on('connection', function(socket){
 				if (err) throw err;
 				if (result.errors) console.log(result.first_error);
 				else {
-					console.log('new user created successfully', JSON.stringify(result, null, 2));
 					r.table('Users').get(payload.id).update({
 						validated: false,
 						cards: [{'poke': starter[Math.floor(Math.random()*starter.length)], 'level': 1}],
@@ -146,9 +145,9 @@ io.on('connection', function(socket){
 	}
 
 	socket.on('new user', function(payload){
-		r.table('Users').filter(r.row('id').eq(payload.id.toLowerCase()))
+		r.table('Users').get(payload.id.toLowerCase())
 		.run(conn, function(err, cursor) {
-			if (err) createanewuser(payload);
+			if (!cursor || err) createanewuser(payload);
 			else {
 				r.table('Users').get(payload.id).update({
 					ign: payload.ign,
