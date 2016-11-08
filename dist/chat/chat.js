@@ -325,7 +325,7 @@ function chat() {
 
  function displaystreamer(username, banner, followamount, views, url) {
   console.log(followamount, minfollowerstoshoutout);
-  if (followamount && followamount < minfollowerstoshoutout) return false;
+  if (!followamount && followamount < minfollowerstoshoutout) return false;
   console.log(username, banner, followers, views, url);
   if(banner == null) banner = defaultavatar;
   var chatLine = document.createElement('li');
