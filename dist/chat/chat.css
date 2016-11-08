@@ -1,6 +1,6 @@
 html, body {
 	font-family: 'Proforma-book, Bitter';
-	font-size: 10px;
+	font-size: 18px;
 	overflow: hidden;
 }
 #chat {
@@ -93,7 +93,7 @@ ul {
 }
 .chat-line[data-faded],  .chat-line[data-faded] .sprsheet{
 	opacity: .67;
-	font-size: 16px;
+	font-size: 18px;
 	transform: scale(1);
 	transition: all 0.5s cubic-bezier(.36,-0.64,.34,1.76);
 }
@@ -210,7 +210,7 @@ ul {
 {
 	flex:1;
 	font-family:'Extra-cool';
-	font-size: 28px;
+	font-size: 36px;
 	font: #fff;
 	text-rendering: optimizeLegibility;
 	max-width: 400px;
@@ -238,7 +238,7 @@ ul {
 {
 	opacity: 1 !important;
 	position: relative;
-	font-size: 20px;
+	font-size: 24px;
 	max-height: 300px;
 	max-width:420px;
 	transition: all 0.5s ease-out;

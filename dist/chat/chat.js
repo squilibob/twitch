@@ -1,7 +1,7 @@
 function chat() {
  // const chatwidth = 400;
  const chatheight = 720;
- const minfollowerstoshoutout = 100;
+ const minfollowerstoshoutout = 12;
  const defaultavatar = 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png';
 
  var useravatars = {},
@@ -182,8 +182,8 @@ function chat() {
    url: 'http://tmi.twitch.tv/group/user/' + channel + '/chatters' + clientid
   }, function(err, res, body) {
    // document.getElementById('viewers').value = typeof(body.data.chatter_count) == 'number' ? body.data.chatter_count : 0;
-   viewers = body.data.chatters.viewers;
-   // console.log(body, viewers);
+   if (body) viewers = body.data.chatters.viewers;
+   console.log(body, viewers);
   });
  }
 
@@ -305,6 +305,7 @@ function chat() {
 
  function checkfollowers(username, hidenotify, url) {
   var maxcursor = 100;
+  var followerslength = followers.length;
   var cursor = url ? url : 'https://api.twitch.tv/kraken/channels/' + username + '/follows?limit=100';
   client.api({
    url: cursor + '&' + clientid.substr(1)
@@ -317,12 +318,15 @@ function chat() {
       if (!hidenotify) chatNotice(body.follows[viewer].user.name + " is now following", 10000, 1);
      }
    }
+   if (followers.length != followerslength && !hidenotify) chatNotice(followers.length + " people follow " + username, 10000, 1);
   });
 
  }
 
  function displaystreamer(username, banner, followers, views, url) {
   if (followers < minfollowerstoshoutout) return false;
+  console.log(username, banner, followers, views, url);
+  if(banner == null) banner = defaultavatar;
   var chatLine = document.createElement('li');
   var chatLineBanner = document.createElement('li');
   var chatBanner = document.createElement('img');
@@ -351,7 +355,6 @@ function chat() {
    chat.appendChild(chatLine);
    client.say(channels[0], 'check out ' + username + ' at ' + url);
   }
-  console.log(chatLine);
  }
 
 
@@ -930,7 +933,7 @@ function chat() {
   if (joinAccounced.indexOf(channel) == -1) {
    // if(showConnectionNotices) chatNotice('Joined ' + capitalize(dehash(channel)), 1000, -1, 'chat-room-join');
    joinAccounced.push(channel);
-   getViewers(channel);
+   // getViewers(channel);
    getStart(channel);
   }
  });
