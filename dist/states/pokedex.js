@@ -212,7 +212,6 @@ project.Pokedex.prototype = {
       grd.addColorStop(options.balance[1],hexstring(options.end));
       myBitmap.context.fillStyle=grd;
       myBitmap.context.fillRect(0,0,options.length,options.height);
-      console.log(grd, myBitmap);
       return myBitmap;
     },
     submit: function(){
@@ -222,6 +221,9 @@ project.Pokedex.prototype = {
           "teamname": winner.team_name,
           "team": winner.team
         });
+    },
+    overlay: function (destination) {
+      overlayselect.create(destination, pokemonname.text.substr(0,1).toUpperCase());
     },
     change: function(which){
       if (!pokemoncontainer.visible) return this;
@@ -264,6 +266,9 @@ project.Pokedex.prototype = {
       pokemonsprite.frame = thepokemon;
       pokemonsprite.scaleX =  scale / dexspritesheet.x;
       pokemonsprite.scaleY =  scale / dexspritesheet.y;
+      pokemonsprite.inputEnabled = true;
+      pokemonsprite.events.onInputDown.add(this.overlay, pokemonsprite);
+
       pokemoncontainer.addChild(pokemonsprite);
       y += scale;
       tierlabel = this.text({obj : tierlabel, text : "tier ", fontsize : scale/4, color : brightcolor, newx : x, newy : y});
@@ -443,7 +448,6 @@ project.Pokedex.prototype = {
       if (Math.sign((50-dexinfo["Gender"])*-2) < 0 ) genderbalance.push(1-(50-dexinfo["Gender"])*2/100);
       else genderbalance.push(1);
       gender.loadTexture(this.gradient({length: genderwidth, height: scale/4, balance: genderbalance, start: Femalecolor, end: Malecolor}));
-      console.log(gender);
       // gender.x = x;
       // gender.y = y;
 
@@ -594,6 +598,10 @@ project.Pokedex.prototype = {
 
     },
   update: function(){
+   if (!isNaN(+pokemoncontainer.children[2].text)) {
+    dexinfo = pokedex[+pokemoncontainer.children[2].text]
+    this.change({frame: +pokemoncontainer.children[2].text-1});
+  }
     for (var statcount = 0; statcount <= 5; statcount++) {
       if (statvalue[statcount]+10 < statmax[statcount]) statvalue[statcount]++;
       if (statvalue[statcount] < statmax[statcount]) {

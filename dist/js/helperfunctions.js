@@ -256,6 +256,7 @@ var selector = {
     if (!value) value = 1;
     group[0].setText(pokedex[parseInt(value)-1].Pokemon);
     group[1].frame = parseInt(value)-1;
+    console.log(group[2]);
     group[2].setText(value);
     return group;
   },
