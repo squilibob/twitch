@@ -323,8 +323,8 @@ function chat() {
 
  }
 
- function displaystreamer(username, banner, followers, views, url) {
-  if (followers < minfollowerstoshoutout) return false;
+ function displaystreamer(username, banner, followamount, views, url) {
+  if (followamount < minfollowerstoshoutout) return false;
   console.log(username, banner, followers, views, url);
   if(banner == null) banner = defaultavatar;
   var chatLine = document.createElement('li');
@@ -345,7 +345,7 @@ function chat() {
   chatBanner.className = 'chat-image';
   chatBanner.src = banner;
   chatStreamerName.innerHTML = username;
-  chatStreamerFollowers.innerHTML = followers + ' followers';
+  chatStreamerFollowers.innerHTML = followamount + ' followers';
   chatStreamerViews.innerHTML = views + ' views';
   chatLine.appendChild(chatStreamerName);
   chatLine.appendChild(chatStreamerFollowers);
