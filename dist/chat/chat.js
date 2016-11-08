@@ -324,6 +324,7 @@ function chat() {
  }
 
  function displaystreamer(username, banner, followamount, views, url) {
+  console.log(followamount, minfollowerstoshoutout);
   if (followamount < minfollowerstoshoutout) return false;
   console.log(username, banner, followers, views, url);
   if(banner == null) banner = defaultavatar;
