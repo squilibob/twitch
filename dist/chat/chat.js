@@ -311,6 +311,7 @@ function chat() {
    url: cursor + '&' + clientid.substr(1)
   }, function(err, res, body) {
    if (body) {
+    console.log(body);
     if (body.follows.length == maxcursor) checkfollowers(username, hidenotify, body._links.next);
     followerloop: for (viewer in body.follows)
      if (followers.indexOf(body.follows[viewer].user.name) < 0) {
@@ -325,7 +326,7 @@ function chat() {
 
  function displaystreamer(username, banner, followamount, views, url) {
   console.log(followamount, minfollowerstoshoutout);
-  if (!followamount || followamount < minfollowerstoshoutout) return false;
+  if (!followamount || followamount <= minfollowerstoshoutout) return false;
   console.log(username, banner, followers, views, url);
   if(banner == null) banner = defaultavatar;
   var chatLine = document.createElement('li');
