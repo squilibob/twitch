@@ -1,62 +1,55 @@
-var buttonborder =  0x4090ff;
+const maxpokes = 719,
+ Tiers = ['lc','pu','bl4','nu','bl3','ru','bl2','uu','bl','ou','uber'],
+// chatwidth = 400,
+ chatheight = 720,
+ minfollowerstoshoutout = 100,
+ defaultavatar = 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png',
+ fadeDelay = 5000, // Set to false to disable chat fade
+ showChannel = true, // Show repespective channels if the channels is longer than 1
+ useColor = true, // Use chatters' colors or to inherit
+ whitethreshold = 192,
+ showBadges = true, // Show chatters' badges
+ showEmotes = true, // Show emotes in the chat
+ doTimeouts = true, // Hide the messages of people who are timed-out
+ doChatClears = true, // Hide the chat from an entire channel
+ showHosting = true, // Show when the channel is hosting or not
+ showConnectionNotices = true, // Show messages like "Connected" and "Disconnected"
+ star = "★",
+ points_system = {
+  score_for_kill: 50,
+  score_for_crit: 50,
+  score_for_hax: 50,
+  penalty_for_clause: 100
+ }
 
-var sectioncolors = [
+
+// Colors
+const buttonborder =  0x4090ff,
+ sectioncolors = [
   0xeb485b,
   0x1f9b76,
   0x9f5fff,
   0xd39e14,
   0x1688c7,
   0x7f7f7f
-  ];
-
-// const spritesheet = {
-//   src: "/img/troz128.png",
-//   x: 128,
-//   y: 128,
-// }
-
-const spritesheet = {
-  src: "/img/pokemonxy.png",
-  x: 38,
-  y: 38,
-  rowlen: 26,
-}
-
-const playersprite = {
-  src: "/img/gen6.png",
-  x: 32,
-  y: 32,
-}
-
-const dexspritesheet = {
-  src: "/img/pikafan2000.png",
-  x: 109,
-  y: 117,
-}
-
-const maxpokes = 719;
-
-const Tiers = ['lc','pu','bl4','nu','bl3','ru','bl2','uu','bl','ou','uber'];
-
-const dexspritesheetrowlen = 25;
-const dexmaxpokes = 720;
+ ],
 // const HPcolor =0xFF0000;
 // const Attcolor =0xF08030;
 // const Defcolor=0xF8D030;
 // const SpAttcolor =0x6890F0;
 // const SpDefcolor=0x78C850;
 // const Specolor=0xF85888;
-const HPcolor = 0x53c60c;
-const Attcolor = 0xebcd42;
-const Defcolor= 0xf87c27;
-const SpAttcolor = 0x1eaeea;
-const SpDefcolor= 0x4e77d8;
-const Specolor= 0xe246db;
+HPcolor = 0x53c60c,
+Attcolor = 0xebcd42,
+Defcolor= 0xf87c27,
+SpAttcolor = 0x1eaeea,
+SpDefcolor= 0x4e77d8,
+Specolor= 0xe246db,
 
-const Femalecolor=0xF85888;
-const Malecolor =0x6890F0;
+Femalecolor=0xF85888,
+Malecolor =0x6890F0,
 
-const colors = {
+colors = {
    "Bug" : 0xA8B820,
    "Dark" : 0x705848,
    "Dragon" : 0x7038F8,
@@ -75,8 +68,9 @@ const colors = {
    "Rock" : 0xB8A038,
    "Steel" : 0xB8B8D0,
    "Water" : 0x6890F0
- }
+ };
 
+ //Spritesheets
  const Useravatars = {
    src:'/img/avatars.png',
    x:256,
@@ -84,12 +78,30 @@ const colors = {
    total:49
  }
 
-const points_system = {
- score_for_kill: 50,
- score_for_crit: 50,
- score_for_hax: 50,
- penalty_for_clause: 100
-}
+ const spritesheet = {
+   src: "/img/pokemonxy.png",
+   x: 38,
+   y: 38,
+   rowlen: 26,
+ }
 
- const star = "★";
+ // const spritesheet = {
+ //   src: "/img/troz128.png",
+ //   x: 128,
+ //   y: 128,
+ // }
 
+ const playersprite = {
+   src: "/img/gen6.png",
+   x: 32,
+   y: 32,
+ }
+
+ const dexspritesheet = {
+   src: "/img/pikafan2000.png",
+   x: 109,
+   y: 117,
+ }
+
+ const dexspritesheetrowlen = 25;
+ const dexmaxpokes = 720;

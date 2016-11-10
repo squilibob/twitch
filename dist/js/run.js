@@ -138,7 +138,7 @@ project.Init.prototype = {
   },
 
   ready: function() {
-    if (pokedexoptions.scoring) chat();
+    if (pokedexoptions.scoring) chatbot();
     loader_elements.graphics.destroy(true);
     game.state.start(firststate, Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
   },

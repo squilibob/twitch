@@ -1,0 +1,22 @@
+var commandlist = {
+ '!battle': ' We do raffles for battles. signup page: http://192.241.226.10/ or !signup. Type !enter to join. !raffle will show who is entered',
+ '!ship': 'I ship me with someone. It is now canon!',
+ '!raffle': '',
+ '!sign': '',
+ 'disable music': 'this code NTAW-WWWW-WW2Y-M2PT in Vs Recorder',
+ 'check level': 'http://mikuia.tv/levels/squilibob',
+ 'evol pokemon': '',
+ 'find pokemon': '',
+ 'route pokemon': '',
+ 'locat pokemon': '',
+ 'obtain pokemon': '',
+ 'weak pokemon': '',
+ 'resist pokemon': '',
+ 'immun pokemon': '',
+ 'strong pokemon': '',
+ 'effective pokemon': '',
+ 'nature': '',
+ 'hidden power' : '',
+ 'tm': '',
+ 'hm': ''
+};

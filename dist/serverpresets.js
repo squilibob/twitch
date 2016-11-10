@@ -34,11 +34,19 @@ const preloadscripts = [
   {'Blank': '/states/blank'},
   '/chat/clientoptions',
   '/chat/tmi.min',
+  '/chat/chatvariables',
+  '/chat/commandlist',
   '/chat/tm',
   '/chat/natures',
   '/chat/hiddenpowers',
   '/chat/ffzemotes',
   '/chat/bttvemotes',
+  '/chat/chatfunctions',
+  '/chat/chatapi',
+  '/chat/chaticon',
+  '/chat/chatsocket',
+  '/chat/pokemonparse',
+  '/chat/chatfrontend',
   '/chat/chat'
   ];
 
