@@ -28,10 +28,12 @@ project.Raffle.prototype = {
       game.load.spritesheet('playersprite', playersprite.src, playersprite.x, playersprite.y, maxpokes*4);
     },
   winraffle: function(person){
+    console.log(person);
     lastraffleuser = person;
-    socket.emit('won raffle', person);
-    // socket.emit('request user pokes', person);
-    socket.emit('request user fc', person);
+    // socket.emit('won raffle', person);
+    socket.emit('request user pokes', person);
+    // socket.emit('request user fc', person);
+    socket.emit('request to connect', {id: person});
   },
   rollraffle: function(){
     spinspeed = 200;

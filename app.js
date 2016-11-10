@@ -450,7 +450,7 @@ function sendUserPokes (username) {
 				cursor.toArray(function(err, result) {
 					if (err || result[0] == undefined || result == []) io.emit('user not found');
 					else {
-						io.emit('user pokes', {name: active, team: result[0][active]});
+						io.emit('user pokes', {user: username, name: active, team: result[0][active]});
 					}
 				});
 			});

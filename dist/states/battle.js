@@ -1,5 +1,6 @@
 project.Battle = function(game) {
   var
+  filter,
   clearleaderboard,
   menu;
 };
@@ -57,6 +58,8 @@ project.Battle.prototype = {
       menu.addMultiple(menubuttons);
       scaleup(menu);
 
+      filter = new Phaser.Filter(game, null, fragmentSrc);
+
       var entireleaderboard = this.add.group();
       var textstyle =  {
         backgroundColor: 'transparent',
@@ -70,7 +73,8 @@ project.Battle.prototype = {
       };
      if (socket.hasListeners('receive leaderboard')) socket.removeListener('receive leaderboard');
       socket.on('receive leaderboard', function(payload){
-        var bg = game.add.graphics(0,0);
+        // var bg = game.add.graphics(0,0);
+        var bg = game.add.sprite();
         var leaderboardlabel = game.add.text(Presets.padding, buttonstyle.horizontalorientation ?  menu.getBounds().height+Presets.padding*2 : 0, 'leaderboard', textstyle);
         var currentline = leaderboardlabel.y+leaderboardlabel.getBounds().height+Presets.padding;
         var board = [];
@@ -105,15 +109,19 @@ project.Battle.prototype = {
           }
           dim.width += Presets.padding*2;
           dim.height += Presets.padding*2;
-          bg.beginFill(0x435a6a);
-          bg.drawRect(dim.x, dim.y, dim.width, dim.height);
-          bg.endFill();
-
+          // bg.beginFill(0x435a6a);
+          // bg.drawRect(dim.x, dim.y, dim.width, dim.height);
+          // bg.endFill();
+          bg.x = dim.x;
+          bg.y = dim.y;
+          bg.width = dim.width;
+          bg.height = dim.height;
+          if (!bg.filters) bg.filters = [ filter ];
         }
         if (pokedexoptions.scoring) {
           clearleaderboard = game.add.group()
-          if (dim) textButton.define(clearleaderboard, game, 'clear', dim.x, dim.y+dim.height+60, sectioncolors[4]);
-          // console.log(clearleaderboard);
+          // if (dim) textButton.define(clearleaderboard, game, 'clear', dim.x+16, dim.y+dim.height+60, sectioncolors[4]);
+          if (dim) textButton.define(clearleaderboard, game, 'clear', 1540, 600, sectioncolors[4]);
           clearleaderboard.onChildInputDown.add(function (){
             socket.emit('clear leaderboard');
             game.state.restart();
@@ -122,8 +130,11 @@ project.Battle.prototype = {
         entireleaderboard.addChild(bg);
         entireleaderboard.addMultiple(board);
         entireleaderboard.addChild(leaderboardlabel);
-        scaleup(entireleaderboard);
+        entireleaderboard.scale.setTo(1.5);
       });
       socket.emit('send leaderboard');
     },
+    update: function(){
+      filter.update();
+    }
   }

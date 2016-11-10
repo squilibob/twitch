@@ -492,7 +492,7 @@ function chat() {
         response ='create: twitch username: ' + user.username + ' IGN: ' + ign + ' fc: '+ fc.join('-');
        }
        else response = fc.join('-') + ' ' + ign + ' is invalid combination of fc and ign';
-      } else response = message + ' invalid please include your ign and fc';
+      } else response = message + ' invalid please include your ign and fc like this: !signup squilibob 3609-1058-1166';
      }
     if (message.toLowerCase().indexOf('fc') >= 0) {
      var notyou = null;

@@ -1,6 +1,7 @@
 project.Pokedex = function(game) {
 
  var
+  filter,
   fullteam,
   rated,
   totalscore,
@@ -99,6 +100,8 @@ project.Pokedex.prototype = {
       menu.addMultiple(menubuttons);
       scaleup(menu);
 
+      filter = new Phaser.Filter(game, null, fragmentSrc);
+
       statvalue = [0,0,0,0,0,0];
       statmax = [0,0,0,0,0,0]
 
@@ -106,13 +109,15 @@ project.Pokedex.prototype = {
 
       fullteam = this.add.group();
 
-      if (Presets.externalteams) {
-        if (game.storage.getItem("externalteams")) {
-          winner = JSON.parse(game.storage.getItem("externalteams"));
-          team_to_rate = winner.team;
-        }
-      };
+      // if (Presets.externalteams) {
+      //   if (game.storage.getItem("externalteams")) {
+      //     winner = JSON.parse(game.storage.getItem("externalteams"));
+      //     team_to_rate = winner.team;
+      //   }
+      // };
+      console.log(!team_to_rate);
       if (!team_to_rate) var team_to_rate = teams ? teams[team_name] : [0,3,6];
+      console.log(team_to_rate);
       var teamarray = [];
       totalbonuses = 0;
 
@@ -215,11 +220,15 @@ project.Pokedex.prototype = {
       return myBitmap;
     },
     submit: function(){
-      if (winner) socket.emit('update leaderboard',  {
-          "id": lastraffleuser ? lastraffleuser : ' ',
+      // if (winner)
+        socket.emit('update leaderboard',  {
+          // "id": lastraffleuser ? lastraffleuser : ' ',
+          "id": game.storage.getItem("id"),
           "score": this.total(),
-          "teamname": winner.team_name,
-          "team": winner.team
+          "teamname": team_name,
+          "team": teams[team_name]
+          // "teamname": winner.team_name,
+          // "team": winner.team
         });
     },
     overlay: function (destination) {
@@ -572,32 +581,39 @@ project.Pokedex.prototype = {
         .endFill();
       statvaluelabel[statcount] = this.text({obj: statvaluelabel[statcount], text: statvalue[statcount], fontsize: scale/4, color: statcolor, newx: statbar[statcount].getBounds().width, newy: 0});
       }
-      stattotal = this.text({obj: stattotal, text: dexinfo["Attack"]+dexinfo["Defense"]+dexinfo["Sp. Attack"]+dexinfo["Sp. Defense"]+dexinfo["Speed"]+"  total", fontsize: scale/4, color: brightcolor, newx: x+textoffset, newy: y+scale/4+textoffset/2});
+      stattotal = this.text({obj: stattotal, text: dexinfo["HP"]+dexinfo["Attack"]+dexinfo["Defense"]+dexinfo["Sp. Attack"]+dexinfo["Sp. Defense"]+dexinfo["Speed"]+"  total", fontsize: scale/4, color: brightcolor, newx: x+textoffset, newy: y+scale/4+textoffset/2});
       bg[2]
       .clear()
       .beginFill(0x000000)
       .drawRect(pokemoncontainer.getBounds().x, pokemoncontainer.getBounds().y, infocontainer.getBounds().width >  misccontainer.getBounds().width ?  infocontainer.getBounds().width :  misccontainer.getBounds().width, pokemoncontainer.getBounds().height+infocontainer.getBounds().height+recommendedcontainer.getBounds().height+misccontainer.getBounds().height)
       .endFill();
+      bg[3].width = bg[2].getBounds().width;
+      bg[3].height = bg[2].getBounds().height;
+      bg[3].x = 8;
+      bg[3].y = 8;
       bg[1]
       .clear()
       .beginFill(0xffffff)
       .drawRect(bg[2].getBounds().x-4, bg[2].getBounds().y-4, bg[2].getBounds().width+8, bg[2].getBounds().height+8)
       .endFill();
-      bg[0].x = (bg[bg.length-1].getBounds().width-bg[bg.length-1].getBounds().x+4)/2
-      bg[0].y = (bg[bg.length-1].getBounds().height+bg[bg.length-1].getBounds().y+4)/2
+      bg[0].x = (bg[2].getBounds().width-bg[2].getBounds().x+4)/2
+      bg[0].y = (bg[2].getBounds().height+bg[2].getBounds().y+4)/2
       var bordercolor = color[dexinfo.Color] || 0xffffff;
       bg[0]
         .clear()
         .beginFill(bordercolor)
-        .arc(0, 0, bg[bg.length-1].getBounds().width, 0, -Math.PI/8, true)
-        .arc(0, 0, bg[bg.length-1].getBounds().width, Math.PI, Math.PI-Math.PI/8, true)
-        .arc(0, 0, bg[bg.length-1].getBounds().width, Math.PI/2, Math.PI/2-Math.PI/8, true)
-        .arc(0, 0, bg[bg.length-1].getBounds().width, Math.PI+Math.PI/2, Math.PI+Math.PI/2-Math.PI/8, true)
+        .arc(0, 0, bg[2].getBounds().width, 0, -Math.PI/8, true)
+        .arc(0, 0, bg[2].getBounds().width, Math.PI, Math.PI-Math.PI/8, true)
+        .arc(0, 0, bg[2].getBounds().width, Math.PI/2, Math.PI/2-Math.PI/8, true)
+        .arc(0, 0, bg[2].getBounds().width, Math.PI+Math.PI/2, Math.PI+Math.PI/2-Math.PI/8, true)
         .endFill();
         bg[0].mask = bg[1];
+      filter.setResolution(bg[2].getBounds().width, bg[2].getBounds().height);
 
     },
   update: function(){
+    if (!bgcontainer.filters) bgcontainer.children[3].filters = [ filter ];
+    filter.update();
    if (!isNaN(+pokemoncontainer.children[2].text)) {
     dexinfo = pokedex[+pokemoncontainer.children[2].text]
     this.change({frame: +pokemoncontainer.children[2].text-1});
@@ -635,6 +651,7 @@ project.Pokedex.prototype = {
     bg[0] = game.add.graphics(0, 0);
     bg[1] = game.add.graphics(0, 0);
     bg[2] = game.add.graphics(0, 0);
+    bg[3] = game.add.sprite();
 
     bgcontainer.addMultiple(bg);
 

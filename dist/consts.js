@@ -40,12 +40,18 @@ const Tiers = ['lc','pu','bl4','nu','bl3','ru','bl2','uu','bl','ou','uber'];
 
 const dexspritesheetrowlen = 25;
 const dexmaxpokes = 720;
-const HPcolor =0xFF0000;
-const Attcolor =0xF08030;
-const Defcolor=0xF8D030;
-const SpAttcolor =0x6890F0;
-const SpDefcolor=0x78C850;
-const Specolor=0xF85888;
+// const HPcolor =0xFF0000;
+// const Attcolor =0xF08030;
+// const Defcolor=0xF8D030;
+// const SpAttcolor =0x6890F0;
+// const SpDefcolor=0x78C850;
+// const Specolor=0xF85888;
+const HPcolor = 0x53c60c;
+const Attcolor = 0xebcd42;
+const Defcolor= 0xf87c27;
+const SpAttcolor = 0x1eaeea;
+const SpDefcolor= 0x4e77d8;
+const Specolor= 0xe246db;
 
 const Femalecolor=0xF85888;
 const Malecolor =0x6890F0;
