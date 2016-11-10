@@ -185,8 +185,16 @@ function chat() {
   }, function(err, res, body) {
    // document.getElementById('viewers').value = typeof(body.data.chatter_count) == 'number' ? body.data.chatter_count : 0;
    if (body) viewers = body.data.chatters.viewers;
-   console.log(body, viewers);
+   socket.emit('send emote', {message:viewers.length+' viewers', picture:5});
   });
+ }
+
+ function repeating_notice_website () {
+   socket.emit('send emote', {message:'!battle - website', picture:6});
+ }
+
+ function repeating_notice_signup () {
+   socket.emit('send emote', {message:'!signup in chat', picture:6});
  }
 
  function getStart(chan) {
@@ -373,6 +381,7 @@ function chat() {
     displaystreamer(username, body.profile_banner ? body.profile_banner : body.logo, body.followers, body.views, body.url);
    }
   });
+  socket.emit('send emote', {message:'hi '+username, picture:9});
  }
 
  function handleChat(channel, user, message, self) {
@@ -945,7 +954,7 @@ function chat() {
  client.addListener('connected', function(address, port) {
   if (showConnectionNotices) chatNotice('Connected', 1000, -2, 'chat-connection-good-connected');
   joinAccounced = [];
-  // checkfollowers(dehash(channels[0]), true);
+  checkfollowers(dehash(channels[0]), true);
  });
  client.addListener('disconnected', function(reason) {
   if (showConnectionNotices) chatNotice('Disconnected: ' + (reason || ''), 3000, 2, 'chat-connection-bad-disconnected');
@@ -1026,6 +1035,8 @@ function chat() {
   submitchat(username + ' tried to enter the raffle but has not registered a FC and IGN (use !signup)');
  });
 
- // window.setInterval(getViewers,24000,channels[0]);
- // window.setInterval(checkfollowers, 180000, dehash(channels[0]), false);
+ window.setInterval(getViewers, 500000, channels[0]);
+ window.setInterval(repeating_notice_website, 3000000);
+ window.setInterval(repeating_notice_signup, 7000000);
+ window.setInterval(checkfollowers, 180000, dehash(channels[0]), false);
 }

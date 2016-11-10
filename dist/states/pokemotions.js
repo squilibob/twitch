@@ -115,6 +115,7 @@ project.Pokemotions.prototype = {
     socket.emit("Send vote", {id: game.storage.getItem("id"), vote:which.text.substr(0,which.text.indexOf(' -'))})
     },
     footertext: function(payload){
+      console.log(payload);
       var message = payload.message;
       var picture = payload.picture;
       test = {

@@ -402,6 +402,7 @@ io.on('connection', function(socket){
 
 	socket.on('send emote', function(payload) {
 		socket.broadcast.emit('receive emote', payload);
+		socket.emit('receive emote', payload);
 	});
 
 	socket.on('update leaderboard', function(entry) {
