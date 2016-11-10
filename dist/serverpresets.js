@@ -36,6 +36,7 @@ const preloadscripts = [
   '/chat/tmi.min',
   '/chat/tm',
   '/chat/natures',
+  '/chat/hiddenpowers',
   '/chat/ffzemotes',
   '/chat/bttvemotes',
   '/chat/chat'

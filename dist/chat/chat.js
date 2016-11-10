@@ -1,7 +1,7 @@
 function chat() {
  // const chatwidth = 400;
  const chatheight = 720;
- const minfollowerstoshoutout = 12;
+ const minfollowerstoshoutout = 100;
  const defaultavatar = 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png';
 
  var useravatars = {},
@@ -41,10 +41,12 @@ function chat() {
   'locat pokemon': '',
   'obtain pokemon': '',
   'nature': '',
-  'weak': '',
-  'resist': '',
-  'strong': '',
-  'effective': '',
+  'weak pokemon': '',
+  'resist pokemon': '',
+  'immun pokemon': '',
+  'strong pokemon': '',
+  'effective pokemon': '',
+  'hidden power' : '',
   '!raffle': '',
   '!sign': ''
  };
@@ -279,15 +281,20 @@ function chat() {
  }
 
  function resistantTo(type1, type2 = '') {
-  var resistances = [];
+  var typecalc = {
+    resist:  [],
+    immune:  []
+  }
   type1 = validatetype(type1);
   if (type2) type2 = validatetype(type2);
   Object.keys(typechart).forEach((elementindex, index) => {
    if (typechart[elementindex][type1] * (type2 == "" ? 1 : typechart[elementindex][type2]) < 1) {
-    resistances.push(typechart[elementindex]["Type"]);
+    if (typechart[elementindex][type1] * (type2 == "" ? 1 : typechart[elementindex][type2]) == 0)
+      typecalc.immune.push(typechart[elementindex]["Type"]);
+      else typecalc.resist.push(typechart[elementindex]["Type"]);
    }
   });
-  return resistances;
+  return typecalc;
  }
 
  function effective(type) {
@@ -311,7 +318,6 @@ function chat() {
    url: cursor + '&' + clientid.substr(1)
   }, function(err, res, body) {
    if (body) {
-    console.log(body);
     if (body.follows.length == maxcursor) checkfollowers(username, hidenotify, body._links.next);
     followerloop: for (viewer in body.follows)
      if (followers.indexOf(body.follows[viewer].user.name) < 0) {
@@ -319,7 +325,6 @@ function chat() {
       if (!hidenotify) chatNotice(body.follows[viewer].user.name + " is now following", 10000, 1);
      }
    }
-   if (followers.length != followerslength && !hidenotify) chatNotice(followers.length + " people follow " + username, 10000, 1);
   });
 
  }
@@ -453,6 +458,11 @@ function chat() {
        }
       }
      }
+    if (containsquestion == true)
+     if (message.toLowerCase().indexOf('hidden power') >= 0) {
+      hiddenpowerloop: for (hptype in hiddenpower)
+      if (message.toLowerCase().indexOf(hptype) >= 0) response = 'in order to get hidden power '+ hptype +' your pokemon needs IVs to be hp: ' + hiddenpower[hptype][0] + ' att: ' + hiddenpower[hptype][1] + ' def: ' + hiddenpower[hptype][2] + ' sp. att: ' + hiddenpower[hptype][3] + ' sp. def: ' + hiddenpower[hptype][4] + ' speed: ' + hiddenpower[hptype][5];
+     }
      if (message.toLowerCase().indexOf('!sign') >= 0) {
       var fc = [];
       var validfc = true;
@@ -577,17 +587,30 @@ function chat() {
        }
        if (containsquestion == true)
         if (command[0] == 'weak') {
-         message.split(' ').forEach((weak, index) => {
-          var list = weakTo(weak);
-          if (list.length > 0) response = validatetype(weak) + ' is weak to ' + list.join(', ');
-         });
+          if (dexno >= 0) {
+            response = pokedex[dexno].Pokemon + ' is weak to ' + weakTo(pokedex[dexno].Type, pokedex[dexno].Secondary).join(', ');
+          }
+          else {
+             message.split(' ').forEach((weak, index) => {
+              var list = weakTo(weak);
+              if (list.length > 0) response = validatetype(weak) + ' is weak to ' + list.join(', ');
+             });
+           }
         }
        if (containsquestion == true)
-        if (command[0] == 'resist') {
-         message.split(' ').forEach((resistant, index) => {
-          var list = resistantTo(resistant);
-          if (list.length > 0) response = validatetype(resistant) + ' is resistant to ' + list.join(', ');
-         });
+        if (command[0] == 'resist' || command[0] == 'immun') {
+          if (dexno >= 0) {
+            var list = resistantTo(pokedex[dexno].Type, pokedex[dexno].Secondary);
+            response = pokedex[dexno].Pokemon + ' is resistant to ' + (list.resist.length > 0 ? list.resist.join(', ') : 'nothing');
+            if (list.immune.length > 0) response += ' and immune to ' + list.immune.join(', ');
+          }
+          else {
+            message.split(' ').forEach((resistant, index) => {
+            var list = resistantTo(resistant);
+            if (list.resist.length > 0) response = validatetype(resistant) + ' is resistant to ' + list.resist.join(', ');
+            if (list.immune.length > 0) response += ' and immune to ' + list.immune.join(', ');
+            });
+          }
         }
        if (containsquestion == true)
         if (command[0] == 'strong' || command[0] == 'effective') {
@@ -922,7 +945,7 @@ function chat() {
  client.addListener('connected', function(address, port) {
   if (showConnectionNotices) chatNotice('Connected', 1000, -2, 'chat-connection-good-connected');
   joinAccounced = [];
-  checkfollowers(dehash(channels[0]), true);
+  // checkfollowers(dehash(channels[0]), true);
  });
  client.addListener('disconnected', function(reason) {
   if (showConnectionNotices) chatNotice('Disconnected: ' + (reason || ''), 3000, 2, 'chat-connection-bad-disconnected');
@@ -1004,5 +1027,5 @@ function chat() {
  });
 
  // window.setInterval(getViewers,24000,channels[0]);
- window.setInterval(checkfollowers, 180000, dehash(channels[0]), false);
+ // window.setInterval(checkfollowers, 180000, dehash(channels[0]), false);
 }
