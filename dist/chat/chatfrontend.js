@@ -33,7 +33,7 @@
   }
  }
 
- function handleChat(channel, user, message, self) {
+function handleChat(channel, user, message, self) {
   if (user["message-type"] != 'chat' && user["message-type"] != 'action') return false;
 
   var chan = dehash(channel),
@@ -337,7 +337,7 @@
   }
  }
 
- function putChat(chan, user, message, self, avatar, image) {
+function putChat(chan, user, message, self, avatar, image) {
   var name = user.username,
    chatLine = document.createElement('li'),
    chatAlignment = document.createElement('div'),

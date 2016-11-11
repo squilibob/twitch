@@ -97,6 +97,7 @@ project.Login.prototype = {
   changestate: function (login) {
     // button.children[1].setText('Password check');
     socket.emit('request to connect', login);
+    game.state.start('Teams', Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
   },
 
   update: function () {

@@ -1,19 +1,5 @@
 function chatbot() {
 
- function submitchat(text) {
-  client.say(channels[0], text);
- }
-
- function showcommands(channel) {
-  chan = dehash(channel);
-  if (checkDelay(channel, 'cmd', 10)) {
-   setDelay(channel, 'cmd');
-   submitchat('bot commands: !signup !enter !battle !raffle !fc !uptime reload me');
-    //~Chat custom commands~: ' + Object.keys(commandlist).join(', '));
-  }
-  // chatNotice('the current commands available in ' + channel + ' are:', 12000, 1);
- }
-
  client.on("hosted", function(channel, username, total) {
 
   var chan = dehash(channel);

@@ -115,8 +115,11 @@ project.Pokedex.prototype = {
       //     team_to_rate = winner.team;
       //   }
       // };
+      for (var name in teams) {
+        if (!team_name) team_name = name;
+        if(!teams[team_name]) team_name = name;
+      }
       if (!team_to_rate) var team_to_rate = teams ? teams[team_name] : [0,3,6];
-      console.log(teams, team_name);
       var teamarray = [];
       totalbonuses = 0;
 
@@ -140,7 +143,9 @@ project.Pokedex.prototype = {
 
       if(pokedexoptions.scoring) {
         // rated = game.add.text(fullteam.getBounds().x+fullteam.getBounds().width, fullteam.getBounds().y, ' = ' + rate(team_to_rate), textstyle);
-        textButton.define(rated = game.add.group(), game, ('000' + rate(team_to_rate)).slice(-3), fullteam.getBounds().x+fullteam.getBounds().width+8, fullteam.getBounds().y+8, sectioncolors[4])
+        var textpad = '';
+        paddingloop: for(var textpadding=0; textpadding < rate(team_to_rate).toString().length; textpadding++) textpad += '0';
+        textButton.define(rated = game.add.group(), game, (textpad + rate(team_to_rate)).substr(-textpadding), fullteam.getBounds().x+fullteam.getBounds().width+8, fullteam.getBounds().y+8, sectioncolors[4])
         rated.onChildInputDown.add(this.toggle, this);
 
         bonusgroup = this.add.group();
@@ -155,7 +160,7 @@ project.Pokedex.prototype = {
         bonusgroup.x = fullteam.getBounds().x+Presets.padding;
         bonusgroup.y = fullteam.getBounds().y+fullteam.getBounds().height+Presets.padding;
         setScale(bonusgroup, 0.8);
-        textButton.define(totalscore = game.add.group(), game, ('000' + this.total()).substr(-4), rated.getBounds().x+rated.getBounds().width+Presets.padding*2, rated.getBounds().y+Presets.padding*2, sectioncolors[1])
+        textButton.define(totalscore = game.add.group(), game, (textpad + this.total().toString()).substr(-textpadding), rated.getBounds().x+rated.getBounds().width+Presets.padding*2, rated.getBounds().y+Presets.padding*2, sectioncolors[1])
         totalscore.onChildInputDown.add(this.submit, this);
         setScale(totalscore, (rated.getBounds().height+bonusgroup.getBounds().height*bonusgroup.scale.y-Presets.padding)/totalscore.getBounds().height);
       }

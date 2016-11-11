@@ -137,3 +137,18 @@ function hosting(channel, target, total, unhost) {
   chatNotice(chan + ' is no longer hosting.', null, null, 'chat-hosting-no');
  }
 }
+
+function submitchat(text) {
+ client.say(channels[0], text);
+}
+
+function showcommands(channel) {
+ chan = dehash(channel);
+ if (checkDelay(channel, 'cmd', 10)) {
+  setDelay(channel, 'cmd');
+  submitchat('bot commands: !signup !enter !battle !raffle !fc !uptime reload me');
+   //~Chat custom commands~: ' + Object.keys(commandlist).join(', '));
+ }
+ // chatNotice('the current commands available in ' + channel + ' are:', 12000, 1);
+}
+

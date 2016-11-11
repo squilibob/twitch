@@ -14,7 +14,8 @@ function validatetype(type) {
  return type;
 }
 
-function weakTo(type1, type2 = '') {
+function weakTo(type1, type2) {
+ type2 = type2 || '';
  var weaknesses = [];
  type1 = validatetype(type1);
  if (type2) type2 = validatetype(type2);
@@ -26,7 +27,8 @@ function weakTo(type1, type2 = '') {
  return weaknesses;
 }
 
-function resistantTo(type1, type2 = '') {
+function resistantTo(type1, type2) {
+  type2 = type2 || '';
  var typecalc = {
    resist:  [],
    immune:  []

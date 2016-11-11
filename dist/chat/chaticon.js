@@ -67,13 +67,13 @@ function formatEmotes(text, emotes) {
  return htmlEntities(splitText).join('')
 }
 
-function badges(chan, user, isBot, custom) {
-
- function createBadge(name) {
+function createBadge(name) {
   var badge = document.createElement('div');
   badge.className = 'chat-badge-' + name;
   return badge;
- }
+}
+
+function badges(chan, user, isBot, custom) {
 
  var chatBadges = document.createElement('span');
  chatBadges.className = 'chat-badges';

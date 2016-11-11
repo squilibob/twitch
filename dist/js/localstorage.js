@@ -10,7 +10,7 @@ if (socket.hasListeners('login accepted') == false) socket.on('login accepted', 
     migrateteam =  Array.isArray(user.teams);
     teams = Array.isArray(user.teams) ? {'default': user.teams} : user.teams;
     team_name = user.active;
-    game.state.start('Teams', Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
+    // game.state.start('Teams', Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
 });
 
 // if (socket.hasListeners('user pokes') == false) socket.on('user pokes', function(payload) {
