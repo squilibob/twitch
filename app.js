@@ -138,7 +138,8 @@ io.on('connection', function(socket){
 						if (result.errors) console.log(result.first_error);
 						// else socket.emit('login accepted', result[0]);
 					});
-					socket.broadcast.emit('someone signed up',payload.id);
+					io.emit('someone signed up',payload.id);
+					// socket.broadcast.emit('someone signed up',payload.id);
 				}
 			})
 		} else console.log('user not created, there was missing information');
@@ -224,6 +225,10 @@ io.on('connection', function(socket){
 			if (err) throw err;
 			console.log(JSON.stringify(result, null, 2));
 		});
+	});
+
+	socket.on("pokemon cry", function(poke){
+		io.emit("playsound", ('000' + poke).substr(-3));
 	});
 
 	socket.on("Send vote", function(payload){
@@ -410,7 +415,8 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('send emote', function(payload) {
-		socket.broadcast.emit('receive emote', payload);
+		io.emit('receive emote', payload);
+		// socket.broadcast.emit('receive emote', payload);
 		socket.emit('receive emote', payload);
 	});
 

@@ -3,6 +3,7 @@ var project = {};
 var teams;
 var team_name;
 var loader_elements = {};
+var audioJSON;
 
 project.Footer = function () {
   states = {};
@@ -11,6 +12,7 @@ project.Footer = function () {
 project.Footer.prototype = {
 
   preload: function () {
+    footergame.load.json('audiojson', '/audio/cries.json');
     footergame.load.script('Pokemotions', '/states/pokemotions.js');
     // {'Pokemotions': '/states/pokemotions'},
     // var script;
@@ -32,6 +34,7 @@ project.Footer.prototype = {
   },
 
   create: function () {
+    audioJSON = footergame.cache.getJSON('audiojson');
     footergame.stage.disableVisibilityChange = true;
     footergame.state.add('Pokemotions', project.Pokemotions);
     footergame.state.start('Pokemotions');

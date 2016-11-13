@@ -254,6 +254,11 @@ function handleChat(channel, user, message, self) {
         }
        }
        if (containsquestion == true)
+        if (command[0] == 'sound') {
+         if (dexno >= 0) {
+          socket.emit("pokemon cry", dexno+1);
+         }
+        }
         if (command[0] == 'weak') {
           if (dexno >= 0) {
             response = pokedex[dexno].Pokemon + ' is weak to ' + weakTo(pokedex[dexno].Type, pokedex[dexno].Secondary).join(', ');

@@ -15,6 +15,7 @@ function pokify(text) {
  }
  pokifyloop: for (var pokes = pokedex.length - 1; pokes >= 0; pokes--)
   if (pokes != skippoke - 1 && text.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) {
+   if (autocry) socket.emit("pokemon cry", pokes+1);
    var location = text.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()),
     namelength = pokedex[pokes].Pokemon.length;
    var xpos = spritesheet.rowlen * spritesheet.x - ((pokes % spritesheet.rowlen) * spritesheet.x),

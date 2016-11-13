@@ -1,5 +1,7 @@
 project.Pokemotions = function(game) {
   var
+  fx,
+  decoded,
   txtstyle,
   questiontext,
   listgroup,
@@ -9,8 +11,10 @@ project.Pokemotions = function(game) {
 project.Pokemotions.prototype = {
     preload: function(){
       footergame.load.spritesheet('pokemotevulpix', '/img/pokemotions.png', 206, 236, 10);
+      footergame.load.audiosprite('cries', '/audio/cries.ogg', '/audio/cries.json', audioJSON);
     },
     create: function(){
+      decoded = false;
       this.game.stage.backgroundColor = 0x1c0f0c;
       txtstyle =  {
         backgroundColor: 'transparent',
@@ -26,12 +30,6 @@ project.Pokemotions.prototype = {
       listgroup = footergame.add.group();
       var _this = this;
 
-      // this.footertext("squilibob's stream", 0);
-      // this.footertext("another one", 1);
-
-      // socket.emit("Send vote", {id:'system', vote:'best eeveelution'});
-      // this.drawvotes('best eeveelution', [{name: 'Flareon', tally: 10}, {name: 'Leafeon', tally: 10}, {name:'Espeon', tally: 19}, {name: 'Jolteon', tally: 12}, {name:'Vaporeon', tally: 5}, {name: 'Umbreon', tally: 10}, {name: 'Sylveon', tally: 10}, {name: 'Glaceon', tally: 10}]);
-      // this.drawvotes('who will your starter be in Sun/Moon?', [{name: 'Litten', tally: 1},{name: 'Rowlet', tally: 2},{name: 'Popplio', tally: 0}]);
       if (socket.hasListeners('receive emote') == false) socket.on('receive emote', function (payload) {
         _this.footertext(payload);
       });
@@ -39,6 +37,18 @@ project.Pokemotions.prototype = {
         _this.composevote(payload);
       });
       socket.emit('Request vote');
+
+      fx = footergame.add.audioSprite('cries');
+      fx.allowMultiple = true;
+      footergame.sound.setDecodedCallback(['cries'], this.playsound, this);
+
+      if (socket.hasListeners('playsound') == false)
+      socket.on('playsound', function(which) {
+        decoded && fx.play(which);
+      });
+    },
+    playsound: function(){
+      decoded = true;
     },
     composevote: function(payload){
       var title, options = [], names;
@@ -111,11 +121,9 @@ project.Pokemotions.prototype = {
     sendvote: function(which){
       which.tint = "0xffff00";
       if (game.storage)
-      console.log(game.storage.getItem("id"), which.text.substr(0,which.text.indexOf(' -')));
     socket.emit("Send vote", {id: game.storage.getItem("id"), vote:which.text.substr(0,which.text.indexOf(' -'))})
     },
     footertext: function(payload){
-      console.log(payload);
       var message = payload.message;
       var picture = payload.picture;
       test = {

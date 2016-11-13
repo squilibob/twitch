@@ -5,6 +5,7 @@ var commandlist = {
  '!sign': '',
  'disable music': 'this code NTAW-WWWW-WW2Y-M2PT in Vs Recorder',
  'check level': 'http://mikuia.tv/levels/squilibob',
+ 'sound pokemon': '',
  'evol pokemon': '',
  'find pokemon': '',
  'route pokemon': '',
