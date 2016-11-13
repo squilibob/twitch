@@ -62,6 +62,7 @@ function chatbot() {
  });
 
  client.connect();
+ socket.emit('send raffle', true);
 
  window.setInterval(getViewers, 525000, channels[0]);
  window.setInterval(repeating_notice_website, 3000000);

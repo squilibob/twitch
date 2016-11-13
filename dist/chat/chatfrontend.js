@@ -149,7 +149,7 @@ function handleChat(channel, user, message, self) {
         socket.emit('new user', payload);
         response ='create: twitch username: ' + user.username + ' IGN: ' + ign + ' fc: '+ fc.join('-');
        }
-       else response = fc.join('-') + ' ' + ign + ' is invalid combination of fc and ign';
+       else response = fc.join('-') + ' ' + ign + ' is invalid combination of fc and ign. Please include your ign and fc like this: !signup squilibob 3609-1058-1166';
       } else response = message + ' invalid please include your ign and fc like this: !signup squilibob 3609-1058-1166';
      }
     if (message.toLowerCase().indexOf('fc') >= 0) {
@@ -163,8 +163,13 @@ function handleChat(channel, user, message, self) {
      socket.emit('request avatar', chan, user, user.username + ': reloaded avatar image', self);
      socket.emit('request badge', user);
     }
-    if (message.toLowerCase().indexOf('!enter') >= 0) {
-     socket.emit("manually enter raffle", user.username, Math.floor(Math.random() * 719));
+    if (message.toLowerCase().indexOf('!enter') >= 0 || message.toLowerCase().indexOf('!join') >= 0) {
+     if (user.username != dehash(channel) && !self)
+      socket.emit("manually enter raffle", user.username, Math.floor(Math.random() * 719));
+    }
+    if (message.toLowerCase().indexOf('!vote') >= 0 && user.username != dehash(channel) && !self) {
+     var voteoption = message.split(' ');
+     (voteoption.length > 1 && voteoption[0].indexOf('!vote') >= 0) ? socket.emit("Send vote", {id: user.username.toLowerCase(), vote: capitalize(voteoption[1].toLowerCase())}) : socket.emit("Show vote");
     }
     // if (message.toLowerCase().indexOf('!password') >= 0) {
     //  socket.emit("resend password", user.username);
@@ -180,10 +185,10 @@ function handleChat(channel, user, message, self) {
       response = ('Stream has been live for ' + hours + (minutes < 10 ? ':0' : ':') + minutes);
      }
     }
+
     if (containsquestion == true) {
      var dexno = -1;
      var sp = false;
-
      var command = message.toLowerCase().split(' ');
      mewtwoloop: for (var i = 0; i < command.length; i++) {
       if (command[i].indexOf('mewtwo') >= 0) dexno = 149;
@@ -232,15 +237,20 @@ function handleChat(channel, user, message, self) {
      if (exists) {
       if (checkDelay(channel, command[0], 10)) {
        setDelay(channel, command[0]);
-       if (command[0] == '!raffle') {
-        response = 'In the raffle: ';
-        var participants = (JSON.parse(localStorage.getItem("participants"))); //.join(', ');
+       if (command[0] == '!raffle' && Object.keys(participants).length > 0) {
+        response = Object.keys(participants).length + ' in the raffle: ';
         var totalraffle = 0;
         totalloop: for (person in participants) {
-         totalraffle += participants[person].chance;
+         totalraffle += participants[person];
         }
-        enteredloop: for (person in participants) {
-         if (participants[person].entered) response = response + participants[person].id + ' (' + Math.floor(participants[person].chance / totalraffle * 10000) / 100 + '%) ';
+        if (participants[user.username.toLowerCase()]) response = user.username + ' has a ' + Math.floor(participants[person] / totalraffle * 10000) / 100 + '% to win the raffle';
+        else {
+         if (user.username == dehash(channel)) self = true;
+         if (self == true)
+         enteredloop: for (person in participants) {
+          response = response + person + ' (' + Math.floor(participants[person] / totalraffle * 10000) / 100 + '%) ';
+         }
+         else response = 'You must sign up to join raffles and then use !enter. Signup page: ' + websiteurl + ' or !signup';
         }
        }
        if (containsquestion == true)

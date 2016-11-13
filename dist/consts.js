@@ -1,3 +1,5 @@
+const websiteurl = 'http://192.241.226.10/';
+
 const maxpokes = 719,
  Tiers = ['lc','pu','bl4','nu','bl3','ru','bl2','uu','bl','ou','uber'],
 // chatwidth = 400,

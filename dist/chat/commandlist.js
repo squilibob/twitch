@@ -1,5 +1,5 @@
 var commandlist = {
- '!battle': ' We do raffles for battles. signup page: http://192.241.226.10/ or !signup. Type !enter to join. !raffle will show who is entered',
+ '!battle': ' We do raffles for battles. You must sign up to join raffles and then use !enter. Signup page: http://192.241.226.10/ or !signup. !raffle will show if you are entered',
  '!ship': 'I ship me with someone. It is now canon!',
  '!raffle': '',
  '!sign': '',

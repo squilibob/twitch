@@ -146,9 +146,24 @@ function showcommands(channel) {
  chan = dehash(channel);
  if (checkDelay(channel, 'cmd', 10)) {
   setDelay(channel, 'cmd');
-  submitchat('bot commands: !signup !enter !battle !raffle !fc !uptime reload me');
+  submitchat('bot commands: !vote !signup !enter !battle !raffle !fc !uptime !follow !level reload me');
    //~Chat custom commands~: ' + Object.keys(commandlist).join(', '));
  }
  // chatNotice('the current commands available in ' + channel + ' are:', 12000, 1);
 }
 
+function parseraffle (raff) {
+  var justentered = [];
+  var updated = {};
+  for (person in raff) {
+    if (participants[raff[person].id] == undefined && raff[person].entered) {
+      justentered.push(raff[person].id);
+      updated[raff[person].id] = raff[person].chance;
+    }
+    else if (raff[person].entered) {
+      updated[raff[person].id] = raff[person].chance;
+    }
+  }
+  participants = updated;
+  if (justentered.length > 0) submitchat(justentered.join(', ') + ' has been entered into the raffle');
+}

@@ -70,7 +70,7 @@ connect().then((c) => {
      else {
 	     cursor.each(function(err, result) {
       		if (err) throw err;
-          		sendRaffleUpdate();
+          		sendRaffleUpdate(true);
 		});
           }
 	});
@@ -235,6 +235,15 @@ io.on('connection', function(socket){
 		});
 	});
 
+	socket.on("Show vote", function(){
+		r.table('Vote')
+		.get('system')
+		.run(conn, function(err, result) {
+			if (err) throw err;
+			else socket.emit("Vote options", result);
+		});
+	});
+
 	socket.on('Request vote', function() {
 		var current = [];
 		r.db('Users').table('Vote')
@@ -396,8 +405,8 @@ io.on('connection', function(socket){
 		});
 	});
 
-	socket.on('send raffle', function() {
-		sendRaffleUpdate();
+	socket.on('send raffle', function(needupdate) {
+		sendRaffleUpdate(needupdate);
 	});
 
 	socket.on('send emote', function(payload) {
@@ -474,7 +483,7 @@ function sendVoteUpdate(){
 		});
 }
 
-function sendRaffleUpdate(){
+function sendRaffleUpdate(updated){
 	var current = [];
 	r.db('Users').table('Raffle')
 		.run(conn, function(err, cursor) {
@@ -484,6 +493,7 @@ function sendRaffleUpdate(){
 					if (result[0] == undefined || result == []) current = [];
 					else current = result;
 					io.emit('receive raffle', current);
+					if (updated) io.emit('raffle update', current);
 				}
 			});
 		});

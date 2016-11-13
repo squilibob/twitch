@@ -43,12 +43,20 @@ socket.on('raffle winner', function(person) {
  submitchat(person + ' has won the raffle');
 });
 
+socket.on('raffle update', function(newraffle) {
+  parseraffle(newraffle);
+});
+
 socket.on('someone signed up', function(name) {
  chatNotice(name + " has created an account", 10000, 1);
 });
 
 socket.on('invalid raffle user', function(username) {
  submitchat(username + ' tried to enter the raffle but has not registered a FC and IGN (use !signup)');
+});
+
+socket.on("Vote options", function(list){
+  submitchat(list.title + ' You can !vote for: ' + list.options.join(', '));
 });
 
 function repeating_notice_website () {

@@ -104,7 +104,6 @@ project.Vote.prototype = {
     sendvote: function(which){
       which.tint = "0xffff00";
       if (game.storage)
-      console.log(game.storage.getItem("id"), which.text.substr(0,which.text.indexOf(' -')));
       socket.emit("Send vote", {id: game.storage.getItem("id"), vote:which.text.substr(0,which.text.indexOf(' -'))})
     },
 }

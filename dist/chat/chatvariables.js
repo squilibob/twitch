@@ -5,11 +5,12 @@ var chatcontainer = document.getElementById('chat'),
 
 chatcontainer.appendChild(chat);
 
-var useravatars = {},
- userbadges = {},
- started,
+var started,
  followers = [],
  viewers = [],
- cmdTimestamps = {},
  stockavatar = [],
+ useravatars = {},
+ userbadges = {},
+ participants = {},
+ cmdTimestamps = {},
  randomColorsChosen = {};

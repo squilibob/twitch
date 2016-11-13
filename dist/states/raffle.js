@@ -305,7 +305,6 @@ project.Raffle.prototype = {
           }
           contextthis.fillraffle(usersraffle);
           contextthis.fillchart(usersraffle);
-          game.storage.setItem("participants", JSON.stringify(usersraffle));
           // if (Presets.externalteams) {
           //   for (member in fullraffle) {
           //       if (fullraffle[member].winner)
