@@ -186,7 +186,7 @@ function handleChat(channel, user, message, self) {
      }
     }
 
-    if (containsquestion == true) {
+if (containsquestion == true) {
      var dexno = -1;
      var sp = false;
      var command = message.toLowerCase().split(' ');
@@ -243,7 +243,7 @@ function handleChat(channel, user, message, self) {
         totalloop: for (person in participants) {
          totalraffle += participants[person];
         }
-        if (participants[user.username.toLowerCase()]) response = user.username + ' has a ' + Math.floor(participants[person] / totalraffle * 10000) / 100 + '% to win the raffle';
+        if (participants[user.username.toLowerCase()]) response = user.username + ' has a ' + Math.floor(participants[user.username] / totalraffle * 10000) / 100 + '% to win the raffle';
         else {
          if (user.username == dehash(channel)) self = true;
          if (self == true)
@@ -259,17 +259,18 @@ function handleChat(channel, user, message, self) {
           socket.emit("pokemon cry", dexno+1);
          }
         }
-        if (command[0] == 'weak') {
-          if (dexno >= 0) {
-            response = pokedex[dexno].Pokemon + ' is weak to ' + weakTo(pokedex[dexno].Type, pokedex[dexno].Secondary).join(', ');
+        if (containsquestion == true)
+          if (command[0] == 'weak') {
+            if (dexno >= 0) {
+              response = pokedex[dexno].Pokemon + ' is weak to ' + weakTo(pokedex[dexno].Type, pokedex[dexno].Secondary).join(', ');
+            }
+            else {
+               message.split(' ').forEach((weak, index) => {
+                var list = weakTo(weak);
+                if (list.length > 0) response = validatetype(weak) + ' is weak to ' + list.join(', ');
+               });
+             }
           }
-          else {
-             message.split(' ').forEach((weak, index) => {
-              var list = weakTo(weak);
-              if (list.length > 0) response = validatetype(weak) + ' is weak to ' + list.join(', ');
-             });
-           }
-        }
        if (containsquestion == true)
         if (command[0] == 'resist' || command[0] == 'immun') {
           if (dexno >= 0) {
