@@ -337,6 +337,7 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('set current team', function(name, payload){
+		console.log(payload);
 		name = name.toLowerCase();
 		// r.db('Users').table('Users').get(name).update({"teams" : payload})
 		r.db('Users').table('Users').get(name).replace(function (row) {

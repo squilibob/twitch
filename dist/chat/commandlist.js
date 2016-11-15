@@ -1,8 +1,9 @@
 var commandlist = {
- '!battle': ' We do raffles for battles. You must sign up to join raffles and then use !enter. Signup page: http://192.241.226.10/ or !signup. !raffle will show if you are entered',
+ '!battle': ' We do raffles for battles. You must sign up to join raffles and then use !enter. Signup webpage: squi.li or !signup. !raffle will show if you are entered',
  '!ship': 'I ship me with someone. It is now canon!',
  '!raffle': '',
  '!sign': '',
+ // '!current': '',
  'disable music': 'this code NTAW-WWWW-WW2Y-M2PT in Vs Recorder',
  'check level': 'http://mikuia.tv/levels/squilibob',
  'sound pokemon': '',

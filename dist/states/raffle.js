@@ -214,7 +214,7 @@ project.Raffle.prototype = {
       cards = JSON.parse(game.storage.getItem('cards'));
       spinspeed = 24;
       radian = Math.PI * 2;
-      donutchartradius = Presets.height / 4 <  Presets.width / 4 ?  Presets.height / 4 :  Presets.width / 4;
+      donutchartradius = Presets.height / 4 <  Presets.width / 4 ?  Presets.height / 8 :  Presets.width / 8;
 
       game.stage.backgroundColor = Presets.bgcolor;
 
