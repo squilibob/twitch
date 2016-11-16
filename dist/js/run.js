@@ -117,6 +117,28 @@ project.Init.prototype = {
     }
       // var userJSON = game.cache.getJSON('userJSON');
       // localStorage.setItem('twitchlogo', userJSON.logo);
+    //   for (poke in aloladex) {
+    //     aloladex[poke]["locationORAS"] = '';
+    //     aloladex[poke]["Atk"] = 0 ;
+    //     aloladex[poke]["Catch"] = 0 ;
+    //     aloladex[poke]["Color"] = "Red" ;
+    //     aloladex[poke]["Def"] = 0 ;
+    //     aloladex[poke]["EVHP"] = 0 ;
+    //     aloladex[poke]["EXPV"] = 0 ;
+    //     aloladex[poke]["Evolve"] = "N" ;
+    //     aloladex[poke]["Item"] = "" ;
+    //     aloladex[poke]["Move1"] = "" ;
+    //     aloladex[poke]["Move2"] = "" ;
+    //     aloladex[poke]["Move3"] = "" ;
+    //     aloladex[poke]["Move4"] = "" ;
+    //     aloladex[poke]["Nature"] = "" ;
+    //     aloladex[poke]["SpA"] = 0 ;
+    //     aloladex[poke]["SpD"] = 0 ;
+    //     aloladex[poke]["Spe"] = 0 ;
+    //     aloladex[poke]["Tier"] = "pu" ;
+    //     console.log(aloladex[poke]);
+    //     socket.emit("Insert pokedex", aloladex[poke]);
+    // }
   },
 
   update: function(){
@@ -133,7 +155,8 @@ project.Init.prototype = {
 
   populatedata: function(){
     // for (var i=1; i <= maxpokes; i++) {
-      socket.emit('Ask for pokedex');
+      socket.emit('Ask for pokedex', Presets.simple);
+      // socket.emit('Ask for pokedex');
     // }
   },
 

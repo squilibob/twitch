@@ -161,19 +161,31 @@ io.on('connection', function(socket){
 		});
 	});
 
-	socket.on ("Ask for pokedex", function(){
-		if (!pokedex)
+	socket.on ("Ask for pokedex", function(simple){
+		if (!pokedex && !simple)
 			r.db('Users').table('Pokedex')
 				.run(conn, function(err, cursor) {
 					cursor.toArray(function(err, result) {
 						if (err || result[0] == undefined || result == []) socket.emit('dex not found');
 						else {
-							socket.emit("Receive pokedex", result);
 							pokedex = result;
+							socket.emit("Receive pokedex", pokedex);
 						}
 					});
 				});
-		else socket.emit("Receive pokedex", pokedex);
+		if (!pokedex && simple)
+			r.db('Users').table('Pokedex')
+			.pluck('Pokemon', 'Tier', 'HP', 'Attack', 'Defense','Sp. Attack', 'Sp. Defense', 'Speed')
+				.run(conn, function(err, cursor) {
+					cursor.toArray(function(err, result) {
+						if (err || result[0] == undefined || result == []) socket.emit('dex not found');
+						else {
+							pokedex = result;
+							socket.emit("Receive pokedex", pokedex);
+						}
+					});
+				});
+		if (pokedex) socket.emit("Receive pokedex", pokedex);
 	});
 	// socket.on ("Ask for pokedex", function(number){
 	// 	number = parseInt(number);
@@ -220,7 +232,7 @@ io.on('connection', function(socket){
 	console.log(payload["id"],payload["Pokemon"]);
 	r.table('Pokedex').
 	get(payload["id"]).
-		update(payload).
+		replace(payload).
 		run(conn, function(err, result) {
 			if (err) throw err;
 			console.log(JSON.stringify(result, null, 2));

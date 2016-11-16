@@ -171,15 +171,15 @@ function handleChat(channel, user, message, self) {
      var voteoption = message.split(' ');
      (voteoption.length > 1 && voteoption[0].indexOf('!vote') >= 0) ? socket.emit("Send vote", {id: user.username.toLowerCase(), vote: capitalize(voteoption[1].toLowerCase())}) : socket.emit("Show vote");
     }
-    if (message.toLowerCase().indexOf('!current') >= 0) { //&& user.username != dehash(channel) && !self) {
-     if (checkall.length > 1) {
-      teamtochange = checkall.slice(1).join(' ');
-      socket.emit('set current team', user.username, teamtochange);
-     }
-     else {
-      response = 'you must supply the name of the team you want to make your current team'
-     }
-    }
+    // if (message.toLowerCase().indexOf('!current') >= 0) && user.username != dehash(channel) && !self) {
+    //  if (checkall.length > 1) {
+    //   teamtochange = checkall.slice(1).join(' ');
+    //   socket.emit('set current team', user.username, teamtochange);
+    //  }
+    //  else {
+    //   response = 'you must supply the name of the team you want to make your current team'
+    //  }
+    // }
     // if (message.toLowerCase().indexOf('!password') >= 0) {
     //  socket.emit("resend password", user.username);
     // }
@@ -346,7 +346,8 @@ if (containsquestion == true) {
           }
          } else {
           if (command[0] == 'find' || command[0] == 'route' || command[0] == 'locat' || command[0] == 'obtain' || command[0] == 'catch') {
-           if (pokedex[dexno].locationORAS) reply += pokedex[dexno].Pokemon + ' ORAS locations: ' + pokedex[dexno].locationORAS;
+           if (pokedex[dexno].Location) reply += pokedex[dexno].Pokemon + ' SuMo locations: ' + pokedex[dexno].Location;
+           else if (pokedex[dexno].locationORAS) reply += pokedex[dexno].Pokemon + ' ORAS locations: ' + pokedex[dexno].locationORAS;
            else reply = 'No location in ORAS for ' + pokedex[dexno].Pokemon;
           }
          }

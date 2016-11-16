@@ -1,6 +1,6 @@
 const websiteurl = 'squi.li';
 
-const maxpokes = 719,
+const maxpokes = 802,
  Tiers = ['lc','pu','bl4','nu','bl3','ru','bl2','uu','bl','ou','uber'],
 // chatwidth = 400,
  chatheight = 720,
@@ -82,11 +82,18 @@ colors = {
  }
 
  const spritesheet = {
-   src: "/img/pokemonxy.png",
+   src: "/img/pokemonsumo.png",
    x: 38,
    y: 38,
    rowlen: 26,
  }
+
+ // const spritesheet = {
+ //   src: "/img/pokemonxy.png",
+ //   x: 38,
+ //   y: 38,
+ //   rowlen: 26,
+ // }
 
  // const spritesheet = {
  //   src: "/img/troz128.png",

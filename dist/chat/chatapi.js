@@ -23,7 +23,6 @@ function getStart(chan) {
 
 function checkfollowers(username, hidenotify, url) {
  var maxcursor = 100;
- var followerslength = followers.length;
  var cursor = url ? url : 'https://api.twitch.tv/kraken/channels/' + username + '/follows?limit=100';
  client.api({
   url: cursor + '&' + clientid.substr(1)
@@ -33,7 +32,7 @@ function checkfollowers(username, hidenotify, url) {
    followerloop: for (viewer in body.follows)
     if (followers.indexOf(body.follows[viewer].user.name) < 0) {
      followers.push(body.follows[viewer].user.name);
-     if (!hidenotify) chatNotice(body.follows[viewer].user.name + " is now following", 10000, 1);
+     if (!hidenotify) chatNotice(body.follows[viewer].user.name + " is now following (follower #" + followers.length + ")", 10000, 1);
     }
   }
  });
