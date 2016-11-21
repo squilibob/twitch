@@ -107,11 +107,18 @@ colors = {
    y: 32,
  }
 
+ // const dexspritesheet = {
+ //   src: "/img/pikafan2000.png",
+ //   x: 109,
+ //   y: 117,
+ // }
+ //const dexspritesheetrowlen = 25;
+
  const dexspritesheet = {
-   src: "/img/pikafan2000.png",
+   src: "/img/pikafanSuMo.png",
    x: 109,
-   y: 117,
+   y: 112,
  }
 
- const dexspritesheetrowlen = 25;
- const dexmaxpokes = 720;
+ const dexspritesheetrowlen = 35;
+ const dexmaxpokes = 802;
