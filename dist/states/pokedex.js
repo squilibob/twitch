@@ -398,10 +398,10 @@ project.Pokedex.prototype = {
       recommendedlabel = this.text({obj : recommendedlabel, text : "recommended ", fontsize : scale/4, color : brightcolor, newx : x, newy : y});
       y += Math.floor(scale/4);
       abilitylabel = this.text({obj : abilitylabel, text : "ability ", fontsize : scale/4, color : softcolor, newx : x, newy : y});
-      abilitylabel.visible = (dexinfo["Ability"].toLowerCase() != '' );
+      // abilitylabel.visible = (dexinfo["Ability"].toLowerCase() != '' );
       x += scale;
-      ability = this.text({obj : ability, text : dexinfo["Ability"].toLowerCase(), fontsize : scale/4, color : brightcolor, newx : x, newy : y});
-      ability.visible = (dexinfo["Ability"].toLowerCase() != '' );
+      ability = this.text({obj : ability, text : dexinfo["Ability"].join(', ').toLowerCase(), fontsize : scale/4, color : brightcolor, newx : x, newy : y});
+      // ability.visible = (dexinfo["Ability"].toLowerCase() != '' );
       if (dexinfo["Item"] != "") {
         x = pokedexoptions.dex.x;
         y += Math.floor(scale/4);
