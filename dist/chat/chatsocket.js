@@ -19,6 +19,13 @@ socket.on('receive badge', function(username, badge) {
  userbadges[username] = badge;
 });
 
+socket.on ("receive moves", function(payload) {
+ // moves = payload;
+ for (move in payload) {
+  moves[payload[move].id] = payload[move];
+  delete moves[payload[move].id].id;
+ }
+});
 // socket.on('user pokes', function(payload) {
 //  var name = payload.name;
 //  var team = payload.team;

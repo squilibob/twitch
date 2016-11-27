@@ -7,7 +7,9 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var r = require('rethinkdb');
 var pokedex;
-var typechart;
+var cached = {};
+// var typechart;
+// var moves;
 
 app.set('port', (process.env.PORT || 80));
 
@@ -215,6 +217,36 @@ io.on('connection', function(socket){
 	// 		socket.emit("Receive typechart" , result);
 	// 	});
 	// });
+	// socket.on ("Ask for moves", function(){
+	//   if (!moves)
+	// 	r.db('Users').table('Moves')
+	// 		.run(conn, function(err, cursor) {
+	// 			cursor.toArray(function(err, result) {
+	// 				if (err || result[0] == undefined || result == []) console.log('moves not found');;
+	// 				else {
+	// 					socket.emit("Receive moves", result);
+	// 					moves = result;
+	// 				}
+	// 			});
+	// 		});
+	//   else socket.emit("Receive typechart", moves);
+	// });
+	socket.on ("Ask for table", function(table){
+	  response = "receive " + table.toLowerCase();
+	  if (!cached[table])
+		r.db('Users').table(table)
+			.run(conn, function(err, cursor) {
+				cursor.toArray(function(err, result) {
+					if (err || result[0] == undefined || result == []) console.log(table + ' not found');
+					else {
+						socket.emit(response, result);
+						cached[table] = result;
+					}
+				});
+			});
+	  else socket.emit(response, cached[table]);
+	  console.log(response);
+	});
 	socket.on("resend password", function(username){
 		r.table('Users').filter(r.row('id').eq(username.toLowerCase()))
 		.pluck('pokevalues')

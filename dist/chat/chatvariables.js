@@ -13,4 +13,5 @@ var started,
  userbadges = {},
  participants = {},
  cmdTimestamps = {},
- randomColorsChosen = {};
+ randomColorsChosen = {},
+ moves = {};

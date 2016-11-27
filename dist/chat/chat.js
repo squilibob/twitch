@@ -63,6 +63,7 @@ function chatbot() {
 
  client.connect();
  socket.emit('send raffle', true);
+ socket.emit("Ask for table", 'Moves');
 
  window.setInterval(getViewers, 525000, channels[0]);
  window.setInterval(repeating_notice_website, 3000000);

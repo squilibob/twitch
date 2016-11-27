@@ -76,9 +76,9 @@ function handleChat(channel, user, message, self) {
      var target = message.slice(message.toLowerCase().indexOf('!raid')).split(' ');
      target = target[1];
      if (target.length > 3) {
-      submitchat('we are now going to raid ' + target + ' please go to http://twitch.tv/' + target + ' and type the raid message:');
+      submitchat('/me we are now going to raid ' + target + ' please go to http://twitch.tv/' + target + ' and type the raid message:');
       submitchat('тo proтecт тнe cнaт froм devasтaтιon, тo υnιтe spaммers wιтнιn oυr naтιon, тo denoυnce тнe evιls of вans and мods, тo eхтend oυr spaм тo тнe space aвove. copy! pasтe! тwιтcн cнaт, scroll aт тнe speed of lιgнт! Ragequιт now or prepare тo fιgнт!');
-      submitchat('make sure you type it into the chat of ' + target + '  at http://twitch.tv/' + target + ' !');
+      submitchat('/me make sure you type it into the chat of ' + target + '  at http://twitch.tv/' + target + ' !');
      }
     }
    } else {
@@ -152,7 +152,7 @@ function handleChat(channel, user, message, self) {
        else response = fc.join('-') + ' ' + ign + ' is invalid combination of fc and ign. Please include your ign and fc like this: !signup squilibob 3609-1058-1166';
       } else response = message + ' invalid please include your ign and fc like this: !signup squilibob 3609-1058-1166';
      }
-    if (message.toLowerCase().indexOf('fc') >= 0) {
+    if (message.toLowerCase().indexOf(' fc ') >= 0 || message.toLowerCase().indexOf('!fc') >= 0) {
      var notyou = null;
      fcloop: for (person in useravatars)
       if (message.toLowerCase().indexOf(person.toLowerCase()) >= 0) notyou = person.toLowerCase();
@@ -229,6 +229,43 @@ if (containsquestion == true) {
        }
       }
      }
+      if (message.toLowerCase().indexOf('move') >= 0 || message.toLowerCase().indexOf('learn') >= 0) {
+        moveloop: for (move in moves) {
+          if (message.toLowerCase().indexOf(move.toLowerCase()) >= 0) {
+            property = Object.keys(moves[move]);
+            response = move + ': ' + moves[move].Description;
+            moveproploop: for (key in property) {
+              if (message.toLowerCase().indexOf(property[key].toLowerCase()) >= 0)
+                response = move + ' ' + property[key] + ': ' + moves[move][property[key]];
+              if (message.toLowerCase().indexOf('pokemon') >= 0) {
+                var learnlist = [];
+                pokemoveloop: for (poke in moves[move].Pokemon) {
+                  learnlist.push(poke);
+                }
+                response = 'The pokemon that can learn ' + move + ' are: ';
+                if (learnlist.length < 7) response += learnlist.join(', ');
+                else {
+                  learnloop: for (var i=0; i<5; i++){
+                    response += learnlist[i] + ', ';
+                  }
+                  response += (learnlist.length - 6) + ' more';
+                }
+              }
+              if (dexno > -1){ // && moves[move].Pokemon.toLowerCase() == pokedex[dexno].Pokemon.toLowerCase()) {
+                response = pokedex[dexno].Pokemon + ' learns ' + move;
+                  console.log(moves[move].Pokemon[pokedex[dexno].Pokemon], typeof(moves[move].Pokemon[pokedex[dexno].Pokemon]) === 'number');
+                if (typeof(moves[move].Pokemon[pokedex[dexno].Pokemon]) === 'number')
+                  response +=  ' at level ' + moves[move].Pokemon[pokedex[dexno].Pokemon];
+                else
+                  if (moves[move].Pokemon[pokedex[dexno].Pokemon].toLowerCase() == 'start') response = pokedex[dexno].Pokemon + ' starts with the move ' + move;
+                  else
+                    if (moves[move].Pokemon[pokedex[dexno].Pokemon].toLowerCase() == 'egg') response += ' as an egg move by breeding';
+                    else response += ' by ' + moves[move].Pokemon[pokedex[dexno].Pokemon];
+              }
+            }
+          }
+        }
+      }
     }
     commandloop: for (var key in commandlist) {
      var command = key.split(' ');
@@ -282,6 +319,7 @@ if (containsquestion == true) {
           }
        if (containsquestion == true)
         if (command[0] == 'resist' || command[0] == 'immun') {
+          response = 'Does not resist anything';
           if (dexno >= 0) {
             var list = resistantTo(pokedex[dexno].Type, pokedex[dexno].Secondary);
             response = pokedex[dexno].Pokemon + ' is resistant to ' + (list.resist.length > 0 ? list.resist.join(', ') : 'nothing');
