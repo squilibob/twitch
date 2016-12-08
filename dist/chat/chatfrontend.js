@@ -1,7 +1,7 @@
  function displaystreamer(username, banner, followamount, views, url) {
-  console.log(followamount, minfollowerstoshoutout);
+  // console.log(followamount, minfollowerstoshoutout);
   if (!followamount || followamount <= minfollowerstoshoutout) return false;
-  console.log(username, banner, followers, views, url);
+  // console.log(username, banner, followers, views, url);
   if(banner == null) banner = defaultavatar;
   var chatLine = document.createElement('li');
   var chatLineBanner = document.createElement('li');
@@ -40,16 +40,16 @@ function handleChat(channel, user, message, self) {
    image,
    response,
    avatar;
-
   if (useravatars[user.username] == undefined) {
    socket.emit('request avatar', channel, user, message, self);
    socket.emit('request badge', user);
-   if (user.username != chan && !self) checkstreamer(user.username);
+   // if (user.username != chan && !self)
+    checkstreamer(user['user-id']);
   } else {
-   if (useravatars[user.username] < 0) {
+   if (useravatars[user.username] < 0 && user['user-id']) {
     if (typeof useravatars[user.username] == "number")
      client.api({
-      url: 'https://api.twitch.tv/kraken/users/' + user.username + clientid
+      url: 'https://api.twitch.tv/kraken/users' + header(user['user-id'])
      }, function(err, res, body) {
       if (body.logo)
        checkImageExists(body.logo, function(existsImage) {
@@ -69,6 +69,11 @@ function handleChat(channel, user, message, self) {
    };
    var question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which']; //'who ', 'why ', 'did ',
    var containsquestion = false;
+   if (message.toLowerCase().indexOf('!join') >= 0) {
+    var target = message.slice(message.toLowerCase().indexOf('!join')).split(' ');
+    console.log(target[1]);
+    client.join(target[1]);
+   }
    if (message.toLowerCase().indexOf('!raid') >= 0)
     if (user.username == dehash(channel)) self = true;
    if (self == true) {

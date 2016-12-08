@@ -831,17 +831,17 @@ var aloladex = [
 // {{lop/ability","088A","Grimer","Poison Touch","Gluttony","Power of Alchemy","Alolan Grimer}}
 // {{lop/ability","089A","Muk","Poison Touch","Gluttony","Power of Alchemy","Alolan Muk}}
 // {{lop/ability","094M","Gengar","Shadow Tag","Mega Gengar}}
-// {{lop/ability","208M","Steelix","Sand Force","Mega Steelix}}
 // {{lop/ability","103A","Exeggutor","Frisk","Harvest","Alolan Exeggutor}}
 // {{lop/ability","105A","Marowak","Cursed Body","Lightning Rod","Rock Head","Alolan Marowak}}
 // {{lop/ability","115M","Kangaskhan","Parental Bond","Mega Kangaskhan}}
-// {{lop/ability","212M","Scizor","Technician","Mega Scizor}}
 // {{lop/ability","127M","Pinsir","Aerilate","Mega Pinsir}}
 // {{lop/ability","130M","Gyarados","Mold Breaker","Mega Gyarados}}
 // {{lop/ability","142M","Aerodactyl","Tough Claws","Mega Aerodactyl}}
 // {{lop/ability","150MX","Mewtwo","Steadfast","Mega Mewtwo X}}
 // {{lop/ability","150MY","Mewtwo","Insomnia","Mega Mewtwo Y}}
 // {{lop/ability","181M","Ampharos","Mold Breaker","Mega Ampharos}}
+// {{lop/ability","208M","Steelix","Sand Force","Mega Steelix}}
+// {{lop/ability","212M","Scizor","Technician","Mega Scizor}}
 // {{lop/ability","214M","Heracross","Skill Link","Mega Heracross}}
 // {{lop/ability","229M","Houndoom","Solar Power","Mega Houndoom}}
 // {{lop/ability","248M","Tyranitar","Sand Stream","Mega Tyranitar}}
@@ -849,7 +849,6 @@ var aloladex = [
 // {{lop/ability","257M","Blaziken","Speed Boost","Mega Blaziken}}
 // {{lop/ability","260M","Swampert","Swift Swim","Mega Swampert}}
 // {{lop/ability","282M","Gardevoir","Pixilate","Mega Gardevoir}}
-// {{lop/ability","475M","Gallade","Inner Focus","Mega Gallade}}
 // {{lop/ability","302M","Sableye","Magic Bounce","Mega Sableye}}
 // {{lop/ability","303M","Mawile","Huge Power","Mega Mawile}}
 // {{lop/ability","306M","Aggron","Filter","Mega Aggron}}
@@ -870,6 +869,7 @@ var aloladex = [
 // {{lop/ability","445M","Garchomp","Sand Force","Mega Garchomp}}
 // {{lop/ability","448M","Lucario","Adaptability","Mega Lucario}}
 // {{lop/ability","460M","Abomasnow","Snow Warning","Mega Abomasnow}}
+// {{lop/ability","475M","Gallade","Inner Focus","Mega Gallade}}
 // {{lop/ability","492S","Shaymin","Serene Grace}}
 // {{lop/ability","531M","Audino","Healer","Mega Audino}}
 // {{lop/ability","555Z","Darmanitan","Zen Mode}}

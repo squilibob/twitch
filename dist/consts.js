@@ -16,7 +16,7 @@ const maxpokes = 802,
  doChatClears = true, // Hide the chat from an entire channel
  showHosting = true, // Show when the channel is hosting or not
  showConnectionNotices = true, // Show messages like "Connected" and "Disconnected"
- autocry = false, // Play the pokemon's cry sound whenever it is mentioned in chat
+ autocry = true, // Play the pokemon's cry sound whenever it is mentioned in chat
  star = "★",
  points_system = {
   score_for_kill: 50,

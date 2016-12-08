@@ -3,20 +3,11 @@ function chatbot() {
  client.on("hosted", function(channel, username, total) {
 
   var chan = dehash(channel);
-  // client.api({url: 'https://tmi.twitch.tv/hosts?include_logins=1&target='+body._id+'&'+clientid.substr(1)}, function(err, res, repl) {
-  // 		console.log(repl);
-  // });
   chan = capitalize(chan);
   if (typeof(total) == 'number')
    chatNotice(username + ' is now hosting ' + chan + ' for ' + total + ' viewer' + (total !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes');
   else chatNotice(username + ' is now hosting ' + chan + '.', null, null, 'chat-hosting-yes');
  });
-
- // document.getElementById("chatform").addEventListener("submit", function(event){
- // 		event.preventDefault();
- // 		if (document.getElementById('chat-input').value != '') submitchat(document.getElementById('chat-input').value);
- // 		document.getElementById('chat-input').value = '';
- // });
 
  client.addListener('message', handleChat);
  client.addListener('timeout', timeout);
@@ -37,7 +28,7 @@ function chatbot() {
  client.addListener('connected', function(address, port) {
   if (showConnectionNotices) chatNotice('Connected', 1000, -2, 'chat-connection-good-connected');
   joinAccounced = [];
-  checkfollowers(dehash(channels[0]), true);
+  checkfollowers(32218175, true);
  });
 
  client.addListener('disconnected', function(reason) {
@@ -68,5 +59,5 @@ function chatbot() {
  window.setInterval(getViewers, 525000, channels[0]);
  window.setInterval(repeating_notice_website, 3000000);
  window.setInterval(repeating_notice_signup, 7200000);
- window.setInterval(checkfollowers, 180000, dehash(channels[0]), false);
+ window.setInterval(checkfollowers, 180000, 32218175, false);
 }

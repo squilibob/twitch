@@ -64,71 +64,14 @@ project.Login.prototype = {
     scaleup(formgroup);
     formgroup.x = formgroup.getBounds().width/2;
 
+    var checkno = -1;
+
+      // socket.emit("Insert pokedex", pokedex[evos[evo].id-1]);
 
 
-
-
-    // for (poke in aloladex) {
-    //   aloladex[poke].id = parseInt(aloladex[poke].id);
-    //   pokedex[aloladex[poke].id-1].Ability = aloladex[poke].Ability
-    //   console.log(pokedex[aloladex[poke].id-1].Pokemon, pokedex[aloladex[poke].id-1].Ability);
-    //   socket.emit("Insert pokedex", pokedex[aloladex[poke].id-1]);
-    // }
-
-
-//     var pokemoves = {};
-//     var moves = {};
-//     var parse = [];
-
-//     for (poke in allmov){
-//       parse = allmov[poke].Moves.split('|');
-//       currentpoke = pokedex[allmov[poke].id-1].Pokemon ;
-//       for (movename of parse) {
-//         currentname = movename.substr(movename.indexOf('- ')+2);
-//         currentpokelearns = movename.substr(0,1) == 'L' ? parseInt(movename.substr(1).trim(' ')) : movename.substr(0, movename.indexOf('-')).trim(' ');
-//         pokemoves[currentname] = movename.substr(0,1) == currentpokelearns;
-//         if (!moves.hasOwnProperty(currentname))
-//           moves[currentname] = {Pokemon: {}};
-
-//         if (moves[currentname].Pokemon.hasOwnProperty(currentpoke))
-//           moves[currentname].Pokemon[currentpoke]  = currentpokelearns;
-//         else
-//           moves[currentname].Pokemon[currentpoke] = currentpokelearns;
-//       }
-
-//     }
-
-//     var newmov = {};
-//     for (mov of movecat) {
-//       newname = mov["name"];
-//       newmov[newname] = {};
-//       newmov[newname].id =  mov["name"];
-//       newmov[newname]["Description"] = mov["desc"];
-//       newmov[newname]["Type"] = mov["type"];
-//       newmov[newname]["Category"] = mov["cat"];
-//       if (mov["bp"]) newmov[newname]["Bp"] = parseInt(mov["bp"]);
-//       if (mov["acc"]) newmov[newname]["Accurracy"] = parseInt(mov["acc"]);
-//       newmov[newname]["Pp"] = parseInt(mov["pp"]);
-//       newmov[newname]["Z"] = mov["z"].substr(-5) == "Power" ? parseInt(mov["z"]) : mov["z"];
-//       if (mov["priority"]) newmov[newname]["Priority"] = parseInt(mov["priority"]);
-
-//     }
-
-//     for (test in newmov) {
-//       if (moves[test]) newmov[test].Pokemon = moves[test].Pokemon;
-//       // console.log(moves[test]);
-//     }
-
-//     // for (test in newmov) {
-//     //   socket.emit ("Insert move", newmov[test]);
-//     // }
-// console.log(newmov);
-
-
-
-
-
-
+    for (poke in megas) {
+      console.log(megas[poke]);
+    }
 
 
   },
