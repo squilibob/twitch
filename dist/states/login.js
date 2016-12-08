@@ -68,10 +68,9 @@ project.Login.prototype = {
 
       // socket.emit("Insert pokedex", pokedex[evos[evo].id-1]);
 
-
-    for (poke in megas) {
-      console.log(megas[poke]);
-    }
+    // for (poke in megas) {
+    //   console.log(megas[poke]);
+    // }
 
 
   },

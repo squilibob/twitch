@@ -75,7 +75,7 @@ function checkstreamer(username) {
  }, function(err, res, body) {
   if (body) {
    displaystreamer(body.name, body.profile_banner ? body.profile_banner : body.logo, body.followers, body.views, body.url);
+   socket.emit('send emote', {message:'hi '+body.name, picture:9});
   }
  });
- socket.emit('send emote', {message:'hi '+username, picture:9});
 }
