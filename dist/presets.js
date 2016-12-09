@@ -14,7 +14,7 @@ const Presets = {
   allowroll: false,
   externalteams:false,
   scalingallowed: true,
-  simple: false,
+  simple: true,
 };
 
 const preloadscripts = [
