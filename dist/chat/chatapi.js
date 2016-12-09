@@ -26,11 +26,12 @@ function header(id, endpoint, extraparams, version){
 // }
 
 function getViewers(chan) {
- // channel = dehash(chan);
+ channel = dehash(chan);
  client.api({
   // url: 'http://tmi.twitch.tv/group/user/' + chan + '/chatters' + clientid
-  url: 'http://tmi.twitch.tv/group/user' + header(chan, '/chatters', null, 3)
+  url: 'http://tmi.twitch.tv/group/user' + header(chan, 'chatters', null, 3)
  }, function(err, res, body) {
+  console.log(body.data.chatters.viewers);
   // document.getElementById('viewers').value = typeof(body.data.chatter_count) == 'number' ? body.data.chatter_count : 0;
   if (body) viewers = body.data.chatters.viewers;
   socket.emit('send emote', {message:viewers.length+' viewers', picture:5});
@@ -40,7 +41,7 @@ function getViewers(chan) {
 function getStart(chan) {
  // channel = dehash(chan);
  client.api({
-  url: 'https://api.twitch.tv/kraken/streams' + chan + clientOptions.options.clientId
+  url: 'https://api.twitch.tv/kraken/streams' + header(chan)
  }, function(err, res, body) {
   if (body.stream) {
    started = new Date(body.stream.created_at);
@@ -48,17 +49,17 @@ function getStart(chan) {
  });
 }
 
-function checkfollowers(userid, hidenotify, url, current) {
+function checkfollowers(userid, hidenotify, current) {
  var maxcursor = 100;
  if (!current) current = 0;
- var cursor = url ? url : 'https://api.twitch.tv/kraken/channels/' + userid + '/follows';
+ // var cursor = url ? url : 'https://api.twitch.tv/kraken/channels/' + userid + '/follows';
  client.api({
   // url: cursor + '&' + clientOptions.options.clientId.substr(1)
-  url: cursor + header(null, null, 'offset=' + current + '&limit=' + maxcursor)
+  url: 'https://api.twitch.tv/kraken/channels' + header(userid, 'follows', 'offset=' + current + '&limit=' + maxcursor)
  }, function(err, res, body) {
   if (body) {
    // if (body.follows.length == maxcursor) checkfollowers(userid, hidenotify, body._links.next);
-   if (current + body.follows.length < body._total) checkfollowers(userid, hidenotify, null, current + body.follows.length);
+   if (current + body.follows.length < body._total) checkfollowers(userid, hidenotify, current + body.follows.length);
    followerloop: for (viewer in body.follows)
     if (followers.indexOf(body.follows[viewer].user.name) < 0) {
      followers.push(body.follows[viewer].user.name);

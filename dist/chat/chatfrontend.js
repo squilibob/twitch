@@ -43,8 +43,7 @@ function handleChat(channel, user, message, self) {
   if (useravatars[user.username] == undefined) {
    socket.emit('request avatar', channel, user, message, self);
    socket.emit('request badge', user);
-   // if (user.username != chan && !self)
-    checkstreamer(user['user-id']);
+   if (user.username != chan && !self) checkstreamer(user['user-id']);
   } else {
    if (useravatars[user.username] < 0 && user['user-id']) {
     if (typeof useravatars[user.username] == "number")
@@ -199,6 +198,7 @@ function handleChat(channel, user, message, self) {
       response = ('Stream has been live for ' + hours + (minutes < 10 ? ':0' : ':') + minutes);
      }
     }
+    if (message.toLowerCase().indexOf('!viewers') >= 0) response = viewers.length + ' viewers';
 
 if (containsquestion == true) {
      var dexno = -1;
@@ -235,8 +235,9 @@ if (containsquestion == true) {
       }
      }
       if (message.toLowerCase().indexOf('move') >= 0 || message.toLowerCase().indexOf('learn') >= 0) {
+        var fullmove = '';
         moveloop: for (move in moves) {
-          if (message.toLowerCase().indexOf(move.toLowerCase()) >= 0) {
+          if (message.toLowerCase().indexOf(move.toLowerCase()) >= 0 && fullmove.indexOf(message.toLowerCase()) < 0) {
             property = Object.keys(moves[move]);
             response = move + ': ' + moves[move].Description;
             moveproploop: for (key in property) {
@@ -248,12 +249,12 @@ if (containsquestion == true) {
                   learnlist.push(poke);
                 }
                 response = 'The pokemon that can learn ' + move + ' are: ';
-                if (learnlist.length < 7) response += learnlist.join(', ');
+                if (learnlist.length < response_length+1) response += learnlist.join(', ');
                 else {
-                  learnloop: for (var i=0; i<5; i++){
+                  learnloop: for (var i=0; i<response_length-1; i++){
                     response += learnlist[i] + ', ';
                   }
-                  response += (learnlist.length - 6) + ' more';
+                  response += (learnlist.length - response_length) + ' more';
                 }
               }
               if (dexno > -1){ // && moves[move].Pokemon.toLowerCase() == pokedex[dexno].Pokemon.toLowerCase()) {
@@ -396,7 +397,6 @@ if (containsquestion == true) {
          }
         }
        if (reply != message && reply != '') response = reply;
-
       }
      }
     }

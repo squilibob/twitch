@@ -41,7 +41,7 @@ function chatbot() {
    // if(showConnectionNotices) chatNotice('Joined ' + capitalize(dehash(channel)), 1000, -1, 'chat-room-join');
    joinAccounced.push(channel);
    // getViewers(channel);
-   getStart(channel);
+   getStart(32218175);
   }
  });
 
