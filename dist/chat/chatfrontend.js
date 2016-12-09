@@ -70,7 +70,6 @@ function handleChat(channel, user, message, self) {
    var containsquestion = false;
    if (message.toLowerCase().indexOf('!join') >= 0) {
     var target = message.slice(message.toLowerCase().indexOf('!join')).split(' ');
-    console.log(target[1]);
     client.join(target[1]);
    }
    if (message.toLowerCase().indexOf('!raid') >= 0)
@@ -211,9 +210,13 @@ if (containsquestion == true) {
         if (command[i].indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) dexno = pokes;
      }
      if (dexno >= 0) {
-      if (message.indexOf('egg group') >= 0 && pokedex[dexno]['Egg Group I'])
+      if (message.toLowerCase().indexOf('egg group') >= 0 && pokedex[dexno]['Egg Group I'])
        if (pokedex[dexno]['Egg Group II'] && pokedex[dexno]['Egg Group II'] != ' ') response = pokedex[dexno].Pokemon + ' is in egg groups ' + pokedex[dexno]['Egg Group I'] + ' & ' + pokedex[dexno]['Egg Group II'];
        else response = pokedex[dexno].Pokemon + ' is in egg group ' + pokedex[dexno]['Egg Group I'];
+     if (message.toLowerCase().indexOf(' ev ') >= 0 || message.toLowerCase().indexOf(' evs ') >= 0){
+      response = pokedex[dexno].Pokemon + ' will reward the EVs:'
+       evloop: for (ev in pokedex[dexno].EVs) response += ' ' + pokedex[dexno].EVs[ev] + ' x ' + ev
+     }
       testtypeloop: for (var i = 0; i < command.length; i++) {
        if (command[i].indexOf('type') >= 0 && pokedex[dexno].Secondary) {
         response = pokedex[dexno].Pokemon + ' types are ' + pokedex[dexno].Type + '/' + pokedex[dexno].Secondary;
@@ -226,9 +229,11 @@ if (containsquestion == true) {
             response = pokedex[dexno].Pokemon + ' ' + key + ': ' + pokedex[dexno][key];
           }
          } else {
-          if (command[i] == key.toLowerCase() && key != 'Pokemon' && sp == false) {
+          if (command[i] == key.toLowerCase() && key != 'Pokemon' && key != 'EVs' && key != 'Forme' && sp == false) {
            if (pokedex[dexno][key]) response = pokedex[dexno].Pokemon + ' ' + key + ': ' + pokedex[dexno][key];
           }
+          if (command[i] == key.toLowerCase() && key == 'Mass') response += ' kg';
+          if (command[i] == key.toLowerCase() && key == 'Height') response += ' m';
          }
         }
        }
@@ -237,7 +242,9 @@ if (containsquestion == true) {
       if (message.toLowerCase().indexOf('move') >= 0 || message.toLowerCase().indexOf('learn') >= 0) {
         var fullmove = '';
         moveloop: for (move in moves) {
-          if (message.toLowerCase().indexOf(move.toLowerCase()) >= 0 && fullmove.indexOf(message.toLowerCase()) < 0) {
+          var testmessage = (dexno > -1) ? message.toLowerCase().replace(pokedex[dexno].Pokemon.toLowerCase(), '') : message.toLowerCase();
+          if (testmessage.indexOf(move.toLowerCase()) >= 0 && fullmove.indexOf(move.toLowerCase()) < 0) {
+            fullmove = move.toLowerCase();
             property = Object.keys(moves[move]);
             response = move + ': ' + moves[move].Description;
             moveproploop: for (key in property) {
@@ -257,9 +264,9 @@ if (containsquestion == true) {
                   response += (learnlist.length - response_length) + ' more';
                 }
               }
-              if (dexno > -1){ // && moves[move].Pokemon.toLowerCase() == pokedex[dexno].Pokemon.toLowerCase()) {
+              if (dexno > -1)
+               if (moves[move].Pokemon[pokedex[dexno].Pokemon]) {
                 response = pokedex[dexno].Pokemon + ' learns ' + move;
-                  console.log(moves[move].Pokemon[pokedex[dexno].Pokemon], typeof(moves[move].Pokemon[pokedex[dexno].Pokemon]) === 'number');
                 if (typeof(moves[move].Pokemon[pokedex[dexno].Pokemon]) === 'number')
                   response +=  ' at level ' + moves[move].Pokemon[pokedex[dexno].Pokemon];
                 else
@@ -267,7 +274,9 @@ if (containsquestion == true) {
                   else
                     if (moves[move].Pokemon[pokedex[dexno].Pokemon].toLowerCase() == 'egg') response += ' as an egg move by breeding';
                     else response += ' by ' + moves[move].Pokemon[pokedex[dexno].Pokemon];
-              }
+               }
+               else response = pokedex[dexno].Pokemon + ' does not learn ' + move;
+
             }
           }
         }

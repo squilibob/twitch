@@ -33,7 +33,7 @@ const preloadscripts = [
   {'Vote': '/states/vote'},
   {'Emote': '/states/emote'},
   // {'Cards': '/states/cards'},
-  // {'Pokedex': '/states/pokedex'},
+  {'Pokedex': '/states/pokedex'},
   ];
 
   const firststate = 'Login';

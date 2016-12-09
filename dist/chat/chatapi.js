@@ -29,9 +29,8 @@ function getViewers(chan) {
  channel = dehash(chan);
  client.api({
   // url: 'http://tmi.twitch.tv/group/user/' + chan + '/chatters' + clientid
-  url: 'http://tmi.twitch.tv/group/user' + header(chan, 'chatters', null, 3)
+  url: 'http://tmi.twitch.tv/group/user' + header(channel, 'chatters', null, 3)
  }, function(err, res, body) {
-  console.log(body.data.chatters.viewers);
   // document.getElementById('viewers').value = typeof(body.data.chatter_count) == 'number' ? body.data.chatter_count : 0;
   if (body) viewers = body.data.chatters.viewers;
   socket.emit('send emote', {message:viewers.length+' viewers', picture:5});
@@ -39,9 +38,9 @@ function getViewers(chan) {
 }
 
 function getStart(chan) {
- // channel = dehash(chan);
+ channel = dehash(chan);
  client.api({
-  url: 'https://api.twitch.tv/kraken/streams' + header(chan)
+  url: 'https://api.twitch.tv/kraken/streams' + header(channel)
  }, function(err, res, body) {
   if (body.stream) {
    started = new Date(body.stream.created_at);

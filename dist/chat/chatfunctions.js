@@ -1,6 +1,6 @@
 // Javascript helper functions
 function dehash(channel) {
- return channel.replace(/^#/, '');
+ return typeof(channel) == 'string' ? channel.replace(/^#/, '') : channel;
 }
 
 function capitalize(n) {
