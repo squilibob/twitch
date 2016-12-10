@@ -26,6 +26,13 @@ socket.on ("receive moves", function(payload) {
   delete moves[payload[move].id].id;
  }
 });
+
+socket.on ("receive abilities", function(payload) {
+ // moves = payload;
+ for (move in payload) {
+  abilities[payload[move].id] = payload[move].desc;
+ }
+});
 // socket.on('user pokes', function(payload) {
 //  var name = payload.name;
 //  var team = payload.team;

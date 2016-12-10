@@ -8,8 +8,6 @@ var io = require('socket.io')(server);
 var r = require('rethinkdb');
 var pokedex;
 var cached = {};
-// var typechart;
-// var moves;
 
 app.set('port', (process.env.PORT || 80));
 
@@ -263,6 +261,16 @@ io.on('connection', function(socket){
 	socket.on ("Insert pokedex", function(payload){
 	console.log(payload["id"],payload["Pokemon"]);
 	r.table('Pokedex').
+	get(payload["id"]).
+		replace(payload).
+		run(conn, function(err, result) {
+			if (err) throw err;
+			console.log(JSON.stringify(result, null, 2));
+		});
+	});
+
+	socket.on ("Insert ability", function(payload){
+	r.table('Abilities').
 	get(payload["id"]).
 		replace(payload).
 		run(conn, function(err, result) {

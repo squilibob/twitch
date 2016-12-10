@@ -14,7 +14,7 @@ const Presets = {
   allowroll: false,
   externalteams:false,
   scalingallowed: true,
-  simple: true,
+  simple: false,
 };
 
 const preloadscripts = [
@@ -24,7 +24,7 @@ const preloadscripts = [
   '/js/dex',
   '/js/phaser-input',
   '/js/helperfunctions',
-  '/js/megas',
+  '/js/abil',
   {'Login': '/states/login'},
   {'Avatar': '/states/avatar'},
   {'Teams': '/states/teams'},

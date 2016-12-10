@@ -107,7 +107,6 @@ project.Login.prototype = {
     //   console.log(dexinfo);
     // }
 
-
   },
   validatefc: function(digits){
     return ('0000' + (digits == undefined ? '0' : digits)).substr(-4);

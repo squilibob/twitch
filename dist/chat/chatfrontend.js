@@ -239,6 +239,11 @@ if (containsquestion == true) {
        }
       }
      }
+     if (message.toLowerCase().indexOf('abilit') >= 0) {
+      abilityloop: for (ability in abilities) {
+        if (message.toLowerCase().indexOf(ability.toLowerCase()) >= 0) response = ability + ': ' + abilities[ability];
+      }
+     }
       if (message.toLowerCase().indexOf('move') >= 0 || message.toLowerCase().indexOf('learn') >= 0) {
         var fullmove = '';
         moveloop: for (move in moves) {
