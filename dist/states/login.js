@@ -64,49 +64,53 @@ project.Login.prototype = {
     scaleup(formgroup);
     formgroup.x = formgroup.getBounds().width/2;
 
-    var checkno = -1;
+    // var checkno = -1;
 
-      // socket.emit("Insert pokedex", pokedex[evos[evo].id-1]);
+    //   if (!Array.prototype.includes) {
+    //     Array.prototype.includes = function(searchElement /*, fromIndex*/) {
+    //       'use strict';
+    //       if (this == null) {
+    //         throw new TypeError('Array.prototype.includes called on null or undefined');
+    //       }
 
-      // if (!Array.prototype.includes) {
-      //   Array.prototype.includes = function(searchElement /*, fromIndex*/) {
-      //     'use strict';
-      //     if (this == null) {
-      //       throw new TypeError('Array.prototype.includes called on null or undefined');
-      //     }
+    //       var O = Object(this);
+    //       var len = parseInt(O.length, 10) || 0;
+    //       if (len === 0) {
+    //         return false;
+    //       }
+    //       var n = parseInt(arguments[1], 10) || 0;
+    //       var k;
+    //       if (n >= 0) {
+    //         k = n;
+    //       } else {
+    //         k = len + n;
+    //         if (k < 0) {k = 0;}
+    //       }
+    //       var currentElement;
+    //       while (k < len) {
+    //         currentElement = O[k];
+    //         if (searchElement === currentElement ||
+    //            (searchElement !== searchElement && currentElement !== currentElement)) { // NaN !== NaN
+    //           return true;
+    //         }
+    //         k++;
+    //       }
+    //       return false;
+    //     };
+    //   }
 
-      //     var O = Object(this);
-      //     var len = parseInt(O.length, 10) || 0;
-      //     if (len === 0) {
-      //       return false;
-      //     }
-      //     var n = parseInt(arguments[1], 10) || 0;
-      //     var k;
-      //     if (n >= 0) {
-      //       k = n;
-      //     } else {
-      //       k = len + n;
-      //       if (k < 0) {k = 0;}
-      //     }
-      //     var currentElement;
-      //     while (k < len) {
-      //       currentElement = O[k];
-      //       if (searchElement === currentElement ||
-      //          (searchElement !== searchElement && currentElement !== currentElement)) { // NaN !== NaN
-      //         return true;
-      //       }
-      //       k++;
-      //     }
-      //     return false;
-      //   };
-      // }
-
+    //   var excludelist = [];
+    //   for (poke in loca) {
+    //     if (loca[poke] == 'Not available in Sun or Moon: Trade it from another game') excludelist.push(poke);
+    //   }
     // for (var dexinfo of pokedex) {
-
+    //   if (!excludelist.includes(dexinfo.Pokemon))
+    //     if (loca[dexinfo.Pokemon]) {
+    //       dexinfo.Location = loca[dexinfo.Pokemon];
     //     // socket.emit("Insert pokedex", dexinfo);
-    //   console.log(dexinfo);
+    //     }
     // }
-
+    // console.log(pokedex);
   },
   validatefc: function(digits){
     return ('0000' + (digits == undefined ? '0' : digits)).substr(-4);

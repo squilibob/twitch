@@ -24,7 +24,7 @@ const preloadscripts = [
   '/js/dex',
   '/js/phaser-input',
   '/js/helperfunctions',
-  '/js/abil',
+  '/js/locations',
   {'Login': '/states/login'},
   {'Avatar': '/states/avatar'},
   {'Teams': '/states/teams'},

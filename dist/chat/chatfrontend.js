@@ -454,6 +454,8 @@ function putChat(chan, user, message, self, avatar, image) {
    if (colortotal > whitethreshold * 3) chatMessage.style.color = "#000000";
   }
 
+  if (name == 'mikuia') return false;
+
   chatLine.ondblclick = function() {
    this.className = 'chat-kill';
    setTimeout(this.remove(), 2000);
