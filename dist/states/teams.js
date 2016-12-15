@@ -65,6 +65,7 @@ project.Teams.prototype = {
     return this;
   },
   newmember: function(index){
+    if (pokedex[index].Forme) console.log('has forme', pokedex[index].Forme);
     currentTeam.create(0, 0, 'spritesheet', index);
     currentTeam.children[currentTeam.children.length-1].scale.setTo(scale);
     currentTeam.children[currentTeam.children.length-1].inputEnabled = true;
