@@ -167,3 +167,141 @@ function parseraffle (raff) {
   participants = updated;
   if (justentered.length > 0) submitchat(justentered.join(', ') + ' has been entered into the raffle');
 }
+
+
+function urlDecode (message) {
+  var checkall = message.split(' ');
+  extensionloop: for (i in checkall)
+   if (checkall[i].toLowerCase().indexOf('.png') >= 0 || checkall[i].toLowerCase().indexOf('.gif') >= 0 || checkall[i].toLowerCase().indexOf('.jpg') >= 0)
+    return {
+      image: checkall[i],
+      message: message.slice(0, message.indexOf(checkall[i])) + message.slice(message.indexOf(checkall[i]) + checkall[i].length + 1)
+    };
+  return {
+    image: null,
+    message: message
+  };
+}
+
+function checkPoke(message) {
+  var dexno = -1;
+  var word = message.toLowerCase().split(' ');
+  mewtwoloop: for (var i = 0; i < word.length; i++) {
+   if (word[i].indexOf('mewtwo') >= 0) dexno = 149;
+   else
+    pokemonnameloop: for (var pokes = 0; pokes < maxpokes; pokes++)
+     if (word[i].indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) dexno = pokes;
+  }
+  return dexno;
+}
+
+function checkDb(obj){
+  var message = obj.message;
+  var dexno = obj.pokemon;
+  var sp = false;
+  var command = message.toLowerCase().split(' ');
+  var response;
+
+   testtypeloop: for (var i in command) {
+    if (command[i].indexOf('type') >= 0 && pokedex[dexno].Secondary) {
+     response = pokedex[dexno].Pokemon + ' types are ' + pokedex[dexno].Type + '/' + pokedex[dexno].Secondary;
+    } else {
+     sploop: for (var key in pokedex[dexno]) {
+      if (i + 1 < command.length && command[i] == 'sp.') {
+       sp = true;
+       if (command[i] + ' ' + command[i + 1] == key.toLowerCase()) {
+        if (pokedex[dexno][key])
+         response = pokedex[dexno].Pokemon + ' ' + key + ': ' + pokedex[dexno][key];
+       }
+      } else {
+       if (command[i] == key.toLowerCase() && key != 'Pokemon' && key != 'EVs' && key != 'Forme' && key != 'Evolve' && sp == false) {
+        if (pokedex[dexno][key]) response = pokedex[dexno].Pokemon + ' ' + key + ': ' + pokedex[dexno][key];
+       }
+       if (command[i] == key.toLowerCase() && key == 'Mass') response += ' kg';
+       if (command[i] == key.toLowerCase() && key == 'Height') response += ' m';
+      }
+     }
+    }
+   }
+  if (message.toLowerCase().indexOf('abilit') >= 0) {
+   abilityloop: for (ability in abilities) {
+     if (message.toLowerCase().indexOf(ability.toLowerCase()) >= 0) response = ability + ': ' + abilities[ability];
+   }
+  }
+  return response;
+}
+
+function checkMoves (obj) {
+  var message = obj.message;
+  var dexno = obj.pokemon;
+  var response;
+  if (message.toLowerCase().indexOf('move') >= 0 || message.toLowerCase().indexOf('learn') >= 0) {
+    var fullmove = '';
+    moveloop: for (move in moves) {
+      var testmessage = (dexno > -1) ? message.toLowerCase().replace(pokedex[dexno].Pokemon.toLowerCase(), '') : message.toLowerCase();
+      if (testmessage.indexOf(move.toLowerCase()) >= 0 && fullmove.indexOf(move.toLowerCase()) < 0) {
+        fullmove = move.toLowerCase();
+        property = Object.keys(moves[move]);
+        response = move + ': ' + moves[move].Description;
+        moveproploop: for (key in property) {
+          if (message.toLowerCase().indexOf(property[key].toLowerCase()) >= 0)
+            response = move + ' ' + property[key] + ': ' + moves[move][property[key]];
+          if (message.toLowerCase().indexOf('pokemon') >= 0) {
+            var learnlist = [];
+            pokemoveloop: for (poke in moves[move].Pokemon) {
+              learnlist.push(poke);
+            }
+            response = 'The pokemon that can learn ' + move + ' are: ';
+            if (learnlist.length < response_length+1) response += learnlist.join(', ');
+            else {
+              learnloop: for (var i=0; i<response_length-1; i++){
+                response += learnlist[i] + ', ';
+              }
+              response += (learnlist.length - response_length) + ' more';
+            }
+          }
+          if (dexno > -1)
+           if (moves[move].Pokemon[pokedex[dexno].Pokemon]) {
+            response = pokedex[dexno].Pokemon + ' learns ' + move;
+            if (typeof(moves[move].Pokemon[pokedex[dexno].Pokemon]) === 'number')
+              response +=  ' at level ' + moves[move].Pokemon[pokedex[dexno].Pokemon];
+            else
+              if (moves[move].Pokemon[pokedex[dexno].Pokemon].toLowerCase() == 'start') response = pokedex[dexno].Pokemon + ' starts with the move ' + move;
+              else
+                if (moves[move].Pokemon[pokedex[dexno].Pokemon].toLowerCase() == 'egg') response += ' as an egg move by breeding';
+                else response += ' by ' + moves[move].Pokemon[pokedex[dexno].Pokemon];
+           }
+           else response = pokedex[dexno].Pokemon + ' does not learn ' + move;
+          }
+        }
+      }
+    }
+  return response;
+  }
+
+function checkExist(checkstring, checkarray, separateword){
+  exist = false;
+  if (separateword) {
+   checkseparatewordloop: for (word of checkstring.toLowerCase().split(' '))
+   if (checkarray.indexOf(word) >= 0) {
+    exist = true;
+   }
+  }
+  else checknotseparatewordloop: for (word of checkarray) {
+   if (checkstring.toLowerCase().indexOf(word) >= 0) {
+    exist = true;
+   }
+  }
+  return exist;
+}
+
+// function checkSubstitutions{
+// var substitutions = {
+//   ' me ': ' ' + user.username + ' ',
+//   'someone': viewers[Math.ceil(Math.random() * viewers.length) - 1]
+// };
+// substitutionloop: for (var replace in substitutions) {
+//  var insert = substitutions[replace];
+//  if (reply.indexOf(replace) >= 0) reply = reply.slice(0, reply.indexOf(replace)) + insert + reply.slice(reply.indexOf(replace) + replace.length, reply.length);
+// }
+// }

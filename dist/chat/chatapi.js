@@ -24,6 +24,30 @@ function header(id, endpoint, extraparams, version){
 //   });
 //  idcall.then(function(converted) { console.log(converted) });
 // }
+function checkAvatar(obj) {
+  var existed = false;
+  if (useravatars[obj.user.username] == undefined) {
+   socket.emit('request avatar', obj.channel, obj.user, obj.message, obj.self);
+   socket.emit('request badge', obj.user);
+   if (obj.user.username != obj.channel && !obj.self) checkstreamer(obj.user['user-id']);
+  } else {
+   existed = true;
+   if (useravatars[obj.user.username] < 0 && obj.user['user-id']) {
+    if (typeof useravatars[obj.user.username] == "number")
+     client.api({
+      url: 'https://api.twitch.tv/kraken/users' + header(obj.user['user-id'])
+     }, function(err, res, body) {
+      if (body.logo)
+       checkImageExists(body.logo, function(existsImage) {
+        if (existsImage) {
+         useravatars[obj.user.username] = body.logo;
+        }
+       });
+     });
+   }
+  }
+  return existed;
+}
 
 function getViewers(chan) {
  channel = dehash(chan);

@@ -33,105 +33,133 @@
   }
  }
 
-function handleChat(channel, user, message, self) {
-  if (user["message-type"] != 'chat' && user["message-type"] != 'action') return false;
-
-  var chan = dehash(channel),
-   image,
-   response,
-   avatar;
-  if (useravatars[user.username] == undefined) {
-   socket.emit('request avatar', channel, user, message, self);
-   socket.emit('request badge', user);
-   if (user.username != chan && !self) checkstreamer(user['user-id']);
-  } else {
-   if (useravatars[user.username] < 0 && user['user-id']) {
-    if (typeof useravatars[user.username] == "number")
-     client.api({
-      url: 'https://api.twitch.tv/kraken/users' + header(user['user-id'])
-     }, function(err, res, body) {
-      if (body.logo)
-       checkImageExists(body.logo, function(existsImage) {
-        if (existsImage) {
-         useravatars[user.username] = body.logo;
-        }
-       });
-     });
-   }
-   // else if (typeof(useravatars[user.username]) == 'number') preloadavatar.src = '/avatars/'+useravatars[user.username]+'.png';
-
-   var substitutions = {
-    ' me ': ' ' + user.username + ' ',
-    'someone': viewers[Math.ceil(Math.random() * viewers.length) - 1]
-     // number random
-     // link to someone's twitch stream
-   };
-   var question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which']; //'who ', 'why ', 'did ',
-   var containsquestion = false;
-   if (message.toLowerCase().indexOf('!join') >= 0) {
-    var target = message.slice(message.toLowerCase().indexOf('!join')).split(' ');
-    client.join(target[1]);
-   }
-   if (message.toLowerCase().indexOf('!raid') >= 0)
-    if (user.username == dehash(channel)) self = true;
-   if (self == true) {
-    if (message.toLowerCase().indexOf('!raid') >= 0) {
-     var target = message.slice(message.toLowerCase().indexOf('!raid')).split(' ');
-     target = target[1];
-     if (target.length > 3) {
-      submitchat('/me we are now going to raid ' + target + ' please go to http://twitch.tv/' + target + ' and type the raid message:');
+var parser = {
+  '!join': {
+    altcmds: [],
+help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: true,
+      pokemon: false,
+      parameters: 1,
+      modonly: true
+    },
+    action: function(obj){
+      client.join(obj.parameters[0]);
+      return false;
+    }
+  },
+  '!raid': {
+    altcmds: [],
+help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: true
+    },
+    action: function(obj){
+      console.log(obj.parameters);
+      if (!obj.parameters[0]) return false;
+      submitchat('/me we are now going to raid ' + obj.parameters[0] + ' please go to http://twitch.tv/' + obj.parameters[0] + ' and type the raid message:');
       submitchat('тo proтecт тнe cнaт froм devasтaтιon, тo υnιтe spaммers wιтнιn oυr naтιon, тo denoυnce тнe evιls of вans and мods, тo eхтend oυr spaм тo тнe space aвove. copy! pasтe! тwιтcн cнaт, scroll aт тнe speed of lιgнт! Ragequιт now or prepare тo fιgнт!');
-      submitchat('/me make sure you type it into the chat of ' + target + '  at http://twitch.tv/' + target + ' !');
-     }
+      submitchat('/me make sure you type it into the chat of ' + obj.parameters[0] + '  at http://twitch.tv/' + obj.parameters[0] + ' !');
+      return false;
     }
-   } else {
-    var checkall = message.split(' ');
-    extensionloop: for (var i = 0; i < checkall.length; i++) {
-     if (checkall[i].toLowerCase().indexOf('.png') >= 0 || checkall[i].toLowerCase().indexOf('.gif') >= 0 || checkall[i].toLowerCase().indexOf('.jpg') >= 0) {
-      image = checkall[i];
-      message = message.slice(0, message.indexOf(checkall[i])) + message.slice(message.indexOf(checkall[i]) + checkall[i].length + 1);
-     }
-     checkquestionloop: for (var word = 0; word < question.length; word++) {
-      if (checkall[i].toLowerCase().indexOf(question[word]) >= 0) containsquestion = true;
-     }
-    }
-    if (containsquestion == true)
-     if (message.toLowerCase().indexOf('tm') >= 0) {
-      var findtm = parseInt(message.slice(message.toLowerCase().indexOf('tm') + 2, message.toLowerCase().indexOf('tm') + 5));
+  },
+  'tm': {
+    altcmds: [],
+help: 'this command ',
+    requires :
+    {
+      question: true,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1, //refactor
+      modonly: false
+    },
+    action: function(obj){
+      var response;
+      var findtm = parseInt(obj.message.slice(obj.message.toLowerCase().indexOf('tm') + 2, obj.message.toLowerCase().indexOf('tm') + 5));
       if (findtm > 0 && findtm < 101)
        tmnameloop: for (var key in tm[findtm - 1]) response = 'TM' + findtm + ' ' + key + ' can be obtained at ' + tm[findtm - 1][key];
       else {
        tmnumberloop: for (num = 1; num < 101; num++) {
         tmnamefromnumberloop: for (var key in tm[num - 1])
-         if (message.toLowerCase().indexOf(key.toLowerCase()) >= 0) response = 'TM' + num + ' ' + key + ' can be obtained at ' + tm[num - 1][key];
+         if (obj.message.toLowerCase().indexOf(key.toLowerCase()) >= 0) response = 'TM' + num + ' ' + key + ' can be obtained at ' + tm[num - 1][key];
        }
       }
-     }
-    if (containsquestion == true)
-     if (message.toLowerCase().indexOf('hm') >= 0) {
-      var findtm = parseInt(message.slice(message.toLowerCase().indexOf('hm') + 2, message.toLowerCase().indexOf('hm') + 5));
-      if (findtm > 0 && findtm < 8)
-       hmloop: for (var key in hm[findtm - 1]) response = 'HM' + findtm + ' ' + key + ' can be obtained at ' + hm[findtm - 1][key];
-      else {
-       hmnumberloop: for (num = 1; num < 8; num++) {
-        hmnamefromnumberloop: for (var key in hm[num - 1])
-         if (message.toLowerCase().indexOf(key.toLowerCase()) >= 0) response = 'HM' + num + ' ' + key + ' can be obtained at ' + hm[num - 1][key];
+      return response;
+    }
+  },
+  'hm': {
+    altcmds: [],
+help: 'this command ',
+    requires :
+    {
+      question: true,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1, //refactor
+      modonly: false
+    },
+    action: function(obj){
+      var response;
+      if (obj.message.toLowerCase().indexOf('hm') >= 0) {
+       var findtm = parseInt(obj.message.slice(obj.message.toLowerCase().indexOf('hm') + 2, obj.message.toLowerCase().indexOf('hm') + 5));
+       if (findtm > 0 && findtm < 8)
+        hmloop: for (var key in hm[findtm - 1]) response = 'HM' + findtm + ' ' + key + ' can be obtained in ORAS at ' + hm[findtm - 1][key];
+       else {
+        hmnumberloop: for (num = 1; num < 8; num++) {
+         hmnamefromnumberloop: for (var key in hm[num - 1])
+          if (obj.message.toLowerCase().indexOf(key.toLowerCase()) >= 0) response = 'HM' + num + ' ' + key + ' can be obtained at ' + hm[num - 1][key];
+        }
        }
       }
-     }
-    if (containsquestion == true)
-     if (message.toLowerCase().indexOf('hidden power') >= 0) {
+      return response;
+    }
+  },
+  'hidden power': {
+    altcmds: [],
+help: 'this command ',
+    requires :
+    {
+      question: true,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1, //refactor
+      modonly: false
+    },
+    action: function(obj){
+      var response;
       hiddenpowerloop: for (hptype in hiddenpower)
-      if (message.toLowerCase().indexOf(hptype) >= 0) response = 'in order to get hidden power '+ hptype +' your pokemon needs IVs to be hp: ' + hiddenpower[hptype][0] + ' att: ' + hiddenpower[hptype][1] + ' def: ' + hiddenpower[hptype][2] + ' sp. att: ' + hiddenpower[hptype][3] + ' sp. def: ' + hiddenpower[hptype][4] + ' speed: ' + hiddenpower[hptype][5];
-     }
-     if (message.toLowerCase().indexOf('!sign') >= 0) {
+      if (obj.message.toLowerCase().indexOf(hptype) >= 0) response = 'in order to get hidden power '+ hptype +' your pokemon needs IVs to be hp: ' + hiddenpower[hptype][0] + ' att: ' + hiddenpower[hptype][1] + ' def: ' + hiddenpower[hptype][2] + ' sp. att: ' + hiddenpower[hptype][3] + ' sp. def: ' + hiddenpower[hptype][4] + ' speed: ' + hiddenpower[hptype][5];
+      return response;
+    }
+  },
+  '!sign': {
+    altcmds: [],
+help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      var response;
       var fc = [];
       var validfc = true;
-      if (message.toLowerCase().indexOf('-') >= 0) {
+      if (obj.message.toLowerCase().indexOf('-') >= 0) {
        var ign;
-       var fcindex = message.indexOf('-') - 4;
-       var fccode = message.substr(fcindex, 14);
-       var parseign = message.substr(0, message.indexOf(fccode)) + message.substr(message.indexOf(fccode) + fccode.length);
+       var fcindex = obj.message.indexOf('-') - 4;
+       var fccode = obj.message.substr(fcindex, 14);
+       var parseign = obj.message.substr(0, obj.message.indexOf(fccode)) + obj.message.substr(obj.message.indexOf(fccode) + fccode.length);
        parseign.trim(' ').split(' ').forEach((name, index) => {
         if (name.indexOf('!') < 0 && name.toLowerCase() != 'fc' && name.toLowerCase() != 'ign' && name.toLowerCase() != 'name') ign = name;
        });
@@ -144,280 +172,467 @@ function handleChat(channel, user, message, self) {
        }
        if (!ign) validfc = false;
        payload = {
-        id: user.username,
+        id: obj.user.username,
         ign: ign,
         fc: fc
        }
        if (validfc) {
         socket.emit('new user', payload);
-        response ='create: twitch username: ' + user.username + ' IGN: ' + ign + ' fc: '+ fc.join('-');
+        response ='create: twitch username: ' + obj.user.username + ' IGN: ' + ign + ' fc: '+ fc.join('-');
        }
        else response = fc.join('-') + ' ' + ign + ' is invalid combination of fc and ign. Please include your ign and fc like this: !signup squilibob 3609-1058-1166';
-      } else response = message + ' invalid please include your ign and fc like this: !signup squilibob 3609-1058-1166';
-     }
-    if (message.toLowerCase().indexOf(' fc ') >= 0 || message.toLowerCase().indexOf('!fc') >= 0) {
-     var notyou = null;
-     fcloop: for (person in useravatars)
-      if (message.toLowerCase().indexOf(person.toLowerCase()) >= 0) notyou = person.toLowerCase();
-     socket.emit('request user fc', notyou == null ? user.username.toLowerCase() : notyou);
+      } else response = obj.message + ' invalid please include your ign and fc like this: !signup squilibob 3609-1058-1166';
+      return response;
     }
-    if (message.toLowerCase().indexOf('reload me') >= 0) {
-     delete useravatars[user.username];
-     socket.emit('request avatar', chan, user, user.username + ': reloaded avatar image', self);
-     socket.emit('request badge', user);
+  },
+  '!fc': {
+    altcmds: [' fc '],
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      var response;
+      var notyou = null;
+       fcloop: for (person in useravatars)
+        if (obj.message.toLowerCase().indexOf(person.toLowerCase()) >= 0) notyou = person.toLowerCase();
+       socket.emit('request user fc', notyou == null ? obj.user.username.toLowerCase() : notyou);
+      return response;
     }
-    if (message.toLowerCase().indexOf('!enter') >= 0 || message.toLowerCase().indexOf('!join') >= 0) {
-     if (user.username != dehash(channel) && !self)
-      socket.emit("manually enter raffle", user.username, Math.floor(Math.random() * 719));
+  },
+  'reload me': {
+    altcmds: [],
+help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 0,
+      modonly: false
+    },
+    action: function(obj){
+       delete useravatars[obj.user.username];
+       socket.emit('request avatar', obj.channel, obj.user, obj.user.username + ': reloaded avatar image', false);
+       socket.emit('request badge', obj.user);
+      return false;
     }
-    if (message.toLowerCase().indexOf('!vote') >= 0 && user.username != dehash(channel) && !self) {
-     var voteoption = message.split(' ');
-     (voteoption.length > 1 && voteoption[0].indexOf('!vote') >= 0) ? socket.emit("Send vote", {id: user.username.toLowerCase(), vote: capitalize(voteoption[1].toLowerCase())}) : socket.emit("Show vote");
+  },
+  '!enter': {
+    altcmds: [],
+help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 0,
+      modonly: false
+    },
+    action: function(obj){
+      socket.emit("manually enter raffle", obj.user.username, Math.floor(Math.random() * 719));
+      return false;
     }
-    // if (message.toLowerCase().indexOf('!current') >= 0) && user.username != dehash(channel) && !self) {
-    //  if (checkall.length > 1) {
-    //   teamtochange = checkall.slice(1).join(' ');
-    //   socket.emit('set current team', user.username, teamtochange);
-    //  }
-    //  else {
-    //   response = 'you must supply the name of the team you want to make your current team'
-    //  }
-    // }
-    // if (message.toLowerCase().indexOf('!password') >= 0) {
-    //  socket.emit("resend password", user.username);
-    // }
-    if (message.toLowerCase().indexOf('!cmd') >= 0 || message.toLowerCase().indexOf('!command') >= 0) showcommands(chan);
-    if (message.toLowerCase().indexOf('uptime') >= 0) {
-     var now = new Date();
-     var uptime = now - started;
-     if ((checkDelay(channel, 'uptime', 120)) && !(isNaN(uptime))) {
-      setDelay(channel, 'uptime');
-      var hours = Math.floor((uptime % 86400000) / 3600000);
-      var minutes = Math.floor(((uptime % 86400000) % 3600000) / 60000);
-      response = ('Stream has been live for ' + hours + (minutes < 10 ? ':0' : ':') + minutes);
-     }
+  },
+  '!vote': { //needs fixing
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1, //refactor
+      modonly: false
+    },
+    action: function(obj){
+       var voteoption = message.split(' ');
+       (voteoption.length > 1 && voteoption[0].indexOf('!vote') >= 0) ? socket.emit("Send vote", {id: obj.user.username.toLowerCase(), vote: capitalize(voteoption[1].toLowerCase())}) : socket.emit("Show vote");
+      return false;
     }
-    if (message.toLowerCase().indexOf('!viewers') >= 0) response = viewers.length + ' viewers';
-
-if (containsquestion == true) {
-     var dexno = -1;
-     var sp = false;
-     var command = message.toLowerCase().split(' ');
-     mewtwoloop: for (var i = 0; i < command.length; i++) {
-      if (command[i].indexOf('mewtwo') >= 0) dexno = 149;
-      else
-       pokemonnameloop: for (var pokes = 0; pokes < maxpokes; pokes++)
-        if (command[i].indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) dexno = pokes;
-     }
-     if (dexno >= 0) {
-      if (message.toLowerCase().indexOf('egg group') >= 0 && pokedex[dexno]['Egg Group I'])
+  },
+  '!cmd': {
+    altcmds: ['!command'],
+    help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: true,
+      pokemon: false,
+      parameters: 0,
+      modonly: false
+    },
+    action: function(obj){
+      showcommands(chan);
+      return false;
+    }
+  },
+  '!uptime': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      var response;
+      var now = new Date();
+      var uptime = now - started;
+      if ((checkDelay(obj.channel, 'uptime', 120)) && !(isNaN(uptime))) { //refactor
+       setDelay(obj.channel, 'uptime');  //refactor
+       var hours = Math.floor((uptime % 86400000) / 3600000);
+       var minutes = Math.floor(((uptime % 86400000) % 3600000) / 60000);
+       response = ('Stream has been live for ' + hours + (minutes < 10 ? ':0' : ':') + minutes);
+      }
+      return response;
+    }
+  },
+  '!viewers': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      return viewers.length + ' viewers';
+    }
+  },
+  'egg group': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      var response;
+      if (pokedex[dexno]['Egg Group I'])
        if (pokedex[dexno]['Egg Group II'] && pokedex[dexno]['Egg Group II'] != ' ') response = pokedex[dexno].Pokemon + ' is in egg groups ' + pokedex[dexno]['Egg Group I'] + ' & ' + pokedex[dexno]['Egg Group II'];
        else response = pokedex[dexno].Pokemon + ' is in egg group ' + pokedex[dexno]['Egg Group I'];
-     if (message.toLowerCase().indexOf(' ev ') >= 0 || message.toLowerCase().indexOf(' evs ') >= 0){
-      response = pokedex[dexno].Pokemon + ' will reward the EVs:'
-       evloop: for (ev in pokedex[dexno].EVs) response += ' ' + pokedex[dexno].EVs[ev] + ' x ' + ev
-     }
-      testtypeloop: for (var i = 0; i < command.length; i++) {
-       if (command[i].indexOf('type') >= 0 && pokedex[dexno].Secondary) {
-        response = pokedex[dexno].Pokemon + ' types are ' + pokedex[dexno].Type + '/' + pokedex[dexno].Secondary;
-       } else {
-        sploop: for (var key in pokedex[dexno]) {
-         if (i + 1 < command.length && command[i] == 'sp.') {
-          sp = true;
-          if (command[i] + ' ' + command[i + 1] == key.toLowerCase()) {
-           if (pokedex[dexno][key])
-            response = pokedex[dexno].Pokemon + ' ' + key + ': ' + pokedex[dexno][key];
-          }
-         } else {
-          if (command[i] == key.toLowerCase() && key != 'Pokemon' && key != 'EVs' && key != 'Forme' && sp == false) {
-           if (pokedex[dexno][key]) response = pokedex[dexno].Pokemon + ' ' + key + ': ' + pokedex[dexno][key];
-          }
-          if (command[i] == key.toLowerCase() && key == 'Mass') response += ' kg';
-          if (command[i] == key.toLowerCase() && key == 'Height') response += ' m';
-         }
-        }
-       }
-      }
-     }
-     if (message.toLowerCase().indexOf('abilit') >= 0) {
-      abilityloop: for (ability in abilities) {
-        if (message.toLowerCase().indexOf(ability.toLowerCase()) >= 0) response = ability + ': ' + abilities[ability];
-      }
-     }
-      if (message.toLowerCase().indexOf('move') >= 0 || message.toLowerCase().indexOf('learn') >= 0) {
-        var fullmove = '';
-        moveloop: for (move in moves) {
-          var testmessage = (dexno > -1) ? message.toLowerCase().replace(pokedex[dexno].Pokemon.toLowerCase(), '') : message.toLowerCase();
-          if (testmessage.indexOf(move.toLowerCase()) >= 0 && fullmove.indexOf(move.toLowerCase()) < 0) {
-            fullmove = move.toLowerCase();
-            property = Object.keys(moves[move]);
-            response = move + ': ' + moves[move].Description;
-            moveproploop: for (key in property) {
-              if (message.toLowerCase().indexOf(property[key].toLowerCase()) >= 0)
-                response = move + ' ' + property[key] + ': ' + moves[move][property[key]];
-              if (message.toLowerCase().indexOf('pokemon') >= 0) {
-                var learnlist = [];
-                pokemoveloop: for (poke in moves[move].Pokemon) {
-                  learnlist.push(poke);
-                }
-                response = 'The pokemon that can learn ' + move + ' are: ';
-                if (learnlist.length < response_length+1) response += learnlist.join(', ');
-                else {
-                  learnloop: for (var i=0; i<response_length-1; i++){
-                    response += learnlist[i] + ', ';
-                  }
-                  response += (learnlist.length - response_length) + ' more';
-                }
-              }
-              if (dexno > -1)
-               if (moves[move].Pokemon[pokedex[dexno].Pokemon]) {
-                response = pokedex[dexno].Pokemon + ' learns ' + move;
-                if (typeof(moves[move].Pokemon[pokedex[dexno].Pokemon]) === 'number')
-                  response +=  ' at level ' + moves[move].Pokemon[pokedex[dexno].Pokemon];
-                else
-                  if (moves[move].Pokemon[pokedex[dexno].Pokemon].toLowerCase() == 'start') response = pokedex[dexno].Pokemon + ' starts with the move ' + move;
-                  else
-                    if (moves[move].Pokemon[pokedex[dexno].Pokemon].toLowerCase() == 'egg') response += ' as an egg move by breeding';
-                    else response += ' by ' + moves[move].Pokemon[pokedex[dexno].Pokemon];
-               }
-               else response = pokedex[dexno].Pokemon + ' does not learn ' + move;
-
-            }
-          }
-        }
-      }
+      return response;
     }
-    commandloop: for (var key in commandlist) {
-     var command = key.split(' ');
-     var exists = true;
-     var dexno = -1;
-     existsloop: for (var i = 0; i < command.length; i++) {
-      command[i] = command[i].toLowerCase();
-      if (command[i] == 'pokemon') {
-       testifexistloop: for (var pokes = 0; pokes < maxpokes; pokes++) {
-        if (message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) dexno = pokes;
+  },
+  'ev': {
+    altcmds: ['evs'],
+    help: 'this command ',
+    requires :
+    {
+      question: true,
+      exclusive: true,
+      pokemon: true,
+      parameters: 0,
+      modonly: false
+    },
+    action: function(obj){
+      var response;
+       response = pokedex[obj.pokemon].Pokemon + ' will reward the EVs:'
+        evloop: for (ev in pokedex[obj.pokemon].EVs) response += ' ' + pokedex[obj.pokemon].EVs[ev] + ' x ' + ev
+      return response;
+    }
+  },
+  '!raffle': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      var response;
+      if (Object.keys(participants).length > 0) {
+       response = Object.keys(participants).length + ' in the raffle: ';
+       var totalraffle = 0;
+       totalloop: for (person in participants) {
+        totalraffle += participants[person];
        }
-      } else if (message.toLowerCase().indexOf(command[i]) < 0) exists = false;
-     }
-
-     if (exists) {
-      if (checkDelay(channel, command[0], 10)) {
-       setDelay(channel, command[0]);
-       if (command[0] == '!raffle' && Object.keys(participants).length > 0) {
-        response = Object.keys(participants).length + ' in the raffle: ';
-        var totalraffle = 0;
-        totalloop: for (person in participants) {
-         totalraffle += participants[person];
+       if (participants[obj.user.username.toLowerCase()]) response = obj.user.username + ' has a ' + Math.floor(participants[obj.user.username] / totalraffle * 10000) / 100 + '% to win the raffle';
+       else {
+        if (obj.user.username == dehash(obj.channel)) obj.self = true;
+        if (obj.self == true)
+        enteredloop: for (person in participants) {
+         response = response + person + ' (' + Math.floor(participants[person] / totalraffle * 10000) / 100 + '%) ';
         }
-        if (participants[user.username.toLowerCase()]) response = user.username + ' has a ' + Math.floor(participants[user.username] / totalraffle * 10000) / 100 + '% to win the raffle';
-        else {
-         if (user.username == dehash(channel)) self = true;
-         if (self == true)
-         enteredloop: for (person in participants) {
-          response = response + person + ' (' + Math.floor(participants[person] / totalraffle * 10000) / 100 + '%) ';
-         }
-         else response = 'You must sign up to join raffles and then use !enter. Signup page: ' + websiteurl + ' or !signup';
-        }
+        else response = 'You must sign up to join raffles and then use !enter. Signup page: ' + websiteurl + ' or !signup';
        }
-       if (containsquestion == true)
-        if (command[0] == 'sound') {
-         if (dexno >= 0) {
-          socket.emit("pokemon cry", dexno+1);
-         }
-        }
-        if (containsquestion == true)
-          if (command[0] == 'weak') {
-            if (dexno >= 0) {
-              response = pokedex[dexno].Pokemon + ' is weak to ' + weakTo(pokedex[dexno].Type, pokedex[dexno].Secondary).join(', ');
-            }
-            else {
-               message.split(' ').forEach((weak, index) => {
-                var list = weakTo(weak);
-                if (list.length > 0) response = validatetype(weak) + ' is weak to ' + list.join(', ');
-               });
-             }
-          }
-       if (containsquestion == true)
-        if (command[0] == 'resist' || command[0] == 'immun') {
-          response = 'Does not resist anything';
-          if (dexno >= 0) {
-            var list = resistantTo(pokedex[dexno].Type, pokedex[dexno].Secondary);
-            response = pokedex[dexno].Pokemon + ' is resistant to ' + (list.resist.length > 0 ? list.resist.join(', ') : 'nothing');
-            if (list.immune.length > 0) response += ' and immune to ' + list.immune.join(', ');
-          }
-          else {
-            message.split(' ').forEach((resistant, index) => {
-            var list = resistantTo(resistant);
-            if (list.resist.length > 0) response = validatetype(resistant) + ' is resistant to ' + list.resist.join(', ');
-            if (list.immune.length > 0) response += ' and immune to ' + list.immune.join(', ');
-            });
-          }
-        }
-       if (containsquestion == true)
-        if (command[0] == 'strong' || command[0] == 'effective') {
-         message.split(' ').forEach((strength, index) => {
-          var list = effective(strength);
-          if (list.length > 0) response = validatetype(strength) + ' is super effective against ' + list.join(', ');
-         });
-        }
-
-        // setDelay(channel, command[0]);
-       var reply = commandlist[key];
-       substitutionloop: for (var replace in substitutions) {
-        var insert = substitutions[replace];
-        if (reply.indexOf(replace) >= 0) reply = reply.slice(0, reply.indexOf(replace)) + insert + reply.slice(reply.indexOf(replace) + replace.length, reply.length);
-       }
-       if (containsquestion == true)
-        if (command[0] == 'nature') {
-         if (message.toLowerCase().indexOf('+') > 0 && message.toLowerCase().indexOf('-') > 0) {
-          var plus = message.slice(message.toLowerCase().indexOf('+') + 1).split(' ');
-          var minus = message.slice(message.toLowerCase().indexOf('-') + 1).split(' ');
-          if (plus[0].toLowerCase() == 'special') plus = plus[0] + ' ' + plus[1];
-          else plus = plus[0];
-          if (minus[0].toLowerCase() == 'special') minus = minus[0] + ' ' + minus[1];
-          else minus = minus[0];
-          detectnaturesloop: for (var count = 0; count < natures.length; count++) {
-           if (natures[count].increase)
-            if (natures[count].increase.toLowerCase() == plus.toLowerCase() &&
-             natures[count].decrease.toLowerCase() == minus.toLowerCase())
-             reply = natures[count].nature + ' is +' + natures[count].increase + ' and -' + natures[count].decrease;
-          }
-         } else
-          shownatureloop: for (var count = 0; count < natures.length; count++) {
-           if (message.toLowerCase().indexOf(natures[count].nature.toLowerCase()) >= 0) reply = (natures[count].increase ? natures[count].nature + ' is +' + natures[count].increase + ' and -' + natures[count].decrease : natures[count].nature + ' is neutral');
-          }
-        }
-       if (containsquestion == true)
-        if (dexno >= 0) {
-         if (command[0] == 'evol') {
-          if (pokedex[dexno].Prevo) {
-           reply += pokedex[dexno].Pokemon + ' evolves from ' + pokedex[dexno].Prevo;
-           if (pokedex[dexno].Evolve) reply += ' (' + pokedex[dexno].Evolve + ') ';
-          } else if (!(pokedex[dexno].Evos)) reply = pokedex[dexno].Pokemon + ' has no evolutions';
-          if (pokedex[dexno].Evos.length > 0)
-           reply += pokedex[dexno].Pokemon + ' evolves into ';
-          evolutionsloop: for (var count = 0; count < pokedex[dexno].Evos.length; count++) {
-           reply += pokedex[dexno].Evos[count];
-           reply += ' (' + pokedex[findpoke(pokedex[dexno].Evos[count])].Evolve + ') ';
-           if (count + 2 == pokedex[dexno].Evos.length) reply += ' and ';
-           else if (count + 1 < pokedex[dexno].Evos.length) reply += ', ';
-          }
-         } else {
-          if (command[0] == 'find' || command[0] == 'route' || command[0] == 'locat' || command[0] == 'obtain' || command[0] == 'catch') {
-           if (pokedex[dexno].Location) reply += pokedex[dexno].Pokemon + ' SuMo locations: ' + pokedex[dexno].Location;
-           else if (pokedex[dexno].locationORAS) reply += pokedex[dexno].Pokemon + ' ORAS locations: ' + pokedex[dexno].locationORAS;
-           else reply = 'No location in ORAS for ' + pokedex[dexno].Pokemon;
-          }
-         }
-        }
-       if (reply != message && reply != '') response = reply;
       }
-     }
+      return response;
+    }
+  },
+  'sound': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: true,
+      exclusive: false,
+      pokemon: true,
+      parameters: 0,
+      modonly: false
+    },
+    action: function(obj){
+      socket.emit("pokemon cry", obj.pokemon+1);
+      return false;
+    }
+  },  'weak': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: true,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      var response;
+      if (obj.pokemon >= 0) {
+        response = pokedex[obj.pokemon].Pokemon + ' is weak to ' + weakTo(pokedex[obj.pokemon].Type, pokedex[obj.pokemon].Secondary).join(', ');
+      }
+      else {
+         message.split(' ').forEach((weak, index) => {
+          var list = weakTo(weak);
+          if (list.length > 0) response = validatetype(weak) + ' is weak to ' + list.join(', ');
+         });
+       }
+      return response;
+    }
+  },
+  'resist': {
+    altcmds: ['immun'],
+    help: 'this command ',
+    requires :
+    {
+      question: true,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      var response = 'Does not resist anything';
+        if (obj.pokemon >= 0) {
+          var list = resistantTo(pokedex[obj.pokemon].Type, pokedex[obj.pokemon].Secondary);
+          response = pokedex[obj.pokemon].Pokemon + ' is resistant to ' + (list.resist.length > 0 ? list.resist.join(', ') : 'nothing');
+          if (list.immune.length > 0) response += ' and immune to ' + list.immune.join(', ');
+        }
+        else {
+          message.split(' ').forEach((resistant, index) => {
+          var list = resistantTo(resistant);
+          if (list.resist.length > 0) response = validatetype(resistant) + ' is resistant to ' + list.resist.join(', ');
+          if (list.immune.length > 0) response += ' and immune to ' + list.immune.join(', ');
+          });
+        }
+      return response;
+    }
+  },
+  'strong': {
+    altcmds: ['effective'],
+    help: 'this command ',
+    requires :
+    {
+      question: true,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+     var response;
+     obj.message.split(' ').forEach((strength, index) => {
+      var list = effective(strength);
+      if (list.length > 0) response = validatetype(strength) + ' is super effective against ' + list.join(', ');
+     });
+     return response;
+    }
+  },
+  'evol': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: true,
+      exclusive: false,
+      pokemon: true,
+      parameters: 0,
+      modonly: false
+    },
+    action: function(obj){
+      var reply ='';
+      var dexno = obj.pokemon;
+       if (pokedex[dexno].Prevo) {
+        reply += pokedex[dexno].Pokemon + ' evolves from ' + pokedex[dexno].Prevo;
+        if (pokedex[dexno].Evolve) if (pokedex[dexno].Evolve != 0) reply += ' (' + pokedex[dexno].Evolve + ') ';
+       } else if (!(pokedex[dexno].Evos)) reply = pokedex[dexno].Pokemon + ' has no evolutions';
+       if (pokedex[dexno].Evos.length > 0)
+        reply += pokedex[dexno].Pokemon + ' evolves into ';
+       evolutionsloop: for (var count = 0; count < pokedex[dexno].Evos.length; count++) {
+        reply += pokedex[dexno].Evos[count];
+        reply += ' (' + pokedex[findpoke(pokedex[dexno].Evos[count])].Evolve + ') ';
+        if (count + 2 == pokedex[dexno].Evos.length) reply += ' and ';
+        else if (count + 1 < pokedex[dexno].Evos.length) reply += ', ';
+       }
+       if (reply != obj.message && reply != '')
+         return reply;
+    }
+  },
+  'find': {
+    altcmds: ['route', 'locat', 'obtain', 'catch'],
+    help: 'this command ',
+    requires :
+    {
+      question: true,
+      exclusive: false,
+      pokemon: true,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      var reply;
+      var dexno = obj.pokemon;
+      if (pokedex[dexno].Location) reply += pokedex[dexno].Pokemon + ' SuMo locations: ' + pokedex[dexno].Location;
+      else if (pokedex[dexno].locationORAS) reply += pokedex[dexno].Pokemon + ' ORAS locations: ' + pokedex[dexno].locationORAS;
+      else reply = 'No location in ORAS for ' + pokedex[dexno].Pokemon;
+      if (reply != obj.message && reply != '')
+        return reply;
+    }
+  },
+  '!battle': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 0,
+      modonly: false
+    },
+    action: function(obj){
+      return 'We do raffles for battles. You must sign up to join raffles and then use !enter. Signup webpage: squi.li or !signup. !raffle will show if you are entered';
+    }
+  },
+  'nature': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: true,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      var reply;
+      if (obj.message.toLowerCase().indexOf('+') > 0 && obj.message.toLowerCase().indexOf('-') > 0) {
+       var plus = obj.message.slice(obj.message.toLowerCase().indexOf('+') + 1).split(' ');
+       var minus = obj.message.slice(obj.message.toLowerCase().indexOf('-') + 1).split(' ');
+       if (plus[0].toLowerCase() == 'special') plus = plus[0] + ' ' + plus[1];
+       else plus = plus[0];
+       if (minus[0].toLowerCase() == 'special') minus = minus[0] + ' ' + minus[1];
+       else minus = minus[0];
+       detectnaturesloop: for (var count = 0; count < natures.length; count++) {
+        if (natures[count].increase)
+         if (natures[count].increase.toLowerCase() == plus.toLowerCase() &&
+          natures[count].decrease.toLowerCase() == minus.toLowerCase())
+          reply = natures[count].nature + ' is +' + natures[count].increase + ' and -' + natures[count].decrease;
+       }
+      } else
+       shownatureloop: for (var count = 0; count < natures.length; count++) {
+        if (obj.message.toLowerCase().indexOf(natures[count].nature.toLowerCase()) >= 0) reply = (natures[count].increase ? natures[count].nature + ' is +' + natures[count].increase + ' and -' + natures[count].decrease : natures[count].nature + ' is neutral');
+       }
+      return reply;
+    }
+  },
+  '!test': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: true,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      var response;
+
+      return response;
+    }
+  },
+};
+
+// console.log(parser);
+
+function handleChat(channel, user, message, self) {
+  if (user["message-type"] != 'chat' && user["message-type"] != 'action') return false;
+  var messagepayload = {
+    channel: dehash(channel),
+    user: user,
+    message: message,
+    self: self,
+    pokemon: checkPoke(message)
+  }
+  var userexisted = checkAvatar(messagepayload);
+  var question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which']; //'who ', 'why ', 'did ',
+  var containsquestion = checkExist(message, question, true);
+  var response;
+
+  if (!self && userexisted)
+   commandparseloop: for (command in parser){
+    var cmdexist = false;
+    var cmdarr = parser[command].altcmds ? [command].concat(parser[command].altcmds) : [command];
+    cmdexist = checkExist(message, cmdarr, parser[command].requires.exclusive);
+    if (cmdexist) {
+      // if (checkDelay(channel, command[0], 10)) {
+      //  setDelay(channel, command[0]);
+      var parameters = [];
+      if (parser[command].requires.pokemon && messagepayload.pokemon < 0) cmdexist = false;
+      if (parser[command].requires.question && !containsquestion) cmdexist = false;
+      if (parser[command].requires.parameters) {
+        fillparaloop: for (var fill = 1; fill <= parser[command].requires.parameters; fill++)
+          parameters.push(message.toLowerCase().split(' ')[fill]);
+      }
+      messagepayload.parameters = parameters;
+      response = parser[command].action(messagepayload);
     }
    }
-   putChat(channel, user, message, self, useravatars[user.username], image);
-   if (response) submitchat(response);
-  }
+
+   var parseurl = urlDecode(messagepayload.message);
+   messagepayload.message = parseurl.message;
+   var image = parseurl.image;
+
+   if (!self && userexisted && containsquestion && !response && messagepayload.pokemon >= 0)
+    response = checkDb(messagepayload);
+
+  if (!self && userexisted && containsquestion && !response)
+   response = checkMoves(messagepayload);
+
+   userexisted && putChat(messagepayload.channel, messagepayload.user, messagepayload.message, messagepayload.self, useravatars[user.username], image);
+   if (response && userexisted) submitchat(response);
  }
 
 function putChat(chan, user, message, self, avatar, image) {
