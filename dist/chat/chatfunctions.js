@@ -182,7 +182,7 @@ function checkPoke(message) {
     pokemonnameloop: for (var pokes = 0; pokes < maxpokes; pokes++)
      if (word[i].indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) dexno = pokes;
   }
-  if (pokedex[dexno].Forme)
+  if (dexno > 0) if (pokedex[dexno].Forme)
     for (forme in pokedex[dexno].Forme)
       if (message.toLowerCase().indexOf(forme.toLowerCase()) >=0) {
         var mergeforme = JSON.parse(JSON.stringify(pokedex[dexno]));
