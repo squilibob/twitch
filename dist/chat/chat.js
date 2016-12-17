@@ -1,7 +1,7 @@
 function chatbot() {
+ var joinAccounced = [];
 
  client.on("hosted", function(channel, username, total) {
-
   var chan = dehash(channel);
   chan = capitalize(chan);
   if (typeof(total) == 'number')
@@ -9,15 +9,13 @@ function chatbot() {
   else chatNotice(username + ' is now hosting ' + chan + '.', null, null, 'chat-hosting-yes');
  });
 
- client.addListener('message', handleChat);
+ client.addListener('message', parseMessage);
  client.addListener('timeout', timeout);
  client.addListener('clearchat', clearChat);
  client.addListener('hosting', hosting);
  client.addListener('unhost', function(channel, viewers) {
   hosting(channel, null, viewers, true)
  });
-
- var joinAccounced = [];
 
  client.addListener('connecting', function(address, port) {if (showConnectionNotices) chatNotice('Connecting', 1000, -4, 'chat-connection-good-connecting');});
  client.addListener('logon', function() {if (showConnectionNotices) chatNotice('Authenticating', 1000, -3, 'chat-connection-good-logon');});
@@ -37,8 +35,8 @@ function chatbot() {
  });
 
  client.addListener('join', function(channel, username) {
-  if (joinAccounced.indexOf(channel) == -1) {
-   // if(showConnectionNotices) chatNotice('Joined ' + capitalize(dehash(channel)), 1000, -1, 'chat-room-join');
+  if(username == client.getUsername()) {
+   if(showConnectionNotices) chatNotice('Joined ' + capitalize(dehash(channel)), 1000, -1, 'chat-room-join');
    joinAccounced.push(channel);
    // getViewers(channel);
    getStart(32218175);

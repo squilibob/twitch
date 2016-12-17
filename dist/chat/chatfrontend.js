@@ -1,7 +1,5 @@
  function displaystreamer(username, banner, followamount, views, url) {
-  // console.log(followamount, minfollowerstoshoutout);
   if (!followamount || followamount <= minfollowerstoshoutout) return false;
-  // console.log(username, banner, followers, views, url);
   if(banner == null) banner = defaultavatar;
   var chatLine = document.createElement('li');
   var chatLineBanner = document.createElement('li');
@@ -62,7 +60,6 @@ help: 'this command ',
       modonly: true
     },
     action: function(obj){
-      console.log(obj.parameters);
       if (!obj.parameters[0]) return false;
       submitchat('/me we are now going to raid ' + obj.parameters[0] + ' please go to http://twitch.tv/' + obj.parameters[0] + ' and type the raid message:');
       submitchat('тo proтecт тнe cнaт froм devasтaтιon, тo υnιтe spaммers wιтнιn oυr naтιon, тo denoυnce тнe evιls of вans and мods, тo eхтend oυr spaм тo тнe space aвove. copy! pasтe! тwιтcн cнaт, scroll aт тнe speed of lιgнт! Ragequιт now or prepare тo fιgнт!');
@@ -267,8 +264,12 @@ help: 'this command ',
       modonly: false
     },
     action: function(obj){
-      showcommands(chan);
-      return false;
+      var response = 'The bot keywords for ' + obj.channel + ' are';
+      for (command in parser) {
+        response += ' ' + command;
+        if (parser[command].altcmds.length > 0) response += ' (or ' + parser[command].altcmds.join(' ') + ')';
+      }
+      return response;
     }
   },
   '!uptime': {
@@ -323,9 +324,9 @@ help: 'this command ',
     },
     action: function(obj){
       var response;
-      if (pokedex[dexno]['Egg Group I'])
-       if (pokedex[dexno]['Egg Group II'] && pokedex[dexno]['Egg Group II'] != ' ') response = pokedex[dexno].Pokemon + ' is in egg groups ' + pokedex[dexno]['Egg Group I'] + ' & ' + pokedex[dexno]['Egg Group II'];
-       else response = pokedex[dexno].Pokemon + ' is in egg group ' + pokedex[dexno]['Egg Group I'];
+      if (obj.pokemon['Egg Group I'])
+       if (obj.pokemon['Egg Group II'] && obj.pokemon['Egg Group II'] != ' ') response = obj.pokemon.Pokemon + ' is in egg groups ' + obj.pokemon['Egg Group I'] + ' & ' + obj.pokemon['Egg Group II'];
+       else response = obj.pokemon.Pokemon + ' is in egg group ' + obj.pokemon['Egg Group I'];
       return response;
     }
   },
@@ -342,8 +343,8 @@ help: 'this command ',
     },
     action: function(obj){
       var response;
-       response = pokedex[obj.pokemon].Pokemon + ' will reward the EVs:'
-        evloop: for (ev in pokedex[obj.pokemon].EVs) response += ' ' + pokedex[obj.pokemon].EVs[ev] + ' x ' + ev
+       response = obj.pokemon.Pokemon + ' will reward the EVs:'
+        evloop: for (ev in obj.pokemon.EVs) response += ' ' + obj.pokemon.EVs[ev] + ' x ' + ev
       return response;
     }
   },
@@ -407,11 +408,11 @@ help: 'this command ',
     },
     action: function(obj){
       var response;
-      if (obj.pokemon >= 0) {
-        response = pokedex[obj.pokemon].Pokemon + ' is weak to ' + weakTo(pokedex[obj.pokemon].Type, pokedex[obj.pokemon].Secondary).join(', ');
+      if (obj.pokemon) {
+        response = obj.pokemon.Pokemon + ' is weak to ' + weakTo(obj.pokemon.Type, obj.pokemon.Secondary).join(', ');
       }
       else {
-         message.split(' ').forEach((weak, index) => {
+         obj.message.split(' ').forEach((weak, index) => {
           var list = weakTo(weak);
           if (list.length > 0) response = validatetype(weak) + ' is weak to ' + list.join(', ');
          });
@@ -432,9 +433,9 @@ help: 'this command ',
     },
     action: function(obj){
       var response = 'Does not resist anything';
-        if (obj.pokemon >= 0) {
-          var list = resistantTo(pokedex[obj.pokemon].Type, pokedex[obj.pokemon].Secondary);
-          response = pokedex[obj.pokemon].Pokemon + ' is resistant to ' + (list.resist.length > 0 ? list.resist.join(', ') : 'nothing');
+        if (obj.pokemon) {
+          var list = resistantTo(obj.pokemon.Type, obj.pokemon.Secondary);
+          response = obj.pokemon.Pokemon + ' is resistant to ' + (list.resist.length > 0 ? list.resist.join(', ') : 'nothing');
           if (list.immune.length > 0) response += ' and immune to ' + list.immune.join(', ');
         }
         else {
@@ -481,17 +482,17 @@ help: 'this command ',
     action: function(obj){
       var reply ='';
       var dexno = obj.pokemon;
-       if (pokedex[dexno].Prevo) {
-        reply += pokedex[dexno].Pokemon + ' evolves from ' + pokedex[dexno].Prevo;
-        if (pokedex[dexno].Evolve) if (pokedex[dexno].Evolve != 0) reply += ' (' + pokedex[dexno].Evolve + ') ';
-       } else if (!(pokedex[dexno].Evos)) reply = pokedex[dexno].Pokemon + ' has no evolutions';
-       if (pokedex[dexno].Evos.length > 0)
-        reply += pokedex[dexno].Pokemon + ' evolves into ';
-       evolutionsloop: for (var count = 0; count < pokedex[dexno].Evos.length; count++) {
-        reply += pokedex[dexno].Evos[count];
-        reply += ' (' + pokedex[findpoke(pokedex[dexno].Evos[count])].Evolve + ') ';
-        if (count + 2 == pokedex[dexno].Evos.length) reply += ' and ';
-        else if (count + 1 < pokedex[dexno].Evos.length) reply += ', ';
+       if (obj.pokemon.Prevo) {
+        reply += obj.pokemon.Pokemon + ' evolves from ' + obj.pokemon.Prevo;
+        if (obj.pokemon.Evolve) if (obj.pokemon.Evolve != 0) reply += ' (' + obj.pokemon.Evolve + ') ';
+       } else if (!(obj.pokemon.Evos)) reply = obj.pokemon.Pokemon + ' has no evolutions';
+       if (obj.pokemon.Evos.length > 0)
+        reply += obj.pokemon.Pokemon + ' evolves into ';
+       evolutionsloop: for (var count = 0; count < obj.pokemon.Evos.length; count++) {
+        reply += obj.pokemon.Evos[count];
+        reply += ' (' + pokedex[findpoke(obj.pokemon.Evos[count])].Evolve + ') ';
+        if (count + 2 == obj.pokemon.Evos.length) reply += ' and ';
+        else if (count + 1 < obj.pokemon.Evos.length) reply += ', ';
        }
        if (reply != obj.message && reply != '')
          return reply;
@@ -509,11 +510,10 @@ help: 'this command ',
       modonly: false
     },
     action: function(obj){
-      var reply;
-      var dexno = obj.pokemon;
-      if (pokedex[dexno].Location) reply += pokedex[dexno].Pokemon + ' SuMo locations: ' + pokedex[dexno].Location;
-      else if (pokedex[dexno].locationORAS) reply += pokedex[dexno].Pokemon + ' ORAS locations: ' + pokedex[dexno].locationORAS;
-      else reply = 'No location in ORAS for ' + pokedex[dexno].Pokemon;
+      var reply ='';
+      if (obj.pokemon.Location) reply += obj.pokemon.Pokemon + ' SuMo locations: ' + obj.pokemon.Location;
+      else if (obj.pokemon.locationORAS) reply += obj.pokemon.Pokemon + ' ORAS locations: ' + obj.pokemon.locationORAS;
+      else reply = 'No location in ORAS for ' + obj.pokemon.Pokemon;
       if (reply != obj.message && reply != '')
         return reply;
     }
@@ -566,28 +566,28 @@ help: 'this command ',
       return reply;
     }
   },
-  '!test': {
-    altcmds: [],
-    help: 'this command ',
-    requires :
-    {
-      question: true,
-      exclusive: false,
-      pokemon: false,
-      parameters: 1,
-      modonly: false
-    },
-    action: function(obj){
-      var response;
+  // '!test': {
+  //   altcmds: [],
+  //   help: 'this command ',
+  //   requires :
+  //   {
+  //     question: true,
+  //     exclusive: false,
+  //     pokemon: false,
+  //     parameters: 1,
+  //     modonly: false
+  //   },
+  //   action: function(obj){
+  //     var response;
 
-      return response;
-    }
-  },
+  //     return response;
+  //   }
+  // },
 };
 
 // console.log(parser);
 
-function handleChat(channel, user, message, self) {
+function parseMessage(channel, user, message, self) {
   if (user["message-type"] != 'chat' && user["message-type"] != 'action') return false;
   var messagepayload = {
     channel: dehash(channel),
@@ -610,7 +610,7 @@ function handleChat(channel, user, message, self) {
       // if (checkDelay(channel, command[0], 10)) {
       //  setDelay(channel, command[0]);
       var parameters = [];
-      if (parser[command].requires.pokemon && messagepayload.pokemon < 0) cmdexist = false;
+      if (parser[command].requires.pokemon && messagepayload.pokemon) cmdexist = false;
       if (parser[command].requires.question && !containsquestion) cmdexist = false;
       if (parser[command].requires.parameters) {
         fillparaloop: for (var fill = 1; fill <= parser[command].requires.parameters; fill++)
@@ -625,17 +625,17 @@ function handleChat(channel, user, message, self) {
    messagepayload.message = parseurl.message;
    var image = parseurl.image;
 
-   if (!self && userexisted && containsquestion && !response && messagepayload.pokemon >= 0)
+   if (!self && userexisted && containsquestion && !response && messagepayload.pokemon)
     response = checkDb(messagepayload);
 
   if (!self && userexisted && containsquestion && !response)
    response = checkMoves(messagepayload);
 
-   userexisted && putChat(messagepayload.channel, messagepayload.user, messagepayload.message, messagepayload.self, useravatars[user.username], image);
+   userexisted && handleChat(messagepayload.channel, messagepayload.user, messagepayload.message, messagepayload.self, useravatars[user.username], image);
    if (response && userexisted) submitchat(response);
  }
 
-function putChat(chan, user, message, self, avatar, image) {
+function handleChat(chan, user, message, self, avatar, image) {
   var name = user.username,
    chatLine = document.createElement('li'),
    chatAlignment = document.createElement('div'),
@@ -786,5 +786,4 @@ function putChat(chan, user, message, self, avatar, image) {
    chat.firstChild.className = 'chat-kill';
    chat.firstChild.dataset = null;
   }
-
  }
