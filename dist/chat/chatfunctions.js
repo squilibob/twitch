@@ -191,7 +191,7 @@ function checkPoke(message) {
         }
         return mergeforme;
       }
-  return pokedex[dexno];
+  return dexno > -1 ? pokedex[dexno] : false;
 }
 
 function checkDb(obj){
