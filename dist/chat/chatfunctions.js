@@ -174,7 +174,6 @@ function urlDecode (message) {
 }
 
 function checkPoke(message) {
-  var mergeforme;
   var dexno = -1;
   var word = message.toLowerCase().split(' ');
   mewtwoloop: for (var i = 0; i < word.length; i++) {
@@ -183,11 +182,10 @@ function checkPoke(message) {
     pokemonnameloop: for (var pokes = 0; pokes < maxpokes; pokes++)
      if (word[i].indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) dexno = pokes;
   }
-  console.log(pokedex[dexno]);
   if (pokedex[dexno].Forme)
     for (forme in pokedex[dexno].Forme)
       if (message.toLowerCase().indexOf(forme.toLowerCase()) >=0) {
-        mergeforme = JSON.parse(JSON.stringify(pokedex[dexno]));
+        var mergeforme = JSON.parse(JSON.stringify(pokedex[dexno]));
         for (merge in pokedex[dexno].Forme[forme]) {
           mergeforme[merge] = pokedex[dexno].Forme[forme][merge];
         }
