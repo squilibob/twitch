@@ -216,6 +216,10 @@ function checkDb(obj){
        if (command[i] == key.toLowerCase() && key != 'Pokemon' && key != 'EVs' && key != 'Forme' && key != 'Evolve' && sp == false) {
         if (obj.pokemon[key]) response = obj.pokemon.Pokemon + ' ' + key + ': ' + obj.pokemon[key];
        }
+       if (command[i] == key.toLowerCase() && key == 'Forme') {
+        response = obj.pokemon.Pokemon + ' Formes';
+        for (forme in obj.pokemon.Formes) response += ', ' + forme;
+       }
        if (command[i] == key.toLowerCase() && key == 'Mass') response += ' kg';
        if (command[i] == key.toLowerCase() && key == 'Height') response += ' m';
       }

@@ -193,12 +193,11 @@ help: 'this command ',
       modonly: false
     },
     action: function(obj){
-      var response;
       var notyou = null;
        fcloop: for (person in useravatars)
         if (obj.message.toLowerCase().indexOf(person.toLowerCase()) >= 0) notyou = person.toLowerCase();
        socket.emit('request user fc', notyou == null ? obj.user.username.toLowerCase() : notyou);
-      return response;
+      return false;
     }
   },
   'reload me': {
@@ -506,10 +505,11 @@ help: 'this command ',
       question: true,
       exclusive: false,
       pokemon: true,
-      parameters: 1,
+      parameters: 0,
       modonly: false
     },
     action: function(obj){
+      console.log(obj);
       var reply ='';
       if (obj.pokemon.Location) reply += obj.pokemon.Pokemon + ' SuMo locations: ' + obj.pokemon.Location;
       else if (obj.pokemon.locationORAS) reply += obj.pokemon.Pokemon + ' ORAS locations: ' + obj.pokemon.locationORAS;
@@ -606,19 +606,20 @@ function parseMessage(channel, user, message, self) {
     var cmdexist = false;
     var cmdarr = parser[command].altcmds ? [command].concat(parser[command].altcmds) : [command];
     cmdexist = checkExist(message, cmdarr, parser[command].requires.exclusive);
+
     if (cmdexist) {
       // if (checkDelay(channel, command[0], 10)) {
       //  setDelay(channel, command[0]);
       var parameters = [];
-      if (parser[command].requires.pokemon && messagepayload.pokemon) cmdexist = false;
+      if (parser[command].requires.pokemon && !messagepayload.pokemon) cmdexist = false;
       if (parser[command].requires.question && !containsquestion) cmdexist = false;
       if (parser[command].requires.parameters) {
         fillparaloop: for (var fill = 1; fill <= parser[command].requires.parameters; fill++)
           parameters.push(message.toLowerCase().split(' ')[fill]);
       }
       messagepayload.parameters = parameters;
-      response = parser[command].action(messagepayload);
     }
+    if (cmdexist) response = parser[command].action(messagepayload);
    }
 
    var parseurl = urlDecode(messagepayload.message);
