@@ -145,7 +145,7 @@ help: 'this command ',
       question: false,
       exclusive: false,
       pokemon: false,
-      parameters: 1,
+      parameters: 2,
       modonly: false
     },
     action: function(obj){
@@ -189,7 +189,7 @@ help: 'this command ',
       question: false,
       exclusive: false,
       pokemon: false,
-      parameters: 1,
+      parameters: 0,
       modonly: false
     },
     action: function(obj){
@@ -317,7 +317,7 @@ help: 'this command ',
     {
       question: false,
       exclusive: false,
-      pokemon: false,
+      pokemon: true,
       parameters: 1,
       modonly: false
     },
@@ -557,7 +557,7 @@ help: 'this command ',
         if (natures[count].increase)
          if (natures[count].increase.toLowerCase() == plus.toLowerCase() &&
           natures[count].decrease.toLowerCase() == minus.toLowerCase())
-          reply = natures[count].nature + ' is +' + natures[count].increase + ' and -' + natures[count].decrease;
+          reply = natures[count].nature + ' is +' + natures[count].increase + ' and -' + natures[count].decrease + ' and likes to eat ' + natures[count].favorite + ' berries';
        }
       } else
        shownatureloop: for (var count = 0; count < natures.length; count++) {
@@ -596,6 +596,7 @@ function parseMessage(channel, user, message, self) {
     self: self,
     pokemon: checkPoke(message)
   }
+  var modmessage = isMod(user);
   var userexisted = checkAvatar(messagepayload);
   var question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which']; //'who ', 'why ', 'did ',
   var containsquestion = checkExist(message, question, true);
@@ -613,6 +614,7 @@ function parseMessage(channel, user, message, self) {
       var parameters = [];
       if (parser[command].requires.pokemon && !messagepayload.pokemon) cmdexist = false;
       if (parser[command].requires.question && !containsquestion) cmdexist = false;
+      if (parser[command].requires.modonly && !modmessage) cmdexist = false;
       if (parser[command].requires.parameters) {
         fillparaloop: for (var fill = 1; fill <= parser[command].requires.parameters; fill++)
           parameters.push(message.toLowerCase().split(' ')[fill]);

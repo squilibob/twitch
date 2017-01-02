@@ -173,15 +173,17 @@ function urlDecode (message) {
   };
 }
 
+function isMod(user) {
+  if (user.badges.broadcaster) return true;
+  return user.mod;
+}
+
 function checkPoke(message) {
   var dexno = -1;
-  var word = message.toLowerCase().split(' ');
-  mewtwoloop: for (var i = 0; i < word.length; i++) {
-   if (word[i].indexOf('mewtwo') >= 0) dexno = 149;
-   else
-    pokemonnameloop: for (var pokes = 0; pokes < maxpokes; pokes++)
-     if (word[i].indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) dexno = pokes;
-  }
+ if (message.toLowerCase().indexOf('mewtwo') >= 0) dexno = 149;
+ else
+  pokemonnameloop: for (var pokes = 0; pokes < maxpokes; pokes++)
+   if (message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) dexno = pokes;
   if (dexno > 0) if (pokedex[dexno].Forme)
     for (forme in pokedex[dexno].Forme)
       if (message.toLowerCase().indexOf(forme.toLowerCase()) >=0) {
@@ -189,6 +191,7 @@ function checkPoke(message) {
         for (merge in pokedex[dexno].Forme[forme]) {
           mergeforme[merge] = pokedex[dexno].Forme[forme][merge];
         }
+        mergeforme.Pokemon = forme;
         return mergeforme;
       }
   return dexno > -1 ? pokedex[dexno] : false;
@@ -236,7 +239,7 @@ function checkDb(obj){
 
 function checkMoves (obj) {
   var message = obj.message;
-  var dexno = obj.pokemon;
+  var dexno = obj.pokemon ? obj.pokemon : -1;
   var response;
   var fullmove = '';
   moveloop: for (move in moves) {
