@@ -233,11 +233,6 @@ function checkDb(obj){
      }
     }
    }
-  if (message.toLowerCase().indexOf('abilit') >= 0) {
-   abilityloop: for (ability in abilities) {
-     if (message.toLowerCase().indexOf(ability.toLowerCase()) >= 0) response = ability + ': ' + abilities[ability];
-   }
-  }
   return response;
 }
 

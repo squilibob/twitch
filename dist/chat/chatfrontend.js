@@ -566,6 +566,26 @@ help: 'this command ',
       return reply;
     }
   },
+  'abilit': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: true,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      var response;
+       console.log(obj.message.toLowerCase().indexOf('abilit'));
+      abilityloop: for (ability in abilities) {
+        if (obj.message.toLowerCase().indexOf(ability.toLowerCase()) >= 0) response = ability + ': ' + abilities[ability];
+      }
+      return response;
+    }
+  },
   // '!test': {
   //   altcmds: [],
   //   help: 'this command ',
