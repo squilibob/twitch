@@ -44,6 +44,7 @@ project.Pokemotions.prototype = {
 
       if (socket.hasListeners('playsound') == false)
       socket.on('playsound', function(which) {
+        console.log(which);
         decoded && fx.play(which);
       });
     },

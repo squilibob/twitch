@@ -391,7 +391,7 @@ help: 'this command ',
       modonly: false
     },
     action: function(obj){
-      socket.emit("pokemon cry", obj.pokemon+1);
+      typeof(obj.pokemon.id === 'number') && socket.emit("pokemon cry", obj.pokemon.id);
       return false;
     }
   },  'weak': {
