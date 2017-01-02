@@ -174,8 +174,12 @@ function urlDecode (message) {
 }
 
 function isMod(user) {
-  if (user.badges.broadcaster) return true;
-  return user.mod;
+  if (user)
+    if (user.badges) {
+      if (user.badges.broadcaster) return true;
+      return user.mod;
+    }
+  return false;
 }
 
 function checkPoke(message) {
@@ -239,7 +243,7 @@ function checkDb(obj){
 
 function checkMoves (obj) {
   var message = obj.message;
-  var dexno = obj.pokemon ? obj.pokemon : -1;
+  var dexno = obj.pokemon ? obj.pokemon.id : -1;
   var response;
   var fullmove = '';
   moveloop: for (move in moves) {
