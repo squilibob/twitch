@@ -28,7 +28,7 @@ function checkAvatar(obj) {
   var existed = false;
   if (useravatars[obj.user.username] == undefined) {
    if (followers[obj.user.username])
-    useravatars[obj.user.username] = followers[obj.user.username].logo;
+    if (followers[obj.user.username].logo) useravatars[obj.user.username] = followers[obj.user.username].logo;
    socket.emit('request avatar', obj.channel, obj.user, obj.message, obj.self);
    socket.emit('request badge', obj.user);
    if (obj.user.username != obj.channel && !obj.self) checkstreamer(obj.user['user-id']);

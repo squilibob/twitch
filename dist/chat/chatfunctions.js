@@ -243,7 +243,6 @@ function checkMoves (obj) {
   var fullmove = '';
   moveloop: for (move in moves) {
     var testmessage = (dexno > -1) ? message.toLowerCase().replace(obj.pokemon.Pokemon.toLowerCase(), '') : message.toLowerCase();
-    if (testmessage.indexOf(move.toLowerCase()) >= 0) console.log(move);
     if (testmessage.indexOf(move.toLowerCase()) >= 0 && fullmove.indexOf(move.toLowerCase()) < 0) {
       fullmove = move.toLowerCase();
       property = Object.keys(moves[move]);
