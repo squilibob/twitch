@@ -215,12 +215,12 @@ function checkDb(obj){
       if (i + 1 < command.length && command[i] == 'sp.') {
        sp = true;
        if (command[i] + ' ' + command[i + 1] == key.toLowerCase()) {
-        if (obj.pokemon[key])
+        if (obj.pokemon[key] !== undefined)
          response = obj.pokemon.Pokemon + ' ' + key + ': ' + obj.pokemon[key];
        }
       } else {
        if (command[i] == key.toLowerCase() && key != 'Pokemon' && key != 'EVs' && key != 'Forme' && key != 'Evolve' && sp == false) {
-        if (obj.pokemon[key]) response = obj.pokemon.Pokemon + ' ' + key + ': ' + obj.pokemon[key];
+        if (obj.pokemon[key] !== undefined) response = obj.pokemon.Pokemon + ' ' + key + ': ' + obj.pokemon[key];
        }
        if (command[i] == key.toLowerCase() && key == 'Forme') {
         response = obj.pokemon.Pokemon + ' Formes';

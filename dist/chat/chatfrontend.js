@@ -526,7 +526,6 @@ help: 'this command ',
       modonly: false
     },
     action: function(obj){
-      console.log(obj);
       var reply ='';
       if (obj.pokemon.Location) reply += obj.pokemon.Pokemon + ' SuMo locations: ' + obj.pokemon.Location;
       else if (obj.pokemon.locationORAS) reply += obj.pokemon.Pokemon + ' ORAS locations: ' + obj.pokemon.locationORAS;
@@ -596,7 +595,6 @@ help: 'this command ',
     },
     action: function(obj){
       var response;
-       console.log(obj.message.toLowerCase().indexOf('abilit'));
       abilityloop: for (ability in abilities) {
         if (obj.message.toLowerCase().indexOf(ability.toLowerCase()) >= 0) response = ability + ': ' + abilities[ability];
       }
