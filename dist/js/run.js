@@ -86,8 +86,6 @@ project.Init.prototype = {
       else script = preloadscripts[testscript];
       game.load.script(this.filename(script), script + '.js');
     }
-
-    // game.load.json('userJSON', 'https://api.twitch.tv/kraken/users/'+localStorage.getItem("id"));
   },
 
   loadUpdate: function(){
@@ -115,8 +113,6 @@ project.Init.prototype = {
       this.populatetypechart();
       this.populatedata();
     }
-      // var userJSON = game.cache.getJSON('userJSON');
-      // localStorage.setItem('twitchlogo', userJSON.logo);
   },
 
   update: function(){

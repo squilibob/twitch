@@ -6,9 +6,9 @@ var chatcontainer = document.getElementById('chat'),
 chatcontainer.appendChild(chat);
 
 var started,
- followers = [],
  viewers = [],
  stockavatar = [],
+ followers = {},
  useravatars = {},
  userbadges = {},
  participants = {},

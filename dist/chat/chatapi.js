@@ -27,6 +27,8 @@ function header(id, endpoint, extraparams, version){
 function checkAvatar(obj) {
   var existed = false;
   if (useravatars[obj.user.username] == undefined) {
+   if (followers[obj.user.username])
+    useravatars[obj.user.username] = followers[obj.user.username].logo;
    socket.emit('request avatar', obj.channel, obj.user, obj.message, obj.self);
    socket.emit('request badge', obj.user);
    if (obj.user.username != obj.channel && !obj.self) checkstreamer(obj.user['user-id']);
@@ -75,18 +77,17 @@ function getStart(chan) {
 function checkfollowers(userid, hidenotify, current) {
  var maxcursor = 100;
  if (!current) current = 0;
- // var cursor = url ? url : 'https://api.twitch.tv/kraken/channels/' + userid + '/follows';
  client.api({
-  // url: cursor + '&' + clientOptions.options.clientId.substr(1)
   url: 'https://api.twitch.tv/kraken/channels' + header(userid, 'follows', 'offset=' + current + '&limit=' + maxcursor)
  }, function(err, res, body) {
   if (body) {
-   // if (body.follows.length == maxcursor) checkfollowers(userid, hidenotify, body._links.next);
    if (current + body.follows.length < body._total) checkfollowers(userid, hidenotify, current + body.follows.length);
    followerloop: for (viewer in body.follows)
-    if (followers.indexOf(body.follows[viewer].user.name) < 0) {
-     followers.push(body.follows[viewer].user.name);
-     if (!hidenotify) chatNotice(body.follows[viewer].user.name + " is now following (follower #" + followers.length + ")", 10000, 1);
+    if (!followers[body.follows[viewer].user.name]) {
+      var datefollowed = new Date(body.follows[viewer].created_at);
+     // followers[body.follows[viewer].user.name] = {logo: body.follows[viewer].user.logo, followed: Math.floor((Date.now() - datefollowed))/8.64e7) + ' days ago (' + body.follows[viewer].created_at.split('T').shift().split('-').reverse().join('/') + ')'};
+     followers[body.follows[viewer].user.name] = {logo: body.follows[viewer].user.logo, followed: Math.floor((Date.now() - datefollowed)/8.64e7) + ' days ago (' + datefollowed.toDateString() + ')'};
+     if (!hidenotify) chatNotice(body.follows[viewer].user.name + " is now following (follower #" + Object.keys(followers).length + ")", 10000, 1);
     }
   }
  });
@@ -94,7 +95,6 @@ function checkfollowers(userid, hidenotify, current) {
 
 function checkstreamer(username) {
  client.api({
-  // url: 'https://api.twitch.tv/kraken/channels/' + username + clientOptions.options.clientId
   url: 'https://api.twitch.tv/kraken/channels' + header(username)
  }, function(err, res, body) {
   if (body) {

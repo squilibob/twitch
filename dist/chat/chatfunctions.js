@@ -174,8 +174,7 @@ function urlDecode (message) {
 }
 
 function isMod(user) {
-  if (user)
-    if (user.badges) {
+  if ((user || {}).badges) {
       if (user.badges.broadcaster) return true;
       return user.mod;
     }

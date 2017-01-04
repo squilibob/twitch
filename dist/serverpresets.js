@@ -15,6 +15,7 @@ const Presets = {
   externalteams:true,
   scalingallowed: false,
   simple: false,
+  cors: 'https://crossorigin.me/',
 };
 const preloadscripts = [
   'consts',

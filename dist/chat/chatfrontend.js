@@ -310,6 +310,23 @@ help: 'this command ',
       return viewers.length + ' viewers';
     }
   },
+  '!follow': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 0,
+      modonly: false
+    },
+    action: function(obj){
+      var response = obj.user.username + ' is not a follower';
+      if (followers[obj.user.username.toLowerCase()]) response = obj.user.username + ' followed ' + followers[obj.user.username.toLowerCase()].followed;
+      return response;
+    }
+  },
   'egg group': {
     altcmds: [],
     help: 'this command ',
@@ -369,7 +386,7 @@ help: 'this command ',
        if (participants[obj.user.username.toLowerCase()]) response = obj.user.username + ' has a ' + Math.floor(participants[obj.user.username] / totalraffle * 10000) / 100 + '% to win the raffle';
        else {
         if (obj.user.username == dehash(obj.channel)) obj.self = true;
-        if (obj.self == true)
+        if (obj.self)
         enteredloop: for (person in participants) {
          response = response + person + ' (' + Math.floor(participants[person] / totalraffle * 10000) / 100 + '%) ';
         }
