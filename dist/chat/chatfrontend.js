@@ -613,26 +613,26 @@ help: 'this command ',
       modonly: false
     },
     action: function(obj){
-      var chatLine = document.createElement('li'),
-      chatContainer = document.createElement('div'),
-      chatImage = document.createElement('img');
-
-      chatLine.className = 'chat-line';
-      chatLine.dataset.hide = '';
-
-      chatContainer.className = 'chat-message-container';
-      chatContainer.dataset.hide = '';
-      chatContainer.style.background = obj.user.color;
-
-      chatLine.appendChild(chatContainer);
-      chat.appendChild(chatLine);
-
-      firstpoke = findpoke(obj.parameters[0]);
-      secondpoke = findpoke(obj.parameters[1]);
-      // if (obj.parameters[0]) response = findpoke(obj.parameters[0]);
+      firstpoke = findpoke(obj.parameters[1]);
+      secondpoke = findpoke(obj.parameters[0]);
       var fusion = 'http://images.alexonsager.net/pokemon/fused/'+ (firstpoke + 1) + '/'+ (firstpoke + 1) + '.' + (secondpoke + 1) + '.png';
       if (typeof(firstpoke) == 'number' && typeof(secondpoke) == 'number')
-        if (firstpoke > 0 && firstpoke < pokedex.length && secondpoke > 0 && secondpoke < pokedex.length )
+        // if (firstpoke > 0 && firstpoke < pokedex.length && secondpoke > 0 && secondpoke < pokedex.length )
+        if (firstpoke > 0 && firstpoke < 152 && secondpoke > 0 && secondpoke < 152 ) {
+          var chatLine = document.createElement('li'),
+          chatContainer = document.createElement('div'),
+          chatImage = document.createElement('img');
+
+          chatLine.className = 'chat-line';
+          chatLine.dataset.hide = '';
+
+          chatContainer.className = 'chat-message-container';
+          chatContainer.dataset.hide = '';
+          chatContainer.style.background = obj.user.color;
+
+          chatLine.appendChild(chatContainer);
+          chat.appendChild(chatLine);
+
           checkImageExists(fusion, function(existsImage) {
            if (existsImage) {
             chatImage.src = fusion;
@@ -642,15 +642,38 @@ help: 'this command ',
             };
            }
           });
-        if (typeof fadeDelay == 'number') {
-         setTimeout(function() {
-          chatLine.dataset.faded = '';
-          chatImage.dataset.faded = '';
-          console.log(chatImage.style);
-          chatImage.style.width = 64;
-          chatImage.style.height = 64;
-         }, fadeDelay);
+          if (typeof fadeDelay == 'number') {
+           setTimeout(function() {
+            chatLine.dataset.faded = '';
+            chatImage.dataset.faded = '';
+            console.log(chatImage.style);
+            chatImage.style.width = 64;
+            // chatImage.style.height = 64;
+           }, fadeDelay);
+          }
         }
+      }
+  },
+  '!stat': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: true,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      var response = obj.pokemon.Pokemon + ' stats: ';
+      response += obj.pokemon.HP + '/';
+      response += obj.pokemon.Attack + '/';
+      response += obj.pokemon.Defense + '/';
+      response += obj.pokemon['Sp. Attack'] + '/';
+      response += obj.pokemon['Sp. Defense'] + '/';
+      response += obj.pokemon.Speed;
+      return response;
     }
   },
   // '!test': {
