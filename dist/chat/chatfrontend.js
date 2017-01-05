@@ -601,6 +601,58 @@ help: 'this command ',
       return response;
     }
   },
+  '!fuse': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: true,
+      parameters: 2,
+      modonly: false
+    },
+    action: function(obj){
+      var chatLine = document.createElement('li'),
+      chatContainer = document.createElement('div'),
+      chatImage = document.createElement('img');
+
+      chatLine.className = 'chat-line';
+      chatLine.dataset.hide = '';
+
+      chatContainer.className = 'chat-message-container';
+      chatContainer.dataset.hide = '';
+      chatContainer.style.background = obj.user.color;
+
+      chatLine.appendChild(chatContainer);
+      chat.appendChild(chatLine);
+
+      firstpoke = findpoke(obj.parameters[0]);
+      secondpoke = findpoke(obj.parameters[1]);
+      // if (obj.parameters[0]) response = findpoke(obj.parameters[0]);
+      var fusion = 'http://images.alexonsager.net/pokemon/fused/'+ (firstpoke + 1) + '/'+ (firstpoke + 1) + '.' + (secondpoke + 1) + '.png';
+      if (typeof(firstpoke) == 'number' && typeof(secondpoke) == 'number')
+        if (firstpoke > 0 && firstpoke < pokedex.length && secondpoke > 0 && secondpoke < pokedex.length )
+          checkImageExists(fusion, function(existsImage) {
+           if (existsImage) {
+            chatImage.src = fusion;
+            chatImage.className = 'chat-image';
+            chatImage.onload = function() {
+             chatContainer.appendChild(chatImage);
+            };
+           }
+          });
+        if (typeof fadeDelay == 'number') {
+         setTimeout(function() {
+          chatLine.dataset.faded = '';
+          chatImage.dataset.faded = '';
+          console.log(chatImage.style);
+          chatImage.style.width = 64;
+          chatImage.style.height = 64;
+         }, fadeDelay);
+        }
+    }
+  },
   // '!test': {
   //   altcmds: [],
   //   help: 'this command ',

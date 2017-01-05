@@ -5,7 +5,6 @@ function findpoke(name) {
  return -1;
 }
 
-
 function validatetype(type) {
  type = capitalize(type.toLowerCase());
  Object.keys(typechart).forEach((elementindex, index) => {
