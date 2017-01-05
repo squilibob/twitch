@@ -213,11 +213,10 @@ function checkDb(obj){
      response = obj.pokemon.Pokemon + ' types are ' + obj.pokemon.Type + '/' + obj.pokemon.Secondary;
     } else {
      sploop: for (var key in obj.pokemon) {
-      if (iterate + 1 < command.length && command[iterate] == 'sp.') {
+      if (iterate + 1 < command.length && (command[iterate] == 'sp.' || command[iterate] == 'special')) {
        sp = true;
-       if (command[iterate] + ' ' + command[iterate + 1] == key.toLowerCase()) {
-        if (obj.pokemon[key])
-         response = obj.pokemon.Pokemon + ' ' + key + ': ' + obj.pokemon[key];
+       if ('sp. ' + command[iterate + 1] == key.toLowerCase()) {
+       response = obj.pokemon.Pokemon + ' ' + key + ': ' + obj.pokemon[key];
        }
       } else {
        if (command[iterate] == key.toLowerCase() && key != 'Pokemon' && key != 'EVs' && key != 'Forme' && key != 'Evolve' && sp == false) {

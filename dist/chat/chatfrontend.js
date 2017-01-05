@@ -577,7 +577,7 @@ help: 'this command ',
        }
       } else
        shownatureloop: for (var count = 0; count < natures.length; count++) {
-        if (obj.message.toLowerCase().indexOf(natures[count].nature.toLowerCase()) >= 0) reply = (natures[count].increase ? natures[count].nature + ' is +' + natures[count].increase + ' and -' + natures[count].decrease : natures[count].nature + ' is neutral');
+        if (obj.message.toLowerCase().indexOf(natures[count].nature.toLowerCase()) >= 0) reply = (natures[count].increase ? natures[count].nature + ' is +' + natures[count].increase + ' and -' + natures[count].decrease + ' and likes to eat ' + natures[count].favorite + ' berries' : natures[count].nature + ' is neutral');
        }
       return reply;
     }

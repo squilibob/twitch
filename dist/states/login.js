@@ -8,10 +8,6 @@ project.Login = function(game) {
 
 };
 project.Login.prototype = {
-  preload: function (){
-    // game.load.script('/chat/chat');
-    // game.load.spritesheet('spritesheet', spritesheet.src, spritesheet.x, spritesheet.y, maxpokes);
-  },
   create: function (){
     var
     margin = Presets.padding,
@@ -32,27 +28,14 @@ project.Login.prototype = {
     textInput.define(form[form.length] = this.add.group(), this, {type: 'number', margin: Presets.padding, divider: Presets.padding, x: x+form[2].children[0].width*2+margin, y: y.spacing*y.next, charwidth: 4});
     y.next++;
 
-    // selector.define(form[form.length] = this.add.group(), this, {x:x-divider, y:y.spacing*y.next, id: 'spritesheet'});
-    // selector.define(form[form.length] = this.add.group(), this, {x:x, y:y.spacing*y.next, id: 'spritesheet'});
-    // selector.define(form[form.length] = this.add.group(), this, {x:x+divider, y:y.spacing*y.next, id: 'spritesheet'});
-
-    // y.next++;
-    // y.next++;
-    // y.next++;
-    // y.next++;
-
     textButton.define(button = this.add.group(), game, "Save these details", 0, y.spacing*y.next, sectioncolors[1]);
     button.onChildInputDown.add(this.connect, this);
-    // button.x -= button.getBounds().width/2;
 
     if (game.storage.getItem("id")) form[0].children[0].setText(game.storage.getItem("id"));
     if (game.storage.getItem("ign")) form[1].children[0].setText(game.storage.getItem("ign"));
     if (game.storage.getItem("fcleft")) form[2].children[0].setText(game.storage.getItem("fcleft"));
     if (game.storage.getItem("fcmid")) form[3].children[0].setText(game.storage.getItem("fcmid"));
     if (game.storage.getItem("fcright")) form[4].children[0].setText(game.storage.getItem("fcright"));
-    // selector.set(form[5].children, game.storage.getItem("pokevalues0"));
-    // selector.set(form[6].children, game.storage.getItem("pokevalues1"));
-    // selector.set(form[7].children, game.storage.getItem("pokevalues2"));
 
     form[0].children[0].startFocus();
     form[0].children[0].focus = true;
@@ -60,57 +43,8 @@ project.Login.prototype = {
     formgroup = game.add.group()
     formgroup.addMultiple(form);
     formgroup.addChild(button);
-    // formgroup.scale.setTo(game.world.width/formgroup.getBounds().width < game.world.height/formgroup.getBounds().height ? game.world.width/formgroup.getBounds().width : game.world.height/formgroup.getBounds().height);
     scaleup(formgroup);
     formgroup.x = formgroup.getBounds().width/2;
-
-    // var checkno = -1;
-
-    //   if (!Array.prototype.includes) {
-    //     Array.prototype.includes = function(searchElement /*, fromIndex*/) {
-    //       'use strict';
-    //       if (this == null) {
-    //         throw new TypeError('Array.prototype.includes called on null or undefined');
-    //       }
-
-    //       var O = Object(this);
-    //       var len = parseInt(O.length, 10) || 0;
-    //       if (len === 0) {
-    //         return false;
-    //       }
-    //       var n = parseInt(arguments[1], 10) || 0;
-    //       var k;
-    //       if (n >= 0) {
-    //         k = n;
-    //       } else {
-    //         k = len + n;
-    //         if (k < 0) {k = 0;}
-    //       }
-    //       var currentElement;
-    //       while (k < len) {
-    //         currentElement = O[k];
-    //         if (searchElement === currentElement ||
-    //            (searchElement !== searchElement && currentElement !== currentElement)) { // NaN !== NaN
-    //           return true;
-    //         }
-    //         k++;
-    //       }
-    //       return false;
-    //     };
-    //   }
-
-    //   var excludelist = [];
-    //   for (poke in loca) {
-    //     if (loca[poke] == 'Not available in Sun or Moon: Trade it from another game') excludelist.push(poke);
-    //   }
-    // for (var dexinfo of pokedex) {
-    //   if (!excludelist.includes(dexinfo.Pokemon))
-    //     if (loca[dexinfo.Pokemon]) {
-    //       dexinfo.Location = loca[dexinfo.Pokemon];
-    //     // socket.emit("Insert pokedex", dexinfo);
-    //     }
-    // }
-    // console.log(pokedex);
   },
   validatefc: function(digits){
     return ('0000' + (digits == undefined ? '0' : digits)).substr(-4);
@@ -121,16 +55,10 @@ project.Login.prototype = {
     game.storage.setItem("fcleft", form[2].children[0].value);
     game.storage.setItem("fcmid", form[3].children[0].value);
     game.storage.setItem("fcright", form[4].children[0].value);
-    // game.storage.setItem("pokevalues0", form[5].children[2].value);
-    // game.storage.setItem("pokevalues1", form[6].children[2].value);
-    // game.storage.setItem("pokevalues2", form[7].children[2].value);
     return {
       id: form[0].children[0].value.toLowerCase(),
       ign: form[1].children[0].value,
       fc: [this.validatefc(form[2].children[0].value), this.validatefc(form[3].children[0].value), this.validatefc(form[4].children[0].value)],
-      // pokevalues: [parseInt(form[5].children[2].value),
-      //  parseInt(form[6].children[2].value),
-      //  parseInt(form[7].children[2].value)]
     };
   },
   connect: function () {
@@ -149,7 +77,6 @@ project.Login.prototype = {
   },
 
   update: function () {
-    // this._inputField.update();
     var pushupdate = null;
     for (var testfc = 2; testfc <= 4; testfc++) {
       var testlength;

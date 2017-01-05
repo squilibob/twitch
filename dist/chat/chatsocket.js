@@ -20,7 +20,6 @@ socket.on('receive badge', function(username, badge) {
 });
 
 socket.on ("receive moves", function(payload) {
- // moves = payload;
  for (move in payload) {
   moves[payload[move].id] = payload[move];
   delete moves[payload[move].id].id;
@@ -28,7 +27,6 @@ socket.on ("receive moves", function(payload) {
 });
 
 socket.on ("receive abilities", function(payload) {
- // moves = payload;
  for (move in payload) {
   abilities[payload[move].id] = payload[move].desc;
  }
