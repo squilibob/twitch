@@ -26,7 +26,7 @@ function chatbot() {
  client.addListener('connected', function(address, port) {
   if (showConnectionNotices) chatNotice('Connected', 1000, -2, 'chat-connection-good-connected');
   joinAccounced = [];
-  checkfollowers(32218175, true);
+  checkfollowers(TwitchID, true);
  });
 
  client.addListener('disconnected', function(reason) {
@@ -39,7 +39,7 @@ function chatbot() {
    if(showConnectionNotices) chatNotice('Joined ' + capitalize(dehash(channel)), 1000, -1, 'chat-room-join');
    joinAccounced.push(channel);
    // getViewers(channel);
-   getStart(32218175);
+   getStart(TwitchID);
   }
  });
 
@@ -54,12 +54,14 @@ function chatbot() {
  socket.emit('send raffle', true);
  socket.emit("Ask for table", 'Moves');
  socket.emit("Ask for table", 'Abilities');
+ socket.emit("Ask for table", 'Bttv');
+ socket.emit("Ask for table", 'Ffz');
 
 var timers = [
  window.setInterval(getViewers, 525000, channels[0]),
  window.setInterval(repeating_notice_website, 3000000),
  window.setInterval(repeating_notice_signup, 7200000),
- window.setInterval(checkfollowers, 180000, 32218175, false),
- window.setInterval(dequeue, 100),
+ window.setInterval(checkfollowers, 180000, TwitchID, false),
+ window.setInterval(dequeue, 1000*botDelay || 1000),
 ];
 }

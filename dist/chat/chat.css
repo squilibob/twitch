@@ -257,7 +257,7 @@ ul {
 	transition: all 0.5s ease-out;
 }
 
-.emoticon {
+.emoticon, .emoji {
 	background-position: center center;
 	background-repeat: no-repeat;
 	margin: -5px 0;
@@ -378,10 +378,6 @@ ul {
 	position: relative;
 	left: 0px;
 	top: 0px;
-}
-.emoji {
-	height: 32px;
-	width: 32px;
 }
 .avs {
 	vertical-align: middle;

@@ -119,7 +119,7 @@ function submitchat(text) {
 }
 
 function dequeue () {
-  if (Date.now() - queue.lastMessage > 1000 * botDelay && queue.messages.length) {
+  if (Date.now() - queue.lastMessage > (1000 * botDelay || 1000) && queue.messages.length) {
    if (queue.messages.join(' / ').length < 500) {
     client.say(channels[0], queue.messages.join(' / '));
     queue.messages = [];

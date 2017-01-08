@@ -27,21 +27,21 @@ function pokify(text) {
 }
 
 function ffz(text) {
- ffzloop: for (set in ffzemotes.sets)
-  emoteloop: for (emote in ffzemotes.sets[set].emoticons) {
+ ffzloop: for (set in emoticons.ffz)
+  emoteloop: for (emote in emoticons.ffz[set].emoticons) {
    var sizeurl = 1;
-   sizeloop: for (size in ffzemotes.sets[set].emoticons[emote].urls)
+   sizeloop: for (size in emoticons.ffz[set].emoticons[emote].urls)
     if (parseInt(size) > sizeurl) sizeurl = size;
-   var thisemote = ffzemotes.sets[set].emoticons[emote].name;
-   if (text.indexOf(thisemote) >= 0) text = text.slice(0, text.indexOf(thisemote)) + '<img class="emoticon" src="http:' + ffzemotes.sets[set].emoticons[emote].urls[sizeurl] + '"/>' + text.slice(text.indexOf(thisemote) + thisemote.length);
+   var thisemote = emoticons.ffz[set].emoticons[emote].name;
+   if (text.indexOf(thisemote) >= 0) text = text.slice(0, text.indexOf(thisemote)) + '<img class="emoticon" src="http:' + emoticons.ffz[set].emoticons[emote].urls[sizeurl] + '"/>' + text.slice(text.indexOf(thisemote) + thisemote.length);
   }
  return text;
 }
 
 function bttv(text) {
- bttvloop: for (set in bttvemotes.emotes) {
-  var thisemote = bttvemotes.emotes[set].code;
-  if (text.indexOf(thisemote) >= 0) text = text.slice(0, text.indexOf(thisemote)) + '<img class="emoticon" src="https://cdn.betterttv.net/emote/' + bttvemotes.emotes[set].id + '/1x"/>' + text.slice(text.indexOf(thisemote) + thisemote.length);
+ bttvloop: for (set in emoticons.bttv) {
+  var thisemote = emoticons.bttv[set].code;
+  if (text.indexOf(thisemote) >= 0) text = text.slice(0, text.indexOf(thisemote)) + '<img class="emoticon" src="https://cdn.betterttv.net/emote/' + emoticons.bttv[set].id + '/1x"/>' + text.slice(text.indexOf(thisemote) + thisemote.length);
  }
  return text;
 }

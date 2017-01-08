@@ -675,6 +675,72 @@ help: 'this command ',
       return response;
     }
   },
+  '!bttv': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      console.log(obj.parameters);
+      if (!self.fetch) {
+          return
+      }
+      var bttvurl = obj.parameters.length ? 'https://api.betterttv.net/2/channels/' +  obj.parameters[0] : bttvemotesurl;
+      fetch(bttvurl).then(function(response) {
+        var contentType = response.headers.get("content-type");
+        if(contentType && contentType.indexOf("application/json") !== -1) {
+          return response.json().then(function(json) {
+            if ((json || {}).emotes) {
+              for (key in json.emotes) {
+                socket.emit("Insert bttv", json.emotes[key]);
+              }
+              submitchat('loaded ' + json.emotes.length + ' emotes');
+              socket.emit("Ask for table", 'Bttv');
+            }
+          });
+        }
+      });
+    }
+  },
+  '!ffz': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      console.log(obj.parameters);
+      if (!self.fetch) {
+          return
+      }
+      var ffzurl = obj.parameters.length ? 'https://api.frankerfacez.com/v1/room/' +  obj.parameters[0] : ffzemotesurl;
+      fetch(ffzurl).then(function(response) {
+        var contentType = response.headers.get("content-type");
+        if(contentType && contentType.indexOf("application/json") !== -1) {
+          return response.json().then(function(json) {
+            if ((json || {}).sets) {
+              for (key in json.sets) {
+                socket.emit("Insert ffz", json.sets[key]);
+                submitchat('loaded ' + json.sets[key].emoticons.length + ' emotes from ' +json.sets[key].title);
+              }
+              socket.emit("Ask for table", 'Ffz');
+            }
+          });
+        }
+      });
+    }
+  },
   // '!test': {
   //   altcmds: [],
   //   help: 'this command ',
@@ -726,7 +792,7 @@ function parseMessage(channel, user, message, self) {
       if (parser[command].requires.modonly && !modmessage) cmdexist = false;
       if (parser[command].requires.parameters) {
         fillparaloop: for (var fill = 1; fill <= parser[command].requires.parameters; fill++)
-          parameters.push(message.toLowerCase().split(' ')[fill]);
+          if (message.split(' ').length > fill) parameters.push(message.toLowerCase().split(' ')[fill]);
       }
       messagepayload.parameters = parameters;
     }

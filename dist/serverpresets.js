@@ -41,8 +41,6 @@ const preloadscripts = [
   '/chat/tm',
   '/chat/natures',
   '/chat/hiddenpowers',
-  '/chat/ffzemotes',
-  '/chat/bttvemotes',
   '/chat/twemoji.min',
   '/chat/chatfunctions',
   '/chat/chatapi',

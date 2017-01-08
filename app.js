@@ -289,6 +289,26 @@ io.on('connection', function(socket){
 		});
 	});
 
+	socket.on ("Insert bttv", function(payload){
+	r.table('Bttv').
+	get(payload["id"]).
+		replace(payload).
+		run(conn, function(err, result) {
+			if (err) throw err;
+			console.log(JSON.stringify(result, null, 2));
+		});
+	});
+
+	socket.on ("Insert ffz", function(payload){
+	r.table('Ffz').
+	get(payload["id"]).
+		replace(payload).
+		run(conn, function(err, result) {
+			if (err) throw err;
+			console.log(JSON.stringify(result, null, 2));
+		});
+	});
+
 	socket.on("pokemon cry", function(poke){
 		io.emit("playsound", ('000' + poke).substr(-3));
 	});
@@ -624,4 +644,3 @@ r.db('Users').table('Raffle').get(username).replace({
 	if (result.errors) console.log(result.first_error);
 });
 }
-

@@ -15,6 +15,7 @@ var started,
  randomColorsChosen = {},
  abilities = {},
  moves = {},
+ emoticons = { bttv: [], ffz:[] },
  queue = {
   messages: [],
   lastMessage: Date.now()

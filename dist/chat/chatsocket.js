@@ -19,10 +19,10 @@ socket.on('receive badge', function(username, badge) {
  userbadges[username] = badge;
 });
 
-socket.on ("receive moves", function(payload) {
- for (move in payload) {
-  moves[payload[move].id] = payload[move];
-  delete moves[payload[move].id].id;
+socket.on ("receive moves", function(movespayload) {
+ for (move in movespayload) {
+  moves[movespayload[move].id] = movespayload[move];
+  delete moves[movespayload[move].id].id;
  }
 });
 
@@ -31,6 +31,15 @@ socket.on ("receive abilities", function(payload) {
   abilities[payload[move].id] = payload[move].desc;
  }
 });
+
+socket.on ("receive bttv", function(payload) {
+  if (payload) emoticons.bttv = payload;
+});
+
+socket.on ("receive ffz", function(payload) {
+  if (payload) emoticons.ffz = payload;
+});
+
 // socket.on('user pokes', function(payload) {
 //  var name = payload.name;
 //  var team = payload.team;
