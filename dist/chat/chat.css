@@ -379,6 +379,10 @@ ul {
 	left: 0px;
 	top: 0px;
 }
+.emoji {
+	height: 32px;
+	width: 32px;
+}
 .avs {
 	vertical-align: middle;
 	background: url(/img/avatars64.png);

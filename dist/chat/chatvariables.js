@@ -12,7 +12,10 @@ var started,
  useravatars = {},
  userbadges = {},
  participants = {},
- cmdTimestamps = {},
  randomColorsChosen = {},
  abilities = {},
- moves = {};
+ moves = {},
+ queue = {
+  messages: [],
+  lastMessage: Date.now()
+ }

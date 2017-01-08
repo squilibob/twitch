@@ -43,6 +43,7 @@ const preloadscripts = [
   '/chat/hiddenpowers',
   '/chat/ffzemotes',
   '/chat/bttvemotes',
+  '/chat/twemoji.min',
   '/chat/chatfunctions',
   '/chat/chatapi',
   '/chat/chaticon',

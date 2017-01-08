@@ -7,29 +7,6 @@ function capitalize(n) {
  return n[0].toUpperCase() + n.substr(1);
 }
 
-function checkDelay(channel, command, seconds) {
- channel = dehash(channel);
- if (!cmdTimestamps[channel]) {
-  cmdTimestamps[channel] = {};
-  return true;
- }
- if (!cmdTimestamps[channel][command]) {
-  return true;
- }
- var currentTime = new Date().getTime() / 1000;
- if (currentTime - cmdTimestamps[channel][command] >= seconds) {
-  return true;
- }
- return false;
-}
-
-function setDelay(channel, command) {
- channel = dehash(channel);
- if (!cmdTimestamps[channel]) cmdTimestamps[channel] = {};
- // Update the time in "cmdTimestamps" variable to the last time the command was executed (now)..
- cmdTimestamps[channel][command] = new Date().getTime() / 1000;
-}
-
 function htmlEntities(html) {
  function it() {
   return html.map(function(n, i, arr) {
@@ -128,8 +105,7 @@ function clearChat(channel) {
 function hosting(channel, target, total, unhost) {
  if (!showHosting) return false;
  if (total == '-') total = 0;
- var chan = dehash(channel);
- chan = capitalize(chan);
+ var chan = capitalize(dehash(channel));
  if (!unhost) {
   var targ = capitalize(target);
   chatNotice(chan + ' is now hosting ' + targ + ' for ' + total + ' viewer' + (total !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes');
@@ -139,7 +115,20 @@ function hosting(channel, target, total, unhost) {
 }
 
 function submitchat(text) {
- client.say(channels[0], text);
+ queue.messages.push(text);
+}
+
+function dequeue () {
+  if (Date.now() - queue.lastMessage > 1000 * botDelay && queue.messages.length) {
+   if (queue.messages.join(' / ').length < 500) {
+    client.say(channels[0], queue.messages.join(' / '));
+    queue.messages = [];
+   }
+   else {
+    client.say(channels[0], queue.messages.shift())
+   }
+  queue.lastMessage = Date.now();
+  }
 }
 
 function parseraffle (raff) {
@@ -175,7 +164,7 @@ function urlDecode (message) {
 
 function isMod(user) {
   if ((user || {}).badges) {
-      if (user.badges.broadcaster) return true;
+      if ('broadcaster' in user.badges) return true;
       return user.mod;
     }
   return false;
@@ -222,9 +211,9 @@ function checkDb(obj){
        if (command[iterate] == key.toLowerCase() && key != 'Pokemon' && key != 'EVs' && key != 'Forme' && key != 'Evolve' && sp == false) {
         if (obj.pokemon[key] !== undefined) response = obj.pokemon.Pokemon + ' ' + key + ': ' + obj.pokemon[key];
        }
-       if (command[iterate] == key.toLowerCase() && key == 'Forme') {
-        response = obj.pokemon.Pokemon + ' Formes';
-        for (forme in obj.pokemon.Formes) response += ', ' + forme;
+       if ((command[iterate] == key.toLowerCase() || command[iterate] == 'formes') && key == 'Forme') {
+        response = obj.pokemon.Pokemon + ' Formes are';
+        for (forme in obj.pokemon.Forme) response += ', ' + forme;
        }
        if (command[iterate] == key.toLowerCase() && key == 'Mass') response += ' kg';
        if (command[iterate] == key.toLowerCase() && key == 'Height') response += ' m';

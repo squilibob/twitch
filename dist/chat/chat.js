@@ -55,8 +55,11 @@ function chatbot() {
  socket.emit("Ask for table", 'Moves');
  socket.emit("Ask for table", 'Abilities');
 
- window.setInterval(getViewers, 525000, channels[0]);
- window.setInterval(repeating_notice_website, 3000000);
- window.setInterval(repeating_notice_signup, 7200000);
- window.setInterval(checkfollowers, 180000, 32218175, false);
+var timers = [
+ window.setInterval(getViewers, 525000, channels[0]),
+ window.setInterval(repeating_notice_website, 3000000),
+ window.setInterval(repeating_notice_signup, 7200000),
+ window.setInterval(checkfollowers, 180000, 32218175, false),
+ window.setInterval(dequeue, 100),
+];
 }

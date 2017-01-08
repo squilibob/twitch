@@ -7,6 +7,7 @@ const maxpokes = 802,
  minfollowerstoshoutout = 100,
  defaultavatar = 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png',
  fadeDelay = 5000, // Set to false to disable chat fade
+ botDelay = 1.5, // Number of seconds between each bot message
  showChannel = true, // Show repespective channels if the channels is longer than 1
  useColor = true, // Use chatters' colors or to inherit
  whitethreshold = 192,

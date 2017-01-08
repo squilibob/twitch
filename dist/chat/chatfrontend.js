@@ -27,7 +27,7 @@
   chatBanner.onload = function() {
    chat.appendChild(chatLineBanner);
    chat.appendChild(chatLine);
-   client.say(channels[0], 'check out ' + username + ' at ' + url);
+   submitchat('check out ' + username + ' at ' + url);
   }
  }
 
@@ -286,9 +286,8 @@ help: 'this command ',
       var response;
       var now = new Date();
       var uptime = now - started;
-      if ((checkDelay(obj.channel, 'uptime', 120)) && !(isNaN(uptime))) { //refactor
-       setDelay(obj.channel, 'uptime');  //refactor
-       var hours = Math.floor((uptime % 86400000) / 3600000);
+      if (!(isNaN(uptime))) {
+       var hours = Math.floor((uptime % 86400000) / 3600000); //should really simplify this
        var minutes = Math.floor(((uptime % 86400000) % 3600000) / 60000);
        response = ('Stream has been live for ' + hours + (minutes < 10 ? ':0' : ':') + minutes);
       }
@@ -843,6 +842,7 @@ function handleChat(chan, user, message, self, avatar, image) {
   chatMessage.innerHTML = pokify(chatMessage.innerHTML);
   chatMessage.innerHTML = ffz(chatMessage.innerHTML);
   chatMessage.innerHTML = bttv(chatMessage.innerHTML);
+  chatMessage.innerHTML = twemoji.parse(chatMessage.innerHTML);
 
   if (image) checkImageExists(image, function(existsImage) {
    if (existsImage) {
