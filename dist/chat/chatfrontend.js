@@ -175,7 +175,7 @@ help: 'this command ',
         fc: fc
        }
        if (validfc) {
-        // socket.emit('new user', payload);
+        socket.emit('new user', payload);
         response ='create: twitch username: ' + obj.user.username + ' IGN: ' + ign + ' fc: '+ fc.join('-');
        }
        else response = fc.join('-') + ' ' + ign + ' is invalid combination of fc and ign. Please include your ign and fc like this: !signup squilibob 3609-1058-1166';
