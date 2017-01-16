@@ -454,7 +454,7 @@ ul {
 .chat-image {
 	display: block;
 	width: 384px;
-	transition: all 0.5s ease-out;
+	transition: all 5s ease-out;
 }
 .chat-image[data-faded] {
 	width: 192px;

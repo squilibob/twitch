@@ -26,9 +26,11 @@ function header(id, endpoint, extraparams, version){
 // }
 function checkAvatar(obj) {
   var existed = false;
+  if (!(obj.user || {}).username) return existed;
   if (useravatars[obj.user.username] == undefined) {
    if (followers[obj.user.username])
     if (followers[obj.user.username].logo) useravatars[obj.user.username] = followers[obj.user.username].logo;
+  console.log(obj);
    socket.emit('request avatar', obj.channel, obj.user, obj.message, obj.self);
    socket.emit('request badge', obj.user);
    if (obj.user.username != obj.channel && !obj.self) checkstreamer(obj.user['user-id']);
@@ -54,12 +56,15 @@ function checkAvatar(obj) {
 function getViewers(chan) {
  channel = dehash(chan);
  client.api({
-  // url: 'http://tmi.twitch.tv/group/user/' + chan + '/chatters' + clientid
-  url: 'http://tmi.twitch.tv/group/user' + header(channel, 'chatters', null, 3)
+  url: 'https://api.twitch.tv/kraken/streams' + header(channel)
  }, function(err, res, body) {
-  // document.getElementById('viewers').value = typeof(body.data.chatter_count) == 'number' ? body.data.chatter_count : 0;
-  if (body) viewers = body.data.chatters.viewers;
-  socket.emit('send emote', {message:viewers.length+' viewers', picture:5});
+  if ((body || {}).stream) {
+  socket.emit('send emote', {message:body.stream.viewers+' viewers', picture:5});
+ //  url: 'http://tmi.twitch.tv/group/user' + header(channel, 'chatters', null, 3)
+ // }, function(err, res, body) {
+ //  if (body) viewers = body.data.chatters.viewers;
+ //  socket.emit('send emote', {message:viewers.length+' viewers', picture:5});
+  }
  });
 }
 
@@ -68,7 +73,7 @@ function getStart(chan) {
  client.api({
   url: 'https://api.twitch.tv/kraken/streams' + header(channel)
  }, function(err, res, body) {
-  if (body.stream) {
+  if ((body || {}).stream) {
    started = new Date(body.stream.created_at);
   }
  });
@@ -98,6 +103,7 @@ function checkstreamer(username) {
   url: 'https://api.twitch.tv/kraken/channels' + header(username)
  }, function(err, res, body) {
   if (body) {
+    console.log(body);
    displaystreamer(body.name, body.profile_banner ? body.profile_banner : body.logo, body.followers, body.views, body.url);
    socket.emit('send emote', {message:'hi '+body.name, picture:9});
   }

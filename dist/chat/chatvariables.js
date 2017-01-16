@@ -17,6 +17,7 @@ var started,
  moves = {},
  emoticons = { bttv: [], ffz:[] },
  queue = {
+  channel: channels[0],
   messages: [],
   lastMessage: Date.now()
  }

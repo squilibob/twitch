@@ -1,6 +1,6 @@
 function findpoke(name) {
- findpokeloop: for (var i = 1; i < pokedex.length; i++) {
-  if (pokedex[i].Pokemon.toLowerCase() == name.toLowerCase()) return i;
+ findpokeloop: for (var i = 0; i < pokedex.length; i++) {
+  if (pokedex[i].Pokemon.toLowerCase() == name.toLowerCase()) return i+1;
  }
  return -1;
 }

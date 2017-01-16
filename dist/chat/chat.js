@@ -58,7 +58,7 @@ function chatbot() {
  socket.emit("Ask for table", 'Ffz');
 
 var timers = [
- window.setInterval(getViewers, 525000, channels[0]),
+ window.setInterval(getViewers, 525000, TwitchID),
  window.setInterval(repeating_notice_website, 3000000),
  window.setInterval(repeating_notice_signup, 7200000),
  window.setInterval(checkfollowers, 180000, TwitchID, false),

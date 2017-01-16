@@ -154,8 +154,9 @@ help: 'this command ',
       var validfc = true;
       if (obj.message.toLowerCase().indexOf('-') >= 0) {
        var ign;
-       var fcindex = obj.message.indexOf('-') - 4;
-       var fccode = obj.message.substr(fcindex, 14);
+       // var fcindex = obj.message.indexOf('-') - 4;
+       // var fccode = obj.message.substr(fcindex, 14);
+       var fccode = obj.message.match(/[0-9]{4}-[0-9]{4}-[0-9]{4}/)[0];
        var parseign = obj.message.substr(0, obj.message.indexOf(fccode)) + obj.message.substr(obj.message.indexOf(fccode) + fccode.length);
        parseign.trim(' ').split(' ').forEach((name, index) => {
         if (name.indexOf('!') < 0 && name.toLowerCase() != 'fc' && name.toLowerCase() != 'ign' && name.toLowerCase() != 'name') ign = name;
@@ -174,7 +175,7 @@ help: 'this command ',
         fc: fc
        }
        if (validfc) {
-        socket.emit('new user', payload);
+        // socket.emit('new user', payload);
         response ='create: twitch username: ' + obj.user.username + ' IGN: ' + ign + ' fc: '+ fc.join('-');
        }
        else response = fc.join('-') + ' ' + ign + ' is invalid combination of fc and ign. Please include your ign and fc like this: !signup squilibob 3609-1058-1166';
@@ -257,7 +258,7 @@ help: 'this command ',
     requires :
     {
       question: false,
-      exclusive: true,
+      exclusive: false,
       pokemon: false,
       parameters: 0,
       modonly: false
@@ -382,10 +383,9 @@ help: 'this command ',
        totalloop: for (person in participants) {
         totalraffle += participants[person];
        }
-       if (participants[obj.user.username.toLowerCase()]) response = obj.user.username + ' has a ' + Math.floor(participants[obj.user.username] / totalraffle * 10000) / 100 + '% to win the raffle';
+       if (participants[obj.user.username.toLowerCase()]) response = obj.user.username + ' has a ' + Math.floor(participants[obj.user.username] / totalraffle * 10000) / 100 + '% chance to win the raffle';
        else {
-        if (obj.user.username == dehash(obj.channel)) obj.self = true;
-        if (obj.self)
+        if (obj.self || obj.user.username === obj.channel)
         enteredloop: for (person in participants) {
          response = response + person + ' (' + Math.floor(participants[person] / totalraffle * 10000) / 100 + '%) ';
         }
@@ -505,7 +505,7 @@ help: 'this command ',
         reply += obj.pokemon.Pokemon + ' evolves into ';
        evolutionsloop: for (var count = 0; count < obj.pokemon.Evos.length; count++) {
         reply += obj.pokemon.Evos[count];
-        reply += ' (' + pokedex[findpoke(obj.pokemon.Evos[count])].Evolve + ') ';
+        reply += ' (' + pokedex[findpoke(obj.pokemon.Evos[count])-1].Evolve + ') ';
         if (count + 2 == obj.pokemon.Evos.length) reply += ' and ';
         else if (count + 1 < obj.pokemon.Evos.length) reply += ', ';
        }
@@ -612,44 +612,54 @@ help: 'this command ',
       modonly: false
     },
     action: function(obj){
-      firstpoke = findpoke(obj.parameters[1]);
       secondpoke = findpoke(obj.parameters[0]);
-      var fusion = 'http://images.alexonsager.net/pokemon/fused/'+ (firstpoke + 1) + '/'+ (firstpoke + 1) + '.' + (secondpoke + 1) + '.png';
+      firstpoke = findpoke(obj.parameters[1]);
+      if (!(firstpoke > 0)) firstpoke = obj.pokemon.id;
+      if (!(secondpoke > 0)) secondpoke = obj.pokemon.id;
+      var fusion = 'http://images.alexonsager.net/pokemon/fused/'+ (firstpoke) + '/'+ (firstpoke) + '.' + (secondpoke) + '.png';
       if (typeof(firstpoke) == 'number' && typeof(secondpoke) == 'number')
         // if (firstpoke > 0 && firstpoke < pokedex.length && secondpoke > 0 && secondpoke < pokedex.length )
         if (firstpoke > 0 && firstpoke < 152 && secondpoke > 0 && secondpoke < 152 ) {
-          var chatLine = document.createElement('li'),
-          chatContainer = document.createElement('div'),
-          chatImage = document.createElement('img');
+          handleChat(obj.channel, obj.user, '', true, -1, fusion);
+          console.log(obj);
+        //   var chatLine = document.createElement('li'),
+        //   chatContainer = document.createElement('div'),
+        //   chatMessage = document.createElement('div'),
+        //   chatImage = document.createElement('img');
 
-          chatLine.className = 'chat-line';
-          chatLine.dataset.hide = '';
+        //   chatLine.className = 'chat-line';
+        //   chatLine.dataset.hide = '';
 
-          chatContainer.className = 'chat-message-container';
-          chatContainer.dataset.hide = '';
-          chatContainer.style.background = obj.user.color;
+        //   chatContainer.className = 'chat-message-container';
+        //   chatContainer.dataset.hide = '';
+        //   chatContainer.style.background = obj.user.color;
 
-          chatLine.appendChild(chatContainer);
-          chat.appendChild(chatLine);
+        //   chatMessage.className = 'chat-message';
+        //   chatMessage.dataset.hide = '';
 
-          checkImageExists(fusion, function(existsImage) {
-           if (existsImage) {
-            chatImage.src = fusion;
-            chatImage.className = 'chat-image';
-            chatImage.onload = function() {
-             chatContainer.appendChild(chatImage);
-            };
-           }
-          });
-          if (typeof fadeDelay == 'number') {
-           setTimeout(function() {
-            chatLine.dataset.faded = '';
-            chatImage.dataset.faded = '';
-            console.log(chatImage.style);
-            chatImage.style.width = 64;
-            // chatImage.style.height = 64;
-           }, fadeDelay);
-          }
+        //   chatContainer.appendChild(chatMessage);
+        //   chatLine.appendChild(chatContainer);
+        //   chat.appendChild(chatLine);
+
+        //   checkImageExists(fusion, function(existsImage) {
+        //    if (existsImage) {
+        //     chatImage.src = fusion;
+        //     chatImage.className = 'fusion';
+        //     chatImage.onload = function() {
+        //      chatMessage.appendChild(chatImage);
+        //     };
+        //    }
+        //   });
+        //   if (typeof fadeDelay == 'number') {
+        //    setTimeout(function() {
+        //     chatLine.dataset.faded = '';
+        //     chatMessage.dataset.faded = '';
+        //     chatImage.dataset.faded = '';
+
+        //     // chatImage.style.width = 64;
+        //     // chatImage.style.height = 64;
+        //    }, fadeDelay);
+        //   }
         }
       }
   },

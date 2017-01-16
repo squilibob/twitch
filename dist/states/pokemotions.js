@@ -11,7 +11,7 @@ project.Pokemotions = function(game) {
 project.Pokemotions.prototype = {
     preload: function(){
       footergame.load.spritesheet('pokemotevulpix', '/img/pokemotions.png', 206, 236, 10);
-      footergame.load.audiosprite('cries', '/audio/cries.ogg', '/audio/cries.json', audioJSON);
+      footergame.load.audiosprite('cries', '/audio/cries.ogg', '/audio/cries.json', audioJSON.cries);
     },
     create: function(){
       decoded = false;

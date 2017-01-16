@@ -121,11 +121,11 @@ function submitchat(text) {
 function dequeue () {
   if (Date.now() - queue.lastMessage > (1000 * botDelay || 1000) && queue.messages.length) {
    if (queue.messages.join(' / ').length < 500) {
-    client.say(channels[0], queue.messages.join(' / '));
+    client.say(queue.channel, queue.messages.join(' / '));
     queue.messages = [];
    }
    else {
-    client.say(channels[0], queue.messages.shift())
+    client.say(queue.channel, queue.messages.shift())
    }
   queue.lastMessage = Date.now();
   }
@@ -144,7 +144,7 @@ function parseraffle (raff) {
     }
   }
   participants = updated;
-  if (justentered.length > 0) submitchat(justentered.join(', ') + ' has been entered into the raffle');
+  if (justentered.length > 0) submitchat(justentered.join(', ') + (justentered.length == 1 ? ' has' : ' have') + ' been entered into the raffle');
 }
 
 

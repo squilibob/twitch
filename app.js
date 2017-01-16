@@ -360,8 +360,8 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('request avatar', function(channel, user, message, self) {
-		var username = user.username;
-		r.table('Users').filter(r.row('id').eq(username.toLowerCase()))
+		var username = user.username.toLowerCase();
+		r.table('Users').filter(r.row('id').eq(username))
 		.getField('avatar')
 		.run(conn, function(err, cursor) {
 			cursor.toArray(function(err, result) {
