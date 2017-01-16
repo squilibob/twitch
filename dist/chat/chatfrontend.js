@@ -287,7 +287,10 @@ help: 'this command ',
       var response;
       var now = new Date();
       var uptime = now - started;
-      if (!(isNaN(uptime))) {
+      if ((isNaN(uptime))) {
+        getStart(TwitchID);
+      }
+      else {
        var hours = Math.floor((uptime % 86400000) / 3600000); //should really simplify this
        var minutes = Math.floor(((uptime % 86400000) % 3600000) / 60000);
        response = ('Stream has been live for ' + hours + (minutes < 10 ? ':0' : ':') + minutes);

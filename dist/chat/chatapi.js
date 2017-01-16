@@ -30,7 +30,6 @@ function checkAvatar(obj) {
   if (useravatars[obj.user.username] == undefined) {
    if (followers[obj.user.username])
     if (followers[obj.user.username].logo) useravatars[obj.user.username] = followers[obj.user.username].logo;
-  console.log(obj);
    socket.emit('request avatar', obj.channel, obj.user, obj.message, obj.self);
    socket.emit('request badge', obj.user);
    if (obj.user.username != obj.channel && !obj.self) checkstreamer(obj.user['user-id']);
@@ -59,7 +58,7 @@ function getViewers(chan) {
   url: 'https://api.twitch.tv/kraken/streams' + header(channel)
  }, function(err, res, body) {
   if ((body || {}).stream) {
-   viewers = body.data.chatters.viewers;
+   viewers = body.stream.viewers;
    socket.emit('send emote', {message:body.stream.viewers+' viewers', picture:5});
   }
  });
