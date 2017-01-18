@@ -6,7 +6,6 @@ var chatcontainer = document.getElementById('chat'),
 chatcontainer.appendChild(chat);
 
 var started,
- viewers = [],
  stockavatar = [],
  followers = {},
  useravatars = {},
@@ -16,6 +15,7 @@ var started,
  abilities = {},
  moves = {},
  emoticons = { bttv: [], ffz:[] },
+ watching : {chatters = [], viewers}
  queue = {
   channel: channels[0],
   messages: [],

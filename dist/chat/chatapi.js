@@ -58,10 +58,18 @@ function getViewers(chan) {
   url: 'https://api.twitch.tv/kraken/streams' + header(channel)
  }, function(err, res, body) {
   if ((body || {}).stream) {
-   viewers = body.stream.viewers;
+   watching.viewers = body.stream.viewers;
    socket.emit('send emote', {message:body.stream.viewers+' viewers', picture:5});
   }
  });
+  client.api({
+   url: 'http://tmi.twitch.tv/group/user' + header(channel, 'chatters', null, 3)
+  }, function(err, res, body) {
+   if ((body || {}).data) {
+   watching.chatters = body.data.chatters.viewers;
+   socket.emit('send emote', {message:viewers.length+' viewers', picture:5});
+   }
+   });
 }
 
 function getStart(chan) {
@@ -96,6 +104,7 @@ function checkfollowers(userid, hidenotify, current) {
 }
 
 function checkstreamer(username) {
+  console.log(username, 'checkstreamer');
  client.api({
   url: 'https://api.twitch.tv/kraken/channels' + header(username)
  }, function(err, res, body) {
