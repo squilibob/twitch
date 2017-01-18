@@ -15,7 +15,7 @@ var started,
  abilities = {},
  moves = {},
  emoticons = { bttv: [], ffz:[] },
- watching : {chatters = [], viewers}
+ watching = {chatters: [], viewers: 0},
  queue = {
   channel: channels[0],
   messages: [],

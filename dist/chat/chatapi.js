@@ -52,28 +52,25 @@ function checkAvatar(obj) {
   return existed;
 }
 
-function getViewers(chan) {
- channel = dehash(chan);
+function getViewers(channel) {
  client.api({
   url: 'https://api.twitch.tv/kraken/streams' + header(channel)
  }, function(err, res, body) {
-  if ((body || {}).stream) {
+  if (((body || {}).stream || {}).viewers) {
    watching.viewers = body.stream.viewers;
-   socket.emit('send emote', {message:body.stream.viewers+' viewers', picture:5});
   }
  });
   client.api({
    url: 'http://tmi.twitch.tv/group/user' + header(channel, 'chatters', null, 3)
   }, function(err, res, body) {
    if ((body || {}).data) {
-   watching.chatters = body.data.chatters.viewers;
-   socket.emit('send emote', {message:viewers.length+' viewers', picture:5});
+    watching.chatters = body.data.chatters.viewers;
+    socket.emit('send emote', {message: watching.chatters + ' viewers', picture:5});
    }
    });
 }
 
-function getStart(chan) {
- channel = dehash(chan);
+function getStart(channel) {
  client.api({
   url: 'https://api.twitch.tv/kraken/streams' + header(channel)
  }, function(err, res, body) {

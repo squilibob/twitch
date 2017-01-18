@@ -310,7 +310,7 @@ help: 'this command ',
       modonly: false
     },
     action: function(obj){
-      return watching.viewers.length + ' viewers' + watching.chatters;
+      return watching.chatters.length + ' in chat ' + watching.viewers + ' reported viewers';
     }
   },
   '!follow': {
