@@ -1,12 +1,12 @@
 function chatbot() {
  var joinAccounced = [];
 
- client.on("hosted", function(channel, username, total) {
+ client.on("hosted", function(channel, username, total, autohost) {
   var chan = dehash(channel);
   chan = capitalize(chan);
   if (typeof(total) == 'number')
-   chatNotice(username + ' is now hosting ' + chan + ' for ' + total + ' viewer' + (total !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes');
-  else chatNotice(username + ' is now hosting ' + chan + '.', null, null, 'chat-hosting-yes');
+   chatNotice(username + ' is now ' + (autohost ? 'auto': '') + 'hosting ' + chan + ' for ' + total + ' viewer' + (total !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes');
+  else chatNotice(username + ' is now ' + (autohost ? 'auto': '') + 'hosting ' + chan + '.', null, null, 'chat-hosting-yes');
  });
 
  client.addListener('message', parseMessage);

@@ -32,6 +32,21 @@
  }
 
 var parser = {
+  '!bot': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      return 'This bot was created by squilibob. It is open source and available at https://github.com/squilibob/twitch';
+    }
+  },
   '!join': {
     altcmds: [],
 help: 'this command ',
@@ -624,45 +639,6 @@ help: 'this command ',
         // if (firstpoke > 0 && firstpoke < pokedex.length && secondpoke > 0 && secondpoke < pokedex.length )
         if (firstpoke > 0 && firstpoke < 152 && secondpoke > 0 && secondpoke < 152 ) {
           handleChat(obj.channel, obj.user, '', true, -1, fusion);
-          console.log(obj);
-        //   var chatLine = document.createElement('li'),
-        //   chatContainer = document.createElement('div'),
-        //   chatMessage = document.createElement('div'),
-        //   chatImage = document.createElement('img');
-
-        //   chatLine.className = 'chat-line';
-        //   chatLine.dataset.hide = '';
-
-        //   chatContainer.className = 'chat-message-container';
-        //   chatContainer.dataset.hide = '';
-        //   chatContainer.style.background = obj.user.color;
-
-        //   chatMessage.className = 'chat-message';
-        //   chatMessage.dataset.hide = '';
-
-        //   chatContainer.appendChild(chatMessage);
-        //   chatLine.appendChild(chatContainer);
-        //   chat.appendChild(chatLine);
-
-        //   checkImageExists(fusion, function(existsImage) {
-        //    if (existsImage) {
-        //     chatImage.src = fusion;
-        //     chatImage.className = 'fusion';
-        //     chatImage.onload = function() {
-        //      chatMessage.appendChild(chatImage);
-        //     };
-        //    }
-        //   });
-        //   if (typeof fadeDelay == 'number') {
-        //    setTimeout(function() {
-        //     chatLine.dataset.faded = '';
-        //     chatMessage.dataset.faded = '';
-        //     chatImage.dataset.faded = '';
-
-        //     // chatImage.style.width = 64;
-        //     // chatImage.style.height = 64;
-        //    }, fadeDelay);
-        //   }
         }
       }
   },
@@ -754,6 +730,24 @@ help: 'this command ',
       });
     }
   },
+  '!poll': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: true,
+      pokemon: false,
+      parameters: 1,
+      modonly: true
+    },
+    action: function(obj){
+      var title;
+      var options = obj.message.substr(obj.message.toLowerCase().indexOf('!poll')+'!poll'.length).split('|');
+      title = options.shift();
+      if (options.length > 1) socket.emit("Vote poll", {options: options, title: title});
+    }
+  },
   // '!test': {
   //   altcmds: [],
   //   help: 'this command ',
@@ -797,8 +791,6 @@ function parseMessage(channel, user, message, self) {
     cmdexist = checkExist(message, cmdarr, parser[command].requires.exclusive);
 
     if (cmdexist) {
-      // if (checkDelay(channel, command[0], 10)) {
-      //  setDelay(channel, command[0]);
       var parameters = [];
       if (parser[command].requires.pokemon && !messagepayload.pokemon) cmdexist = false;
       if (parser[command].requires.question && !containsquestion) cmdexist = false;
@@ -859,6 +851,11 @@ function handleChat(chan, user, message, self, avatar, image) {
    colorloop: for (var string = 0; string < colortemp.length; string++) colortotal += parseInt(colortemp[string]);
    if (colortotal > whitethreshold * 3) chatMessage.style.color = "#000000";
   }
+  // else {
+  //   var colortemp = color.match( /^#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/);
+  //   if (colortemp.length) var colorstring = 'rgba(' + parseInt(colortemp[colortemp.length-3], 16) + ', ' + parseInt(colortemp[colortemp.length-2], 16) + ', ' + parseInt(colortemp[colortemp.length-1], 16) + ', ' + colorbrightness + ')';
+  //   if (colorstring) color = colorstring;
+  // }
 
   if (name == 'mikuia') return false;
 
@@ -913,6 +910,7 @@ function handleChat(chan, user, message, self, avatar, image) {
   chatContainer.className = 'chat-message-container';
   chatContainer.dataset.hide = '';
   chatContainer.style.background = color;
+  // chatContainer.style.opacity = chatopacity;
 
   chatMessage.className = 'chat-message';
   chatMessage.dataset.hide = '';

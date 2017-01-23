@@ -63,9 +63,10 @@ function getViewers(channel) {
   client.api({
    url: 'http://tmi.twitch.tv/group/user' + header(channel, 'chatters', null, 3)
   }, function(err, res, body) {
+    console.log(body.data.chatters.viewers);
    if ((body || {}).data) {
     watching.chatters = body.data.chatters.viewers;
-    socket.emit('send emote', {message: watching.chatters + ' viewers', picture:5});
+    socket.emit('send emote', {message: watching.chatters.length + ' viewers', picture:5});
    }
    });
 }

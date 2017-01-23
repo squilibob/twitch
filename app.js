@@ -313,6 +313,15 @@ io.on('connection', function(socket){
 		io.emit("playsound", ('000' + poke).substr(-3));
 	});
 
+	socket.on("Vote poll", function(payload){
+		r.table('Vote')
+		.get('system')
+		.replace({id: 'system', options: payload.options, title: payload.title}).
+		run(conn, function(err, result) {
+			if (err) throw err;
+		});
+	});
+
 	socket.on("Send vote", function(payload){
 		r.table('Vote')
 		.get(payload.id)
@@ -564,7 +573,7 @@ function sendVoteUpdate(){
 			cursor.toArray(function(err, result) {
 				if (err) console.log('error not found');
 				else {
-					if (result[0] == undefined || result == []) current = [];
+					if (result == [] || result[0] == undefined) current = [];
 					else current = result;
 					io.emit('receive vote', current);
 				}
