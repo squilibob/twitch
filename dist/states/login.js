@@ -43,7 +43,7 @@ project.Login.prototype = {
     formgroup = game.add.group()
     formgroup.addMultiple(form);
     formgroup.addChild(button);
-    scaleup(formgroup);
+    // scaleup(formgroup);
     formgroup.x = formgroup.getBounds().width/2;
   },
   validatefc: function(digits){
