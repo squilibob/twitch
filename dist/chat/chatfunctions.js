@@ -230,8 +230,19 @@ function checkMoves (obj) {
   var response;
   var fullmove = '';
   moveloop: for (move in moves) {
-    var testmessage = (dexno > -1) ? message.toLowerCase().replace(obj.pokemon.Pokemon.toLowerCase(), '') : message.toLowerCase();
-    if (testmessage.indexOf(move.toLowerCase()) >= 0 && fullmove.indexOf(move.toLowerCase()) < 0) {
+    var testmessage = (dexno > -1) ? message.toLowerCase().replace(obj.pokemon.Pokemon.toLowerCase(), '').split(' ') : message.toLowerCase().split(' ');
+    var testIndex = false;
+    var testmove = move.toLowerCase().split(' ');
+    if (testmove.length == 1) {
+      for (testfirst of testmessage) {
+        if (testfirst == testmove[0]) testIndex = testfirst;
+      }
+    }
+    else {
+      if (testmessage.join(' ').indexOf(move.toLowerCase()) >= 0) testIndex = move.toLowerCase();
+    }
+    testIndex && console.log(testIndex, testmove);
+    if (testIndex && fullmove.indexOf(move.toLowerCase()) < 0) {
       fullmove = move.toLowerCase();
       property = Object.keys(moves[move]);
       response = move + ': ' + moves[move].Description;

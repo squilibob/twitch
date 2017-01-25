@@ -231,20 +231,20 @@ io.on('connection', function(socket){
 	// });
 	socket.on ("Ask for table", function(table){
 	  var dbname = table;
-	  response = "receive " + dbname.toLowerCase();
+	  var response = "receive " + dbname.toLowerCase();
 	  if (!cached[dbname])
 		r.db('Users').table(dbname)
 			.run(conn, function(err, cursor) {
 				cursor.toArray(function(err, result) {
 					if (err || result[0] == undefined || result == []) console.log(dbname + ' not found');
 					else {
-						socket.emit(response, result);
 						cached[dbname] = result;
+						socket.emit(response, cached[dbname]);
+						console.log(response, dbname, cached[dbname].length);
 					}
 				});
 			});
 	  else socket.emit(response, cached[dbname]);
-	  console.log(response, dbname);
 	});
 	socket.on("resend password", function(username){
 		r.table('Users').filter(r.row('id').eq(username.toLowerCase()))
