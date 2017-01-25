@@ -14,7 +14,7 @@ const Presets = {
   allowroll: false,
   externalteams:false,
   scalingallowed: true,
-  simple: false,
+  simple: true,
   cors: 'https://crossorigin.me/',
 };
 
@@ -34,7 +34,7 @@ const preloadscripts = [
   {'Vote': '/states/vote'},
   {'Emote': '/states/emote'},
   // {'Cards': '/states/cards'},
-  {'Pokedex': '/states/pokedex'},
+  // {'Pokedex': '/states/pokedex'},
   ];
 
   const firststate = 'Login';

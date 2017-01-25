@@ -173,19 +173,19 @@ io.on('connection', function(socket){
 						}
 					});
 				});
-		if (!pokedex && simple)
+		if (simple)
 			r.db('Users').table('Pokedex')
-			.pluck('Pokemon', 'Tier', 'HP', 'Attack', 'Defense','Sp. Attack', 'Sp. Defense', 'Speed')
+			.pluck('id', 'Pokemon', 'Tier')
+			// .pluck('Pokemon', 'Tier', 'HP', 'Attack', 'Defense','Sp. Attack', 'Sp. Defense', 'Speed')
 				.run(conn, function(err, cursor) {
 					cursor.toArray(function(err, result) {
 						if (err || result[0] == undefined || result == []) socket.emit('dex not found');
 						else {
-							pokedex = result;
-							socket.emit("Receive pokedex", pokedex);
+							socket.emit("Receive pokedex", result);
 						}
 					});
 				});
-		if (pokedex) socket.emit("Receive pokedex", pokedex);
+		if (pokedex && !simple) socket.emit("Receive pokedex", pokedex);
 	});
 	// socket.on ("Ask for pokedex", function(number){
 	// 	number = parseInt(number);

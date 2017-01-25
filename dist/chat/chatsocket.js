@@ -33,12 +33,10 @@ socket.on ("receive abilities", function(abilitypayload) {
 });
 
 socket.on ("receive bttv", function(bttvpayload) {
-  console.log('bttv', bttvpayload[0]);
   if (bttvpayload) emoticons.bttv = bttvpayload;
 });
 
 socket.on ("receive ffz", function(ffzpayload) {
-  console.log('ffz', ffzpayload[0]);
   if (ffzpayload) emoticons.ffz = ffzpayload;
 });
 

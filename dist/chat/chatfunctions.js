@@ -241,7 +241,6 @@ function checkMoves (obj) {
     else {
       if (testmessage.join(' ').indexOf(move.toLowerCase()) >= 0) testIndex = move.toLowerCase();
     }
-    testIndex && console.log(testIndex, testmove);
     if (testIndex && fullmove.indexOf(move.toLowerCase()) < 0) {
       fullmove = move.toLowerCase();
       property = Object.keys(moves[move]);
