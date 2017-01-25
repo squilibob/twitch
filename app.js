@@ -7,6 +7,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var r = require('rethinkdb');
 var pokedex;
+var typechart;
 var cached = {};
 
 app.set('port', (process.env.PORT || 80));
