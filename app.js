@@ -230,20 +230,21 @@ io.on('connection', function(socket){
 	//   else socket.emit("Receive typechart", moves);
 	// });
 	socket.on ("Ask for table", function(table){
-	  response = "receive " + table.toLowerCase();
-	  if (!cached[table])
-		r.db('Users').table(table)
+	  var dbname = table;
+	  response = "receive " + dbname.toLowerCase();
+	  if (!cached[dbname])
+		r.db('Users').table(dbname)
 			.run(conn, function(err, cursor) {
 				cursor.toArray(function(err, result) {
-					if (err || result[0] == undefined || result == []) console.log(table + ' not found');
+					if (err || result[0] == undefined || result == []) console.log(dbname + ' not found');
 					else {
 						socket.emit(response, result);
-						cached[table] = result;
+						cached[dbname] = result;
 					}
 				});
 			});
-	  else socket.emit(response, cached[table]);
-	  console.log(response);
+	  else socket.emit(response, cached[dbname]);
+	  console.log(response, dbname);
 	});
 	socket.on("resend password", function(username){
 		r.table('Users').filter(r.row('id').eq(username.toLowerCase()))

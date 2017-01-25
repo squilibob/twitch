@@ -61,7 +61,6 @@ function getViewers(channel) {
     client.api({
      url: 'http://tmi.twitch.tv/group/user' + header(body.stream.channel.name, 'chatters', null, 3)
     }, function(err, res, tmibody) {
-      console.log(tmibody.data.chatters.viewers);
      if ((tmibody || {}).data) {
       watching.chatters = tmibody.data.chatters.viewers;
       socket.emit('send emote', {message: watching.chatters.length + ' in chat ' + watching.viewers + ' reported viewers', picture:5});
@@ -75,7 +74,6 @@ function getStart(channel) {
  client.api({
   url: 'https://api.twitch.tv/kraken/streams' + header(channel)
  }, function(err, res, body) {
-  console.log(body);
   if ((body || {}).stream) {
    started = new Date(body.stream.created_at);
   }
