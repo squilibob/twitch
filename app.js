@@ -6,9 +6,10 @@ var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var r = require('rethinkdb');
-var pokedex;
-var typechart;
-var cached = {};
+var cached = {
+	pokedex: [],
+	typechart: []
+};
 
 app.set('port', (process.env.PORT || 80));
 
@@ -163,18 +164,19 @@ io.on('connection', function(socket){
 	});
 
 	socket.on ("Ask for pokedex", function(simple){
-		if (!pokedex && !simple)
+		if (!simple && cached.pokedex.length) socket.emit("Receive pokedex", cached.pokedex);
+		if (!simple && !cached.pokedex.length)
 			r.db('Users').table('Pokedex')
 				.run(conn, function(err, cursor) {
 					cursor.toArray(function(err, result) {
 						if (err || result[0] == undefined || result == []) socket.emit('dex not found');
 						else {
-							pokedex = result;
-							socket.emit("Receive pokedex", pokedex);
+							cached.pokedex = result;
+							socket.emit("Receive pokedex", cached.pokedex);
 						}
 					});
 				});
-		if (simple)
+		if (simple && !cached.pokedex.length)
 			r.db('Users').table('Pokedex')
 			.pluck('id', 'Pokemon', 'Tier')
 			// .pluck('Pokemon', 'Tier', 'HP', 'Attack', 'Defense','Sp. Attack', 'Sp. Defense', 'Speed')
@@ -186,7 +188,13 @@ io.on('connection', function(socket){
 						}
 					});
 				});
-		if (pokedex && !simple) socket.emit("Receive pokedex", pokedex);
+		if (simple && cached.pokedex.length) {
+			var result = [];
+			for (cachedpoke of cached.pokedex){
+				result.push({ Pokemon: cachedpoke.Pokemon, Tier: cachedpoke.Tier, id: cachedpoke.id });
+			}
+			socket.emit("Receive pokedex", result);
+		}
 	});
 	// socket.on ("Ask for pokedex", function(number){
 	// 	number = parseInt(number);
@@ -197,18 +205,18 @@ io.on('connection', function(socket){
 	// 		});
 	// 	});
 	socket.on ("Ask for typechart", function(){
-	  if (!typechart)
+	  if (!cached.typechart.length)
 		r.db('Users').table('TypeChart')
 			.run(conn, function(err, cursor) {
 				cursor.toArray(function(err, result) {
 					if (err || result[0] == undefined || result == []) socket.emit('typechart not found');
 					else {
 						socket.emit("Receive typechart", result);
-						typechart = result;
+						cached.typechart = result;
 					}
 				});
 			});
-	  else socket.emit("Receive typechart", typechart);
+	  else socket.emit("Receive typechart", cached.typechart);
 	});
 	// socket.on ("Ask for typechart", function(number){
 	// 	r.db('Users').table('TypeChart').nth(number).run(conn, function(err, result) {

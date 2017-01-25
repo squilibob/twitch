@@ -99,36 +99,35 @@ project.Init.prototype = {
     game.plugins.add(Fabrique.Plugins.SuperStorage);
     for (statename in states)
       game.state.add(statename, project[statename]);
-    // this.socketready = new Phaser.Signal();
-    // this.socketready.add(this.ready, this);
+    this.socketready = new Phaser.Signal();
+    this.socketready.add(this.ready, this);
     // pokedex = JSON.parse(game.storage.getItem("pokedex"));
     // typechart = JSON.parse(game.storage.getItem("typechart"));
-    // if (pokedex && typechart) {
-    //   if (typechart.length != 19) this.populatetypechart();
-    //   if (pokedex.length < maxpokes) this.populatedata();
-    // }
-    // else {
-    //   typechart = [];
-    //   pokedex = [];
-    //   this.populatetypechart();
-    //   this.populatedata();
-    // }
-    this.ready();
+    if (pokedex && typechart) {
+      if (typechart.length != 19) this.populatetypechart();
+      if (pokedex.length < maxpokes) this.populatedata();
+    }
+    else {
+      typechart = [];
+      pokedex = [];
+      this.populatetypechart();
+      this.populatedata();
+    }
   },
 
-  // update: function(){
-  //   if (pokedex) {
-  //     if (pokedex.length >= maxpokes) this.socketready.dispatch();
-  //   }
-  // },
+  update: function(){
+    if (pokedex) {
+      if (pokedex.length >= maxpokes) this.socketready.dispatch();
+    }
+  },
 
-  // populatetypechart: function(){
-  //     socket.emit('Ask for typechart');
-  // },
+  populatetypechart: function(){
+      socket.emit('Ask for typechart');
+  },
 
-  // populatedata: function(){
-  //     socket.emit('Ask for pokedex', Presets.simple);
-  // },
+  populatedata: function(){
+      socket.emit('Ask for pokedex', Presets.simple);
+  },
 
   ready: function() {
     if (pokedexoptions.scoring) chatbot();
