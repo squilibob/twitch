@@ -294,8 +294,10 @@ project.Raffle.prototype = {
         usersraffle = [];
           for (user in fullraffle){
             if (fullraffle[user].winner == true) {
-              winnercircle.children[3].setText(fullraffle[user].id);
-              previouswinner = fullraffle[user].id;
+              if (fullraffle && fullraffle[user] && fullraffle[user].id) {
+                winnercircle.children[3].setText(fullraffle[user].id);
+                previouswinner = fullraffle[user].id;
+              }
             }
           }
           for (user in fullraffle){

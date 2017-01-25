@@ -26,18 +26,19 @@ socket.on ("receive moves", function(movespayload) {
  }
 });
 
-socket.on ("receive abilities", function(payload) {
- for (move in payload) {
-  abilities[payload[move].id] = payload[move].desc;
+socket.on ("receive abilities", function(abilitypayload) {
+ for (move in abilitypayload) {
+  abilities[abilitypayload[move].id] = abilitypayload[move].desc;
  }
 });
 
-socket.on ("receive bttv", function(payload) {
-  if (payload) emoticons.bttv = payload;
+socket.on ("receive bttv", function(bttv.payload) {
+  console.log('bttv', bttv.payload);
+  if (bttv.payload) emoticons.bttv = bttv.payload;
 });
 
-socket.on ("receive ffz", function(payload) {
-  if (payload) emoticons.ffz = payload;
+socket.on ("receive ffz", function(ffzpayload) {
+  if (ffzpayload) emoticons.ffz = ffzpayload;
 });
 
 // socket.on('user pokes', function(payload) {
