@@ -642,12 +642,12 @@ help: 'this command ',
         }
       }
   },
-  '!stat': {
+  'stat': {
     altcmds: [],
     help: 'this command ',
     requires :
     {
-      question: false,
+      question: true,
       exclusive: false,
       pokemon: true,
       parameters: 1,

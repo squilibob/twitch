@@ -70,7 +70,6 @@ ul {
 	padding:0;
 	opacity: 1;
   	flex-direction: row-reverse;
-	transform: none;
 	transition: all 0.75s cubic-bezier(.36,-0.64,.34,1.76);
 	transform-origin: bottom left;
 }
@@ -95,6 +94,7 @@ ul {
 	margin: 0;
 	padding:0;
 	display: block;
+	transform: scale(0);
 	transform-origin: bottom left;
 }
 .chat-line[data-faded],  .chat-line[data-faded] .sprsheet{
