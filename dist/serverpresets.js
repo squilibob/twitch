@@ -1,6 +1,6 @@
 const Presets = {
-  'width': 1800-136,
-  'height': 475*2,
+  'width': 1600,
+  'height': 958,
   bgcolor: '#1c0f0c',
   selectedcolor: '#604040',
   font: 'Extra-Cool',
@@ -9,6 +9,7 @@ const Presets = {
   pressedstate: 0xffffff,
   normalstate: 0x888888,
   highlightedstate:0xe0e0e0,
+  autohide: true,
   padding: 8,
   showdonutchart: false,
   allowroll: true,
@@ -51,7 +52,7 @@ const preloadscripts = [
   '/chat/chat'
   ];
 
-  const firststate = 'Login';
+  const firststate = 'Blank';
 
   const pokedexoptions = {
     scoring: true,
@@ -63,12 +64,6 @@ const preloadscripts = [
       x : 1002,
       y : 620,
     },
-  };
-
-  var buttonstyle = {
-    x: Presets.width-128,
-    y: 8,
-    horizontalorientation: false
   };
 
   var fragmentSrc = [

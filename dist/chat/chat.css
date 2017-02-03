@@ -1,13 +1,18 @@
 html, body {
-	font-family: 'Proforma-book, Bitter';
+	font-family: 'Proforma-book', 'Bitter';
 	font-size: 18px;
 	overflow: hidden;
+}
+canvas {
+	border: none;
+	padding: 0;
+	margin: 0;
 }
 #chat {
 	visibility: visible;
 	position: fixed;
 	bottom: 0px;
-	left: -12px;
+	left: -16px;
 	padding: 0;
 	z-index:3;
 }
@@ -19,6 +24,7 @@ html, body {
 	width: 38px;
 	padding: 0px 0px;
 	transform: scale(1.5);
+	opacity: 1 !important;
 }
 .w3-tooltip .w3-text{
 	display:none;
@@ -92,7 +98,6 @@ ul {
 	transform-origin: bottom left;
 }
 .chat-line[data-faded],  .chat-line[data-faded] .sprsheet{
-	opacity: .67;
 	font-size: 18px;
 	transform: scale(1);
 	transition: all 0.5s cubic-bezier(.36,-0.64,.34,1.76);
@@ -104,7 +109,7 @@ ul {
 	max-width: 400px;
 }
 .chat-line.chat-notice[data-level] {
-	font-family: 'Extra-cool';
+	font-family: "HelveticaNeue";
 	font-size:24px;
 }
 .chat-line.chat-notice[data-level="-4"] {
@@ -171,6 +176,12 @@ ul {
 	right: 2px;
 	transition: all 0.5s ease-out;
 }
+.chat-colon[data-faded] {
+	opacity: 0.6;
+	margin-right: 0em;
+	left: -44px;
+	transition: all 0.5s ease-out;
+}
 .chat-colon:after {
 	vertical-align: middle;
 	font-size: 24px;
@@ -206,10 +217,15 @@ ul {
 	border-radius: 18px;
 	box-shadow: 10px 5px 5px rgba(0,0,0,0.1);
 }
+.chat-message-container[data-faded]
+{
+	left: -47px;
+	opacity: 0.6;
+}
 .chat-message
 {
 	flex:1;
-	font-family:'Extra-cool';
+	font-family:"HelveticaNeue";
 	font-size: 36px;
 	font: #fff;
 	text-rendering: optimizeLegibility;
@@ -223,7 +239,7 @@ ul {
 }
 .chat-shoutout {
 	flex:1;
-	font-family:'Extra-cool';
+	font-family:"HelveticaNeue";
 	font-size: 22px;
 	font: #fff;
 	text-rendering: optimizeLegibility;
@@ -238,9 +254,9 @@ ul {
 {
 	opacity: 1 !important;
 	position: relative;
-	font-size: 24px;
+	font-size: 26px;
 	max-height: 300px;
-	max-width:420px;
+	max-width:424px;
 	transition: all 0.5s ease-out;
 }
 .chat-message[data-hide]
@@ -381,56 +397,47 @@ ul {
 }
 .avs {
 	vertical-align: middle;
-	background: url(/img/avatars64.png);
+	background: url(/img/avatars128.png);
 	display: inline-block;
-	border-radius: 32px;
+	border-radius: 64px;
 	margin: 0;
 	padding: 0;
-	height: 64px;
-	width: 64px;
+	height: 128px;
+	width: 128px;
 	position: relative;
+	left: -8px;
 	transition: all 0.5s cubic-bezier(.36,-0.64,.34,1.76);
-}
-.avs[data-faded]
-{
-	transform: scale(0.75);
-	transition: all 0.5s ease-out;
 }
 .chat-avatar
 {
-	border-radius: 32px;
+	border-radius: 64px;
 	margin: 0;
 	padding: 0;
-     	vertical-align: middle;
-	height: 64px;
-	width: 64px;
+     vertical-align: middle;
+	height: 128px;
+	width: 128px;
 	position: relative;
 	transition: all 0.5s cubic-bezier(.36,-0.64,.34,1.76);
 }
-.chat-avatar[data-faded]
+.avs[data-faded], .chat-avatar[data-faded]
 {
-	border-radius: 32px;
-	margin: 0;
-	padding: 0;
-     	vertical-align: middle;
-	height: 48px;
-	width: 48px;
-	position: relative;
+	transform: scale(0.75);
 	transition: all 0.5s ease-out;
+	left: -24px;
 }
 .chat-avatar[data-hide]
 {
 	border-radius: 0px;
 	margin: 0;
 	padding: 0;
-     	vertical-align: middle;
+     vertical-align: middle;
 	height: 0px;
 	width: 0px;
 	position: relative;
 	transition: all 0.5s ease-out;
 }
 .chat-viewers {
-      font: 28px "Extra-cool", "Haettenschweiler", "HelveticaNeue";
+      font: 28px "Haettenschweiler", "HelveticaNeue";
       color: #fff;
       border: none;
       text-align: left;
@@ -438,12 +445,12 @@ ul {
 	z-index:4;
 }
 .chat-time {
-      font: 36px "Extra-cool", "Haettenschweiler", "HelveticaNeue";
+      font: 36px "Gothic", "Extra-Cool";
       color:#ddd;
 	transition: all 0.5s ease-out;
 }
 .chat-time[data-faded] {
-      font: 22px "Extra-cool", "Haettenschweiler", "HelveticaNeue";
+      font: 22px "Gothic", "Extra-Cool";
       color:#ddd;
 	transition: all 0.5s ease-out;
 }
@@ -464,21 +471,4 @@ ul {
 	display: block;
 	width: 100%;
 	transition: all 0.5s ease-out;
-}
-.usercounts {
-	display: inline-block !important;
-	position: absolute;
-	bottom: 186px;
-	left: 491px;
-	width: 96px;
-	font-size: 24px;
-      vertical-align: middle;
-      background: rgba(72,144,255,1);
-      min-height: 1em;
-	padding: 2px 8px;
-	-webkit-border-top-right-radius: 18px;
-	-moz-border-top-right-radius: 18px;
-	border-top-right-radius: 18px;
-	z-index:4;
-	opacity: 0.3;
 }

@@ -13,6 +13,5 @@ project.Blank.prototype = {
       menu = this.add.group();
       menu.addMultiple(menubuttons);
       scaleup(menu);
-
     }
   }

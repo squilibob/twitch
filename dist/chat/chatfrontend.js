@@ -19,8 +19,8 @@
   chatBanner.className = 'chat-image';
   chatBanner.src = banner;
   chatStreamerName.innerHTML = username;
-  chatStreamerFollowers.innerHTML = followamount + ' followers';
-  chatStreamerViews.innerHTML = views + ' views';
+  chatStreamerFollowers.innerHTML = followamount.toLocaleString()  + ' followers';
+  chatStreamerViews.innerHTML = views.toLocaleString()  + ' views';
   chatLine.appendChild(chatStreamerName);
   chatLine.appendChild(chatStreamerFollowers);
   chatLine.appendChild(chatStreamerViews);
@@ -325,7 +325,7 @@ help: 'this command ',
       modonly: false
     },
     action: function(obj){
-      return watching.chatters.length + ' in chat ' + watching.viewers + ' reported viewers';
+      return watching.chatters.length.toLocaleString() + ' in chat ' + watching.viewers.toLocaleString() + ' reported viewers';
     }
   },
   '!follow': {
@@ -882,8 +882,8 @@ function handleChat(chan, user, message, self, avatar, image) {
   } else {
    var chatAvatar = document.createElement('span');
    chatAvatar.className = 'avs';
-   var xpos = 64 * ((Useravatars.total - (useravatars[name] + 1) % 7));
-   var ypos = 64 * (Useravatars.total - Math.floor((useravatars[name] + 1) / 7));
+   var xpos = 128 * ((Useravatars.total - (useravatars[name] + 1) % 7));
+   var ypos = 128 * (Useravatars.total - Math.floor((useravatars[name] + 1) / 7));
    chatAvatar.style = 'background-position:  ' + xpos + 'px  ' + ypos + 'px';
   }
 
@@ -948,6 +948,8 @@ function handleChat(chan, user, message, self, avatar, image) {
    setTimeout(function() {
     chatLine.dataset.faded = '';
     chatMessage.dataset.faded = '';
+    chatColon.dataset.faded = '';
+    chatContainer.dataset.faded = '';
     // chatMessage.style.opacity = 1;
     chatAvatar.dataset.faded = '';
     chatName.dataset.faded = '';

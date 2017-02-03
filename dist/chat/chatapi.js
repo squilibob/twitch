@@ -63,7 +63,7 @@ function getViewers(channel) {
     }, function(err, res, tmibody) {
      if ((tmibody || {}).data) {
       watching.chatters = tmibody.data.chatters.viewers;
-      socket.emit('send emote', {message: watching.chatters.length + ' in chat ' + watching.viewers + ' reported viewers', picture:5});
+      socket.emit('send emote', {message: watching.chatters.length.toLocaleString() + ' in chat ' + watching.viewers.toLocaleString() + ' reported viewers', picture:5});
      }
      });
    }
@@ -93,7 +93,7 @@ function checkfollowers(userid, hidenotify, current) {
       var datefollowed = new Date(body.follows[viewer].created_at);
      // followers[body.follows[viewer].user.name] = {logo: body.follows[viewer].user.logo, followed: Math.floor((Date.now() - datefollowed))/8.64e7) + ' days ago (' + body.follows[viewer].created_at.split('T').shift().split('-').reverse().join('/') + ')'};
      followers[body.follows[viewer].user.name] = {logo: body.follows[viewer].user.logo, followed: Math.floor((Date.now() - datefollowed)/8.64e7) + ' days ago (' + datefollowed.toDateString() + ')'};
-     if (!hidenotify) chatNotice(body.follows[viewer].user.name + " is now following (follower #" + Object.keys(followers).length + ")", 10000, 1);
+     if (!hidenotify) chatNotice(body.follows[viewer].user.name + " is now following (follower #" + Object.keys(followers).length.toLocaleString()  + ")", 10000, 1);
     }
   }
  });

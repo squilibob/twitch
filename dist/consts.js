@@ -30,8 +30,13 @@ const maxpokes = 802,
   score_for_crit: 50,
   score_for_hax: 50,
   penalty_for_clause: 100
- }
+ },
 
+ buttonstyle = {
+   x: 8,
+   y: 8,
+   horizontalorientation: true
+ };
 
 // Colors
 const buttonborder =  0x4090ff,

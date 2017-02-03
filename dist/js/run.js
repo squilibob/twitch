@@ -101,8 +101,8 @@ project.Init.prototype = {
       game.state.add(statename, project[statename]);
     this.socketready = new Phaser.Signal();
     this.socketready.add(this.ready, this);
-    // pokedex = JSON.parse(game.storage.getItem("pokedex"));
-    // typechart = JSON.parse(game.storage.getItem("typechart"));
+    pokedex = JSON.parse(game.storage.getItem("pokedex"));
+    typechart = JSON.parse(game.storage.getItem("typechart"));
     if (pokedex && typechart) {
       if (typechart.length != 19) this.populatetypechart();
       if (pokedex.length < maxpokes) this.populatedata();

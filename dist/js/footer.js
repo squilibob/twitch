@@ -1,4 +1,4 @@
-var footergame = new Phaser.Game(1480, 220, Phaser.AUTO, "footer");
+var footergame = new Phaser.Game(1600, 220, Phaser.AUTO, "footer");
 var project = {};
 var teams;
 var team_name;

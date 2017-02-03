@@ -9,6 +9,7 @@ const Presets = {
   pressedstate: 0xffffff,
   normalstate: 0x888888,
   highlightedstate:0xe0e0e0,
+  autohide: false,
   padding: 8,
   showdonutchart: true,
   allowroll: false,
@@ -48,12 +49,6 @@ const preloadscripts = [
       x : 8,
       y : 256,
     },
-  };
-
-  var buttonstyle = {
-    x: 8,
-    y: 8,
-    horizontalorientation: true
   };
 
     var fragmentSrc = [
