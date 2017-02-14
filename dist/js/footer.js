@@ -14,7 +14,6 @@ project.Footer.prototype = {
   preload: function () {
     footergame.load.json('audiojsoncries', '/audio/cries.json');
     footergame.load.script('Pokemotions', '/states/pokemotions.js');
-    // {'Pokemotions': '/states/pokemotions'},
     // var script;
     // for (testscript in preloadscripts) {
     //   if (typeof(preloadscripts[testscript]) == 'object')

@@ -480,6 +480,10 @@ io.on('connection', function(socket){
 		});
 	});
 
+	socket.on('followed', function(person) {
+		socket.emit('new follower', person);
+	});
+
 	socket.on('won raffle', function(person) {
 		rafflewinner(person);
 	});
@@ -490,6 +494,16 @@ io.on('connection', function(socket){
 			if (err) socket.emit('invalid raffle user', username);
 			else {
 				raffleChangeUser(username.toLowerCase(), 12, true, result.cards[0].poke);
+			}
+		});
+	});
+
+	socket.on('manually leave raffle', function(username, displayicon) {
+		r.table('Users').get(username)
+		.run(conn, function(err, result) {
+			if (err) socket.emit('invalid raffle user', username);
+			else {
+				raffleChangeUser(username.toLowerCase(), 12, false, result.cards[0].poke);
 			}
 		});
 	});

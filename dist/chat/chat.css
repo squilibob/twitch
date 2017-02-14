@@ -91,6 +91,7 @@ ul {
 }
 .chat-line[data-hide] {
 	position: relative;
+	font-size: 0px;
 	margin: 0;
 	padding:0;
 	display: block;
@@ -434,6 +435,7 @@ ul {
 	height: 0px;
 	width: 0px;
 	position: relative;
+	transform: scale(0);
 	transition: all 0.5s ease-out;
 }
 .chat-viewers {

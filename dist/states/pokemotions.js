@@ -1,5 +1,8 @@
 project.Pokemotions = function(game) {
   var
+  followergroup,
+  followed,
+  runningfolloweranimation,
   fx,
   decoded,
   txtstyle,
@@ -11,9 +14,12 @@ project.Pokemotions = function(game) {
 project.Pokemotions.prototype = {
     preload: function(){
       footergame.load.spritesheet('pokemotevulpix', '/img/pokemotions.png', 206, 236, 10);
+      footergame.load.image('followerbg', '/img/paint.png');
       footergame.load.audiosprite('cries', '/audio/cries.ogg', '/audio/cries.json', audioJSON.cries);
     },
     create: function(){
+      followed = [];
+      runningfolloweranimation = false;
       decoded = false;
       this.game.stage.backgroundColor = 0x1c0f0c;
       txtstyle =  {
@@ -46,6 +52,42 @@ project.Pokemotions.prototype = {
       socket.on('playsound', function(which) {
         decoded && fx.play(which);
       });
+
+      if (socket.hasListeners('new follower') == false)
+      socket.on('new follower', function(who) {
+        followed.push(who);
+      });
+    },
+    followershow: function(person) {
+      runningfolloweranimation = true;
+      var fol = [];
+      followergroup = footergame.add.group();
+      fol[0] = footergame.add.sprite(0, 0, 'followerbg');
+      var folscale = footergame.world.height / fol[0].height ;
+      fol[0].scale.setTo(folscale);
+      fol[1] = footergame.add.text(0, 0, person, txtstyle);
+      fol[1].x = fol[0].x + fol[0].width - fol[1].width - 64;
+      fol[1].y = fol[0].height / 4;
+      fol[2] = footergame.add.text(0, 0, 'follow', txtstyle);
+      fol[2].x = fol[0].x + fol[0].width - fol[2].width - 64;
+      fol[2].y = fol[1].height / 2 + fol[1].y + 8;
+      followergroup.addMultiple(fol)
+      followergroup.x = footergame.world.width - followergroup.width;
+      var folmask = footergame.add.graphics();
+      folmask.beginFill(0x000000);
+      folmask.drawRect(followergroup.x, followergroup.y, followergroup.width, followergroup.height);
+      folmask.endFill();
+      folmask.x = followergroup.width;
+      followergroup.mask = folmask;
+      // followergroup.alpha = 0.2;
+      var folfadeout = footergame.add.tween(followergroup).to({ alpha: 0 }, 4000, Phaser.Easing.Linear.None, false);
+      folfadeout.onComplete.add(this.emptygroup, this);
+      footergame.add.tween(folmask).to({ x: 0 }, 500, Phaser.Easing.Linear.None, true)
+      .chain(folfadeout);
+    },
+    emptygroup: function() {
+      followergroup.destroy(true, true);
+      runningfolloweranimation = false;
     },
     playsound: function(){
       decoded = true;
@@ -154,7 +196,7 @@ project.Pokemotions.prototype = {
       }
       var tempgroup = footergame.add.group();
       tempgroup.addMultiple(newtest);
-      tempgroup.y += 32;
+      // tempgroup.y += 32;
     },
     addtween: function(obj){
       var sinData = game.math.sinCosGenerator(1337, 8, 16, 5);
@@ -164,4 +206,7 @@ project.Pokemotions.prototype = {
       footergame.add.tween(obj).to( { alpha: 0}, 6000-obj.offset*3, Phaser.Easing.Linear.None, false));
       footergame.add.tween(obj).to({y: sin}, 500+obj.offset, Phaser.Easing.Linear.None, true);
     },
+    update: function(){
+      if (followed.length && !runningfolloweranimation) this.followershow(followed.shift());
+    }
   }

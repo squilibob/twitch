@@ -250,6 +250,22 @@ help: 'this command ',
       return false;
     }
   },
+  '!leave': {
+    altcmds: [],
+help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 0,
+      modonly: false
+    },
+    action: function(obj){
+      socket.emit("manually leave raffle", obj.user.username, Math.floor(Math.random() * 719));
+      return false;
+    }
+  },
   '!vote': { //needs fixing
     altcmds: [],
     help: 'this command ',
