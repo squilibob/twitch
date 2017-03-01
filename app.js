@@ -350,6 +350,10 @@ io.on('connection', function(socket){
 		});
 	});
 
+	socket.on("send fusion", function(firstpoke, secondpoke){
+		io.emit('show fusion', firstpoke, secondpoke);
+	});
+
 	socket.on('Request vote', function() {
 		var current = [];
 		r.db('Users').table('Vote')

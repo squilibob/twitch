@@ -9,6 +9,8 @@ function scaleup (group) {
 function inputform(placeHolder, max, InputType) {
   return {
     backgroundColor: 'transparent',
+    boundsAlignH: "center",
+    boundsAlignV: "middle",
     borderColor: '#4090ff',
     borderRadius: 0,
     borderWidth: 1,
@@ -44,6 +46,8 @@ var textButton = {
       var buttonelement = [];
       var textstyle =  {
         backgroundColor: hexstring(color),
+        boundsAlignH: "center",
+        boundsAlignV: "middle",
         fill: Presets.fill,
         fillAlpha: 1,
         font: Presets.font,
@@ -89,6 +93,8 @@ var numberButton = {
       var buttonelement = [];
       var textstyle =  {
         backgroundColor: 'transparent',
+        boundsAlignH: "center",
+        boundsAlignV: "middle",
         fill: Presets.fill,
         fillAlpha: 1,
         font: Presets.font,
@@ -155,6 +161,8 @@ var textInput = {
   label: function(group, game, options){
     var style = {
       backgroundColor: 'transparent',
+      boundsAlignH: "center",
+      boundsAlignV: "middle",
       fill: Presets.fill,
       fillAlpha: 1,
       font: Presets.font,
@@ -210,6 +218,8 @@ var selector = {
   numberinput: function(group, game, options){
     return game.add.inputField(options.x, options.y, {
     backgroundColor: Presets.bgcolor,
+    boundsAlignH: "center",
+    boundsAlignV: "middle",
     borderColor: '#4090ff',
     borderRadius: 0,
     borderWidth: 1,
@@ -337,6 +347,8 @@ function drawteam(group, members, name, color){
 
   var textstyle =  {
     backgroundColor: hexstring(color),
+    boundsAlignH: "center",
+    boundsAlignV: "middle",
     fill: Presets.fill,
     fillAlpha: 1,
     font: Presets.font,

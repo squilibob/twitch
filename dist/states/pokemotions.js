@@ -3,27 +3,43 @@ project.Pokemotions = function(game) {
   followergroup,
   followed,
   runningfolloweranimation,
+  fusion,
+  fusionqueue,
+  runningfusionanimation,
   fx,
   decoded,
   txtstyle,
   questiontext,
   listgroup,
+  player,
+  enemy,
+  maxvelocity,
   current;
 };
 
 project.Pokemotions.prototype = {
     preload: function(){
-      footergame.load.spritesheet('pokemotevulpix', '/img/pokemotions.png', 206, 236, 10);
+      footergame.load.spritesheet('pokemotevulpix', '/img/pokemotions.png', 206, 236);
       footergame.load.image('followerbg', '/img/paint.png');
       footergame.load.audiosprite('cries', '/audio/cries.ogg', '/audio/cries.json', audioJSON.cries);
+      footergame.load.spritesheet('playerpoke', '/img/gen6.png', 32, 32);
+      for (currentfuse = 1; currentfuse < 152; currentfuse++) {
+        var cachename = 'fuse' + currentfuse;
+        var currentfusion = '/img/fusion/' + currentfuse + '.png';
+        var loading =  footergame.load.spritesheet(cachename, currentfusion, 240, 240);
+      }
     },
     create: function(){
       followed = [];
       runningfolloweranimation = false;
+      fusionqueue = [];
+      runningfusionanimation = false;
       decoded = false;
       this.game.stage.backgroundColor = 0x1c0f0c;
       txtstyle =  {
         backgroundColor: 'transparent',
+        boundsAlignH: "center",
+        boundsAlignV: "middle",
         fill: Presets.fill,
         fillAlpha: 1,
         font: Presets.font,
@@ -34,19 +50,26 @@ project.Pokemotions.prototype = {
       };
       questiontext = footergame.add.text(0, 0, '', txtstyle);
       listgroup = footergame.add.group();
-      var _this = this;
-
-      if (socket.hasListeners('receive emote') == false) socket.on('receive emote', function (payload) {
-        _this.footertext(payload);
-      });
-      if (socket.hasListeners('receive vote') == false) socket.on('receive vote', function (payload) {
-        _this.composevote(payload);
-      });
-      socket.emit('Request vote');
+      player = [];
+      enemy = [];
+      maxvelocity = 120;
 
       fx = footergame.add.audioSprite('cries');
       fx.allowMultiple = true;
       footergame.sound.setDecodedCallback(['cries'], this.playsound, this);
+      this.nextround();
+      this.addsocketlisteners(this);
+
+    },
+    addsocketlisteners: function(_this) {
+
+      if (socket.hasListeners('receive emote') == false) socket.on('receive emote', function (payload) {
+        _this.footertext(payload);
+      });
+
+      if (socket.hasListeners('receive vote') == false) socket.on('receive vote', function (payload) {
+        _this.composevote(payload);
+      });
 
       if (socket.hasListeners('playsound') == false)
       socket.on('playsound', function(which) {
@@ -57,6 +80,12 @@ project.Pokemotions.prototype = {
       socket.on('new follower', function(who) {
         followed.push(who);
       });
+
+      if (socket.hasListeners('show fusion') == false) socket.on('show fusion', function (firstpoke, secondpoke) {
+        fusionqueue.push({firstpoke: firstpoke, secondpoke: secondpoke});
+      });
+
+      socket.emit('Request vote');
     },
     followershow: function(person) {
       runningfolloweranimation = true;
@@ -108,13 +137,13 @@ project.Pokemotions.prototype = {
     },
     drawvotes: function(title, options, maxwidth, maxheight){
       if (!sectioncolors) var sectioncolors = [
-  0xeb485b,
-  0x1f9b76,
-  0x9f5fff,
-  0xd39e14,
-  0x1688c7,
-  0x7f7f7f
-  ];
+        0xeb485b,
+        0x1f9b76,
+        0x9f5fff,
+        0xd39e14,
+        0x1688c7,
+        0x7f7f7f
+        ];
       listgroup.removeChildren();
       var listvotes = [];
       var listtext = [];
@@ -170,10 +199,12 @@ project.Pokemotions.prototype = {
       var picture = payload.picture;
       test = {
         backgroundColor: 'transparent',
+        boundsAlignH: "center",
+        boundsAlignV: "middle",
         fill: "#ffffff",
         fillAlpha: 1,
         font: 'Extra-Cool',
-        fontSize: 36,//window.innerWidth/75,
+        fontSize: 36,
         stroke: 6,
       }
 
@@ -190,7 +221,6 @@ project.Pokemotions.prototype = {
         newtest[newtest.length] = footergame.add.text(footergame.world.width,32,testarray[letter],test);
         newtest[newtest.length-1].alpha = 0;
         if (newtest.length-1 > 0) newtest[newtest.length-1].offset = newtest[newtest.length-2].offset + newtest[newtest.length-2].getBounds().width + 24;
-        // console.log(newtest[newtest.length-2].offset, newtest[newtest.length-2].getBounds().width);
         else newtest[newtest.length-1].offset = 0;
         this.addtween(newtest[newtest.length-1]);
       }
@@ -206,7 +236,112 @@ project.Pokemotions.prototype = {
       footergame.add.tween(obj).to( { alpha: 0}, 6000-obj.offset*3, Phaser.Easing.Linear.None, false));
       footergame.add.tween(obj).to({y: sin}, 500+obj.offset, Phaser.Easing.Linear.None, true);
     },
+    emptyfusion: function() {
+      fusion.destroy(true);
+      runningfusionanimation = false;
+    },
+    fusionshow: function(fusions) {
+      runningfusionanimation = true;
+      firstpoke = fusions.firstpoke;
+      secondpoke = fusions.secondpoke;
+      fusion = footergame.add.sprite(0, 0, 'fuse' + firstpoke);
+      fusion.frame = secondpoke-1;
+      var fusionfadeout = footergame.add.tween(fusion).to({ alpha: 0 }, 8000, Phaser.Easing.Linear.None, true);
+      fusionfadeout.onComplete.add(this.emptyfusion, this);
+      console.log(fusion, fusionfadeout);
+      // footergame.add.tween(folmask).to({ x: 0 }, 500, Phaser.Easing.Linear.None, true)
+      // .chain(folfadeout);
+    },
+    createplayer: function(pokemon, x, y) {
+      var namestyle =  {
+        backgroundColor: 'transparent',
+        boundsAlignH: "center",
+        boundsAlignV: "middle",
+        fill: Presets.fill,
+        fillAlpha: 1,
+        fontSize: '8px ',
+        fontWeight: 'Bold',
+        textAlign: 'left',
+        stroke: 0
+      };
+      var offset = pokemon * 4;
+      var playerpoke = footergame.add.sprite(x, y, 'playerpoke');
+      game.physics.enable(playerpoke, Phaser.Physics.ARCADE);
+      playerpoke.anchor.set(0.5);
+      playerpoke.body.collideWorldBounds = true;
+      playerpoke.scale.setTo(3);
+      playerpoke.animations.add('idle', [offset, offset+1]);
+      playerpoke.animations.add('walk', [offset+2, offset+3]);
+      playerpoke.animations.play('walk', 4, true);
+      playerpoke.body.velocity.x = -maxvelocity;
+      playerpoke.addChild(footergame.add.text(0, -32, 'player', namestyle));
+      playerpoke.children[0].anchor.set(0.5, 0);
+      playerpoke.setHealth(100);
+      playerpoke.exp = 0;
+      playerpoke.addChild(footergame.add.graphics());
+      // playerpoke.children[1].anchor.set(0.5, 0);
+      return playerpoke;
+    },
+    createenemy: function(pokemon, x, y) {
+      var offset = pokemon * 4;
+      var playerpoke = footergame.add.sprite(x, y, 'playerpoke');
+      game.physics.enable(playerpoke, Phaser.Physics.ARCADE);
+      playerpoke.anchor.set(0.5);
+      playerpoke.body.collideWorldBounds = true;
+      playerpoke.scale.setTo(3);
+      playerpoke.animations.add('idle', [offset, offset+1]);
+      playerpoke.animations.add('walk', [offset+2, offset+3]);
+      playerpoke.animations.play('idle', 4, true);
+      playerpoke.setHealth(100);
+      playerpoke.addChild(footergame.add.graphics());
+      return playerpoke;
+    },
+    nextround: function(){
+      // player[0] = this.createplayer(50, footergame.world.width / 2, footergame.world.height / 2);
+      // player[1] = this.createplayer(200, footergame.world.width / 2 + 400, footergame.world.height / 2);
+      enemy[0] = this.createenemy(100, footergame.world.width / 2, footergame.world.height / 2);
+    },
+    toggleplayerdirection: function(whichplayer){
+      whichplayer.body.velocity.x *= -1;
+      whichplayer.scale.x *= -1;
+      whichplayer.children[0].scale.x = Math.sign(whichplayer.scale.x);
+    },
+    checkBounds: function(){
+      for (checkplayer of player) {
+        var playerdirection = Math.sign(checkplayer.body.velocity.x);
+        if ((checkplayer.x-maxvelocity < 0 && playerdirection == -1) || (checkplayer.x+maxvelocity >= footergame.world.width && playerdirection == 1)) {
+          this.toggleplayerdirection(checkplayer);
+        }
+      }
+    },
+    checkHP: function(){
+      for (checkplayer of player) {
+        (checkplayer.health < 1) && checkplayer.kill();
+        barcolor = parseInt('0x50' + ('00' + Math.floor(checkplayer.health/100 * 255).toString(16)).substr(-2) + '00', 16);
+        checkplayer.children[1]
+          .clear()
+          .lineStyle(1, 0xffffff, 0.5)
+          .beginFill(barcolor)
+          .drawRect(-16 * checkplayer.health / 100, -20, 32 * checkplayer.health / 100, 6)
+          .endFill();
+      }
+      for (checkenemy of enemy) {
+        (checkenemy.health < 1) && checkenemy.kill();
+        barcolor = parseInt('0x' + ('00' + Math.floor(checkenemy.health/100 * 255).toString(16)).substr(-2) + '0000', 16);
+        checkenemy.children[0]
+          .clear()
+          .lineStyle(1, 0xffffff, 0.5)
+          .beginFill(barcolor)
+          .drawRect(-16 * checkenemy.health / 100, -20, 32 * checkenemy.health / 100, 6)
+          .endFill();
+      }
+    },
     update: function(){
       if (followed.length && !runningfolloweranimation) this.followershow(followed.shift());
+      if (fusionqueue.length && !runningfusionanimation) this.fusionshow(fusionqueue.shift());
+      this.checkBounds();
+      this.checkHP();
+      enemy[0].setHealth(enemy[0].health - 0.25);
+      // player[0].setHealth(player[0].health - 0.1);
     }
   }

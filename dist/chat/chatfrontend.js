@@ -652,9 +652,9 @@ help: 'this command ',
       if (!(secondpoke > 0)) secondpoke = obj.pokemon.id;
       var fusion = 'http://images.alexonsager.net/pokemon/fused/'+ (firstpoke) + '/'+ (firstpoke) + '.' + (secondpoke) + '.png';
       if (typeof(firstpoke) == 'number' && typeof(secondpoke) == 'number')
-        // if (firstpoke > 0 && firstpoke < pokedex.length && secondpoke > 0 && secondpoke < pokedex.length )
         if (firstpoke > 0 && firstpoke < 152 && secondpoke > 0 && secondpoke < 152 ) {
-          handleChat(obj.channel, obj.user, '', true, -1, fusion);
+          // handleChat(obj.channel, obj.user, '', true, -1, fusion);
+          socket.emit('send fusion', firstpoke, secondpoke);
         }
       }
   },
@@ -761,7 +761,95 @@ help: 'this command ',
       var title;
       var options = obj.message.substr(obj.message.toLowerCase().indexOf('!poll')+'!poll'.length).split('|');
       title = options.shift();
+      for (vote of options) capitalize(vote);
       if (options.length > 1) socket.emit("Vote poll", {options: options, title: title});
+    }
+  },
+  '!topsyturvy': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 1,
+      modonly: false
+    },
+    action: function(obj){
+      if (!obj.message.length) return;
+      var map = {
+        'A': '∀',
+        'B': '𐐒',
+        'C': 'Ɔ',
+        'E': 'Ǝ',
+        'F': 'Ⅎ',
+        'G': 'פ',
+        'J': 'ſ',
+        'L': '˥',
+        'M': 'W',
+        'N': 'N',
+        'P': 'Ԁ',
+        'R': 'ᴚ',
+        'T': '⊥',
+        'U': '∩',
+        'V': 'Λ',
+        'W': 'M',
+        'Y': '⅄',
+        'a': 'ɐ',
+        'b': 'q',
+        'c': 'ɔ',
+        'd': 'p',
+        'e': 'ǝ',
+        'f': 'ɟ',
+        'g': 'ƃ',
+        'h': 'ɥ',
+        'i': '!',
+        'j': 'ɾ',
+        'k': 'ʞ',
+        'm': 'ɯ',
+        'n': 'u',
+        'p': 'd',
+        'q': 'b',
+        'r': 'ɹ',
+        't': 'ʇ',
+        'u': 'n',
+        'v': 'ʌ',
+        'w': 'ʍ',
+        'y': 'ʎ',
+        '1': 'Ɩ',
+        '2': 'ᄅ',
+        '3': 'Ɛ',
+        '4': 'ㄣ',
+        '5': 'ϛ',
+        '6': '9',
+        '7': 'ㄥ',
+        '8': '8',
+        '9': '6',
+        '.': '˙',
+        ',': "'",
+        "": ',',
+        '"': ',,',
+        '`': ',',
+        '<': '>',
+        '>': '<',
+        '∴': '∵',
+        '&': '⅋',
+        '_': '‾',
+        '?': '¿',
+        '¿': '?',
+        '!': '¡',
+        '¡': '!',
+        '[': ']',
+        ']': '[',
+        '(': ')',
+        ')': '(',
+        '{': '}',
+        '}': '{'
+      };
+      return obj.message.split('').reverse().map(function (element) {
+        return map[element] || map[element.toLowerCase()] || element;
+      }).join('');
     }
   },
   // '!test': {
