@@ -244,13 +244,12 @@ project.Pokemotions.prototype = {
       runningfusionanimation = true;
       firstpoke = fusions.firstpoke;
       secondpoke = fusions.secondpoke;
-      fusion = footergame.add.sprite(0, 0, 'fuse' + firstpoke);
+      fusion = footergame.add.sprite(footergame.width, 0, 'fuse' + firstpoke);
       fusion.frame = secondpoke-1;
-      var fusionfadeout = footergame.add.tween(fusion).to({ alpha: 0 }, 8000, Phaser.Easing.Linear.None, true);
+      var fusionfadeout = footergame.add.tween(fusion).to({ alpha: 0 }, 8000, Phaser.Easing.Linear.None, false);
       fusionfadeout.onComplete.add(this.emptyfusion, this);
-      console.log(fusion, fusionfadeout);
-      // footergame.add.tween(folmask).to({ x: 0 }, 500, Phaser.Easing.Linear.None, true)
-      // .chain(folfadeout);
+      footergame.add.tween(fusion).to({ x: 240 }, 500, Phaser.Easing.Linear.None, true)
+      .chain(fusionfadeout);
     },
     createplayer: function(pokemon, x, y) {
       var namestyle =  {
