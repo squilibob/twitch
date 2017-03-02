@@ -692,7 +692,6 @@ help: 'this command ',
       modonly: false
     },
     action: function(obj){
-      console.log(obj.parameters);
       if (!self.fetch) {
           return
       }
@@ -725,7 +724,6 @@ help: 'this command ',
       modonly: false
     },
     action: function(obj){
-      console.log(obj.parameters);
       if (!self.fetch) {
           return
       }
