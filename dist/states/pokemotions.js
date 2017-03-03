@@ -6,6 +6,8 @@ project.Pokemotions = function(game) {
   fusion,
   fusionqueue,
   runningfusionanimation,
+  leftfuse,
+  rightfuse,
   fx,
   decoded,
   txtstyle,
@@ -59,7 +61,6 @@ project.Pokemotions.prototype = {
       footergame.sound.setDecodedCallback(['cries'], this.playsound, this);
       this.nextround();
       this.addsocketlisteners(this);
-
     },
     addsocketlisteners: function(_this) {
 
@@ -240,15 +241,30 @@ project.Pokemotions.prototype = {
       fusion.destroy(true);
       runningfusionanimation = false;
     },
+    destroy: function() {
+      leftfuse.destroy(true);
+      rightfuse.destroy(true);
+      this.fusionmake();
+    },
     fusionshow: function(fusions) {
       runningfusionanimation = true;
       firstpoke = fusions.firstpoke;
       secondpoke = fusions.secondpoke;
-      fusion = footergame.add.sprite(footergame.width, 0, 'fuse' + firstpoke);
+      leftfuse = footergame.add.sprite(0, 0, 'fuse' + firstpoke);
+      leftfuse.frame = firstpoke-1;
+      rightfuse = footergame.add.sprite(footergame.width - 240, 0, 'fuse' + secondpoke);
+      rightfuse.frame = secondpoke-1;
+      fusion = footergame.add.sprite(footergame.world.centerX, 0, 'fuse' + firstpoke);
       fusion.frame = secondpoke-1;
+      fusion.alpha = 0;
+      footergame.add.tween(leftfuse).to({ x: footergame.world.centerX }, 1000, Phaser.Easing.Sinusoidal.In, true);
+      footergame.add.tween(rightfuse).to({ x: footergame.world.centerX }, 1000, Phaser.Easing.Sinusoidal.In, true)
+      .onComplete.add(this.destroy, this);
+    },
+    fusionmake: function() {
       var fusionfadeout = footergame.add.tween(fusion).to({ alpha: 0 }, 8000, Phaser.Easing.Linear.None, false);
       fusionfadeout.onComplete.add(this.emptyfusion, this);
-      footergame.add.tween(fusion).to({ x: 240 }, 500, Phaser.Easing.Linear.None, true)
+      footergame.add.tween(fusion).to({ alpha: 1 }, 250, Phaser.Easing.Linear.None, true)
       .chain(fusionfadeout);
     },
     createplayer: function(pokemon, x, y) {

@@ -171,10 +171,13 @@ function isMod(user) {
 }
 
 function checkPoke(message) {
- message.toLowerCase().replace('nature', ''); // fixes Natu false positive
+ message = message.toLowerCase().replace('nature', ''); // fixes Natu false positive
  var listofpokemon = [];
- if (message.toLowerCase().indexOf('mewtwo') >= 0) listofpokemon.push(pokedex[149]);
- else {
+ if (message.toLowerCase().indexOf('mewtwo') >= 0) {
+  listofpokemon.push(pokedex[149]);
+  message = message.toLowerCase().replace('mewtwo', '');
+  console.log(message);
+ }
   pokemonnameloop: for (var pokes = maxpokes-1; pokes >= 0; pokes--) {
    if (message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) {
     if (pokedex[pokes].Forme) {
@@ -192,8 +195,10 @@ function checkPoke(message) {
     else listofpokemon.push(pokedex[pokes]);
    }
   }
- }
- return listofpokemon;
+  console.log(listofpokemon);
+ return listofpokemon.sort(function(a, b){
+  return message.indexOf(a.Pokemon.toLowerCase())-message.indexOf(b.Pokemon.toLowerCase());
+ });
 }
 
 function checkDb(obj){
