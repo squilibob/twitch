@@ -50,18 +50,18 @@ function chatbot() {
   }
  });
 
- // client.connect();
- // socket.emit('send raffle', true);
- // socket.emit("Ask for table", 'Moves');
- // socket.emit("Ask for table", 'Abilities');
- // socket.emit("Ask for table", 'Bttv');
- // socket.emit("Ask for table", 'Ffz');
+ client.connect();
+ socket.emit('send raffle', true);
+ socket.emit("Ask for table", 'Moves');
+ socket.emit("Ask for table", 'Abilities');
+ socket.emit("Ask for table", 'Bttv');
+ socket.emit("Ask for table", 'Ffz');
 
-// var timers = [
-//  window.setInterval(getViewers, 525000, TwitchID),
-//  window.setInterval(repeating_notice_website, 3000000),
-//  window.setInterval(repeating_notice_signup, 7200000),
-//  window.setInterval(checkfollowers, 180000, TwitchID, false),
-//  window.setInterval(dequeue, 1000*botDelay || 1000),
-// ];
+var timers = [
+ window.setInterval(getViewers, 525000, TwitchID),
+ window.setInterval(repeating_notice_website, 3000000),
+ window.setInterval(repeating_notice_signup, 7200000),
+ window.setInterval(checkfollowers, 180000, TwitchID, false),
+ window.setInterval(dequeue, 1000*botDelay || 1000),
+];
 }

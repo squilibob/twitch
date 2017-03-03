@@ -323,6 +323,10 @@ io.on('connection', function(socket){
 		io.emit("playsound", ('000' + poke).substr(-3));
 	});
 
+	socket.on("update vote", function(){
+		sendVoteUpdate();
+	});
+
 	socket.on("Vote poll", function(payload){
 		r.table('Vote')
 		.get('system')

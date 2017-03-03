@@ -77,7 +77,7 @@ socket.on('invalid raffle user', function(username) {
 });
 
 socket.on("Vote options", function(list){
-  submitchat(list.title + ' You can !vote for: ' + list.options.join(', '));
+  submitchat('the current poll is: ' + list.title + ' You can !vote for: ' + list.options.join(', '));
 });
 
 function repeating_notice_website () {

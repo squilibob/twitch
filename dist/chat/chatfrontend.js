@@ -274,11 +274,11 @@ help: 'this command ',
       question: false,
       exclusive: false,
       pokemon: false,
-      parameters: 1, //refactor
+      parameters: 0, //refactor
       modonly: false
     },
     action: function(obj){
-       var voteoption = message.split(' ');
+       var voteoption = obj.message.split(' ');
        (voteoption.length > 1 && voteoption[0].indexOf('!vote') >= 0) ? socket.emit("Send vote", {id: obj.user.username.toLowerCase(), vote: capitalize(voteoption[1].toLowerCase())}) : socket.emit("Show vote");
       return false;
     }
@@ -657,7 +657,7 @@ help: 'this command ',
       question: false,
       exclusive: false,
       pokemon: 2,
-      parameters: 2,
+      parameters: 0,
       modonly: false
     },
     action: function(obj){
@@ -770,8 +770,23 @@ help: 'this command ',
       var title;
       var options = obj.message.substr(obj.message.toLowerCase().indexOf('!poll')+'!poll'.length).split('|');
       title = options.shift();
-      for (vote of options) capitalize(vote);
+      for (voteoption in options) options[voteoption] = capitalize(options[voteoption]);
       if (options.length > 1) socket.emit("Vote poll", {options: options, title: title});
+    }
+  },
+  '!showpoll': {
+    altcmds: [],
+    help: 'this command ',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      pokemon: false,
+      parameters: 0,
+      modonly: false
+    },
+    action: function(obj){
+      socket.emit("update vote");
     }
   },
   '!topsyturvy': {
