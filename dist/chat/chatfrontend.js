@@ -368,15 +368,15 @@ help: 'this command ',
     {
       question: false,
       exclusive: false,
-      pokemon: true,
+      pokemon: 1,
       parameters: 1,
       modonly: false
     },
     action: function(obj){
       var response;
-      if (obj.pokemon['Egg Group I'])
-       if (obj.pokemon['Egg Group II'] && obj.pokemon['Egg Group II'] != ' ') response = obj.pokemon.Pokemon + ' is in egg groups ' + obj.pokemon['Egg Group I'] + ' & ' + obj.pokemon['Egg Group II'];
-       else response = obj.pokemon.Pokemon + ' is in egg group ' + obj.pokemon['Egg Group I'];
+      if (obj.pokemon[0]['Egg Group I'])
+       if (obj.pokemon[0]['Egg Group II'] && obj.pokemon[0]['Egg Group II'] != ' ') response = obj.pokemon[0].Pokemon + ' is in egg groups ' + obj.pokemon[0]['Egg Group I'] + ' & ' + obj.pokemon[0]['Egg Group II'];
+       else if (obj.pokemon[0]['Egg Group I'].length) response = obj.pokemon[0].Pokemon + ' is in egg group ' + obj.pokemon[0]['Egg Group I'];
       return response;
     }
   },
@@ -387,14 +387,14 @@ help: 'this command ',
     {
       question: true,
       exclusive: true,
-      pokemon: true,
+      pokemon: 1,
       parameters: 0,
       modonly: false
     },
     action: function(obj){
       var response;
-       response = obj.pokemon.Pokemon + ' will reward the EVs:'
-        evloop: for (ev in obj.pokemon.EVs) response += ' ' + obj.pokemon.EVs[ev] + ' x ' + ev
+       response = obj.pokemon[0].Pokemon + ' will reward the EVs:'
+        evloop: for (ev in obj.pokemon[0].EVs) response += ' ' + obj.pokemon[0].EVs[ev] + ' x ' + ev
       return response;
     }
   },
@@ -436,12 +436,12 @@ help: 'this command ',
     {
       question: true,
       exclusive: false,
-      pokemon: true,
+      pokemon: 1,
       parameters: 0,
       modonly: false
     },
     action: function(obj){
-      typeof(obj.pokemon.id === 'number') && socket.emit("pokemon cry", obj.pokemon.id);
+      typeof(obj.pokemon[0].id === 'number') && socket.emit("pokemon cry", obj.pokemon[0].id);
       return false;
     }
   },  'weak': {
@@ -457,8 +457,8 @@ help: 'this command ',
     },
     action: function(obj){
       var response;
-      if (obj.pokemon) {
-        response = obj.pokemon.Pokemon + ' is weak to ' + weakTo(obj.pokemon.Type, obj.pokemon.Secondary).join(', ');
+      if (obj.pokemon[0]) {
+        response = obj.pokemon[0].Pokemon + ' is weak to ' + weakTo(obj.pokemon[0].Type, obj.pokemon[0].Secondary).join(', ');
       }
       else {
          obj.message.split(' ').forEach((weak, index) => {
@@ -482,9 +482,9 @@ help: 'this command ',
     },
     action: function(obj){
       var response = 'Does not resist anything';
-        if (obj.pokemon) {
-          var list = resistantTo(obj.pokemon.Type, obj.pokemon.Secondary);
-          response = obj.pokemon.Pokemon + ' is resistant to ' + (list.resist.length > 0 ? list.resist.join(', ') : 'nothing');
+        if (obj.pokemon[0]) {
+          var list = resistantTo(obj.pokemon[0].Type, obj.pokemon[0].Secondary);
+          response = obj.pokemon[0].Pokemon + ' is resistant to ' + (list.resist.length > 0 ? list.resist.join(', ') : 'nothing');
           if (list.immune.length > 0) response += ' and immune to ' + list.immune.join(', ');
         }
         else {
@@ -524,24 +524,24 @@ help: 'this command ',
     {
       question: true,
       exclusive: false,
-      pokemon: true,
+      pokemon: 1,
       parameters: 0,
       modonly: false
     },
     action: function(obj){
       var reply ='';
-      var dexno = obj.pokemon;
-       if (obj.pokemon.Prevo) {
-        reply += obj.pokemon.Pokemon + ' evolves from ' + obj.pokemon.Prevo;
-        if (obj.pokemon.Evolve) if (obj.pokemon.Evolve != 0) reply += ' (' + obj.pokemon.Evolve + ') ';
-       } else if (!(obj.pokemon.Evos)) reply = obj.pokemon.Pokemon + ' has no evolutions';
-       if (obj.pokemon.Evos.length > 0)
-        reply += obj.pokemon.Pokemon + ' evolves into ';
-       evolutionsloop: for (var count = 0; count < obj.pokemon.Evos.length; count++) {
-        reply += obj.pokemon.Evos[count];
-        reply += ' (' + pokedex[findpoke(obj.pokemon.Evos[count])-1].Evolve + ') ';
-        if (count + 2 == obj.pokemon.Evos.length) reply += ' and ';
-        else if (count + 1 < obj.pokemon.Evos.length) reply += ', ';
+      var dexno = obj.pokemon[0];
+       if (obj.pokemon[0].Prevo) {
+        reply += obj.pokemon[0].Pokemon + ' evolves from ' + obj.pokemon[0].Prevo;
+        if (obj.pokemon[0].Evolve) if (obj.pokemon[0].Evolve != 0) reply += ' (' + obj.pokemon[0].Evolve + ') ';
+       } else if (!(obj.pokemon[0].Evos)) reply = obj.pokemon[0].Pokemon + ' has no evolutions';
+       if (obj.pokemon[0].Evos.length > 0)
+        reply += obj.pokemon[0].Pokemon + ' evolves into ';
+       evolutionsloop: for (var count = 0; count < obj.pokemon[0].Evos.length; count++) {
+        reply += obj.pokemon[0].Evos[count];
+        reply += ' (' + pokedex[findpoke(obj.pokemon[0].Evos[count])-1].Evolve + ') ';
+        if (count + 2 == obj.pokemon[0].Evos.length) reply += ' and ';
+        else if (count + 1 < obj.pokemon[0].Evos.length) reply += ', ';
        }
        if (reply != obj.message && reply != '')
          return reply;
@@ -554,15 +554,15 @@ help: 'this command ',
     {
       question: true,
       exclusive: false,
-      pokemon: true,
+      pokemon: 1,
       parameters: 0,
       modonly: false
     },
     action: function(obj){
       var reply ='';
-      if (obj.pokemon.Location) reply += obj.pokemon.Pokemon + ' SuMo locations: ' + obj.pokemon.Location;
-      else if (obj.pokemon.locationORAS) reply += obj.pokemon.Pokemon + ' ORAS locations: ' + obj.pokemon.locationORAS;
-      else reply = 'No location in ORAS for ' + obj.pokemon.Pokemon;
+      if (obj.pokemon[0].Location) reply += obj.pokemon[0].Pokemon + ' SuMo locations: ' + obj.pokemon[0].Location;
+      else if (obj.pokemon[0].locationORAS) reply += obj.pokemon[0].Pokemon + ' ORAS locations: ' + obj.pokemon[0].locationORAS;
+      else reply = 'No location in ORAS for ' + obj.pokemon[0].Pokemon;
       if (reply != obj.message && reply != '')
         return reply;
     }
@@ -629,7 +629,22 @@ help: 'this command ',
     action: function(obj){
       var response;
       abilityloop: for (ability in abilities) {
-        if (obj.message.toLowerCase().indexOf(ability.toLowerCase()) >= 0) response = ability + ': ' + abilities[ability];
+        if (obj.message.toLowerCase().indexOf(ability.toLowerCase()) >= 0)
+          if (obj.message.toLowerCase().indexOf('pokemon') >= 0) {
+            var hasability = [];
+            for (testpoke of pokedex)
+              for (testability of testpoke.Ability)
+                if (testability == ability) hasability.push(testpoke.Pokemon);
+            if (hasability.length) response = 'the pokemon with the ability ' + ability + ' are: ';
+            if (hasability.length < response_length+1) response += hasability.join(', ');
+            else {
+                  pokemonthatcanlearnloop: for (var learnresponse=0; learnresponse<response_length-1; learnresponse++){
+                  response += hasability[learnresponse] + ', ';
+                }
+                response += (hasability.length - response_length) + ' more';
+            }
+          }
+          else response = ability + ': ' + abilities[ability];
       }
       return response;
     }
@@ -641,20 +656,16 @@ help: 'this command ',
     {
       question: false,
       exclusive: false,
-      pokemon: true,
+      pokemon: 2,
       parameters: 2,
       modonly: false
     },
     action: function(obj){
-      secondpoke = findpoke(obj.parameters[0]);
-      firstpoke = findpoke(obj.parameters[1]);
-      if (!(firstpoke > 0)) firstpoke = obj.pokemon.id;
-      if (!(secondpoke > 0)) secondpoke = obj.pokemon.id;
-      var fusion = 'http://images.alexonsager.net/pokemon/fused/'+ (firstpoke) + '/'+ (firstpoke) + '.' + (secondpoke) + '.png';
-      if (typeof(firstpoke) == 'number' && typeof(secondpoke) == 'number')
-        if (firstpoke > 0 && firstpoke < 152 && secondpoke > 0 && secondpoke < 152 ) {
+      var fusion = 'http://images.alexonsager.net/pokemon/fused/'+ (obj.pokemon[0].id) + '/'+ (obj.pokemon[0].id) + '.' + (obj.pokemon[1].id) + '.png';
+      if (typeof(obj.pokemon[0].id) == 'number' && typeof(obj.pokemon[1].id) == 'number')
+        if (obj.pokemon[0].id > 0 && obj.pokemon[0].id < 152 && obj.pokemon[1].id > 0 && obj.pokemon[1].id < 152 ) {
           // handleChat(obj.channel, obj.user, '', true, -1, fusion);
-          socket.emit('send fusion', firstpoke, secondpoke);
+          socket.emit('send fusion', obj.pokemon[0].id, obj.pokemon[1].id);
         }
       }
   },
@@ -665,18 +676,18 @@ help: 'this command ',
     {
       question: true,
       exclusive: false,
-      pokemon: true,
+      pokemon: 1,
       parameters: 1,
       modonly: false
     },
     action: function(obj){
-      var response = obj.pokemon.Pokemon + ' stats: ';
-      response += obj.pokemon.HP + '/';
-      response += obj.pokemon.Attack + '/';
-      response += obj.pokemon.Defense + '/';
-      response += obj.pokemon['Sp. Attack'] + '/';
-      response += obj.pokemon['Sp. Defense'] + '/';
-      response += obj.pokemon.Speed;
+      var response = obj.pokemon[0].Pokemon + ' stats: ';
+      response += obj.pokemon[0].HP + '/';
+      response += obj.pokemon[0].Attack + '/';
+      response += obj.pokemon[0].Defense + '/';
+      response += obj.pokemon[0]['Sp. Attack'] + '/';
+      response += obj.pokemon[0]['Sp. Defense'] + '/';
+      response += obj.pokemon[0].Speed;
       return response;
     }
   },
@@ -689,7 +700,7 @@ help: 'this command ',
       exclusive: false,
       pokemon: false,
       parameters: 1,
-      modonly: false
+      modonly: true
     },
     action: function(obj){
       if (!self.fetch) {
@@ -721,7 +732,7 @@ help: 'this command ',
       exclusive: false,
       pokemon: false,
       parameters: 1,
-      modonly: false
+      modonly: true
     },
     action: function(obj){
       if (!self.fetch) {
@@ -892,9 +903,9 @@ function parseMessage(channel, user, message, self) {
     var cmdarr = parser[command].altcmds ? [command].concat(parser[command].altcmds) : [command];
     cmdexist = checkExist(message, cmdarr, parser[command].requires.exclusive);
 
-    if (cmdexist) {
+    if (!self && cmdexist) {
       var parameters = [];
-      if (parser[command].requires.pokemon && !messagepayload.pokemon) cmdexist = false;
+      if (parser[command].requires.pokemon && messagepayload.pokemon.length < parser[command].requires.pokemon.length) cmdexist = false;
       if (parser[command].requires.question && !containsquestion) cmdexist = false;
       if (parser[command].requires.modonly && !modmessage) cmdexist = false;
       if (parser[command].requires.parameters) {
@@ -903,14 +914,14 @@ function parseMessage(channel, user, message, self) {
       }
       messagepayload.parameters = parameters;
     }
-    if (cmdexist) response = parser[command].action(messagepayload);
+    if (!self && cmdexist) response = parser[command].action(messagepayload);
    }
 
    var parseurl = urlDecode(messagepayload.message);
    messagepayload.message = parseurl.message;
    var image = parseurl.image;
 
-   if (!self && userexisted && containsquestion && !response && messagepayload.pokemon)
+   if (!self && userexisted && containsquestion && !response && messagepayload.pokemon.length)
     response = checkDb(messagepayload);
 
   if (!self && userexisted && containsquestion && !response)

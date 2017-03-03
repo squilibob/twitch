@@ -171,52 +171,62 @@ function isMod(user) {
 }
 
 function checkPoke(message) {
-  var dexno = -1;
- if (message.toLowerCase().indexOf('mewtwo') >= 0) dexno = 149;
- else
-  pokemonnameloop: for (var pokes = 0; pokes < maxpokes; pokes++)
-   if (message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) dexno = pokes;
-  if (dexno > 0) if (pokedex[dexno].Forme)
-    for (forme in pokedex[dexno].Forme)
+ message.toLowerCase().replace('nature', ''); // fixes Natu false positive
+ var listofpokemon = [];
+ if (message.toLowerCase().indexOf('mewtwo') >= 0) listofpokemon.push(pokedex[149]);
+ else {
+  pokemonnameloop: for (var pokes = maxpokes-1; pokes >= 0; pokes--) {
+   if (message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) {
+    if (pokedex[pokes].Forme) {
+     var mergeforme;
+     findformeloop: for (forme in pokedex[pokes].Forme)
       if (message.toLowerCase().indexOf(forme.toLowerCase()) >=0) {
-        var mergeforme = JSON.parse(JSON.stringify(pokedex[dexno]));
-        for (merge in pokedex[dexno].Forme[forme]) {
-          mergeforme[merge] = pokedex[dexno].Forme[forme][merge];
-        }
-        mergeforme.Pokemon = forme;
-        return mergeforme;
+       mergeforme = JSON.parse(JSON.stringify(pokedex[pokes]));
+       mergeformeloop: for (merge in pokedex[pokes].Forme[forme])
+        mergeforme[merge] = pokedex[pokes].Forme[forme][merge];
+       mergeforme.Pokemon = forme;
+       listofpokemon.push(mergeforme);
       }
-  return dexno > -1 ? pokedex[dexno] : false;
+      if (!mergeforme) listofpokemon.push(pokedex[pokes]);
+    }
+    else listofpokemon.push(pokedex[pokes]);
+   }
+  }
+ }
+ return listofpokemon;
 }
 
 function checkDb(obj){
   var message = obj.message;
-  var dexno = obj.pokemon;
+  var dexno = obj.pokemon[0];
+
   var sp = false;
   var command = message.toLowerCase().split(' ');
   var response;
 
    testtypeloop: for (var iterate in command) {
     iterate = parseInt(iterate);
-    if (command[iterate].indexOf('type') >= 0 && obj.pokemon.Secondary) {
-     response = obj.pokemon.Pokemon + ' types are ' + obj.pokemon.Type + '/' + obj.pokemon.Secondary;
+    if (command[iterate].indexOf('type') >= 0 && obj.pokemon[0].Secondary) {
+     response = obj.pokemon[0].Pokemon + ' types are ' + obj.pokemon[0].Type + '/' + obj.pokemon[0].Secondary;
     } else {
-     sploop: for (var key in obj.pokemon) {
+     sploop: for (var key in obj.pokemon[0]) {
       if (iterate + 1 < command.length && (command[iterate] == 'sp.' || command[iterate] == 'special')) {
        sp = true;
        if ('sp. ' + command[iterate + 1] == key.toLowerCase()) {
-       response = obj.pokemon.Pokemon + ' ' + key + ': ' + obj.pokemon[key];
+       response = obj.pokemon[0].Pokemon + ' ' + key + ': ' + obj.pokemon[0][key];
        }
       } else {
        if (command[iterate] == key.toLowerCase() && key != 'Pokemon' && key != 'EVs' && key != 'Forme' && key != 'Evolve' && sp == false) {
-        if (obj.pokemon[key] !== undefined) response = obj.pokemon.Pokemon + ' ' + key + ': ' + obj.pokemon[key];
+        if (obj.pokemon[0][key] !== undefined) response = obj.pokemon[0].Pokemon + ' ' + key + ': ' + obj.pokemon[0][key];
        }
        if ((command[iterate] == key.toLowerCase() || command[iterate] == 'formes') && key == 'Forme') {
-        response = obj.pokemon.Pokemon + ' Formes are';
-        for (forme in obj.pokemon.Forme) response += ', ' + forme;
+        response = obj.pokemon[0].Pokemon + ' Formes are';
+        for (forme in obj.pokemon[0].Forme) response += ', ' + forme;
        }
-       if (command[iterate] == key.toLowerCase() && key == 'Mass') response += ' kg';
-       if (command[iterate] == key.toLowerCase() && key == 'Height') response += ' m';
+       if (key == 'Mass' && (command[iterate] == 'heavy' || command[iterate].indexOf('weigh') >= 0)) response =  obj.pokemon[0].Pokemon + "'s mass is " +  obj.pokemon[0][key] + ' kg';
+       if (key == 'Mass' && command[iterate] == key.toLowerCase()) response += ' kg';
+       if (key == 'Height' && (command[iterate] == 'high' || command[iterate] == 'tall')) response =  obj.pokemon[0].Pokemon + "'s height is " +  obj.pokemon[0][key] + ' m';
+       if (key == 'Height' && command[iterate] == key.toLowerCase()) response += ' m';
       }
      }
     }
@@ -226,11 +236,11 @@ function checkDb(obj){
 
 function checkMoves (obj) {
   var message = obj.message;
-  var dexno = obj.pokemon ? obj.pokemon.id : -1;
+  var dexno = obj.pokemon.length ? obj.pokemon[0].id : -1;
   var response;
   var fullmove = '';
   moveloop: for (move in moves) {
-    var testmessage = (dexno > -1) ? message.toLowerCase().replace(obj.pokemon.Pokemon.toLowerCase(), '').split(' ') : message.toLowerCase().split(' ');
+    var testmessage = (dexno > -1) ? message.toLowerCase().replace(obj.pokemon[0].Pokemon.toLowerCase(), '').split(' ') : message.toLowerCase().split(' ');
     var testIndex = false;
     var testmove = move.toLowerCase().split(' ');
     if (testmove.length == 1) {
@@ -263,17 +273,17 @@ function checkMoves (obj) {
           }
         }
         if (dexno > -1)
-         if (moves[move].Pokemon[obj.pokemon.Pokemon]) {
-          response = obj.pokemon.Pokemon + ' learns ' + move;
-          if (typeof(moves[move].Pokemon[obj.pokemon.Pokemon]) === 'number')
-            response +=  ' at level ' + moves[move].Pokemon[obj.pokemon.Pokemon];
+         if (moves[move].Pokemon[obj.pokemon[0].Pokemon]) {
+          response = obj.pokemon[0].Pokemon + ' learns ' + move;
+          if (typeof(moves[move].Pokemon[obj.pokemon[0].Pokemon]) === 'number')
+            response +=  ' at level ' + moves[move].Pokemon[obj.pokemon[0].Pokemon];
           else
-            if (moves[move].Pokemon[obj.pokemon.Pokemon].toLowerCase() == 'start') response = obj.pokemon.Pokemon + ' starts with the move ' + move;
+            if (moves[move].Pokemon[obj.pokemon[0].Pokemon].toLowerCase() == 'start') response = obj.pokemon[0].Pokemon + ' starts with the move ' + move;
             else
-              if (moves[move].Pokemon[obj.pokemon.Pokemon].toLowerCase() == 'egg') response += ' as an egg move by breeding';
-              else response += ' by ' + moves[move].Pokemon[obj.pokemon.Pokemon];
+              if (moves[move].Pokemon[obj.pokemon[0].Pokemon].toLowerCase() == 'egg') response += ' as an egg move by breeding';
+              else response += ' by ' + moves[move].Pokemon[obj.pokemon[0].Pokemon];
          }
-         else response = obj.pokemon.Pokemon + ' does not learn ' + move;
+         else response = obj.pokemon[0].Pokemon + ' does not learn ' + move;
         }
       }
     }
