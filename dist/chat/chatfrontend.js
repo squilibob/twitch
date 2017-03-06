@@ -939,7 +939,12 @@ function parseMessage(channel, user, message, self) {
    if (!self && userexisted && containsquestion && !response && messagepayload.pokemon.length)
     response = checkDb(messagepayload);
 
-  if (!self && userexisted && containsquestion && (!response || response.toLowerCase().indexOf('attack') >= 0 || response.toLowerCase().indexOf('defense') >= 0 || response.toLowerCase().indexOf('speed') >= 0  || response.toLowerCase().indexOf('nature') >= 0 ))
+  if (response && (response.toLowerCase().indexOf('attack') >= 0 || response.toLowerCase().indexOf('defense') >= 0 || response.toLowerCase().indexOf('speed') >= 0  || response.toLowerCase().indexOf('nature') >= 0 )) {
+    var tempresponse = checkMoves(messagepayload);
+    if (tempresponse) response = tempresponse;
+  }
+
+  if (!self && userexisted && containsquestion && !response)
    response = checkMoves(messagepayload);
 
    userexisted && handleChat(messagepayload.channel, messagepayload.user, messagepayload.message, messagepayload.self, useravatars[user.username], image);
