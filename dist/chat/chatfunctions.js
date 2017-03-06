@@ -219,8 +219,14 @@ function checkDb(obj){
        response = obj.pokemon[0].Pokemon + ' ' + key + ': ' + obj.pokemon[0][key];
        }
       } else {
-       if (command[iterate] == key.toLowerCase() && key != 'Pokemon' && key != 'EVs' && key != 'Forme' && key != 'Evolve' && sp == false) {
+       if (command[iterate] == key.toLowerCase() && key != 'Pokemon' && key != 'EVs' && key != 'Forme' && key != 'Evolve' && key != 'Ability' && sp == false) {
         if (obj.pokemon[0][key] !== undefined) response = obj.pokemon[0].Pokemon + ' ' + key + ': ' + obj.pokemon[0][key];
+       }
+       if ((command[iterate] == key.toLowerCase() || command[iterate] == 'abilities') && key == 'Ability') {
+        if (obj.pokemon[0][key].length) {
+          response = obj.pokemon[0].Pokemon + ' has the abilit' + (obj.pokemon[0][key].length > 0 ? 'y' : 'ies' ) + ' ' + obj.pokemon[0].Ability.join(', ');
+          if(obj.pokemon[0][key].length > 2) response += ' (hidden ability)';
+        }
        }
        if ((command[iterate] == key.toLowerCase() || command[iterate] == 'formes') && key == 'Forme') {
         response = obj.pokemon[0].Pokemon + ' Formes are';

@@ -257,8 +257,8 @@ project.Pokemotions.prototype = {
       fusion = footergame.add.sprite(footergame.world.centerX, 0, 'fuse' + firstpoke);
       fusion.frame = secondpoke-1;
       fusion.alpha = 0;
-      footergame.add.tween(leftfuse).to({ x: footergame.world.centerX }, 1000, Phaser.Easing.Sinusoidal.In, true);
-      footergame.add.tween(rightfuse).to({ x: footergame.world.centerX }, 1000, Phaser.Easing.Sinusoidal.In, true)
+      footergame.add.tween(leftfuse).to({ x: footergame.world.centerX-120 }, 1000, Phaser.Easing.Sinusoidal.In, true);
+      footergame.add.tween(rightfuse).to({ x: footergame.world.centerX-120 }, 1000, Phaser.Easing.Sinusoidal.In, true)
       .onComplete.add(this.destroy, this);
     },
     fusionmake: function() {
