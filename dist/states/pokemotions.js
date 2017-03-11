@@ -312,8 +312,8 @@ project.Pokemotions.prototype = {
       return playerpoke;
     },
     nextround: function(){
-      // player[0] = this.createplayer(50, footergame.world.width / 2, footergame.world.height / 2);
-      // player[1] = this.createplayer(200, footergame.world.width / 2 + 400, footergame.world.height / 2);
+      player[0] = this.createplayer(50, footergame.world.width / 2, footergame.world.height / 2);
+      player[1] = this.createplayer(200, footergame.world.width / 2 + 400, footergame.world.height / 2);
       enemy[0] = this.createenemy(100, footergame.world.width / 2, footergame.world.height / 2);
     },
     toggleplayerdirection: function(whichplayer){
@@ -332,7 +332,9 @@ project.Pokemotions.prototype = {
     checkHP: function(){
       for (checkplayer of player) {
         (checkplayer.health < 1) && checkplayer.kill();
-        barcolor = parseInt('0x50' + ('00' + Math.floor(checkplayer.health/100 * 255).toString(16)).substr(-2) + '00', 16);
+        // barcolor = parseInt('0x50' + ('00' + Math.floor(checkplayer.health/100 * 255).toString(16)).substr(-2) + '00', 16);
+        barcolor = Phaser.Color.getColor32(255, 80, Math.floor(checkplayer.health/100 * 255), 80);
+
         checkplayer.children[1]
           .clear()
           .lineStyle(1, 0xffffff, 0.5)
@@ -342,7 +344,8 @@ project.Pokemotions.prototype = {
       }
       for (checkenemy of enemy) {
         (checkenemy.health < 1) && checkenemy.kill();
-        barcolor = parseInt('0x' + ('00' + Math.floor(checkenemy.health/100 * 255).toString(16)).substr(-2) + '0000', 16);
+        // barcolor = parseInt('0x' + ('00' + Math.floor(checkenemy.health/100 * 255).toString(16)).substr(-2) + '0000', 16);
+        barcolor = Phaser.Color.getColor32(255, Math.floor(checkenemy.health/100 * 255), 0, 0);
         checkenemy.children[0]
           .clear()
           .lineStyle(1, 0xffffff, 0.5)
@@ -357,6 +360,6 @@ project.Pokemotions.prototype = {
       this.checkBounds();
       this.checkHP();
       enemy[0].setHealth(enemy[0].health - 0.25);
-      // player[0].setHealth(player[0].health - 0.1);
+      player[0].setHealth(player[0].health - 0.1);
     }
   }

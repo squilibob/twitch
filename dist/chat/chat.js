@@ -24,19 +24,19 @@ function chatbot() {
  client.addListener('crash', function() {chatNotice('Crashed', 10000, 4, 'chat-crash');});
 
  client.addListener('connected', function(address, port) {
-  if (showConnectionNotices) chatNotice('Connected', 1000, -2, 'chat-connection-good-connected');
+  showConnectionNotices && chatNotice('Connected', 1000, -2, 'chat-connection-good-connected');
   joinAccounced = [];
   checkfollowers(TwitchID, true);
  });
 
  client.addListener('disconnected', function(reason) {
-  if (showConnectionNotices) chatNotice('Disconnected: ' + (reason || ''), 3000, 2, 'chat-connection-bad-disconnected');
+  showConnectionNotices && chatNotice('Disconnected: ' + (reason || ''), 3000, 2, 'chat-connection-bad-disconnected');
   client.connect();
  });
 
  client.addListener('join', function(channel, username) {
   if(username == client.getUsername()) {
-   if(showConnectionNotices) chatNotice('Joined ' + capitalize(dehash(channel)), 1000, -1, 'chat-room-join');
+   showConnectionNotices && chatNotice('Joined ' + capitalize(dehash(channel)), 1000, -1, 'chat-room-join');
    joinAccounced.push(channel);
    // getViewers(channel);
    getStart(TwitchID);
@@ -44,10 +44,7 @@ function chatbot() {
  });
 
  client.addListener('part', function(channel, username) {
-  var index = joinAccounced.indexOf(channel);
-  if (index > -1) {
-   joinAccounced.splice(joinAccounced.indexOf(channel), 1)
-  }
+  joinAccounced.indexOf(channel) > -1 && joinAccounced.splice(joinAccounced.indexOf(channel), 1)
  });
 
  client.connect();

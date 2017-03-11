@@ -104,8 +104,8 @@ project.Init.prototype = {
     pokedex = JSON.parse(game.storage.getItem("pokedex"));
     typechart = JSON.parse(game.storage.getItem("typechart"));
     if (pokedex && typechart) {
-      if (typechart.length != 19) this.populatetypechart();
-      if (pokedex.length < maxpokes) this.populatedata();
+      typechart.length != 19 && this.populatetypechart();
+      pokedex.length < maxpokes && this.populatedata();
     }
     else {
       typechart = [];
@@ -116,9 +116,7 @@ project.Init.prototype = {
   },
 
   update: function(){
-    if (pokedex) {
-      if (pokedex.length >= maxpokes) this.socketready.dispatch();
-    }
+    pokedex && pokedex.length >= maxpokes && this.socketready.dispatch();
   },
 
   populatetypechart: function(){
@@ -130,7 +128,7 @@ project.Init.prototype = {
   },
 
   ready: function() {
-    if (pokedexoptions.scoring) chatbot();
+    pokedexoptions.scoring && chatbot();
     loader_elements.graphics.destroy(true);
     game.state.start(firststate, Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight);
   },

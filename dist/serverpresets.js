@@ -1,6 +1,6 @@
 const Presets = {
-  'width': 1600,
-  'height': 958,
+  width: 1600,
+  height: 958,
   bgcolor: '#1c0f0c',
   selectedcolor: '#604040',
   font: 'Extra-Cool',

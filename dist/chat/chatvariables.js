@@ -14,6 +14,7 @@ var started,
  randomColorsChosen = {},
  abilities = {},
  moves = {},
+ recentTimeouts = {},
  emoticons = { bttv: [], ffz:[] },
  watching = {chatters: [], viewers: 0},
  queue = {

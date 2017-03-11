@@ -34,7 +34,8 @@
 var parser = {
   '!bot': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command shows information about the bot',
+    times: 0,
     requires :
     {
       question: false,
@@ -49,7 +50,8 @@ var parser = {
   },
   '!join': {
     altcmds: [],
-help: 'this command ',
+    help: 'this command joins chat of another twitch streamers channel',
+    times: 0,
     requires :
     {
       question: false,
@@ -65,7 +67,8 @@ help: 'this command ',
   },
   '!raid': {
     altcmds: [],
-help: 'this command ',
+    help: 'this command shows a raid message and link to a streamers channel',
+    times: 0,
     requires :
     {
       question: false,
@@ -84,7 +87,8 @@ help: 'this command ',
   },
   'tm': {
     altcmds: [],
-help: 'this command ',
+    help: 'this command displays what a TM is based on its number or name',
+    times: 0,
     requires :
     {
       question: true,
@@ -109,7 +113,8 @@ help: 'this command ',
   },
   'hm': {
     altcmds: [],
-help: 'this command ',
+    help: 'this command displays what a HM is based on its name or number',
+    times: 0,
     requires :
     {
       question: true,
@@ -136,7 +141,8 @@ help: 'this command ',
   },
   'hidden power': {
     altcmds: [],
-help: 'this command ',
+    help: 'this command shows the IVs required to get a hidden power based on its type',
+    times: 0,
     requires :
     {
       question: true,
@@ -154,7 +160,8 @@ help: 'this command ',
   },
   '!sign': {
     altcmds: [],
-help: 'this command ',
+    help: 'this command registers a viewers friend code and in game name',
+    times: 0,
     requires :
     {
       question: false,
@@ -200,6 +207,8 @@ help: 'this command ',
   },
   '!fc': {
     altcmds: [' fc '],
+    help: 'displays the users friend code or the FC of the person specified',
+    times: 0,
     requires :
     {
       question: false,
@@ -218,7 +227,8 @@ help: 'this command ',
   },
   'reload me': {
     altcmds: [],
-help: 'this command ',
+    help: 'this command resets the cached copy of the users avatar to the actual avatar',
+    times: 0,
     requires :
     {
       question: false,
@@ -236,7 +246,8 @@ help: 'this command ',
   },
   '!enter': {
     altcmds: [],
-help: 'this command ',
+    help: 'this command enters the user into the raffle',
+    times: 0,
     requires :
     {
       question: false,
@@ -252,7 +263,8 @@ help: 'this command ',
   },
   '!leave': {
     altcmds: [],
-help: 'this command ',
+    help: 'this command removes a user from the raffle',
+    times: 0,
     requires :
     {
       question: false,
@@ -266,15 +278,16 @@ help: 'this command ',
       return false;
     }
   },
-  '!vote': { //needs fixing
+  '!vote': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command votes for a poll option',
+    times: 0,
     requires :
     {
       question: false,
       exclusive: false,
       pokemon: false,
-      parameters: 0, //refactor
+      parameters: 0,
       modonly: false
     },
     action: function(obj){
@@ -285,7 +298,8 @@ help: 'this command ',
   },
   '!cmd': {
     altcmds: ['!command'],
-    help: 'this command ',
+    help: 'this command shows a list of all the commands',
+    times: 0,
     requires :
     {
       question: false,
@@ -305,7 +319,8 @@ help: 'this command ',
   },
   '!uptime': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command shows how long the stream has been live',
+    times: 0,
     requires :
     {
       question: false,
@@ -331,7 +346,8 @@ help: 'this command ',
   },
   '!viewers': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command shows how many people in chat and how many reported viewers from the API',
+    times: 0,
     requires :
     {
       question: false,
@@ -346,7 +362,8 @@ help: 'this command ',
   },
   '!follow': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command shows how long the user has been following',
+    times: 0,
     requires :
     {
       question: false,
@@ -363,7 +380,8 @@ help: 'this command ',
   },
   'egg group': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command displays what egg groups a pokemon is in',
+    times: 0,
     requires :
     {
       question: false,
@@ -382,7 +400,8 @@ help: 'this command ',
   },
   'ev': {
     altcmds: ['evs'],
-    help: 'this command ',
+    help: 'this command shows what effort values a defeated pokemon will yield',
+    times: 0,
     requires :
     {
       question: true,
@@ -400,7 +419,8 @@ help: 'this command ',
   },
   '!raffle': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command shows a users chance to win the raffle if they are in the raffle',
+    times: 0,
     requires :
     {
       question: false,
@@ -431,7 +451,8 @@ help: 'this command ',
   },
   'sound': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command plays the sound of the cry of a pokemon',
+    times: 0,
     requires :
     {
       question: true,
@@ -446,7 +467,8 @@ help: 'this command ',
     }
   },  'weak': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command shows what types a pokemon is weak to',
+    times: 0,
     requires :
     {
       question: true,
@@ -471,7 +493,8 @@ help: 'this command ',
   },
   'resist': {
     altcmds: ['immun'],
-    help: 'this command ',
+    help: 'this command shows what types a pokemon resists or is immune to',
+    times: 0,
     requires :
     {
       question: true,
@@ -499,7 +522,8 @@ help: 'this command ',
   },
   'strong': {
     altcmds: ['effective'],
-    help: 'this command ',
+    help: 'this command shows what a type is effective against',
+    times: 0,
     requires :
     {
       question: true,
@@ -519,7 +543,8 @@ help: 'this command ',
   },
   'evol': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command shows how a pokemon family evolves',
+    times: 0,
     requires :
     {
       question: true,
@@ -549,7 +574,8 @@ help: 'this command ',
   },
   'find': {
     altcmds: ['route', 'locat', 'obtain', 'catch'],
-    help: 'this command ',
+    help: 'this command shows the in game location of a pokemon',
+    times: 0,
     requires :
     {
       question: true,
@@ -569,7 +595,8 @@ help: 'this command ',
   },
   '!battle': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command dispays help on how to battle',
+    times: 0,
     requires :
     {
       question: false,
@@ -584,7 +611,8 @@ help: 'this command ',
   },
   'nature': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command shows what attributes a nature gives a pokemon',
+    times: 0,
     requires :
     {
       question: true,
@@ -617,7 +645,8 @@ help: 'this command ',
   },
   'abilit': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command displays the abilities of a pokemon',
+    times: 0,
     requires :
     {
       question: true,
@@ -651,7 +680,8 @@ help: 'this command ',
   },
   '!fuse': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command displays alexonsager fusion on the stream',
+    times: 0,
     requires :
     {
       question: false,
@@ -671,7 +701,8 @@ help: 'this command ',
   },
   'stat': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command shows all stats of a pokemon',
+    times: 0,
     requires :
     {
       question: true,
@@ -693,7 +724,8 @@ help: 'this command ',
   },
   '!bttv': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command incorporates the users bttv emotes into the database',
+    times: 0,
     requires :
     {
       question: false,
@@ -725,7 +757,8 @@ help: 'this command ',
   },
   '!ffz': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command incorporates the users ffz emotes into the database',
+    times: 0,
     requires :
     {
       question: false,
@@ -757,7 +790,8 @@ help: 'this command ',
   },
   '!poll': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command sets up a poll based on the vote options given',
+    times: 0,
     requires :
     {
       question: false,
@@ -776,7 +810,8 @@ help: 'this command ',
   },
   '!showpoll': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command shows the poll on the stream',
+    times: 0,
     requires :
     {
       question: false,
@@ -791,7 +826,8 @@ help: 'this command ',
   },
   '!topsyturvy': {
     altcmds: [],
-    help: 'this command ',
+    help: 'this command displays the given text upside down',
+    times: 0,
     requires :
     {
       question: false,

@@ -43,39 +43,25 @@ function checkImageExists(imageUrl, callBack) {
 
 function chatNotice(information, noticeFadeDelay, level, additionalClasses) {
  var ele = document.createElement('li');
-
  ele.className = 'chat-line chat-notice';
  ele.innerHTML = information;
-
  if (additionalClasses !== undefined) {
-  if (Array.isArray(additionalClasses)) {
-   additionalClasses = additionalClasses.join(' ');
-  }
+  if (Array.isArray(additionalClasses)) additionalClasses = additionalClasses.join(' ');
   ele.className += ' ' + additionalClasses;
  }
-
- if (typeof level == 'number' && level != 0) {
-  ele.dataset.level = level;
- }
-
+ if (typeof level == 'number' && level != 0) ele.dataset.level = level;
  chat.appendChild(ele);
-
  if (typeof noticeFadeDelay == 'number') {
   setTimeout(function() {
    ele.dataset.faded = '';
   }, noticeFadeDelay || 500);
  }
-
  return ele;
 }
 
-var recentTimeouts = {};
-
 function timeout(channel, username) {
  if (!doTimeouts) return false;
- if (!recentTimeouts.hasOwnProperty(channel)) {
-  recentTimeouts[channel] = {};
- }
+ if (!recentTimeouts.hasOwnProperty(channel)) recentTimeouts[channel] = {};
  if (!recentTimeouts[channel].hasOwnProperty(username) || recentTimeouts[channel][username] + 1000 * 10 < +new Date) {
   recentTimeouts[channel][username] = +new Date;
   chatNotice(capitalize(username) + ' was timed-out in ' + capitalize(dehash(channel)), 1000, 1, 'chat-delete-timeout')
@@ -144,7 +130,7 @@ function parseraffle (raff) {
     }
   }
   participants = updated;
-  if (justentered.length > 0) submitchat(justentered.join(', ') + (justentered.length == 1 ? ' has' : ' have') + ' been entered into the raffle');
+  justentered.length > 0 && submitchat(justentered.join(', ') + (justentered.length == 1 ? ' has' : ' have') + ' been entered into the raffle');
 }
 
 
@@ -189,7 +175,7 @@ function checkPoke(message) {
        mergeforme.Pokemon = forme;
        listofpokemon.push(mergeforme);
       }
-      if (!mergeforme) listofpokemon.push(pokedex[pokes]);
+      !mergeforme && listofpokemon.push(pokedex[pokes]);
     }
     else listofpokemon.push(pokedex[pokes]);
    }
@@ -304,25 +290,10 @@ function checkExist(checkstring, checkarray, separateword){
   exist = false;
   if (separateword) {
    checkseparatewordloop: for (word of checkstring.toLowerCase().split(' '))
-   if (checkarray.indexOf(word) >= 0) {
-    exist = true;
-   }
+   if (checkarray.indexOf(word) >= 0) exist = true;
   }
   else checknotseparatewordloop: for (word of checkarray) {
-   if (checkstring.toLowerCase().indexOf(word) >= 0) {
-    exist = true;
-   }
+   if (checkstring.toLowerCase().indexOf(word) >= 0) exist = true;
   }
   return exist;
 }
-
-// function checkSubstitutions{
-// var substitutions = {
-//   ' me ': ' ' + user.username + ' ',
-//   'someone': viewers[Math.ceil(Math.random() * viewers.length) - 1]
-// };
-// substitutionloop: for (var replace in substitutions) {
-//  var insert = substitutions[replace];
-//  if (reply.indexOf(replace) >= 0) reply = reply.slice(0, reply.indexOf(replace)) + insert + reply.slice(reply.indexOf(replace) + replace.length, reply.length);
-// }
-// }
