@@ -9,6 +9,7 @@ project.Pokemotions = function(game) {
   leftfuse,
   rightfuse,
   fx,
+  followersound,
   decoded,
   txtstyle,
   questiontext,
@@ -23,6 +24,7 @@ project.Pokemotions.prototype = {
     preload: function(){
       footergame.load.spritesheet('pokemotevulpix', '/img/pokemotions.png', 206, 236);
       footergame.load.image('followerbg', '/img/paint.png');
+      footergame.load.audio('followersound', '/audio/ability.mp3');
       footergame.load.audiosprite('cries', '/audio/cries.ogg', '/audio/cries.json', audioJSON.cries);
       footergame.load.spritesheet('playerpoke', '/img/gen6.png', 32, 32);
       for (currentfuse = 1; currentfuse < 152; currentfuse++) {
@@ -59,6 +61,8 @@ project.Pokemotions.prototype = {
       fx = footergame.add.audioSprite('cries');
       fx.allowMultiple = true;
       footergame.sound.setDecodedCallback(['cries'], this.playsound, this);
+      followersound = footergame.add.audio('followersound');
+
       this.nextround();
       this.addsocketlisteners(this);
     },
@@ -114,6 +118,7 @@ project.Pokemotions.prototype = {
       folfadeout.onComplete.add(this.emptygroup, this);
       footergame.add.tween(folmask).to({ x: 0 }, 500, Phaser.Easing.Linear.None, true)
       .chain(folfadeout);
+      followersound.play();
     },
     emptygroup: function() {
       followergroup.destroy(true, true);
@@ -312,8 +317,8 @@ project.Pokemotions.prototype = {
       return playerpoke;
     },
     nextround: function(){
-      player[0] = this.createplayer(50, footergame.world.width / 2, footergame.world.height / 2);
-      player[1] = this.createplayer(200, footergame.world.width / 2 + 400, footergame.world.height / 2);
+      // player[0] = this.createplayer(50, footergame.world.width / 2, footergame.world.height / 2);
+      // player[1] = this.createplayer(200, footergame.world.width / 2 + 400, footergame.world.height / 2);
       enemy[0] = this.createenemy(100, footergame.world.width / 2, footergame.world.height / 2);
     },
     toggleplayerdirection: function(whichplayer){
@@ -360,6 +365,6 @@ project.Pokemotions.prototype = {
       this.checkBounds();
       this.checkHP();
       enemy[0].setHealth(enemy[0].health - 0.25);
-      player[0].setHealth(player[0].health - 0.1);
+      // player[0].setHealth(player[0].health - 0.1);
     }
   }
