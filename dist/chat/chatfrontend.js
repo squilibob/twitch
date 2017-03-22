@@ -39,6 +39,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: false,
       exclusive: false,
       pokemon: false,
       parameters: 1,
@@ -55,6 +56,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: true,
       exclusive: true,
       pokemon: false,
       parameters: 1,
@@ -72,6 +74,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: false,
       exclusive: false,
       pokemon: false,
       parameters: 1,
@@ -92,6 +95,7 @@ var parser = {
     requires :
     {
       question: true,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 1, //refactor
@@ -118,6 +122,7 @@ var parser = {
     requires :
     {
       question: true,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 1, //refactor
@@ -146,6 +151,7 @@ var parser = {
     requires :
     {
       question: true,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 1, //refactor
@@ -165,6 +171,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 2,
@@ -212,6 +219,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 0,
@@ -225,13 +233,14 @@ var parser = {
       return false;
     }
   },
-  'reload me': {
+  '!reload': {
     altcmds: [],
     help: 'this command resets the cached copy of the users avatar to the actual avatar',
     times: 0,
     requires :
     {
       question: false,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 0,
@@ -251,6 +260,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: false,
       exclusive: false,
       pokemon: false,
       parameters: 0,
@@ -268,6 +278,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 0,
@@ -285,6 +296,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 0,
@@ -303,6 +315,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: false,
       exclusive: false,
       pokemon: false,
       parameters: 0,
@@ -324,6 +337,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 1,
@@ -351,6 +365,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 1,
@@ -367,6 +382,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 0,
@@ -385,6 +401,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: true,
       exclusive: false,
       pokemon: 1,
       parameters: 1,
@@ -405,6 +422,7 @@ var parser = {
     requires :
     {
       question: true,
+      display: true,
       exclusive: true,
       pokemon: 1,
       parameters: 0,
@@ -424,6 +442,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: false,
       exclusive: false,
       pokemon: false,
       parameters: 1,
@@ -456,6 +475,7 @@ var parser = {
     requires :
     {
       question: true,
+      display: true,
       exclusive: false,
       pokemon: 1,
       parameters: 0,
@@ -472,6 +492,7 @@ var parser = {
     requires :
     {
       question: true,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 1,
@@ -498,6 +519,7 @@ var parser = {
     requires :
     {
       question: true,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 1,
@@ -527,6 +549,7 @@ var parser = {
     requires :
     {
       question: true,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 1,
@@ -548,6 +571,7 @@ var parser = {
     requires :
     {
       question: true,
+      display: true,
       exclusive: false,
       pokemon: 1,
       parameters: 0,
@@ -579,6 +603,7 @@ var parser = {
     requires :
     {
       question: true,
+      display: true,
       exclusive: false,
       pokemon: 1,
       parameters: 0,
@@ -600,6 +625,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: false,
       exclusive: false,
       pokemon: false,
       parameters: 0,
@@ -616,6 +642,7 @@ var parser = {
     requires :
     {
       question: true,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 1,
@@ -650,6 +677,7 @@ var parser = {
     requires :
     {
       question: true,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 1,
@@ -685,6 +713,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: false,
       exclusive: false,
       pokemon: 2,
       parameters: 0,
@@ -706,6 +735,7 @@ var parser = {
     requires :
     {
       question: true,
+      display: true,
       exclusive: false,
       pokemon: 1,
       parameters: 1,
@@ -729,6 +759,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 1,
@@ -762,6 +793,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 1,
@@ -795,6 +827,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: true,
       exclusive: true,
       pokemon: false,
       parameters: 1,
@@ -815,6 +848,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: true,
       exclusive: false,
       pokemon: false,
       parameters: 0,
@@ -831,6 +865,7 @@ var parser = {
     requires :
     {
       question: false,
+      display: false,
       exclusive: false,
       pokemon: false,
       parameters: 1,
@@ -912,6 +947,22 @@ var parser = {
       }).join('');
     }
   },
+  '!discord': {
+    altcmds: ['!chat'],
+    help: 'this command shows an invite link',
+    requires :
+    {
+      question: false,
+      exclusive: false,
+      display: true,
+      pokemon: false,
+      parameters: 0,
+      modonly: false
+    },
+    action: function(obj){
+      return "We don't use discord, join us on the twitch app chat server at https://invite.twitch.tv/EdlanMizliPaws";
+    }
+  },
   // '!test': {
   //   altcmds: [],
   //   help: 'this command ',
@@ -919,6 +970,7 @@ var parser = {
   //   {
   //     question: true,
   //     exclusive: false,
+   //    display: true,
   //     pokemon: false,
   //     parameters: 1,
   //     modonly: false
@@ -947,6 +999,7 @@ function parseMessage(channel, user, message, self) {
   var question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which']; //'who ', 'why ', 'did ',
   var containsquestion = checkExist(message, question, true);
   var response;
+  var displaycommand = true;
 
   if (!self && userexisted)
    commandparseloop: for (command in parser){
@@ -964,8 +1017,9 @@ function parseMessage(channel, user, message, self) {
           if (message.split(' ').length > fill) parameters.push(message.toLowerCase().split(' ')[fill]);
       }
       messagepayload.parameters = parameters;
+      response = parser[command].action(messagepayload);
+      displaycommand = parser[command].requires.display;
     }
-    if (!self && cmdexist) response = parser[command].action(messagepayload);
    }
 
    var parseurl = urlDecode(messagepayload.message);
@@ -983,7 +1037,7 @@ function parseMessage(channel, user, message, self) {
   if (!self && userexisted && containsquestion && !response)
    response = checkMoves(messagepayload);
 
-   userexisted && handleChat(messagepayload.channel, messagepayload.user, messagepayload.message, messagepayload.self, useravatars[user.username], image);
+   userexisted && displaycommand && handleChat(messagepayload.channel, messagepayload.user, messagepayload.message, messagepayload.self, useravatars[user.username], image);
    if (response && userexisted) submitchat(response);
  }
 

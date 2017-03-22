@@ -319,7 +319,9 @@ project.Pokemotions.prototype = {
     nextround: function(){
       // player[0] = this.createplayer(50, footergame.world.width / 2, footergame.world.height / 2);
       // player[1] = this.createplayer(200, footergame.world.width / 2 + 400, footergame.world.height / 2);
-      enemy[0] = this.createenemy(100, footergame.world.width / 2, footergame.world.height / 2);
+      // player[2] = this.createplayer(280, footergame.world.width / 2 + 580, footergame.world.height / 2);
+      // enemy[0] = this.createenemy(100, footergame.world.width / 2, footergame.world.height / 2);
+      // enemy[1] = this.createenemy(700, footergame.world.width / 2 - 100, footergame.world.height / 2);
     },
     toggleplayerdirection: function(whichplayer){
       whichplayer.body.velocity.x *= -1;
@@ -359,12 +361,21 @@ project.Pokemotions.prototype = {
           .endFill();
       }
     },
+    checkPromixity: function(){
+      for (currentenemy of enemy) currentenemy.alpha = 1
+      for (currentplayer of player)
+        for (currentenemy of enemy){
+          if (Math.abs(currentplayer.x - currentenemy.x) < 60)
+           currentenemy.alpha = 0.5;
+        }
+    },
     update: function(){
       if (followed.length && !runningfolloweranimation) this.followershow(followed.shift());
       if (fusionqueue.length && !runningfusionanimation) this.fusionshow(fusionqueue.shift());
       this.checkBounds();
       this.checkHP();
-      enemy[0].setHealth(enemy[0].health - 0.25);
+      this.checkPromixity();
+      // enemy[0].setHealth(enemy[0].health - 0.25);
       // player[0].setHealth(player[0].health - 0.1);
     }
   }
