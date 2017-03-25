@@ -56,14 +56,14 @@ project.Pokemotions.prototype = {
       listgroup = footergame.add.group();
       player = [];
       enemy = [];
-      maxvelocity = 120;
+      maxvelocity = 36;
 
       fx = footergame.add.audioSprite('cries');
       fx.allowMultiple = true;
       footergame.sound.setDecodedCallback(['cries'], this.playsound, this);
       followersound = footergame.add.audio('followersound');
 
-      this.nextround();
+      this.firstround();
       this.addsocketlisteners(this);
     },
     addsocketlisteners: function(_this) {
@@ -316,12 +316,20 @@ project.Pokemotions.prototype = {
       playerpoke.addChild(footergame.add.graphics());
       return playerpoke;
     },
-    nextround: function(){
+    firstround: function(){
       // player[0] = this.createplayer(50, footergame.world.width / 2, footergame.world.height / 2);
       // player[1] = this.createplayer(200, footergame.world.width / 2 + 400, footergame.world.height / 2);
       // player[2] = this.createplayer(280, footergame.world.width / 2 + 580, footergame.world.height / 2);
-      // enemy[0] = this.createenemy(100, footergame.world.width / 2, footergame.world.height / 2);
+      // enemy[0] = this.createenemy(25, footergame.world.width / 2 - 200, footergame.world.height / 2);
       // enemy[1] = this.createenemy(700, footergame.world.width / 2 - 100, footergame.world.height / 2);
+      // enemy[2] = this.createenemy(480, footergame.world.width / 2 - 400, footergame.world.height / 2);
+    },
+    nextround: function(){
+      for (checkenemy of enemy) {
+        checkenemy.health = 100;
+        checkenemy.revive();
+        checkenemy.x = checkenemy.body.width+Math.floor(Math.random() * footergame.world.width-checkenemy.body.width*2);
+      }
     },
     toggleplayerdirection: function(whichplayer){
       whichplayer.body.velocity.x *= -1;
@@ -331,12 +339,14 @@ project.Pokemotions.prototype = {
     checkBounds: function(){
       for (checkplayer of player) {
         var playerdirection = Math.sign(checkplayer.body.velocity.x);
-        if ((checkplayer.x-maxvelocity < 0 && playerdirection == -1) || (checkplayer.x+maxvelocity >= footergame.world.width && playerdirection == 1)) {
+        // console.log(checkplayer.x+maxvelocity, footergame.world.width);
+        if ((checkplayer.x-checkplayer.body.width < 0 && playerdirection == -1) || (checkplayer.x+checkplayer.body.width >= footergame.world.width && playerdirection == 1)) {
           this.toggleplayerdirection(checkplayer);
         }
       }
     },
     checkHP: function(){
+      var playersalive=false;
       for (checkplayer of player) {
         (checkplayer.health < 1) && checkplayer.kill();
         // barcolor = parseInt('0x50' + ('00' + Math.floor(checkplayer.health/100 * 255).toString(16)).substr(-2) + '00', 16);
@@ -348,7 +358,9 @@ project.Pokemotions.prototype = {
           .beginFill(barcolor)
           .drawRect(-16 * checkplayer.health / 100, -20, 32 * checkplayer.health / 100, 6)
           .endFill();
+          if (checkplayer.alive) playersalive = true;
       }
+      var enemiesalive=false;
       for (checkenemy of enemy) {
         (checkenemy.health < 1) && checkenemy.kill();
         // barcolor = parseInt('0x' + ('00' + Math.floor(checkenemy.health/100 * 255).toString(16)).substr(-2) + '0000', 16);
@@ -359,23 +371,58 @@ project.Pokemotions.prototype = {
           .beginFill(barcolor)
           .drawRect(-16 * checkenemy.health / 100, -20, 32 * checkenemy.health / 100, 6)
           .endFill();
+        if (checkenemy.alive) enemiesalive = true;
+      }
+      if (!enemiesalive) this.nextround();
+      else if (!playersalive) {
+        for (checkenemy of enemy) {
+          currentenemy.animations.play('walk', 4, true);
+          checkenemy.body.velocity.x = Math.sign(checkenemy.scale.x) * maxvelocity;
+        }
       }
     },
     checkPromixity: function(){
-      for (currentenemy of enemy) currentenemy.alpha = 1
-      for (currentplayer of player)
+      for (currentenemy of enemy) {
+        currentenemy.alpha = 1
+        currentenemy.animations.play('idle', 4, true);
+      }
+      for (currentplayer of player) {
+        currentplayer.enemytarget = null;
         for (currentenemy of enemy){
-          if (Math.abs(currentplayer.x - currentenemy.x) < 60)
-           currentenemy.alpha = 0.5;
+          if (currentplayer.alive && currentenemy.alive && Math.abs(currentplayer.x - currentenemy.x) < 60) {
+            currentenemy.animations.play('walk', 4, true);
+            currentenemy.alpha = 0.5;
+            if (Math.sign(currentplayer.x - currentenemy.x)) currentenemy.scale.x = -currentplayer.scale.x;
+            currentplayer.body.velocity.x = 0;
+            currentplayer.enemytarget = currentenemy.position.x;
+            // currentenemy.enemytarget = currentplayer.position.x;
+          }
         }
+        if (!currentplayer.enemytarget && Math.abs(currentplayer.body.velocity.x) < maxvelocity) currentplayer.body.velocity.x = maxvelocity * -Math.sign(currentplayer.scale.x);
+        // if (!currentplayer.enemytarget && Math.abs(currentplayer.body.velocity.x) < maxvelocity) currentplayer.body.velocity.x = currentplayer.body.velocity.x+Math.random(Math.abs(maxvelocity-currentplayer.body.velocity.x))* -Math.sign(currentplayer.scale.x);
+      }
+    },
+    calcAttack: function(){
+      for (currentplayer of player)
+        if (currentplayer.alive) for (currentenemy of enemy){
+          if (currentplayer.enemytarget == currentenemy.x) {
+            currentenemy.setHealth(currentenemy.health - 1);
+            currentplayer.setHealth(currentplayer.health - 0.125);
+          }
+        }
+    },
+    decideDirection: function(){
+      for (currentplayer of player) if (!currentplayer.enemytarget && Math.random() < 0.002) this.toggleplayerdirection(currentplayer);
     },
     update: function(){
       if (followed.length && !runningfolloweranimation) this.followershow(followed.shift());
       if (fusionqueue.length && !runningfusionanimation) this.fusionshow(fusionqueue.shift());
-      this.checkBounds();
-      this.checkHP();
-      this.checkPromixity();
-      // enemy[0].setHealth(enemy[0].health - 0.25);
-      // player[0].setHealth(player[0].health - 0.1);
+      if (player.length) {
+        this.checkBounds();
+        this.checkHP();
+        this.checkPromixity();
+        this.calcAttack();
+        this.decideDirection();
+      }
     }
   }

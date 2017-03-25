@@ -178,6 +178,7 @@ function checkPoke(message) {
       !mergeforme && listofpokemon.push(pokedex[pokes]);
     }
     else listofpokemon.push(pokedex[pokes]);
+    message = message.substr(0, message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase())) + message.substr(message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase() + pokedex[pokes].Pokemon.length));
    }
   }
  return listofpokemon.sort(function(a, b){
