@@ -38,7 +38,6 @@ const preloadscripts = [
   '/chat/clientoptions',
   '/chat/tmi.min',
   '/chat/chatvariables',
-  '/chat/commandlist',
   '/chat/tm',
   '/chat/natures',
   '/chat/hiddenpowers',

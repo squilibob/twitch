@@ -26,6 +26,7 @@ function header(id, endpoint, extraparams, version){
 // }
 function checkAvatar(obj) {
   var existed = false;
+  console.log(obj);
   if (!(obj.user || {}).username) return existed;
   if (useravatars[obj.user.username] == undefined) {
    if (followers[obj.user.username])
@@ -103,12 +104,10 @@ function checkfollowers(userid, hidenotify, current) {
 }
 
 function checkstreamer(username) {
-  console.log(username, 'checkstreamer');
  client.api({
   url: 'https://api.twitch.tv/kraken/channels' + header(username)
  }, function(err, res, body) {
   if (body) {
-    console.log(body);
    displaystreamer(body.name, body.profile_banner ? body.profile_banner : body.logo, body.followers, body.views, body.url);
    socket.emit('send emote', {message:'hi '+body.name, picture:9});
   }

@@ -994,6 +994,7 @@ function parseMessage(channel, user, message, self) {
     self: self,
     pokemon: checkPoke(message)
   }
+
   var modmessage = isMod(user);
   var userexisted = checkAvatar(messagepayload);
   var question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which']; //'who ', 'why ', 'did ',
