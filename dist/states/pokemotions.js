@@ -76,6 +76,10 @@ project.Pokemotions.prototype = {
         _this.composevote(payload);
       });
 
+      if (socket.hasListeners('receive new player') == false) socket.on('receive new player', function (payload) {
+        player.push(_this.createplayer(payload.poke, footergame.world.width / 2, footergame.world.height / 2, payload.name));
+      });
+
       if (socket.hasListeners('playsound') == false)
       socket.on('playsound', function(which) {
         decoded && fx.play(which);
@@ -272,7 +276,7 @@ project.Pokemotions.prototype = {
       footergame.add.tween(fusion).to({ alpha: 1 }, 250, Phaser.Easing.Linear.None, true)
       .chain(fusionfadeout);
     },
-    createplayer: function(pokemon, x, y) {
+    createplayer: function(pokemon, x, y, username) {
       var namestyle =  {
         backgroundColor: 'transparent',
         boundsAlignH: "center",
@@ -294,7 +298,7 @@ project.Pokemotions.prototype = {
       playerpoke.animations.add('walk', [offset+2, offset+3]);
       playerpoke.animations.play('walk', 4, true);
       playerpoke.body.velocity.x = -maxvelocity;
-      playerpoke.addChild(footergame.add.text(0, -32, 'player', namestyle));
+      playerpoke.addChild(footergame.add.text(0, -32, username, namestyle));
       playerpoke.children[0].anchor.set(0.5, 0);
       playerpoke.setHealth(100);
       playerpoke.exp = 0;
@@ -317,12 +321,12 @@ project.Pokemotions.prototype = {
       return playerpoke;
     },
     firstround: function(){
-      // player[0] = this.createplayer(50, footergame.world.width / 2, footergame.world.height / 2);
-      // player[1] = this.createplayer(200, footergame.world.width / 2 + 400, footergame.world.height / 2);
-      // player[2] = this.createplayer(280, footergame.world.width / 2 + 580, footergame.world.height / 2);
-      // enemy[0] = this.createenemy(25, footergame.world.width / 2 - 200, footergame.world.height / 2);
-      // enemy[1] = this.createenemy(700, footergame.world.width / 2 - 100, footergame.world.height / 2);
-      // enemy[2] = this.createenemy(480, footergame.world.width / 2 - 400, footergame.world.height / 2);
+      // player[0] = this.createplayer(25, footergame.world.width / 2, footergame.world.height / 2, 'player1');
+      // player[1] = this.createplayer(25, footergame.world.width / 2 + 400, footergame.world.height / 2, 'player2');
+      // player[2] = this.createplayer(25, footergame.world.width / 2 + 580, footergame.world.height / 2, 'player3');
+      enemy[0] = this.createenemy(19, footergame.world.width / 2 - 200, footergame.world.height / 2);
+      enemy[1] = this.createenemy(19, footergame.world.width / 2 - 100, footergame.world.height / 2);
+      enemy[2] = this.createenemy(19, footergame.world.width / 2 - 400, footergame.world.height / 2);
     },
     nextround: function(){
       for (checkenemy of enemy) {
@@ -373,11 +377,12 @@ project.Pokemotions.prototype = {
           .endFill();
         if (checkenemy.alive) enemiesalive = true;
       }
-      if (!enemiesalive) this.nextround();
+      if (!enemiesalive && playersalive) this.nextround();
       else if (!playersalive) {
         for (checkenemy of enemy) {
-          currentenemy.animations.play('walk', 4, true);
-          checkenemy.body.velocity.x = Math.sign(checkenemy.scale.x) * maxvelocity;
+          // currentenemy.animations.play('walk', 4, true);
+          checkenemy.kill();
+          //checkenemy.body.velocity.x = Math.sign(checkenemy.scale.x) * maxvelocity;
         }
       }
     },

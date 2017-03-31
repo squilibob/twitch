@@ -178,7 +178,7 @@ function checkPoke(message) {
       !mergeforme && listofpokemon.push(pokedex[pokes]);
     }
     else listofpokemon.push(pokedex[pokes]);
-    message = message.substr(0, message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase())) + message.substr(message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase() + pokedex[pokes].Pokemon.length));
+    message = message.substr(0, message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase())) + message.substr(message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()) + pokedex[pokes].Pokemon.length);
    }
   }
  return listofpokemon.sort(function(a, b){
@@ -207,7 +207,11 @@ function checkDb(obj){
        }
       } else {
        if (command[iterate] == key.toLowerCase() && key != 'Pokemon' && key != 'EVs' && key != 'Forme' && key != 'Evolve' && key != 'Ability' && sp == false) {
-        if (obj.pokemon[0][key] !== undefined) response = obj.pokemon[0].Pokemon + ' ' + key + ': ' + obj.pokemon[0][key];
+        if (obj.pokemon[0][key] !== undefined) if (obj.pokemon[0][key].length) response = obj.pokemon[0].Pokemon + ' ' + key + ': ' + obj.pokemon[0][key];
+         if (key == 'Nature' || key == 'Attack' || key == 'Defense' || key == 'Speed') {
+           var tempresponse = checkMoves(obj);
+           if (tempresponse) response = tempresponse;
+         }
        }
        if ((command[iterate] == key.toLowerCase() || command[iterate] == 'abilities') && key == 'Ability') {
         if (obj.pokemon[0][key].length) {

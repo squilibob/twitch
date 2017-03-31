@@ -552,6 +552,11 @@ io.on('connection', function(socket){
 		});
 	});
 
+	socket.on('create new player', function(payload) {
+		socket.emit('receive new player', payload);
+	});
+
+
 	socket.on('send leaderboard', function() {
 		var current = [];
 		r.db('Users').table('Leaderboard')

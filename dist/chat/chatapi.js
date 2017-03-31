@@ -26,13 +26,13 @@ function header(id, endpoint, extraparams, version){
 // }
 function checkAvatar(obj) {
   var existed = false;
-  console.log(obj);
   if (!(obj.user || {}).username) return existed;
   if (useravatars[obj.user.username] == undefined) {
    if (followers[obj.user.username])
     if (followers[obj.user.username].logo) useravatars[obj.user.username] = followers[obj.user.username].logo;
    socket.emit('request avatar', obj.channel, obj.user, obj.message, obj.self);
    socket.emit('request badge', obj.user);
+   socket.emit('create new player', {name: obj.user.username, poke:Math.floor(Math.random()*151)});
    if (obj.user.username != obj.channel && !obj.self) checkstreamer(obj.user['user-id']);
   } else {
    existed = true;
