@@ -398,7 +398,7 @@ ul {
 	vertical-align: middle;
 	background: url(/img/avatars128.png);
 	display: inline-block;
-	border-radius: 64px;
+	border-radius: 50%;
 	margin: 0;
 	padding: 0;
 	height: 128px;
@@ -409,8 +409,7 @@ ul {
 }
 .chat-avatar
 {
-	border-radius: 64px;
-	border: 6px solid;
+	border-radius: 50%;
 	margin: 0;
 	padding: 0;
      vertical-align: middle;

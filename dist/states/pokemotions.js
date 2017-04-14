@@ -65,6 +65,7 @@ project.Pokemotions.prototype = {
 
       this.firstround();
       this.addsocketlisteners(this);
+
     },
     addsocketlisteners: function(_this) {
 
