@@ -995,7 +995,6 @@ function parseMessage(channel, user, message, self) {
     self: self,
     pokemon: checkPoke(message)
   }
-  console.log(messagepayload.pokemon);
 
   var modmessage = isMod(user);
   var userexisted = checkAvatar(messagepayload);
@@ -1105,9 +1104,11 @@ function handleChat(chan, user, message, self, avatar, image) {
    chatAvatar.className = 'avs';
    var xpos = 128 * ((Useravatars.total - (useravatars[name] + 1) % 7));
    var ypos = 128 * (Useravatars.total - Math.floor((useravatars[name] + 1) / 7));
-   chatAvatar.style = 'background-position:  ' + xpos + 'px  ' + ypos + 'px';
+   // chatAvatar.style = 'background-position:  ' + xpos + 'px  ' + ypos + 'px';
+   chatAvatar.style.backgroundPositionX = xpos + 'px';
+   chatAvatar.style.backgroundPositionY = ypos + 'px';
   }
-
+  chatAvatar.style.border = '6px solid ' + color;
   chatTime.className = 'chat-time';
   chatTime.innerHTML = String.fromCodePoint(date.getHours() > 12 ? 128323 + date.getHours() : (date.getHours() < 1 ? 128347 : 128335 + date.getHours())) + ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2); //(not using seconds right now) + '.' + ('0' + date.getSeconds()).slice(-2) ;
 

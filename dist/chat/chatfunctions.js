@@ -223,10 +223,10 @@ function checkDb(obj){
         response = obj.pokemon[0].Pokemon + ' Formes are';
         for (forme in obj.pokemon[0].Forme) response += ', ' + forme;
        }
-       if (key == 'Mass' && (command[iterate] == 'heavy' || command[iterate].indexOf('weigh') >= 0)) response =  obj.pokemon[0].Pokemon + "'s mass is " +  obj.pokemon[0][key] + ' kg';
-       if (key == 'Mass' && command[iterate] == key.toLowerCase()) response += ' kg';
-       if (key == 'Height' && (command[iterate] == 'high' || command[iterate] == 'tall')) response =  obj.pokemon[0].Pokemon + "'s height is " +  obj.pokemon[0][key] + ' m';
-       if (key == 'Height' && command[iterate] == key.toLowerCase()) response += ' m';
+       if (key == 'Mass' && (command[iterate].indexOf('mass') >= 0 || command[iterate] == 'heavy' || command[iterate].indexOf('weigh') >= 0)) response =  obj.pokemon[0].Pokemon + "'s mass is " +  obj.pokemon[0][key] + ' kg';
+       // if (key == 'Mass' && command[iterate] == key.toLowerCase()) response += ' kg';
+       if (key == 'Height' && (command[iterate] == 'height' || command[iterate] == 'high' || command[iterate] == 'tall')) response =  obj.pokemon[0].Pokemon + "'s height is " +  obj.pokemon[0][key] + ' m';
+       // if (key == 'Height' && command[iterate] == key.toLowerCase()) response += ' m';
       }
      }
     }

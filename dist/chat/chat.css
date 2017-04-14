@@ -99,8 +99,6 @@ ul {
 	transform-origin: bottom left;
 }
 .chat-line[data-faded],  .chat-line[data-faded] .sprsheet{
-	font-size: 18px;
-	transform: scale(1);
 	transition: all 0.5s cubic-bezier(.36,-0.64,.34,1.76);
 }
 .chat-line.chat-action {
@@ -394,7 +392,7 @@ ul {
 .chat-align {
 	position: relative;
 	left: 0px;
-	top: 0px;
+	top: 16px;
 }
 .avs {
 	vertical-align: middle;
@@ -412,6 +410,7 @@ ul {
 .chat-avatar
 {
 	border-radius: 64px;
+	border: 6px solid;
 	margin: 0;
 	padding: 0;
      vertical-align: middle;
