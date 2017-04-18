@@ -167,6 +167,11 @@ ul {
 	font-size: 24px;
 	transition: all 0.5s ease-out;
 }
+.chat-streamer {
+	font-family: 'Dimitri Swank';
+	font-size: 22px;
+	padding: 0px 6px;
+}
 .chat-colon {
 	height:24px;
 	margin-right: 0em;
@@ -178,7 +183,7 @@ ul {
 .chat-colon[data-faded] {
 	opacity: 0.6;
 	margin-right: 0em;
-	left: -44px;
+	right: 44px;
 	transition: all 0.5s ease-out;
 }
 .chat-colon:after {
@@ -215,11 +220,13 @@ ul {
 	-moz-border-radius: 18px;
 	border-radius: 18px;
 	box-shadow: 10px 5px 5px rgba(0,0,0,0.1);
+	transition: all 0.5s ease-out;
 }
 .chat-message-container[data-faded]
 {
-	left: -47px;
+	left: -48px;
 	opacity: 0.6;
+	transition: all 0.5s ease-out;
 }
 .chat-message
 {
@@ -228,6 +235,8 @@ ul {
 	font-size: 36px;
 	font: #fff;
 	text-rendering: optimizeLegibility;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 	max-width: 400px;
 	text-shadow:
 		-1px -1px 0 #555,
@@ -309,29 +318,28 @@ ul {
 }
 
 .chat-badge-mod {
-	background-color: hsl(105, 89%, 36%);
-	background-image: url(http://www.twitch.tv/images/xarth/badge_mod.svg);
+	background-image: url(https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/2);
 }
 .chat-badge-turbo {
-	background-color: hsl(261, 43%, 45%);
-	background-image: url(http://www.twitch.tv/images/xarth/badge_turbo.svg);
+	background-image: url(https://static-cdn.jtvnw.net/badges/v1/bd444ec6-8f34-4bf9-91f4-af1e3428d80f/2);
+}
+.chat-badge-premium {
+	background-image: url(https://static-cdn.jtvnw.net/badges/v1/a1dd5073-19c3-4911-8cb4-c464a7bc1510/2);
 }
 .chat-badge-broadcaster {
-	background-color: hsl(0, 81%, 50%);
-	background-image: url(http://www.twitch.tv/images/xarth/badge_broadcaster.svg);
+	background-image: url(https://static-cdn.jtvnw.net/badges/v1/5527c58c-fb7d-422d-b71b-f309dcb85cc1/2);
 }
 .chat-badge-admin {
-	background-color: hsl(40, 96%, 54%);
-	background-image: url(http://www.twitch.tv/images/xarth/badge_admin.svg);
+	background-image: url(https://static-cdn.jtvnw.net/badges/v1/9ef7e029-4cdf-4d4d-a0d5-e2b3fb2583fe/2);
 }
 .chat-badge-staff {
-	background-color: hsl(268, 55%, 13%);
-	background-image: url(http://www.twitch.tv/images/xarth/badge_staff.svg);
+	background-image: url(https://static-cdn.jtvnw.net/badges/v1/d97c37bd-a6f5-4c38-8f57-4e4bef88af34/2);
 }
 .chat-badge-subscriber {
+	background-image: url(https://static-cdn.jtvnw.net/badges/v1/19dd8673-124d-4f44-830c-b0f4f9d78635/2);
 }
 .chat-badge-bot {
-	background-image: url(https://cdn.betterttv.net/tags/bot.png);
+	background-image: url(https://static-cdn.jtvnw.net/badges/v1/df9095f6-a8a0-4cc2-bb33-d908c0adffb8/2);
 }
 .chat-badge-sun {
 	background-image: url(/img/sun.png);

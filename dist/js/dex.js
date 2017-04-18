@@ -1,22 +1,22 @@
-var pokedex = [];
-var typechart = [];
+var pokedex = []
+var typechart = []
 
-socket.on('Receive pokedex', function(payload){
+socket.on('Receive pokedex', function (payload) {
   // pokedex[payload.id-1]=payload;
   for (entry in payload) {
     // console.log(payload[entry]);
-    pokedex[parseInt(payload[entry].id)-1] = payload[entry];
+    pokedex[parseInt(payload[entry].id) - 1] = payload[entry]
   }
-  console.log('receiving pokedex ' + payload.length);
-  game.storage.setItem("pokedex", JSON.stringify(pokedex));
-});
+  console.log('receiving pokedex ' + payload.length)
+  game.storage.setItem('pokedex', JSON.stringify(pokedex))
+})
 
-socket.on('Receive typechart', function(payload){
+socket.on('Receive typechart', function (payload) {
   // typechart.push(payload);
-  typechart = payload;
-  console.log('receiving typechart ' + payload.length);
-  game.storage.setItem("typechart", JSON.stringify(typechart));
-});
+  typechart = payload
+  console.log('receiving typechart ' + payload.length)
+  game.storage.setItem('typechart', JSON.stringify(typechart))
+})
 
 // function populatetypechart(){
 //   // for (var i=0; i <= 18; i++) {
