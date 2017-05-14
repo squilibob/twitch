@@ -235,7 +235,6 @@ ul {
 	font-size: 36px;
 	font: #fff;
 	text-rendering: optimizeLegibility;
-	white-space: nowrap;
 	text-overflow: ellipsis;
 	max-width: 400px;
 	text-shadow:

@@ -1,15 +1,16 @@
 project.Raffle = function (game) {
   var
     cards,
-    displaygroup,
-    queuegroup,
-    spinuser,
-    spinusername,
+    // displaygroup,
+    // queuegroup,
+    // spinuser,
+    // spinusername,
+    arrow,
     spinspeed,
     spinslow,
     usersraffle,
-    enterbutton,
-    leavebutton,
+    // enterbutton,
+    // leavebutton,
     rollbutton,
     clearbutton,
     donutchart,
@@ -18,7 +19,7 @@ project.Raffle = function (game) {
     yoffset,
     previouswinner,
     winnercircle,
-    allraffle,
+    // allraffle,
     menu
 }
 
@@ -26,16 +27,17 @@ project.Raffle.prototype = {
   preload: function () {
     game.load.script('menu', '/js/menubuttons.js')
     game.load.spritesheet('playersprite', playersprite.src, playersprite.x, playersprite.y, maxpokes * 4)
+    game.load.image('arrow', '/img/arrow.png')
   },
   winraffle: function (person) {
-    lastraffleuser = person
+    previouswinner = person
     socket.emit('won raffle', person)
     socket.emit('request user pokes', person)
     socket.emit('request user fc', person)
     socket.emit('request to connect', {id: person})
   },
   rollraffle: function () {
-    spinspeed = 200
+    spinspeed = 100 + Math.floor(Math.random() * 45)
     spinslow += 1
   },
   enterraffle: function () {
@@ -55,7 +57,7 @@ project.Raffle.prototype = {
     this.respin()
   },
   respin: function () {
-    spinspeed = 24
+    spinspeed = 1
   },
   update: function () {
     winnercircle.children[3].setText(previouswinner)
@@ -63,37 +65,42 @@ project.Raffle.prototype = {
     if (spinspeed > 0) {
       spinspeed -= spinslow
       if (spinspeed == 0) {
-        this.winraffle(spinusername.text)
+        testRad = radian - (arrow.rotation - Math.PI * 0.5) % radian
+
+        for (user of usersraffle) {
+          if (testRad > user.startradian && testRad < user.endradian) this.winraffle(user.id)
+        }
         spinslow = 0
       };
+      if (spinspeed) arrow.rotation += spinspeed / 100
 
-      for (var movement = 0; movement < spinspeed; movement++) {
-        displaygroup.subAll('x', 1)
+    //   for (var movement = 0; movement < spinspeed; movement++) {
+    //     displaygroup.subAll('x', 1)
 
-        if (displaygroup.children.length > 1) {
-          var showcurrent = Math.floor(displaygroup.children.length / 2)
-          spinuser.frame = displaygroup.children[showcurrent].frame
-          spinusername.setText(displaygroup.children[showcurrent].username)
-        }
+    //     if (displaygroup.children.length > 1) {
+    //       var showcurrent = Math.floor(displaygroup.children.length / 2)
+    //       spinuser.frame = displaygroup.children[showcurrent].frame
+    //       spinusername.setText(displaygroup.children[showcurrent].username)
+    //     }
 
-        if (displaygroup.children.length > 2) {
-          if (displaygroup.children[0]) {
-            for (member in displaygroup.children) {
-              if (displaygroup.children[member].x < -playersprite.x) {
-                queuegroup.addChild(displaygroup.children[member])
-                displaygroup.addChild(queuegroup.children[0])
-                displaygroup.children[displaygroup.children.length - 1].x = displaygroup.children[displaygroup.children.length - 2].x + displaygroup.children[displaygroup.children.length - 1].width
-              }
-            }
-          }
-        }
-      }
+    //     if (displaygroup.children.length > 2) {
+    //       if (displaygroup.children[0]) {
+    //         for (member in displaygroup.children) {
+    //           if (displaygroup.children[member].x < -playersprite.x) {
+    //             queuegroup.addChild(displaygroup.children[member])
+    //             displaygroup.addChild(queuegroup.children[0])
+    //             displaygroup.children[displaygroup.children.length - 1].x = displaygroup.children[displaygroup.children.length - 2].x + displaygroup.children[displaygroup.children.length - 1].width
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
     }
   },
   findpoint: function (oX, oY, angle, radius) {
     return {x: oX + radius * Math.cos(angle), y: oY + radius * Math.sin(angle)}
   },
-  fillchart: function (fullraffle) {
+  fillchart: function () {
     if (Presets.showdonutchart) {
       var graphics = []
       var text = []
@@ -104,16 +111,20 @@ project.Raffle.prototype = {
       var endradian = radian
       var arc = 0
       var totalusers = 0
-      for (user in fullraffle) {
-        if (fullraffle[user].entered) {
-          totalchance += fullraffle[user].chance
+      for (user in usersraffle) {
+        if (usersraffle[user].entered) {
+          totalchance += usersraffle[user].chance
           totalusers++
         }
       }
-      for (user in fullraffle) {
-        if (fullraffle[user].entered) {
-          var userchance = radian * fullraffle[user].chance / totalchance
+      arrow.visible = winnercircle.visible = totalusers > 0
+
+      for (user in usersraffle) {
+        if (usersraffle[user].entered) {
+          var userchance = radian * usersraffle[user].chance / totalchance
           endradian = startradian + userchance
+          usersraffle[user].startradian = startradian
+          usersraffle[user].endradian = endradian
           var angle = (startradian + endradian) / 2
           graphics.push(game.add.graphics(0, 0))
           graphics[graphics.length - 1]
@@ -121,7 +132,7 @@ project.Raffle.prototype = {
             .beginFill(sectioncolors[arc % sectioncolors.length])
             .arc(0, 0, donutchartradius, -startradian, -endradian, true, 360)
             .endFill()
-          text.push(game.add.text(0, 0, fullraffle[user].id, { font: '24px Arial', fill: hexstring(sectioncolors[arc % sectioncolors.length])}))
+          text.push(game.add.text(0, 0, usersraffle[user].id, { font: '24px Arial', fill: hexstring(sectioncolors[arc % sectioncolors.length])}))
           if (angle > Math.PI / 2 && angle < Math.PI * 3 / 2) text[text.length - 1].angle = -game.math.radToDeg(angle) - 180
           else text[text.length - 1].angle = -game.math.radToDeg(angle)
           var coords = this.findpoint(0, 0, -angle, donutchartradius + text[text.length - 1].getBounds().width / 2)
@@ -133,11 +144,11 @@ project.Raffle.prototype = {
           var coords = this.findpoint(0, 0, -angle, donutchartradius + text[text.length - 1].getBounds().width + playersprite.x / 2)
           icons.push(game.add.sprite(coords.x, coords.y, 'playersprite'))
           with_object(icons[icons.length - 1], {
-            frame: fullraffle[user].displayicon * 4,
+            frame: usersraffle[user].displayicon * 4,
             angle: text[text.length - 1].angle
           })
             .anchor.setTo(0.5)
-          percent.push(game.add.text(0, 0, Math.floor(fullraffle[user].chance / totalchance * 1000) / 10 + '% ', { font: '24px Arial', fill: hexstring(sectioncolors[arc % sectioncolors.length])}))
+          percent.push(game.add.text(0, 0, Math.floor(usersraffle[user].chance / totalchance * 1000) / 10 + '% ', { font: '24px Arial', fill: hexstring(sectioncolors[arc % sectioncolors.length])}))
           var coords = this.findpoint(0, 0, -angle, donutchartradius * 0.85 - percent[percent.length - 1].getBounds().width / 2)
           with_object(percent[percent.length - 1], {
             x: coords.x,
@@ -145,7 +156,6 @@ project.Raffle.prototype = {
             angle: text[text.length - 1].angle
           })
             .anchor.setTo(0.5)
-
           startradian = endradian
           arc++
           if (totalusers % sectioncolors.length == 1 && arc == totalusers - 1) arc++
@@ -165,61 +175,61 @@ project.Raffle.prototype = {
         .addGroup(mask)
         .addGroup(percent)
         .pivot.setTo(0.5)
-      donutchart.x = donutchart.getBounds().width / 2
+      donutchart.x = arrow.x = game.world.centerX// + donutchart.getBounds().width / 2
       // if (game.world.height < donutchart.getBounds().height+winnercircle.getBounds().height)
-      //   donutchart.y = yoffset + playersprite.y + donutchart.getBounds().height / 2;
+        donutchart.y = arrow.y = game.world.centerY //+ donutchart.getBounds().height / 2;
       // else
-      donutchart.y = leavebutton.getBounds().y + leavebutton.getBounds().height + donutchart.getBounds().height / 2
+      // donutchart.y = leavebutton.getBounds().y + leavebutton.getBounds().height + donutchart.getBounds().height / 2
     }
   },
-  fillraffle: function (members) {
-    displaygroup.removeAll(true)
-    queuegroup.removeAll(true)
-    var xoffset = 0
-    var maxwidth = Math.ceil(Presets.width / playersprite.x)
-    var temp = []
-    for (member in members) {
-      if (members[member].entered) {
-        for (var index = 0; index < members[member].chance; index++) {
-          var x = xoffset + index * playersprite.x
-          var y = 0
-          // while (x > Presets.width){
-          //   x -= Presets.width+playersprite.x;
-          //   y += playersprite.y;
-          // }
-          temp.push(game.add.sprite(x, yoffset + y, 'playersprite'))
-          temp[temp.length - 1].frame = members[member].displayicon * 4
-          temp[temp.length - 1]['username'] = members[member].id
-          if (displaygroup.children.length < maxwidth && temp.length > maxwidth) {
-            displaygroup.addMultiple(temp)
-            temp = []
-          }
-        }
-      }
-      xoffset = x
-    }
-    if (displaygroup.children.length == 0) {
-      displaygroup.addMultiple(temp)
-      temp = []
-    }
-    queuegroup.addMultiple(temp)
-    queuegroup.visible = false
+  // fillraffle: function (members) {
+  //   displaygroup.removeAll(true)
+  //   queuegroup.removeAll(true)
+  //   var xoffset = 0
+  //   var maxwidth = Math.ceil(Presets.width / playersprite.x)
+  //   var temp = []
+  //   for (member in members) {
+  //     if (members[member].entered) {
+  //       for (var index = 0; index < members[member].chance; index++) {
+  //         var x = xoffset + index * playersprite.x
+  //         var y = 0
+  //         // while (x > Presets.width){
+  //         //   x -= Presets.width+playersprite.x;
+  //         //   y += playersprite.y;
+  //         // }
+  //         temp.push(game.add.sprite(x, yoffset + y, 'playersprite'))
+  //         temp[temp.length - 1].frame = members[member].displayicon * 4
+  //         temp[temp.length - 1]['username'] = members[member].id
+  //         if (displaygroup.children.length < maxwidth && temp.length > maxwidth) {
+  //           displaygroup.addMultiple(temp)
+  //           temp = []
+  //         }
+  //       }
+  //     }
+  //     xoffset = x
+  //   }
+  //   if (displaygroup.children.length == 0) {
+  //     displaygroup.addMultiple(temp)
+  //     temp = []
+  //   }
+  //   queuegroup.addMultiple(temp)
+  //   queuegroup.visible = false
 
-    // make queuegroup first -- add items to it
-    // steal items from queuegroup for displaygroup that is length of the screen
-    // if item in displaygroup is < 0 for x put it at the end of the queuegroup
-        // add  first queuegroup item into displaygroup -- function
-  },
+  //   // make queuegroup first -- add items to it
+  //   // steal items from queuegroup for displaygroup that is length of the screen
+  //   // if item in displaygroup is < 0 for x put it at the end of the queuegroup
+  //       // add  first queuegroup item into displaygroup -- function
+  // },
   create: function () {
     cards = JSON.parse(game.storage.getItem('cards'))
-    spinspeed = 24
+    spinspeed = 1
     radian = Math.PI * 2
-    donutchartradius = Presets.height / 4 < Presets.width / 4 ? Presets.height / 8 : Presets.width / 8
+    donutchartradius = Presets.height < Presets.width ? Presets.height / 4 : Presets.width / 4
 
     game.stage.backgroundColor = Presets.bgcolor
 
-    displaygroup = this.add.group()
-    queuegroup = this.add.group()
+    // displaygroup = this.add.group()
+    // queuegroup = this.add.group()
     donutchart = this.add.group()
     winnercircle = this.add.group()
     allraffle = this.add.group()
@@ -275,17 +285,23 @@ project.Raffle.prototype = {
     winnercircle.addMultiple(winner)
     winnercircle.inputEnableChildren = true  // does NOT work
     winnercircle.onChildInputDown.add(this.respin, this)
+    winnercircle.y = yoffset + 90
       // winnercircle.setAll('tint', Presets.normalstate);
 
-    textButton.define(enterbutton = game.add.group(), game, 'enter ' + (team_name || 'raffle'), 8, winnercircle.getBounds().y + winnercircle.getBounds().height + 32, sectioncolors[0])
-       .onChildInputDown.add(this.enterraffle, this)
-    textButton.define(leavebutton = game.add.group(), game, 'leave raffle', enterbutton.getBounds().x + enterbutton.getBounds().width + 16, winnercircle.getBounds().y + winnercircle.getBounds().height + 32, sectioncolors[3])
-       .onChildInputDown.add(this.leaveraffle, this)
+    // textButton.define(enterbutton = game.add.group(), game, 'enter ' + (team_name || 'raffle'), 8, winnercircle.getBounds().y + winnercircle.getBounds().height + 32, sectioncolors[0])
+    //    .onChildInputDown.add(this.enterraffle, this)
+    // textButton.define(leavebutton = game.add.group(), game, 'leave raffle', enterbutton.getBounds().x + enterbutton.getBounds().width + 16, winnercircle.getBounds().y + winnercircle.getBounds().height + 32, sectioncolors[3])
+    //    .onChildInputDown.add(this.leaveraffle, this)
     if (Presets.allowroll) {
-      textButton.define(rollbutton = game.add.group(), game, 'roll raffle', leavebutton.getBounds().x + leavebutton.getBounds().width + 16, winnercircle.getBounds().y + winnercircle.getBounds().height + 32, sectioncolors[1])
+      textButton.define(rollbutton = game.add.group(), game, 'roll raffle', 16, 90, sectioncolors[1])
          .onChildInputDown.add(this.rollraffle, this)
-      textButton.define(clearbutton = game.add.group(), game, 'clear raffle', rollbutton.getBounds().x + rollbutton.getBounds().width + 16, winnercircle.getBounds().y + winnercircle.getBounds().height + 32, sectioncolors[4])
+      textButton.define(clearbutton = game.add.group(), game, 'clear raffle', 16, rollbutton.getBounds().height + 100, sectioncolors[0])
          .onChildInputDown.add(this.clearraffle, this)
+      arrow = game.add.sprite(0, 0, 'arrow')
+      arrow.anchor.setTo(0.5)
+      arrow.scale.setTo(0.5)
+      arrow.inputEnabled = true
+      arrow.events.onInputDown.add(this.rollraffle, this)
     }
 
       // previouswinner
@@ -294,8 +310,8 @@ project.Raffle.prototype = {
       socket.on('receive raffle', function (fullraffle) {
         usersraffle = []
         for (user in fullraffle) {
-          if (fullraffle[user].winner == true) {
-            if (fullraffle && fullraffle[user] && fullraffle[user].id) {
+          if (fullraffle && fullraffle[user] && fullraffle[user].entered == true && fullraffle[user].winner == true) {
+            if (fullraffle[user].id) {
               winnercircle.children[3].setText(fullraffle[user].id)
               previouswinner = fullraffle[user].id
             }
@@ -306,8 +322,8 @@ project.Raffle.prototype = {
             usersraffle.push(fullraffle[user])
           }
         }
-        contextthis.fillraffle(usersraffle)
-        contextthis.fillchart(usersraffle)
+        // contextthis.fillraffle(usersraffle)
+        contextthis.fillchart()
           // if (Presets.externalteams) {
           //   for (member in fullraffle) {
           //       if (fullraffle[member].winner)
@@ -319,24 +335,24 @@ project.Raffle.prototype = {
 
     socket.emit('send raffle')
 
-    spinuser = game.add.sprite(winnercircle.getBounds().x + winnercircle.getBounds().width * 1.5, winnercircle.getBounds().y, 'playersprite')
-    spinuser.anchor.setTo(0.5, 0)
-    spinuser.scale.setTo(2.5)
-    spinusername = game.add.text(spinuser.x, spinuser.y + spinuser.getBounds().height * 2, '', {
-      backgroundColor: 'transparent',
-      fill: Presets.fill,
-      fillAlpha: 1,
-      font: Presets.font,
-      fontSize: '60px ',
-      fontWeight: 'Bold',
-      textAlign: 'left',
-      stroke: 0
-    })
-    spinusername.anchor.setTo(0.5, 0)
+    // spinuser = game.add.sprite(winnercircle.getBounds().x + winnercircle.getBounds().width * 1.5, winnercircle.getBounds().y, 'playersprite')
+    // spinuser.anchor.setTo(0.5, 0)
+    // spinuser.scale.setTo(2.5)
+    // spinusername = game.add.text(spinuser.x, spinuser.y + spinuser.getBounds().height * 2, '', {
+    //   backgroundColor: 'transparent',
+    //   fill: Presets.fill,
+    //   fillAlpha: 1,
+    //   font: Presets.font,
+    //   fontSize: '60px ',
+    //   fontWeight: 'Bold',
+    //   textAlign: 'left',
+    //   stroke: 0
+    // })
+    // spinusername.anchor.setTo(0.5, 0)
 
-    allraffle.addChild(winnercircle)
-    allraffle.addChild(spinuser)
-    allraffle.addChild(spinusername)
+    // allraffle.addChild(winnercircle)
+    // allraffle.addChild(spinuser)
+    // allraffle.addChild(spinusername)
       // scaleup(allraffle);
   }
 }

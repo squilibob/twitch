@@ -11,19 +11,6 @@ function header (id, endpoint, extraparams, version) {
   return paramstring
 }
 
-// function nametoid(username) {
-//  username = dehash(username);
-//  var idcall = new Promise(
-//   function(resolve, reject) {
-//    client.api({
-//     url: 'https://api.twitch.tv/kraken/users/' + header(null, null, 'login=' + username)
-//    }, function (err, res, body) {
-//     console.log(body.users[0]._id);
-//     resolve(body.users[0]._id);
-//    });
-//   });
-//  idcall.then(function(converted) { console.log(converted) });
-// }
 function checkAvatar (obj) {
   var existed = false
   if (!(obj.user || {}).username) return existed

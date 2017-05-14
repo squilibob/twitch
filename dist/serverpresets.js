@@ -11,7 +11,7 @@ const Presets = {
   highlightedstate: 0xe0e0e0,
   autohide: true,
   padding: 8,
-  showdonutchart: false,
+  showdonutchart: true,
   allowroll: true,
   externalteams: true,
   scalingallowed: false,

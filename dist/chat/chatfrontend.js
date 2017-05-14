@@ -106,8 +106,10 @@
         var response
         var findtm = parseInt(obj.message.slice(obj.message.toLowerCase().indexOf('tm') + 2, obj.message.toLowerCase().indexOf('tm') + 5))
         if (findtm > 0 && findtm < 101) { tmnameloop: for (var key in tm[findtm - 1]) response = 'TM' + findtm + ' ' + key + ' can be obtained at ' + tm[findtm - 1][key] } else {
-          tmnumberloop: for (num = 1; num < 101; num++) {
-            tmnamefromnumberloop: for (var key in tm[num - 1]) { if (obj.message.toLowerCase().indexOf(key.toLowerCase()) >= 0) response = 'TM' + num + ' ' + key + ' can be obtained at ' + tm[num - 1][key] }
+          tmnumberloop: for (num = tm.length; num > 0; num--) {
+            tmnamefromnumberloop: for (var key in tm[num - 1]) {
+             if (obj.message.toLowerCase().indexOf(key.toLowerCase()) >= 0) response = 'TM' + num + ' ' + key + ' can be obtained at ' + tm[num - 1][key]
+            }
           }
         }
         return response
@@ -1008,7 +1010,9 @@
             fillparaloop: for (var fill = 1; fill <= parser[command].requires.parameters; fill++) { if (message.split(' ').length > fill) parameters.push(message.toLowerCase().split(' ')[fill]) }
           }
           messagepayload.parameters = parameters
-          response = parser[command].action(messagepayload)
+          if (cmdexist) {
+            response = parser[command].action(messagepayload)
+          }
           displaycommand = parser[command].requires.display
         }
       }

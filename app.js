@@ -671,7 +671,7 @@ function rafflewinner(username){
 							}
 						});
 					});
-					sendRaffleUpdate();
+					// sendRaffleUpdate();
 				});
 			}
 		}
