@@ -1,487 +1,596 @@
 {
   "resources": [
-    "pikachu.ogg",
+    "pikachu.ogg"
   ],
   "spritemap": {
     "Happy 01": {
       "start": 0,
       "end": 1.4705668934240363,
-      "loop": false
+      "loop": false,
+      "Pikachu": "Long"
     },
     "Happy 02": {
       "start": 2,
       "end": 3.0325170068027214,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Happy 03": {
       "start": 4,
       "end": 5.939886621315193,
-      "loop": false
+      "loop": false,
+      "Pika": "Short",
+      "Pikachu": "Normal"
     },
     "Happy 04": {
       "start": 6,
       "end": 7.627006802721088,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal",
+      "Pikachu": "Short"
     },
     "Happy 05": {
       "start": 8,
       "end": 8.65705215419501,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Happy 06": {
       "start": 9,
       "end": 10.063809523809525,
-      "loop": false
+      "loop": false,
+      "Pikacha": "Short"
     },
     "Happy 07": {
       "start": 11,
       "end": 12.939886621315193,
-      "loop": false
+      "loop": false,
+      "Pika": "Short",
+      "Pikachu": "Long"
     },
     "Happy 08": {
       "start": 13,
       "end": 14.564421768707483,
-      "loop": false
+      "loop": false,
+      "Pika": "Short",
+      "Ka": 3
     },
     "Happy 09": {
       "start": 15,
       "end": 16.595714285714287,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Happy 10": {
       "start": 17,
       "end": 17.406757369614514,
-      "loop": false
+      "loop": false,
+      "Pika": "Short"
     },
     "Happy 11": {
       "start": 18,
       "end": 19.095102040816325,
-      "loop": false
+      "loop": false,
+      "Pika": "Long"
     },
     "Happy 12": {
       "start": 20,
       "end": 21.68956916099773,
-      "loop": false
+      "loop": false,
+      "Pika": "Long",
+      "Pikachu": "Long"
     },
     "Happy 13": {
       "start": 22,
       "end": 22.563197278911566,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Happy 14": {
       "start": 23,
       "end": 24.90859410430839,
-      "loop": false
+      "loop": false,
+      "Pika": 3
     },
     "Happy 15": {
       "start": 25,
       "end": 25.876077097505668,
-      "loop": false
+      "loop": false,
+      "Pikachu": "Normal"
     },
     "Happy 16": {
       "start": 26,
       "end": 27.627006802721088,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Happy 17": {
       "start": 28,
       "end": 29.282834467120182,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal",
+      "Pi": "Normal"
     },
     "Happy 18": {
       "start": 30,
       "end": 31.501836734693878,
-      "loop": false
+      "loop": false,
+      "Pika Pi": 2
     },
     "Happy 19": {
       "start": 32,
       "end": 33.65827664399093,
-      "loop": false
+      "loop": false,
+      "Pi": 2,
+      "Pi Pika": "Normal"
     },
     "Happy 20": {
       "start": 34,
       "end": 35.063809523809525,
-      "loop": false
+      "loop": false,
+      "Pika": "Long"
     },
     "Happy 21": {
       "start": 36,
       "end": 36.93866213151927,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Happy 22": {
       "start": 37,
       "end": 37.782222222222224,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Happy 23": {
       "start": 38,
       "end": 38.84478458049887,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Happy 24": {
       "start": 39,
       "end": 40.846009070294784,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal",
+      "Bree": "Normal"
     },
     "Happy 25": {
       "start": 41,
       "end": 42.939886621315196,
-      "loop": false
+      "loop": false,
+      "Pika": "Long"
     },
     "Happy 26": {
       "start": 43,
       "end": 44.56442176870748,
-      "loop": false
+      "loop": false,
+      "Cha": "Long"
     },
     "Happy 27": {
       "start": 45,
       "end": 46.53312925170068,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Happy 28": {
       "start": 47,
       "end": 48.43927437641723,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Happy 29": {
       "start": 49,
       "end": 50.220249433106574,
-      "loop": false
+      "loop": false,
+      "Cha": "Short"
     },
     "Happy 30": {
       "start": 51,
       "end": 52.971156462585036,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Happy 31": {
       "start": 53,
       "end": 54.18895691609978,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Happy 32": {
       "start": 55,
       "end": 56.501836734693875,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Happy 33": {
       "start": 57,
       "end": 57.81748299319728,
-      "loop": false
+      "loop": false,
+      "Pikachu": "Normal"
     },
     "Happy 34": {
       "start": 58,
       "end": 59.09825396825397,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Happy 35": {
       "start": 60,
       "end": 60.63662131519274,
-      "loop": false
+      "loop": false,
+      "Pi": "Normal"
     },
     "Happy 36": {
       "start": 61,
       "end": 62.36419501133787,
-      "loop": false
+      "loop": false,
+      "Pikacha": "Normal"
     },
     "Happy 37": {
       "start": 63,
       "end": 64.35498866213152,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Happy 38": {
       "start": 65,
       "end": 65.90612244897959,
-      "loop": false
+      "loop": false,
+      "Pi Pika": "Normal"
     },
     "Happy 39": {
       "start": 66,
       "end": 66.6166439909297,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Happy 40": {
       "start": 67,
       "end": 67.5852380952381,
-      "loop": false
+      "loop": false,
+      "Pi": "Long"
     },
     "Happy 41": {
       "start": 68,
       "end": 69.36975056689343,
-      "loop": false
+      "loop": false,
+      "Cha": "Long"
     },
     "Happy 42": {
       "start": 70,
       "end": 71.91333333333333,
-      "loop": false
+      "loop": false,
+      "Pikachu": "Long"
     },
     "Happy 43": {
       "start": 72,
       "end": 73.38267573696145,
-      "loop": false
+      "loop": false,
+      "Cha": "Normal"
     },
     "Happy 44": {
       "start": 74,
       "end": 75.97621315192744,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal",
+      "Pikachu": "Normal"
     },
     "Happy 45": {
       "start": 76,
       "end": 77.0154648526077,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Happy 46": {
       "start": 78,
       "end": 78.65705215419501,
-      "loop": false
+      "loop": false,
+      "Pi": "Normal"
     },
     "Happy 47": {
       "start": 79,
       "end": 79.59448979591836,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Happy 48": {
       "start": 80,
       "end": 80.90736961451248,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Happy 49": {
       "start": 81,
       "end": 81.71963718820862,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Happy 50": {
       "start": 82,
       "end": 83.18895691609977,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Happy 51": {
       "start": 84,
       "end": 84.56319727891156,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Happy 52": {
       "start": 85,
       "end": 86.12639455782313,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Happy 53": {
       "start": 87,
       "end": 87.81351473922902,
-      "loop": false
+      "loop": false,
+      "Cha": "Short"
     },
     "Happy 54": {
       "start": 88,
       "end": 89.09510204081633,
-      "loop": false
+      "loop": false,
+      "Pika Pi": "Normal"
     },
     "Playful 01": {
       "start": 90,
       "end": 91.72086167800454,
-      "loop": false
+      "loop": false,
+      "Pika": "Long"
     },
     "Playful 02": {
       "start": 92,
       "end": 93.90859410430839,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal",
+      "Pikachu": "Long"
     },
     "Playful 03": {
       "start": 94,
       "end": 94.87607709750567,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Playful 04": {
       "start": 95,
       "end": 96.78344671201815,
-      "loop": false
+      "loop": false,
+      "Pika": "Long"
     },
     "Playful 05": {
       "start": 97,
       "end": 98.49290249433106,
-      "loop": false
+      "loop": false,
+      "Pika": "Long"
     },
     "Playful 06": {
       "start": 99,
       "end": 100.27213151927438,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Sad 01": {
       "start": 101,
       "end": 102.47056689342404,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Sad 02": {
       "start": 103,
       "end": 104.43927437641723,
-      "loop": false
+      "loop": false,
+      "Pi": "Normal"
     },
     "Sad 03": {
       "start": 105,
       "end": 106.9398866213152,
-      "loop": false
+      "loop": false,
+      "Pikachu": "Long"
     },
     "Sad 04": {
       "start": 107,
       "end": 108.87730158730159,
-      "loop": false
+      "loop": false,
+      "Pi Pika": "Long"
     },
     "Sad 05": {
       "start": 109,
       "end": 110.59571428571428,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Sad 06": {
       "start": 111,
       "end": 112.15766439909297,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Sad 07": {
       "start": 113,
       "end": 114.15766439909297,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Sad 08": {
       "start": 115,
       "end": 117.00244897959183,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Sad 09": {
       "start": 118,
       "end": 119.97115646258503,
-      "loop": false
+      "loop": false,
+      "Pi Pika": "Long"
     },
     "Sad 10": {
       "start": 120,
       "end": 122.6880045351474,
-      "loop": false
+      "loop": false,
+      "Pika": ",Very Long,"
     },
     "Sad 11": {
       "start": 123,
       "end": 124.25154195011338,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Sad 12": {
       "start": 125,
       "end": 126.1825850340136,
-      "loop": false
+      "loop": false,
+      "Pika": "Long"
     },
     "Sad 13": {
       "start": 127,
       "end": 128.85151927437641,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Sad 14": {
       "start": 129,
       "end": 130.41555555555556,
-      "loop": false
+      "loop": false,
+      "Pika": "Long"
     },
     "Sad 15": {
       "start": 131,
       "end": 132.37149659863945,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Sad 16": {
       "start": 133,
       "end": 133.9503628117914,
-      "loop": false
+      "loop": false,
+      "Bree": "Normal"
     },
     "Sad 17": {
       "start": 134,
       "end": 135.16297052154195,
-      "loop": false
+      "loop": false,
+      "Ka": "Short"
     },
     "Sad 18": {
       "start": 136,
       "end": 137.37666666666667,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Stern 01": {
       "start": 138,
       "end": 139.65827664399092,
-      "loop": false
+      "loop": false,
+      "Pika": "Long"
     },
     "Stern 02": {
       "start": 140,
       "end": 140.7509297052154,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Stern 03": {
       "start": 141,
       "end": 142.00122448979593,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal",
+      "Pikachu": "Short"
     },
     "Stern 04": {
       "start": 143,
       "end": 144.15766439909297,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal",
+      "Pi": "Normal"
     },
     "Stern 05": {
       "start": 145,
       "end": 146.40798185941043,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Stern 06": {
       "start": 147,
       "end": 148.65827664399092,
-      "loop": false
+      "loop": false,
+      "Pika": 2,
+      "Pikachu": 1
     },
     "Stern 07": {
       "start": 149,
       "end": 150.65827664399092,
-      "loop": false
+      "loop": false,
+      "Pi Pika": "Normal"
     },
     "Stern 08": {
       "start": 151,
       "end": 151.66326530612244,
-      "loop": false
+      "loop": false,
+      "Pika": "Short"
     },
     "Stern 09": {
       "start": 152,
       "end": 153.4878231292517,
-      "loop": false
+      "loop": false,
+      "Pika": 3
     },
     "Stern 10": {
       "start": 154,
       "end": 155.116485260771,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Surprised 01": {
       "start": 156,
       "end": 157.09510204081633,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Surprised 02": {
       "start": 158,
       "end": 158.87607709750566,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Surprised 03": {
       "start": 159,
       "end": 159.90736961451248,
-      "loop": false
+      "loop": false,
+      "Pika": "Normal"
     },
     "Surprised 04": {
       "start": 160,
       "end": 161.8773015873016,
-      "loop": false
+      "loop": false,
+      "Pi Pika": "Normal"
     },
     "Surprised 05": {
       "start": 162,
       "end": 163.97115646258504,
-      "loop": false
+      "loop": false,
+      "Pika": "Long"
     },
     "Surprised 06": {
       "start": 164,
       "end": 164.7509297052154,
-      "loop": false
+      "loop": false,
+      "Pika": "Short"
     },
     "Surprised 07": {
       "start": 165,
       "end": 166.75437641723357,
-      "loop": false
+      "loop": false,
+      "Pika": 2
     },
     "Surprised 08": {
       "start": 167,
       "end": 168.3487074829932,
-      "loop": false
+      "loop": false,
+      "Pi Pika": "Normal"
     }
   }
 }

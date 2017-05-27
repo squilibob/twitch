@@ -121,9 +121,10 @@ io.on('connection', function(socket){
 				if (err) throw err;
 				if (result.errors) console.log(result.first_error);
 				else {
+					firstcard = starter[Math.floor(Math.random()*starter.length)];
 					r.table('Users').get(payload.id).update({
 						validated: false,
-						cards: [{'poke': starter[Math.floor(Math.random()*starter.length)], 'level': 1}],
+						cards: [{'poke': fir, 'level': 1}],
 						active: "default",
 						avatar: -1,
 						teams: {
@@ -141,6 +142,14 @@ io.on('connection', function(socket){
 						// else socket.emit('login accepted', result[0]);
 					});
 					io.emit('someone signed up',payload.id);
+					raffleChangeUser(payload.id.toLowerCase(), 12, true, firstcard, "default", [
+						        0 ,
+						        1 ,
+						        2 ,
+						        3 ,
+						        4 ,
+						        5
+						    ]);
 					// socket.broadcast.emit('someone signed up',payload.id);
 				}
 			})

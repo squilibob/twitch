@@ -20,6 +20,7 @@ function chatbot () {
   client.addListener('connectfail', function () { if (showConnectionNotices) chatNotice('Connection failed', 1000, 3, 'chat-connection-bad-fail') })
   client.addListener('reconnect', function () { if (showConnectionNotices) chatNotice('Reconnected', 1000, 'chat-connection-good-reconnect') })
   client.addListener('crash', function () { chatNotice('Crashed', 10000, 4, 'chat-crash') })
+  client.addListener('cheer', function () { chatNotice('Cheer received', 10000, 4, 'chat-crash') })
 
   client.addListener('connected', function (address, port) {
     showConnectionNotices && chatNotice('Connected', 1000, -2, 'chat-connection-good-connected')
