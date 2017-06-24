@@ -29,11 +29,17 @@ project.Login.prototype = {
     textButton.define(button = this.add.group(), game, 'Save these details', 0, y.spacing * y.next, sectioncolors[1])
     button.onChildInputDown.add(this.connect, this)
 
-    if (game.storage.getItem('id')) form[0].children[0].setText(game.storage.getItem('id'))
-    if (game.storage.getItem('ign')) form[1].children[0].setText(game.storage.getItem('ign'))
-    if (game.storage.getItem('fcleft')) form[2].children[0].setText(game.storage.getItem('fcleft'))
-    if (game.storage.getItem('fcmid')) form[3].children[0].setText(game.storage.getItem('fcmid'))
-    if (game.storage.getItem('fcright')) form[4].children[0].setText(game.storage.getItem('fcright'))
+    if (game.device.localStorage) {
+      if (game.storage.getItem('id')) form[0].children[0].setText(game.storage.getItem('id'))
+      if (game.storage.getItem('ign')) form[1].children[0].setText(game.storage.getItem('ign'))
+      if (game.storage.getItem('fcleft')) form[2].children[0].setText(game.storage.getItem('fcleft'))
+      if (game.storage.getItem('fcmid')) form[3].children[0].setText(game.storage.getItem('fcmid'))
+      if (game.storage.getItem('fcright')) form[4].children[0].setText(game.storage.getItem('fcright'))
+    }
+    else {
+      game.state.start('Raffle', Phaser.Plugin.StateTransition.Out.SlideRight, Phaser.Plugin.StateTransition.In.SlideRight)
+    }
+
 
     form[0].children[0].startFocus()
     form[0].children[0].focus = true

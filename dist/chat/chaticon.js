@@ -95,6 +95,15 @@ function badges (chan, user, isBot) {
     if (((user || {}).badges || {}).premium) {
       chatBadges.appendChild(createBadge('premium'))
     }
+    if (((user || {}).badges || {}).bits) {
+      var bit = 1
+      if (user.badges.bits > 99) bit = 100
+      if (user.badges.bits > 999) bit = 1000
+      if (user.badges.bits > 4999) bit = 5000
+      if (user.badges.bits > 9999) bit = 10000
+      bit = 'bit' + bit
+      chatBadges.appendChild(createBadge(bit))
+    }
   } else {
     chatBadges.appendChild(createBadge('bot'))
   }

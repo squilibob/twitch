@@ -1,5 +1,5 @@
 function chatbot () {
-  var joinAccounced = []
+  var joinAnnounced = []
 
   client.on('hosted', function (channel, username, total, autohost) {
     var chan = dehash(channel)
@@ -24,7 +24,7 @@ function chatbot () {
 
   client.addListener('connected', function (address, port) {
     showConnectionNotices && chatNotice('Connected', 1000, -2, 'chat-connection-good-connected')
-    joinAccounced = []
+    joinAnnounced = []
     checkfollowers(TwitchID, true)
   })
 
@@ -36,14 +36,14 @@ function chatbot () {
   client.addListener('join', function (channel, username) {
     if (username == client.getUsername()) {
       showConnectionNotices && chatNotice('Joined ' + capitalize(dehash(channel)), 1000, -1, 'chat-room-join')
-      joinAccounced.push(channel)
+      joinAnnounced.push(channel)
    // getViewers(channel);
       getStart(TwitchID)
     }
   })
 
   client.addListener('part', function (channel, username) {
-    joinAccounced.indexOf(channel) > -1 && joinAccounced.splice(joinAccounced.indexOf(channel), 1)
+    joinAnnounced.indexOf(channel) > -1 && joinAnnounced.splice(joinAnnounced.indexOf(channel), 1)
   })
 
   client.connect()

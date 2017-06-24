@@ -17,7 +17,8 @@ project.Pokemotions = function (game) {
     player,
     enemy,
     maxvelocity,
-    current
+    current,
+    counts
 }
 
 project.Pokemotions.prototype = {
@@ -26,6 +27,7 @@ project.Pokemotions.prototype = {
     footergame.load.image('followerbg', '/img/paint.png')
     footergame.load.audio('followersound', '/audio/ability.mp3')
     footergame.load.audiosprite('cries', '/audio/cries.ogg', '/audio/cries.json', audioJSON.cries)
+    footergame.load.audiosprite('texttopika', '/audio/pikachu.ogg', '/audio/pikachu.json', audioJSON.cries)
     footergame.load.spritesheet('playerpoke', '/img/gen6.png', 32, 32)
     for (currentfuse = 1; currentfuse < 152; currentfuse++) {
       var cachename = 'fuse' + currentfuse
@@ -60,11 +62,31 @@ project.Pokemotions.prototype = {
 
     fx = footergame.add.audioSprite('cries')
     fx.allowMultiple = true
-    footergame.sound.setDecodedCallback(['cries'], this.playsound, this)
+    texttopika = footergame.add.audioSprite('texttopika')
+    footergame.sound.setDecodedCallback(['cries', 'texttopika'], this.playsound, this)
     followersound = footergame.add.audio('followersound')
 
     this.firstround()
     this.addsocketlisteners(this)
+
+    counts = {}
+    differentsounds = []
+    this.getCounts()
+  },
+  getCounts: function(){
+    for (current in audioJSON.texttopika.spritemap) {
+      name = current.split(" ")[0]
+      if (counts[name] === undefined) counts[name] =  []
+      for (key in audioJSON.texttopika.spritemap[current].sounds) {
+          counts[name].push(audioJSON.texttopika.spritemap[current].sounds[key])
+          temp = Object.keys(audioJSON.texttopika.spritemap[current].sounds[key])[0]
+          !differentsounds.includes(temp) && differentsounds.push(temp)
+      }
+    }
+    differentsounds.sort(function(a, b) {
+      return a.length - b.length
+    })
+    console.log(counts, differentsounds)
   },
   addsocketlisteners: function (_this) {
     if (socket.hasListeners('receive emote') == false) {
