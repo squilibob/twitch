@@ -42,6 +42,7 @@ const preloadscripts = [
   '/chat/natures',
   '/chat/hiddenpowers',
   '/chat/twemoji.min',
+  '/js/metaphone',
   '/chat/chatfunctions',
   '/chat/chatapi',
   '/chat/chaticon',

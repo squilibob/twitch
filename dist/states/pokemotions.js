@@ -18,7 +18,10 @@ project.Pokemotions = function (game) {
     enemy,
     maxvelocity,
     current,
-    counts
+    pikaqueue,
+    counts,
+    pikachutalking,
+    lengths
 }
 
 project.Pokemotions.prototype = {
@@ -39,6 +42,8 @@ project.Pokemotions.prototype = {
     followed = []
     runningfolloweranimation = false
     fusionqueue = []
+    pikaqueue = []
+    pikachutalking = false
     runningfusionanimation = false
     decoded = false
     this.game.stage.backgroundColor = 0x1c0f0c
@@ -71,11 +76,13 @@ project.Pokemotions.prototype = {
 
     counts = {}
     differentsounds = []
+    lengths = {}
     this.getCounts()
   },
   getCounts: function(){
     for (current in audioJSON.texttopika.spritemap) {
       name = current.split(" ")[0]
+      lengths[name] = {}
       if (counts[name] === undefined) counts[name] =  []
       for (key in audioJSON.texttopika.spritemap[current].sounds) {
           counts[name].push(audioJSON.texttopika.spritemap[current].sounds[key])
@@ -86,7 +93,46 @@ project.Pokemotions.prototype = {
     differentsounds.sort(function(a, b) {
       return a.length - b.length
     })
-    console.log(counts, differentsounds)
+    for (emotion in counts) {
+      for (blob in counts[emotion]) {
+        bloblen = 0
+        for (current in counts[emotion][blob]) {
+          var len
+          switch (counts[emotion][blob][current]) {
+            case 'Short': len = 0.5
+            break
+            case 'Normal': len = 1
+            break
+            case 'Long': len = 1.5
+            break
+            case 'Very Long': len = 2
+            break
+            default: len = counts[emotion][blob][current]
+          }
+          switch (current) {
+
+          case "Pi":
+          case "Ka": len *= 1
+          break
+          case "Cha": len *= 1.5
+          break
+          case "Pika":
+          case "Bree": len *= 2
+          break
+          case "Pikachu":
+          case "Pikacha": len *= 3
+          break
+          case "Pika Pi":
+          case "Pi Pika" : len *= 2.75
+          break
+          }
+          bloblen += len
+        }
+       if (!lengths[emotion][Math.ceil(bloblen)]) lengths[emotion][Math.ceil(bloblen)] = []
+       lengths[emotion][Math.ceil(bloblen)].push(emotion + ' ' + ("00" + (parseInt(blob)+1)).substr(-2))
+      }
+    }
+    console.log(lengths)
   },
   addsocketlisteners: function (_this) {
     if (socket.hasListeners('receive emote') == false) {
@@ -119,6 +165,12 @@ project.Pokemotions.prototype = {
       })
     }
 
+    if (socket.hasListeners('texttopika') == false) {
+      socket.on('texttopika', function (meta) {
+        _this.guesspikas(meta)
+      })
+    }
+
     if (socket.hasListeners('show fusion') == false) {
       socket.on('show fusion', function (firstpoke, secondpoke) {
         fusionqueue.push({firstpoke: firstpoke, secondpoke: secondpoke})
@@ -126,6 +178,19 @@ project.Pokemotions.prototype = {
     }
 
     socket.emit('Request vote')
+  },
+  guesspikas: function (metaphone) {
+    for (phone of metaphone) {
+      wordlength = phone
+      while (!lengths['Happy'][wordlength]) wordlength--
+      pikaqueue.push(lengths['Happy'][wordlength][Math.floor(Math.random() * lengths['Happy'][wordlength].length)])
+    }
+  },
+  saypikas: function () {
+    if (!pikachutalking && pikaqueue.length) {
+      pikachutalking = true
+      texttopika.play(pikaqueue.shift()).onStop.add(() => { pikachutalking = false }, this)
+    }
   },
   followershow: function (person) {
     runningfolloweranimation = true
@@ -457,6 +522,7 @@ project.Pokemotions.prototype = {
   update: function () {
     if (followed.length && !runningfolloweranimation) this.followershow(followed.shift())
     if (fusionqueue.length && !runningfusionanimation) this.fusionshow(fusionqueue.shift())
+    this.saypikas()
     if (player.length) {
       this.checkBounds()
       this.checkHP()
@@ -465,4 +531,10 @@ project.Pokemotions.prototype = {
       this.decideDirection()
     }
   }
+}
+
+function  getRandomIntInclusive(min, max) {
+  min = Math.ceil(min)
+  max = Math.floor(max) + 1
+  return ("0" + (Math.floor(Math.random() * max) + 1)).substr(-2)
 }

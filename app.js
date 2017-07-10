@@ -501,6 +501,10 @@ io.on('connection', function(socket){
 		socket.emit('new follower', person);
 	});
 
+	socket.on('metaphone', function(meta) {
+		socket.emit('texttopika', meta);
+	});
+
 	socket.on('won raffle', function(person) {
 		rafflewinner(person);
 	});

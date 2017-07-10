@@ -33,7 +33,7 @@ function ffz (text) {
       var sizeurl = 1
       sizeloop: for (size in emoticons.ffz[set].emoticons[emote].urls) { if (parseInt(size) > sizeurl) sizeurl = size }
       var thisemote = emoticons.ffz[set].emoticons[emote].name
-      if (text.indexOf(thisemote) >= 0) text = text.slice(0, text.indexOf(thisemote)) + '<img class="emoticon" src="http:' + emoticons.ffz[set].emoticons[emote].urls[sizeurl] + '"/>' + text.slice(text.indexOf(thisemote) + thisemote.length)
+      if (text.indexOf(thisemote) >= 0) text = text.replace(new RegExp(thisemote, 'g'), '<img class="emoticon" src="http:' + emoticons.ffz[set].emoticons[emote].urls[sizeurl] + '"/>')
     }
   }
   return text
@@ -42,7 +42,7 @@ function ffz (text) {
 function bttv (text) {
   bttvloop: for (set in emoticons.bttv) {
     var thisemote = emoticons.bttv[set].code
-    if (text.indexOf(thisemote) >= 0) text = text.slice(0, text.indexOf(thisemote)) + '<img class="emoticon" src="https://cdn.betterttv.net/emote/' + emoticons.bttv[set].id + '/1x"/>' + text.slice(text.indexOf(thisemote) + thisemote.length)
+    if (text.indexOf(thisemote) >= 0) text = text.replace(new RegExp(thisemote, 'g'), '<img class="emoticon" src="https://cdn.betterttv.net/emote/' + emoticons.bttv[set].id + '/1x"/>')
   }
   return text
 }
@@ -94,6 +94,9 @@ function badges (chan, user, isBot) {
     }
     if (((user || {}).badges || {}).premium) {
       chatBadges.appendChild(createBadge('premium'))
+    }
+    if (((user || {}).badges || {}).subscriber) {
+      chatBadges.appendChild(createBadge('subscriber'))
     }
     if (((user || {}).badges || {}).bits) {
       var bit = 1

@@ -1003,7 +1003,7 @@
 
         if (!self && cmdexist) {
           var parameters = []
-          if (parser[command].requires.pokemon && messagepayload.pokemon.length < parser[command].requires.pokemon.length) cmdexist = false
+          if (parser[command].requires.pokemon.length > 0 && messagepayload.pokemon.length < parser[command].requires.pokemon.length) cmdexist = false
           if (parser[command].requires.question && !containsquestion) cmdexist = false
           if (parser[command].requires.modonly && !modmessage) cmdexist = false
           if (parser[command].requires.parameters) {
@@ -1034,7 +1034,7 @@
     var name = user.username,
       chatLine = document.createElement('li'),
       chatAlignment = document.createElement('div'),
-      chatChannel = document.createElement('div'),
+      chatChannel = document.createElement('span'),
       chatName = document.createElement('span'),
       chatStreamer = document.createElement('span'),
       chatBadge,
@@ -1122,6 +1122,7 @@
       chatAlignment.appendChild(chatBadge)
     }
     streamers.includes(name) && chatAlignment.appendChild(chatStreamer)
+    if (showChannel && client.channels.length > 1) chatAlignment.appendChild(chatChannel)
     chatAlignment.appendChild(chatTime)
     chatLine.appendChild(chatAlignment)
 
@@ -1159,7 +1160,6 @@
 
     chatContainer.appendChild(chatMessage)
 
-    if (client.opts.channels.length > 1 && showChannel) chatLine.appendChild(chatChannel)
     chatLine.appendChild(chatAvatar)
     chatLine.appendChild(chatColon)
     chatLine.appendChild(chatContainer)
@@ -1174,6 +1174,7 @@
         chatColon.dataset.faded = ''
         chatContainer.dataset.faded = ''
      // chatMessage.style.opacity = 1;
+        chatChannel.dataset.faded = ''
         chatAvatar.dataset.faded = ''
         chatName.dataset.faded = ''
         chatName.style.color = '#ffffff'
@@ -1201,4 +1202,9 @@
       chat.firstChild.className = 'chat-kill'
       chat.firstChild.dataset = null
     }
+    var chunks = []
+    for (word of message.split(' ')) {
+      chunks.push(process(word).length)
+    }
+    socket.emit('metaphone', chunks)
   }

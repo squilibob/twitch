@@ -156,15 +156,24 @@ ul {
 }
 .chat-channel {
 	opacity: .6;
+	transition: all 0.5s ease-out;
+}
+.chat-channel:before {
+    content: '#';
 }
 .chat-line.chat-name, .chat-name {
 	font-family: 'Gill Sans MT';
 	font-size: 36px;
 	transition: all 0.5s ease-out;
 }
-.chat-line.chat-name[data-faded], .chat-name[data-faded] {
+.chat-line.chat-name[data-faded], .chat-name[data-faded], {
 	font-family: 'Gill Sans MT';
 	font-size: 24px;
+	transition: all 0.5s ease-out;
+}
+.chat-channel[data-faded] {
+	font-family: 'Gill Sans MT';
+	font-size: 18px;
 	transition: all 0.5s ease-out;
 }
 .chat-streamer {
@@ -335,7 +344,7 @@ ul {
 	background-image: url(https://static-cdn.jtvnw.net/badges/v1/d97c37bd-a6f5-4c38-8f57-4e4bef88af34/2);
 }
 .chat-badge-subscriber {
-	background-image: url(https://static-cdn.jtvnw.net/badges/v1/19dd8673-124d-4f44-830c-b0f4f9d78635/2);
+	background-image: url(/img/subscriber112.png);
 }
 .chat-badge-bot {
 	background-image: url(https://static-cdn.jtvnw.net/badges/v1/df9095f6-a8a0-4cc2-bb33-d908c0adffb8/2);

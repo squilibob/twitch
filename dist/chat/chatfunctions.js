@@ -178,6 +178,7 @@ function checkPoke (message) {
       message = message.substr(0, message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase())) + message.substr(message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()) + pokedex[pokes].Pokemon.length)
     }
   }
+  if (!listofpokemon.length) return []
   return listofpokemon.sort(function (a, b) {
     return message.indexOf(a.Pokemon.toLowerCase()) - message.indexOf(b.Pokemon.toLowerCase())
   })
