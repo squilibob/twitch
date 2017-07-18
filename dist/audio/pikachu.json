@@ -257,7 +257,7 @@
         "loop": false,
         "sounds": [
           {
-            "Pika": "Long"
+            "Pika": "Very Long"
           }
         ]
       },
@@ -367,7 +367,7 @@
         "loop": false,
         "sounds": [
           {
-            "Pikacha": "Normal"
+            "Pikachu": "Long"
           }
         ]
       },
@@ -548,7 +548,7 @@
         "loop": false,
         "sounds": [
           {
-            "Pika Pi": "Normal"
+            "Pika": 2
           }
         ]
       },

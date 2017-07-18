@@ -19,6 +19,7 @@ project.Pokemotions = function (game) {
     maxvelocity,
     current,
     pikaqueue,
+    pikatextqueue,
     counts,
     pikachutalking,
     lengths
@@ -27,6 +28,8 @@ project.Pokemotions = function (game) {
 project.Pokemotions.prototype = {
   preload: function () {
     footergame.load.spritesheet('pokemotevulpix', '/img/pokemotions.png', 206, 236)
+    footergame.load.spritesheet('pikachuhi', '/img/pikachu hi.png', 400, 400)
+    footergame.load.spritesheet('pikachudance', '/img/pikachu dance.png', 206, 236)
     footergame.load.image('followerbg', '/img/paint.png')
     footergame.load.audio('followersound', '/audio/ability.mp3')
     footergame.load.audiosprite('cries', '/audio/cries.ogg', '/audio/cries.json', audioJSON.cries)
@@ -43,6 +46,7 @@ project.Pokemotions.prototype = {
     runningfolloweranimation = false
     fusionqueue = []
     pikaqueue = []
+    pikatextqueue = []
     pikachutalking = false
     runningfusionanimation = false
     decoded = false
@@ -180,16 +184,23 @@ project.Pokemotions.prototype = {
     socket.emit('Request vote')
   },
   guesspikas: function (metaphone) {
+    pikaemotion = 'Happy'
     for (phone of metaphone) {
       wordlength = phone
-      while (!lengths['Happy'][wordlength]) wordlength--
-      pikaqueue.push(lengths['Happy'][wordlength][Math.floor(Math.random() * lengths['Happy'][wordlength].length)])
+      while (!lengths[pikaemotion][wordlength]) wordlength--
+      randomsound = lengths[pikaemotion][wordlength][Math.floor(Math.random() * lengths[pikaemotion][wordlength].length)]
+
+      for (character in counts[pikaemotion][parseInt(randomsound.split(' ')[1])-1]) {
+        pikatextqueue.push([ "ピ", "カ", "チャ", "ピカ", "ブレ", "ピカチュウ", "ピカチャ", "ピカ ピ", "ピ ピカ" ][[ "Pi", "Ka", "Cha", "Pika", "Bree", "Pikachu", "Pikacha", "Pika Pi", "Pi Pika" ].indexOf(character)])
+      }
+      pikaqueue.push(randomsound)
     }
   },
   saypikas: function () {
     if (!pikachutalking && pikaqueue.length) {
       pikachutalking = true
       texttopika.play(pikaqueue.shift()).onStop.add(() => { pikachutalking = false }, this)
+      console.log(pikatextqueue)
     }
   },
   followershow: function (person) {
