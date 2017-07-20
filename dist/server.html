@@ -8,7 +8,10 @@
       <script src="serverpresets.js"></script>
       <script src="serverIP.js"></script>
       <script src="/socket.io/socket.io.js"></script>
-      <script>var socket =io(serverIP);</script>
+      <script>
+        var socket =io(serverIP)
+        var project = {}
+      </script>
       <script type="text/javascript" src="/js/phaser.js"></script>
       <script type="text/javascript" src = "/js/phaser-state-transition.min.js"></script>
       <script type="text/javascript" src="/js/run.js"></script>
@@ -19,6 +22,6 @@
 <body>
     <div id="content" style="position:absolute; z-index:2; top:20px; left: 579px;"></div>
     <div id="footer" style="position:absolute; z-index:3; top:985px; left: 579px;"></div>
-    <div id="chat"  style="z-index:3"></div>
+    <div id="chat"  style="z-index:4"></div>
 </body>
 </html>

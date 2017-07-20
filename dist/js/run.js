@@ -85,6 +85,8 @@ project.Init.prototype = {
       } else script = preloadscripts[testscript]
       game.load.script(this.filename(script), script + '.js')
     }
+    game.load.json('audiojsoncries', '/audio/cries.json')
+    game.load.json('texttopikajson', '/audio/pikachu.json')
   },
 
   loadUpdate: function () {
@@ -93,6 +95,7 @@ project.Init.prototype = {
   },
 
   create: function () {
+    game.audioJSON = {}
     game.stage.disableVisibilityChange = true
     game.plugins.add(Fabrique.Plugins.InputField)
     game.plugins.add(Fabrique.Plugins.SuperStorage)

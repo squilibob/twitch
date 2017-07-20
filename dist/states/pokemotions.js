@@ -1,39 +1,22 @@
 project.Pokemotions = function (game) {
   var
-    followergroup,
-    followed,
-    runningfolloweranimation,
     fusion,
     fusionqueue,
     runningfusionanimation,
     leftfuse,
     rightfuse,
-    fx,
-    followersound,
-    decoded,
     txtstyle,
     questiontext,
     listgroup,
     player,
     enemy,
     maxvelocity,
-    current,
-    pikaqueue,
-    pikatextqueue,
-    counts,
-    pikachutalking,
-    lengths
+    current
 }
 
 project.Pokemotions.prototype = {
   preload: function () {
     footergame.load.spritesheet('pokemotevulpix', '/img/pokemotions.png', 206, 236)
-    footergame.load.spritesheet('pikachuhi', '/img/pikachu hi.png', 400, 400)
-    footergame.load.spritesheet('pikachudance', '/img/pikachu dance.png', 206, 236)
-    footergame.load.image('followerbg', '/img/paint.png')
-    footergame.load.audio('followersound', '/audio/ability.mp3')
-    footergame.load.audiosprite('cries', '/audio/cries.ogg', '/audio/cries.json', audioJSON.cries)
-    footergame.load.audiosprite('texttopika', '/audio/pikachu.ogg', '/audio/pikachu.json', audioJSON.cries)
     footergame.load.spritesheet('playerpoke', '/img/gen6.png', 32, 32)
     for (currentfuse = 1; currentfuse < 152; currentfuse++) {
       var cachename = 'fuse' + currentfuse
@@ -42,14 +25,8 @@ project.Pokemotions.prototype = {
     }
   },
   create: function () {
-    followed = []
-    runningfolloweranimation = false
     fusionqueue = []
-    pikaqueue = []
-    pikatextqueue = []
-    pikachutalking = false
     runningfusionanimation = false
-    decoded = false
     this.game.stage.backgroundColor = 0x1c0f0c
     txtstyle = {
       backgroundColor: 'transparent',
@@ -68,75 +45,8 @@ project.Pokemotions.prototype = {
     player = []
     enemy = []
     maxvelocity = 36
-
-    fx = footergame.add.audioSprite('cries')
-    fx.allowMultiple = true
-    texttopika = footergame.add.audioSprite('texttopika')
-    footergame.sound.setDecodedCallback(['cries', 'texttopika'], this.playsound, this)
-    followersound = footergame.add.audio('followersound')
-
     this.firstround()
     this.addsocketlisteners(this)
-
-    counts = {}
-    differentsounds = []
-    lengths = {}
-    this.getCounts()
-  },
-  getCounts: function(){
-    for (current in audioJSON.texttopika.spritemap) {
-      name = current.split(" ")[0]
-      lengths[name] = {}
-      if (counts[name] === undefined) counts[name] =  []
-      for (key in audioJSON.texttopika.spritemap[current].sounds) {
-          counts[name].push(audioJSON.texttopika.spritemap[current].sounds[key])
-          temp = Object.keys(audioJSON.texttopika.spritemap[current].sounds[key])[0]
-          !differentsounds.includes(temp) && differentsounds.push(temp)
-      }
-    }
-    differentsounds.sort(function(a, b) {
-      return a.length - b.length
-    })
-    for (emotion in counts) {
-      for (blob in counts[emotion]) {
-        bloblen = 0
-        for (current in counts[emotion][blob]) {
-          var len
-          switch (counts[emotion][blob][current]) {
-            case 'Short': len = 0.5
-            break
-            case 'Normal': len = 1
-            break
-            case 'Long': len = 1.5
-            break
-            case 'Very Long': len = 2
-            break
-            default: len = counts[emotion][blob][current]
-          }
-          switch (current) {
-
-          case "Pi":
-          case "Ka": len *= 1
-          break
-          case "Cha": len *= 1.5
-          break
-          case "Pika":
-          case "Bree": len *= 2
-          break
-          case "Pikachu":
-          case "Pikacha": len *= 3
-          break
-          case "Pika Pi":
-          case "Pi Pika" : len *= 2.75
-          break
-          }
-          bloblen += len
-        }
-       if (!lengths[emotion][Math.ceil(bloblen)]) lengths[emotion][Math.ceil(bloblen)] = []
-       lengths[emotion][Math.ceil(bloblen)].push(emotion + ' ' + ("00" + (parseInt(blob)+1)).substr(-2))
-      }
-    }
-    console.log(lengths)
   },
   addsocketlisteners: function (_this) {
     if (socket.hasListeners('receive emote') == false) {
@@ -157,24 +67,6 @@ project.Pokemotions.prototype = {
       })
     }
 
-    if (socket.hasListeners('playsound') == false) {
-      socket.on('playsound', function (which) {
-        decoded && fx.play(which)
-      })
-    }
-
-    if (socket.hasListeners('new follower') == false) {
-      socket.on('new follower', function (who) {
-        followed.push(who)
-      })
-    }
-
-    if (socket.hasListeners('texttopika') == false) {
-      socket.on('texttopika', function (meta) {
-        _this.guesspikas(meta)
-      })
-    }
-
     if (socket.hasListeners('show fusion') == false) {
       socket.on('show fusion', function (firstpoke, secondpoke) {
         fusionqueue.push({firstpoke: firstpoke, secondpoke: secondpoke})
@@ -182,61 +74,6 @@ project.Pokemotions.prototype = {
     }
 
     socket.emit('Request vote')
-  },
-  guesspikas: function (metaphone) {
-    pikaemotion = 'Happy'
-    for (phone of metaphone) {
-      wordlength = phone
-      while (!lengths[pikaemotion][wordlength]) wordlength--
-      randomsound = lengths[pikaemotion][wordlength][Math.floor(Math.random() * lengths[pikaemotion][wordlength].length)]
-
-      for (character in counts[pikaemotion][parseInt(randomsound.split(' ')[1])-1]) {
-        pikatextqueue.push([ "ピ", "カ", "チャ", "ピカ", "ブレ", "ピカチュウ", "ピカチャ", "ピカ ピ", "ピ ピカ" ][[ "Pi", "Ka", "Cha", "Pika", "Bree", "Pikachu", "Pikacha", "Pika Pi", "Pi Pika" ].indexOf(character)])
-      }
-      pikaqueue.push(randomsound)
-    }
-  },
-  saypikas: function () {
-    if (!pikachutalking && pikaqueue.length) {
-      pikachutalking = true
-      texttopika.play(pikaqueue.shift()).onStop.add(() => { pikachutalking = false }, this)
-      console.log(pikatextqueue)
-    }
-  },
-  followershow: function (person) {
-    runningfolloweranimation = true
-    var fol = []
-    followergroup = footergame.add.group()
-    fol[0] = footergame.add.sprite(0, 0, 'followerbg')
-    var folscale = footergame.world.height / fol[0].height
-    fol[0].scale.setTo(folscale)
-    fol[1] = footergame.add.text(0, 0, person, txtstyle)
-    fol[1].x = fol[0].x + fol[0].width - fol[1].width - 64
-    fol[1].y = fol[0].height / 4
-    fol[2] = footergame.add.text(0, 0, 'follow', txtstyle)
-    fol[2].x = fol[0].x + fol[0].width - fol[2].width - 64
-    fol[2].y = fol[1].height / 2 + fol[1].y + 8
-    followergroup.addMultiple(fol)
-    followergroup.x = footergame.world.width - followergroup.width
-    var folmask = footergame.add.graphics()
-    folmask.beginFill(0x000000)
-    folmask.drawRect(followergroup.x, followergroup.y, followergroup.width, followergroup.height)
-    folmask.endFill()
-    folmask.x = followergroup.width
-    followergroup.mask = folmask
-      // followergroup.alpha = 0.2;
-    var folfadeout = footergame.add.tween(followergroup).to({ alpha: 0 }, 4000, Phaser.Easing.Linear.None, false)
-    folfadeout.onComplete.add(this.emptygroup, this)
-    footergame.add.tween(folmask).to({ x: 0 }, 500, Phaser.Easing.Linear.None, true)
-      .chain(folfadeout)
-    followersound.play()
-  },
-  emptygroup: function () {
-    followergroup.destroy(true, true)
-    runningfolloweranimation = false
-  },
-  playsound: function () {
-    decoded = true
   },
   composevote: function (payload) {
     var title, options = [], names
@@ -347,7 +184,7 @@ project.Pokemotions.prototype = {
       // tempgroup.y += 32;
   },
   addtween: function (obj) {
-    var sinData = game.math.sinCosGenerator(1337, 8, 16, 5)
+    var sinData = footergame.math.sinCosGenerator(1337, 8, 16, 5)
     var sin = sinData.sin
     footergame.add.tween(obj).to({ alpha: 1, fontSize: 72}, 1000, Phaser.Easing.Bounce.Out, true)
     footergame.add.tween(obj).to({ x: 0 + obj.offset}, 1000, Phaser.Easing.Sinusoidal.InOut, true).chain(
@@ -417,7 +254,7 @@ project.Pokemotions.prototype = {
   createenemy: function (pokemon, x, y) {
     var offset = pokemon * 4
     var playerpoke = footergame.add.sprite(x, y, 'playerpoke')
-    game.physics.enable(playerpoke, Phaser.Physics.ARCADE)
+    footergame.physics.enable(playerpoke, Phaser.Physics.ARCADE)
     playerpoke.anchor.set(0.5)
     playerpoke.body.collideWorldBounds = true
     playerpoke.scale.setTo(3)
@@ -531,9 +368,7 @@ project.Pokemotions.prototype = {
     for (currentplayer of player) if (!currentplayer.enemytarget && Math.random() < 0.002) this.toggleplayerdirection(currentplayer)
   },
   update: function () {
-    if (followed.length && !runningfolloweranimation) this.followershow(followed.shift())
     if (fusionqueue.length && !runningfusionanimation) this.fusionshow(fusionqueue.shift())
-    this.saypikas()
     if (player.length) {
       this.checkBounds()
       this.checkHP()

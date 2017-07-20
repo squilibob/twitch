@@ -27,14 +27,15 @@ const preloadscripts = [
   '/js/helperfunctions',
   {'Login': '/states/login'},
   // {'Avatar': '/states/avatar'},
-  {'Teams': '/states/teams'},
+  // {'Teams': '/states/teams'},
   {'Raffle': '/states/raffle'},
   // {'Pokemotions': '/states/pokemotions'},
   {'Battle': '/states/battle'},
   // {'Vote': '/states/vote'},
   // {'Cards': '/states/cards'},
   {'Pokedex': '/states/pokedex'},
-  {'Blank': '/states/blank'},
+  {'Layout': '/states/layout'},
+  // {'Blank': '/states/blank'},
   '/chat/clientoptions',
   '/chat/tmi.min',
   '/chat/chatvariables',
@@ -52,7 +53,7 @@ const preloadscripts = [
   '/chat/chat'
 ]
 
-const firststate = 'Blank'
+const firststate = 'Layout'
 
 const pokedexoptions = {
   scoring: true,

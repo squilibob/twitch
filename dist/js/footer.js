@@ -1,9 +1,4 @@
 var footergame = new Phaser.Game(1600, 220, Phaser.AUTO, 'footer')
-var project = {}
-var teams
-var team_name
-var loader_elements = {}
-var audioJSON = {}
 
 project.Footer = function () {
   states = {}
@@ -12,8 +7,6 @@ project.Footer = function () {
 project.Footer.prototype = {
 
   preload: function () {
-    footergame.load.json('audiojsoncries', '/audio/cries.json')
-    footergame.load.json('texttopikajson', '/audio/pikachu.json')
     footergame.load.script('Pokemotions', '/states/pokemotions.js')
     // var script;
     // for (testscript in preloadscripts) {
@@ -34,9 +27,8 @@ project.Footer.prototype = {
   },
 
   create: function () {
-    audioJSON.cries = footergame.cache.getJSON('audiojsoncries')
-    audioJSON.texttopika = footergame.cache.getJSON('texttopikajson')
     footergame.stage.disableVisibilityChange = true
+    // footergame.transparent = true
     footergame.state.add('Pokemotions', project.Pokemotions)
     footergame.state.start('Pokemotions')
   }
