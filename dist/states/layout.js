@@ -1,18 +1,21 @@
 project.Layout = function (game) {
   var
+    overlayqueue,
+    overlayqueueready,
     followergroup,
     followed,
-    runningfolloweranimation,
     fx,
     followersound,
     decoded,
-    txtstyle,
+    pikatxtstyle,
+    actualmessage,
     pikaqueue,
     pikatextqueue,
     pikacharqueue,
     counts,
     pikachutalking,
     pikawave,
+    pikadance,
     lengths,
     textorigin
 }
@@ -20,7 +23,7 @@ project.Layout = function (game) {
 project.Layout.prototype = {
   preload: function () {
     game.load.spritesheet('pikachuhi', '/img/pikachu hi.png', 800, 800)
-    game.load.spritesheet('pikachudance', '/img/pikachu dance.png', 206, 236)
+    game.load.spritesheet('pikachudance', '/img/pikachu dance.png', 99, 99)
     game.load.image('followerbg', '/img/paint.png')
     game.load.audio('followersound', '/audio/ability.mp3')
     game.load.audiosprite('cries', '/audio/cries.ogg', '/audio/cries.json', game.audioJSON.cries)
@@ -28,10 +31,18 @@ project.Layout.prototype = {
   },
   create: function () {
     pikawave = game.add.sprite(game.world.width / 4, game.world.height-800, 'pikachuhi')
+    pikawave.visible = false
+    pikadance = game.add.sprite(game.world.width / 2, game.world.height-800, 'pikachudance')
+    pikadance.anchor.x = 0.5
+    pikadance.visible = false
+    overlayqueueready = true
     var wave = pikawave.animations.add('wave')
+    var dance = pikadance.animations.add('dance')
     pikawave.animations.play('wave', 30, true)
+    pikadance.animations.play('dance', 12, true)
+    overlayqueue = []
     followed = []
-    runningfolloweranimation = false
+    actualmessage = []
     pikaqueue = []
     pikatextqueue = []
     pikacharqueue = []
@@ -48,17 +59,20 @@ project.Layout.prototype = {
     counts = {}
     differentsounds = []
     lengths = {}
-    txtstyle = {
+    pikatxtstyle = {
+      align: 'center',
       backgroundColor: 'transparent',
       boundsAlignH: 'center',
       boundsAlignV: 'middle',
       fill: Presets.fill,
       fillAlpha: 1,
       font: Presets.font,
-      fontSize: '96px ',
+      fontSize: '48px ',
       fontWeight: 'Bold',
       textAlign: 'left',
-      stroke: 0
+      stroke: 0,
+      wordWrap: true,
+      wordWrapWidth: game.world.width
     }
     // textorigin = {x: game.world.width - 100, y: game.world.height-64}
     textorigin = {x: game.world.width / 2, y: game.world.height-64}
@@ -127,17 +141,19 @@ project.Layout.prototype = {
     }
     if (socket.hasListeners('new follower') == false) {
       socket.on('new follower', function (who) {
-        followed.push(who)
+        overlayqueue.push({type:'follower', value: who})
+        // followed.push(who)
       })
     }
     if (socket.hasListeners('texttopika') == false) {
-      socket.on('texttopika', function (meta) {
-        _this.guesspikas(meta)
+      socket.on('texttopika', function (meta, message) {
+        _this.guesspikas(meta, message)
       })
     }
   },
-  guesspikas: function (metaphone) {
+  guesspikas: function (metaphone, message) {
     pikaemotion = 'Happy'
+    pikamessage = []
     for (phone of metaphone) {
       wordlength = phone
       while (!lengths[pikaemotion][wordlength]) wordlength--
@@ -150,33 +166,31 @@ project.Layout.prototype = {
         // pikatextqueue[pikatextqueue.length - 1].angle = 90
       }
       pikacharqueue.push(pikaword.join(' '))
-      pikaqueue.push(randomsound)
+      pikamessage.push(randomsound)
     }
+    overlayqueue.push({type: 'pika', value: pikamessage}, {type: 'message', value: message})
   },
   saypikas: function () {
-    pikawave.visible = pikatextqueue.length ? true : false
     if (!pikachutalking && pikaqueue.length) {
       pikachutalking = true
       texttopika.play(pikaqueue.shift()).onStop.add(() => { pikachutalking = false }, this)
       if (pikacharqueue.length) {
-        pikatextqueue.push(game.add.text(textorigin.x, textorigin.y, pikacharqueue.shift(), txtstyle))
+        pikatextqueue.push(game.add.text(textorigin.x, textorigin.y, pikacharqueue.shift(), pikatxtstyle))
         pikatextqueue[pikatextqueue.length-1].pivot.y = 800
         pikatextqueue[pikatextqueue.length-1].angle = 90
       }
-      console.log(pikacharqueue, pikatextqueue)
     }
   },
   followershow: function (person) {
-    runningfolloweranimation = true
     var fol = []
     followergroup = game.add.group()
     fol[0] = game.add.sprite(0, 0, 'followerbg')
     var folscale = 0.5//game.world.width / fol[0].width
     fol[0].scale.setTo(folscale)
-    fol[1] = game.add.text(0, 0, person, txtstyle)
+    fol[1] = game.add.text(0, 0, person, pikatxtstyle)
     fol[1].x = fol[0].x + fol[0].width - fol[1].width - 64
     fol[1].y = fol[0].height / 4
-    fol[2] = game.add.text(0, 0, 'follow', txtstyle)
+    fol[2] = game.add.text(0, 0, 'follow', pikatxtstyle)
     fol[2].x = fol[0].x + fol[0].width - fol[2].width - 64
     fol[2].y = fol[1].height / 2 + fol[1].y + 8
     followergroup.addMultiple(fol)
@@ -190,27 +204,57 @@ project.Layout.prototype = {
     followergroup.mask = folmask
       // followergroup.alpha = 0.2;
     var folfadeout = game.add.tween(followergroup).to({ alpha: 0 }, 4000, Phaser.Easing.Linear.None, false)
-    folfadeout.onComplete.add(this.emptygroup, this)
+    folfadeout.onComplete.add(this.emptygroup, this, followergroup)
     game.add.tween(folmask).to({ x: 0 }, 500, Phaser.Easing.Linear.None, true)
       .chain(folfadeout)
     followersound.play()
   },
-  emptygroup: function () {
-    followergroup.destroy(true, true)
-    runningfolloweranimation = false
+  emptygroup: function (toDestroy) {
+    toDestroy.destroy(true, true)
+    overlayqueueready = true
+    pikadance.visible = false
   },
   playsound: function () {
     decoded = true
   },
-  update: function () {
-    if (followed.length && !runningfolloweranimation) this.followershow(followed.shift())
-    this.saypikas()
+  showmessage: function(message) {
+    overlayqueueready = false
+    if (!message) message = 'no message'
+    messagetoshow = game.add.text(game.world.width / 2, game.world.height / 2, message, pikatxtstyle)
+    messagetoshow.anchor.setTo(0.5)
+    pikadance.y = messagetoshow.y - messagetoshow.getBounds().height / 2 - pikadance.getBounds().height
+    pikadance.visible = true
+    messagetween = game.add.tween(messagetoshow).to({ alpha: 0 }, 12000, Phaser.Easing.Linear.None, true)
+    messagetween.onComplete.add(this.emptygroup, this, messagetoshow)
+  },
+  movetext: function () {
     for (text in pikatextqueue) {
       pikatextqueue[text].angle--
       if (pikatextqueue[text].angle < -135) {
         texttoremove = pikatextqueue.shift()
         texttoremove.destroy(true)
+        if (!pikatextqueue.length)  overlayqueueready = true
       }
     }
+  },
+  dequeue: function() {
+    pikawave.visible = pikatextqueue.length ? true : false
+    if (overlayqueue.length && overlayqueueready) {
+      overlayqueueready = false
+      next = overlayqueue.shift()
+      switch (next.type) {
+        case 'follower': this.followershow(next.value)
+        break;
+        case 'pika': pikaqueue = next.value
+        break;
+        case 'message': this.showmessage(next.value)
+        break;
+      }
+    }
+  },
+  update: function () {
+    this.saypikas()
+    this.movetext()
+    this.dequeue()
   }
 }

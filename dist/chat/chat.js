@@ -21,16 +21,26 @@ function chatbot () {
   client.addListener('reconnect', function () { if (showConnectionNotices) chatNotice('Reconnected', 1000, 'chat-connection-good-reconnect') })
   client.addListener('crash', function () { chatNotice('Crashed', 10000, 4, 'chat-crash') })
   client.addListener("cheer", function (channel, userstate, message) {
-    console.log(userstate);
+    console.log(userstate, message)
     chatNotice(userstate.username + ' has donated ' + userstate.bits + ' bits', 10000, 1)
     // Object { badges: Object, bits: "50", color: "#FF0000", display-name: "jennluv69", emotes: null, id: "9ff6f821-6419-4f9a-a4ab-f4c638012ae2", mod: false, room-id: "39392583", subscriber: false, tmi-sent-ts: "1498980326580", turbo, user-id, user-type, username}
-  });
+    var chunks = []
+    for (word of message.split(' ')) {
+      chunks.push(process(word).length)
+    }
+    socket.emit('metaphone', chunks, 'pikachu said:\n' + message + '\n(from ' + userstate['display-name'] + ')')
+  })
 
 
   client.on("subscription", function (channel, username, method, message, userstate) {
-      chatNotice(username + ' has subscribed (' + method + ') bits', 10000, 1)
-      console.log(userstate);
-  });
+      chatNotice(username + ' has subscribed (' + method + ')', 10000, 1)
+      console.log(userstate, message)
+      var chunks = []
+      for (word of message.split(' ')) {
+        chunks.push(process(word).length)
+      }
+      socket.emit('metaphone', chunks, 'pikachu said:\n' + message + '\n(from ' + username + ' new subscriber)')
+  })
 
 
 
@@ -59,17 +69,17 @@ function chatbot () {
   })
 
   client.connect()
-  // socket.emit('send raffle', true)
-  // socket.emit('Ask for table', 'Moves')
-  // socket.emit('Ask for table', 'Abilities')
-  // socket.emit('Ask for table', 'Bttv')
-  // socket.emit('Ask for table', 'Ffz')
+  socket.emit('send raffle', true)
+  socket.emit('Ask for table', 'Moves')
+  socket.emit('Ask for table', 'Abilities')
+  socket.emit('Ask for table', 'Bttv')
+  socket.emit('Ask for table', 'Ffz')
 
-  // var timers = [
-  //   window.setInterval(getViewers, 525000, TwitchID),
-  //   window.setInterval(repeating_notice_website, 3000000),
-  //   window.setInterval(repeating_notice_signup, 7200000),
-  //   window.setInterval(checkfollowers, 180000, TwitchID, false),
+  var timers = [
+    window.setInterval(getViewers, 525000, TwitchID),
+    window.setInterval(repeating_notice_website, 3000000),
+    window.setInterval(repeating_notice_signup, 7200000),
+    window.setInterval(checkfollowers, 180000, TwitchID, false),
     window.setInterval(dequeue, 1000 * botDelay || 1000)
-  // ]
+  ]
 }

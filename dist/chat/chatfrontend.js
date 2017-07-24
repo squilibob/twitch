@@ -1202,9 +1202,4 @@
       chat.firstChild.className = 'chat-kill'
       chat.firstChild.dataset = null
     }
-    var chunks = []
-    for (word of message.split(' ')) {
-      chunks.push(process(word).length)
-    }
-    socket.emit('metaphone', chunks)
   }
