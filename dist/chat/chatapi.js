@@ -31,6 +31,7 @@ function checkAvatar (obj) {
             checkImageExists(body.logo, function (existsImage) {
               if (existsImage) {
                 useravatars[obj.user.username] = body.logo
+                socket.emit('newest chatter', body.logo)
               }
             })
           }

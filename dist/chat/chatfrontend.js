@@ -1030,6 +1030,19 @@
     if (response && userexisted) submitchat(response)
   }
 
+/*
+          socket.on('newchatter', function (avatar){
+            console.log(avatar)
+                if (typeof(avatar) !== 'number') tempload = game.load.image('temp1', avatar, 32, 32)
+                tempload.onLoadComplete.add(_this.work, _this)
+                tempload.start()
+          })
+  work: function () {
+    game.add.sprite(300, 300, 'temp1')
+  },
+      game.load.crossOrigin = 'anonymous'
+      */
+
   function handleChat (chan, user, message, self, avatar, image) {
     var name = user.username,
       chatLine = document.createElement('li'),

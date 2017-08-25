@@ -16,7 +16,7 @@ const Presets = {
   externalteams: true,
   scalingallowed: false,
   simple: false,
-  cors: 'https://crossorigin.me/'
+  cors: 'https://cors-anywhere.herokuapp.com/'
 }
 const preloadscripts = [
   'consts',
