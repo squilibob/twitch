@@ -1,12 +1,12 @@
-project.Emote = function (game) {
-  var
+project.Emote = (function (game) {
+  let
     gameTimer,
     startTime,
     totalTime,
     timeElapsed,
     canSend,
     menu
-}
+})
 
 project.Emote.prototype = {
   preload: function () {
@@ -21,8 +21,8 @@ project.Emote.prototype = {
     }
   },
   updateTimer: function () {
-    var currentTime = new Date()
-    var timeDifference = startTime.getTime() - currentTime.getTime()
+    let currentTime = new Date()
+    let timeDifference = startTime.getTime() - currentTime.getTime()
     timeElapsed = Math.abs(timeDifference / 1000)
   },
   update: function () {
@@ -44,17 +44,17 @@ project.Emote.prototype = {
     totalTime = 12
     timeElapsed = 0
 
-    var me = this
+    let me = this
     gameTimer = game.time.events.loop(100, function () {
       me.updateTimer()
     })
 
     poke = []
-    var width = 206 + Presets.padding
-    var height = 236 + Presets.padding
-    var x = -width
-    var y = 200
-    for (var i = 0; i < 10; i++) {
+    let width = 206 + Presets.padding
+    let height = 236 + Presets.padding
+    let x = -width
+    let y = 200
+    for (let i = 0; i < 10; i++) {
       x += width
       if (x + width > game.world.width) {
         x = 0

@@ -1,5 +1,5 @@
-project.Layout = function (game) {
-  var
+project.Layout = (function (game) {
+  let
     overlayqueue,
     overlayqueueready,
     followergroup,
@@ -18,7 +18,7 @@ project.Layout = function (game) {
     pikadance,
     lengths,
     textorigin
-}
+})
 
 project.Layout.prototype = {
   preload: function () {
@@ -37,8 +37,8 @@ project.Layout.prototype = {
     pikadance.anchor.x = 0.5
     pikadance.visible = false
     overlayqueueready = true
-    var wave = pikawave.animations.add('wave')
-    var dance = pikadance.animations.add('dance')
+    let wave = pikawave.animations.add('wave')
+    let dance = pikadance.animations.add('dance')
     pikawave.animations.play('wave', 30, true)
     pikadance.animations.play('dance', 12, true)
     overlayqueue = []
@@ -98,7 +98,7 @@ project.Layout.prototype = {
       for (blob in counts[emotion]) {
         bloblen = 0
         for (current in counts[emotion][blob]) {
-          var len
+          let len
           switch (counts[emotion][blob][current]) {
             case 'Short': len = 0.5
             break
@@ -183,10 +183,10 @@ project.Layout.prototype = {
     }
   },
   followershow: function (person) {
-    var fol = []
+    let fol = []
     followergroup = game.add.group()
     fol[0] = game.add.sprite(0, 0, 'followerbg')
-    var folscale = 0.5//game.world.width / fol[0].width
+    let folscale = 0.5//game.world.width / fol[0].width
     fol[0].scale.setTo(folscale)
     fol[1] = game.add.text(0, 0, person, pikatxtstyle)
     fol[1].x = fol[0].x + fol[0].width - fol[1].width - 64
@@ -197,14 +197,14 @@ project.Layout.prototype = {
     followergroup.addMultiple(fol)
     followergroup.x = game.world.width - followergroup.width
     followergroup.y = game.world.height / 4
-    var folmask = game.add.graphics()
+    let folmask = game.add.graphics()
     folmask.beginFill(0x000000)
     folmask.drawRect(followergroup.x, followergroup.y, followergroup.width, followergroup.height)
     folmask.endFill()
     folmask.x = followergroup.width
     followergroup.mask = folmask
       // followergroup.alpha = 0.2;
-    var folfadeout = game.add.tween(followergroup).to({ alpha: 0 }, 4000, Phaser.Easing.Linear.None, false)
+    let folfadeout = game.add.tween(followergroup).to({ alpha: 0 }, 4000, Phaser.Easing.Linear.None, false)
     folfadeout.onComplete.add(this.emptygroup, this, followergroup)
     game.add.tween(folmask).to({ x: 0 }, 500, Phaser.Easing.Linear.None, true)
       .chain(folfadeout)

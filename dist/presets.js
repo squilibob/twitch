@@ -51,7 +51,7 @@ const pokedexoptions = {
   }
 }
 
-var fragmentSrc = [
+let fragmentSrc = [
   'precision mediump float;',
   'uniform vec2      resolution;',
   'uniform float     time;',

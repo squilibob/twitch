@@ -1,5 +1,5 @@
-project.Pokemotions = function (game) {
-  var
+project.Pokemotions = (function (game) {
+  let
     fusion,
     fusionqueue,
     runningfusionanimation,
@@ -12,16 +12,16 @@ project.Pokemotions = function (game) {
     enemy,
     maxvelocity,
     current
-}
+})
 
 project.Pokemotions.prototype = {
   preload: function () {
     footergame.load.spritesheet('pokemotevulpix', '/img/pokemotions.png', 206, 236)
     footergame.load.spritesheet('playerpoke', '/img/gen6.png', 32, 32)
-    for (currentfuse = 1; currentfuse < 152; currentfuse++) {
-      var cachename = 'fuse' + currentfuse
-      var currentfusion = '/img/fusion/' + currentfuse + '.png'
-      var loading = footergame.load.spritesheet(cachename, currentfusion, 240, 240)
+    for (let currentfuse = 1; currentfuse < 152; currentfuse++) {
+      let cachename = 'fuse' + currentfuse
+      let currentfusion = '/img/fusion/' + currentfuse + '.png'
+      let loading = footergame.load.spritesheet(cachename, currentfusion, 240, 240)
     }
   },
   create: function () {
@@ -76,7 +76,7 @@ project.Pokemotions.prototype = {
     socket.emit('Request vote')
   },
   composevote: function (payload) {
-    var title, options = [], names
+    let title, options = [], names
     for (entry in payload) {
       if (payload[entry].title) title = payload[entry].title
       if (payload[entry].options) names = payload[entry].options
@@ -91,7 +91,7 @@ project.Pokemotions.prototype = {
   },
   drawvotes: function (title, options, maxwidth, maxheight) {
     if (!sectioncolors) {
-      var sectioncolors = [
+      let sectioncolors = [
         0xeb485b,
         0x1f9b76,
         0x9f5fff,
@@ -101,10 +101,10 @@ project.Pokemotions.prototype = {
       ]
     }
     listgroup.removeChildren()
-    var listvotes = []
-    var listtext = []
-    var increment = 0
-    var lowestvote = options[0].tally
+    let listvotes = []
+    let listtext = []
+    let increment = 0
+    let lowestvote = options[0].tally
     questiontext.setText('vote: ' + title)
     for (option in options) {
       increment += options[option].tally
@@ -120,11 +120,11 @@ project.Pokemotions.prototype = {
       listtext[listtext.length - 1].inputEnabled = true
       listtext[listtext.length - 1].anchor.x = 0.5
       listtext[listtext.length - 1].anchor.y = listtext[listtext.length - 1].getBounds().height + listtext[listtext.length - 1].y > footergame.world.height ? 1 : 0
-      var placeholdy = footergame.world.height - increment * options[option].tally
+      let placeholdy = footergame.world.height - increment * options[option].tally
       listvotes[listvotes.length - 1].y = footergame.world.height - increment * lowestvote
       footergame.add.tween(listvotes[listvotes.length - 1]).to({ y: 0}, 2000, Phaser.Easing.Bounce.Out, true)
       if (listtext[listtext.length - 1].anchor.y == 0) {
-        var placeholdy = listtext[listtext.length - 1].y// -listtext[listtext.length-1].getBounds().height/2;
+        let placeholdy = listtext[listtext.length - 1].y// -listtext[listtext.length-1].getBounds().height/2;
         listtext[listtext.length - 1].y = footergame.world.height - increment * lowestvote
         footergame.add.tween(listtext[listtext.length - 1]).to({ y: placeholdy}, 2000, Phaser.Easing.Bounce.Out, true)
       }
@@ -150,8 +150,8 @@ project.Pokemotions.prototype = {
     if (game.storage) { socket.emit('Send vote', {id: game.storage.getItem('id'), vote: which.text.substr(0, which.text.indexOf(' -'))}) }
   },
   footertext: function (payload) {
-    var message = payload.message
-    var picture = payload.picture
+    let message = payload.message
+    let picture = payload.picture
     test = {
       backgroundColor: 'transparent',
       boundsAlignH: 'center',
@@ -170,7 +170,7 @@ project.Pokemotions.prototype = {
     newtest[newtest.length - 1].offset = 160
     this.addtween(newtest[newtest.length - 1])
 
-    var testarray = Array.from(message)
+    let testarray = Array.from(message)
 
     for (letter in testarray) {
       newtest[newtest.length] = footergame.add.text(footergame.world.width, 32, testarray[letter], test)
@@ -179,13 +179,13 @@ project.Pokemotions.prototype = {
       else newtest[newtest.length - 1].offset = 0
       this.addtween(newtest[newtest.length - 1])
     }
-    var tempgroup = footergame.add.group()
+    let tempgroup = footergame.add.group()
     tempgroup.addMultiple(newtest)
       // tempgroup.y += 32;
   },
   addtween: function (obj) {
-    var sinData = footergame.math.sinCosGenerator(1337, 8, 16, 5)
-    var sin = sinData.sin
+    let sinData = footergame.math.sinCosGenerator(1337, 8, 16, 5)
+    let sin = sinData.sin
     footergame.add.tween(obj).to({ alpha: 1, fontSize: 72}, 1000, Phaser.Easing.Bounce.Out, true)
     footergame.add.tween(obj).to({ x: 0 + obj.offset}, 1000, Phaser.Easing.Sinusoidal.InOut, true).chain(
       footergame.add.tween(obj).to({ alpha: 0}, 6000 - obj.offset * 3, Phaser.Easing.Linear.None, false))
@@ -216,13 +216,13 @@ project.Pokemotions.prototype = {
       .onComplete.add(this.destroy, this)
   },
   fusionmake: function () {
-    var fusionfadeout = footergame.add.tween(fusion).to({ alpha: 0 }, 8000, Phaser.Easing.Linear.None, false)
+    let fusionfadeout = footergame.add.tween(fusion).to({ alpha: 0 }, 8000, Phaser.Easing.Linear.None, false)
     fusionfadeout.onComplete.add(this.emptyfusion, this)
     footergame.add.tween(fusion).to({ alpha: 1 }, 250, Phaser.Easing.Linear.None, true)
       .chain(fusionfadeout)
   },
   createplayer: function (pokemon, x, y, username) {
-    var namestyle = {
+    let namestyle = {
       backgroundColor: 'transparent',
       boundsAlignH: 'center',
       boundsAlignV: 'middle',
@@ -233,8 +233,8 @@ project.Pokemotions.prototype = {
       textAlign: 'left',
       stroke: 0
     }
-    var offset = pokemon * 4
-    var playerpoke = footergame.add.sprite(x, y, 'playerpoke')
+    let offset = pokemon * 4
+    let playerpoke = footergame.add.sprite(x, y, 'playerpoke')
     game.physics.enable(playerpoke, Phaser.Physics.ARCADE)
     playerpoke.anchor.set(0.5)
     playerpoke.body.collideWorldBounds = true
@@ -252,8 +252,8 @@ project.Pokemotions.prototype = {
     return playerpoke
   },
   createenemy: function (pokemon, x, y) {
-    var offset = pokemon * 4
-    var playerpoke = footergame.add.sprite(x, y, 'playerpoke')
+    let offset = pokemon * 4
+    let playerpoke = footergame.add.sprite(x, y, 'playerpoke')
     footergame.physics.enable(playerpoke, Phaser.Physics.ARCADE)
     playerpoke.anchor.set(0.5)
     playerpoke.body.collideWorldBounds = true
@@ -287,7 +287,7 @@ project.Pokemotions.prototype = {
   },
   checkBounds: function () {
     for (checkplayer of player) {
-      var playerdirection = Math.sign(checkplayer.body.velocity.x)
+      let playerdirection = Math.sign(checkplayer.body.velocity.x)
         // console.log(checkplayer.x+maxvelocity, footergame.world.width);
       if ((checkplayer.x - checkplayer.body.width < 0 && playerdirection == -1) || (checkplayer.x + checkplayer.body.width >= footergame.world.width && playerdirection == 1)) {
         this.toggleplayerdirection(checkplayer)
@@ -295,7 +295,7 @@ project.Pokemotions.prototype = {
     }
   },
   checkHP: function () {
-    var playersalive = false
+    let playersalive = false
     for (checkplayer of player) {
       (checkplayer.health < 1) && checkplayer.kill()
         // barcolor = parseInt('0x50' + ('00' + Math.floor(checkplayer.health/100 * 255).toString(16)).substr(-2) + '00', 16);
@@ -309,7 +309,7 @@ project.Pokemotions.prototype = {
           .endFill()
       if (checkplayer.alive) playersalive = true
     }
-    var enemiesalive = false
+    let enemiesalive = false
     for (checkenemy of enemy) {
       (checkenemy.health < 1) && checkenemy.kill()
         // barcolor = parseInt('0x' + ('00' + Math.floor(checkenemy.health/100 * 255).toString(16)).substr(-2) + '0000', 16);

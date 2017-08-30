@@ -1,7 +1,7 @@
-project.Blank = function (game) {
-  var
+project.Blank = (function (game) {
+  let
   menu
-}
+})
 
 project.Blank.prototype = {
   preload: function () {

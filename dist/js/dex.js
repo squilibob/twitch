@@ -1,5 +1,5 @@
-var pokedex = []
-var typechart = []
+let pokedex = []
+let typechart = []
 
 socket.on('Receive pokedex', function (payload) {
   // pokedex[payload.id-1]=payload;
@@ -19,13 +19,13 @@ socket.on('Receive typechart', function (payload) {
 })
 
 // function populatetypechart(){
-//   // for (var i=0; i <= 18; i++) {
+//   // for (let i=0; i <= 18; i++) {
 //     socket.emit('Ask for typechart');
 //   // }
 // }
 
 // function populatedata(){
-//   // for (var i=1; i <= maxpokes; i++) {
+//   // for (let i=1; i <= maxpokes; i++) {
 //     socket.emit('Ask for pokedex', Presets.simple);
 //     // socket.emit('Ask for pokedex');
 //   // }

@@ -1,11 +1,11 @@
-project.Vote = function (game) {
-  var
+project.Vote = (function (game) {
+  let
     txtstyle,
     questiontext,
     listgroup,
     current,
     menu
-}
+})
 
 project.Vote.prototype = {
   preload: function () {
@@ -30,7 +30,7 @@ project.Vote.prototype = {
     }
     questiontext = game.add.text(0, menu.getBounds().height + Presets.padding, '', txtstyle)
     listgroup = game.add.group()
-    var _this = this
+    let _this = this
     if (socket.hasListeners('receive vote') == false) {
       socket.on('receive vote', function (payload) {
         _this.composevote(payload)
@@ -39,7 +39,7 @@ project.Vote.prototype = {
     socket.emit('Request vote')
   },
   composevote: function (payload) {
-    var title, options = [], names
+    let title, options = [], names
     for (entry in payload) {
       if (payload[entry].title) title = payload[entry].title
       if (payload[entry].options) names = payload[entry].options
@@ -54,7 +54,7 @@ project.Vote.prototype = {
   },
   drawvotes: function (title, options, maxwidth, maxheight) {
     if (!sectioncolors) {
-      var sectioncolors = [
+      let sectioncolors = [
         0xeb485b,
         0x1f9b76,
         0x9f5fff,
@@ -64,10 +64,10 @@ project.Vote.prototype = {
       ]
     }
     listgroup.removeChildren()
-    var listvotes = []
-    var listtext = []
-    var increment = 0
-    var lowestvote = options[0].tally
+    let listvotes = []
+    let listtext = []
+    let increment = 0
+    let lowestvote = options[0].tally
     questiontext.setText('vote: ' + title)
     for (option in options) {
       increment += options[option].tally
@@ -83,11 +83,11 @@ project.Vote.prototype = {
       listtext[listtext.length - 1].inputEnabled = true
       listtext[listtext.length - 1].anchor.x = 0.5
       listtext[listtext.length - 1].anchor.y = listtext[listtext.length - 1].getBounds().height + listtext[listtext.length - 1].y > game.world.height ? 1 : 0
-      var placeholdy = game.world.height - increment * options[option].tally
+      let placeholdy = game.world.height - increment * options[option].tally
       listvotes[listvotes.length - 1].y = game.world.height - increment * lowestvote
       game.add.tween(listvotes[listvotes.length - 1]).to({ y: 0}, 2000, Phaser.Easing.Bounce.Out, true)
       if (listtext[listtext.length - 1].anchor.y == 0) {
-        var placeholdy = listtext[listtext.length - 1].y// -listtext[listtext.length-1].getBounds().height/2;
+        let placeholdy = listtext[listtext.length - 1].y// -listtext[listtext.length-1].getBounds().height/2;
         listtext[listtext.length - 1].y = game.world.height - increment * lowestvote
         game.add.tween(listtext[listtext.length - 1]).to({ y: placeholdy}, 2000, Phaser.Easing.Bounce.Out, true)
       }

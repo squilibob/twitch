@@ -1,15 +1,15 @@
-var game = new Phaser.Game(Presets.width, Presets.height, Phaser.AUTO, 'content')
+let game = new Phaser.Game(Presets.width, Presets.height, Phaser.AUTO, 'content')
 
-var project = {}
-var mobile = true
-var teams
-var migrateteam = false
-var lastraffleuser
-var team_name
-var loader_elements = {}
+project = {}
+let mobile = true
+let teams
+let migrateteam = false
+let lastraffleuser
+let team_name
+let loader_elements = {}
 
 function pokeball_loader () {
-  var radius = game.world.height / 4
+  let radius = game.world.height / 4
 
   loader_elements.graphics = game.add.group()
 
@@ -75,7 +75,7 @@ project.Init.prototype = {
     game.canvas.style.height = '100%'
     game.scale.refresh()
     pokeball_loader()
-    var script
+    let script
     for (testscript in preloadscripts) {
       if (typeof (preloadscripts[testscript]) === 'object') {
         for (key in preloadscripts[testscript]) {
