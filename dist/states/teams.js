@@ -1,5 +1,5 @@
-project.Teams = function (game) {
-  var
+project.Teams = (function (game) {
+  let
     currentTeam,
     teamname,
     selectnew,
@@ -12,7 +12,7 @@ project.Teams = function (game) {
     maker,
     scale,
     menu
-}
+})
 
 project.Teams.prototype = {
   preload: function () {
@@ -27,7 +27,7 @@ project.Teams.prototype = {
   },
   onClick: function (whichbutton) {
     currentTeam.removeAll(true)
-    for (var eachpoke = 3; eachpoke < whichbutton.parent.children.length; eachpoke++) {
+    for (let eachpoke = 3; eachpoke < whichbutton.parent.children.length; eachpoke++) {
       this.newmember(whichbutton.parent.children[eachpoke].frame)
     }
     teamname.setText(whichbutton.parent.children[1].text)
@@ -42,12 +42,12 @@ project.Teams.prototype = {
     return this
   },
   positionteams: function () {
-    var horizontal = spritesheet.x
-    // var vertical =  spritesheet.y*2.5*scale+48;
-    var vertical = saveteam.getBounds().y + saveteam.getBounds().height * 1.5 + Presets.padding
-    // var vertical =  teamname.y + teamname.getBounds().height*1.5+Presets.padding;
+    let horizontal = spritesheet.x
+    // let vertical =  spritesheet.y*2.5*scale+48;
+    let vertical = saveteam.getBounds().y + saveteam.getBounds().height * 1.5 + Presets.padding
+    // let vertical =  teamname.y + teamname.getBounds().height*1.5+Presets.padding;
 
-    for (var teamcounter = 0; teamcounter < teamlist.length; teamcounter++) {
+    for (let teamcounter = 0; teamcounter < teamlist.length; teamcounter++) {
       if (horizontal + teamlist[teamcounter].getBounds().width > Presets.width) {
         horizontal = spritesheet.x
         vertical += teamlist[0].getBounds().height
@@ -113,7 +113,7 @@ project.Teams.prototype = {
     maker.addChild(useteam)
     // scaleup(maker);
 
-    for (var name in teams) {
+    for (let name in teams) {
       if (!team_name) team_name = name
       drawteam(teamlist[teamlist.length] = game.add.group(), teams[name], name, sectioncolors[teamlist.length % sectioncolors.length])
       teamlist[teamlist.length - 1].onChildInputOver.add(this.onOver, this)
@@ -128,10 +128,10 @@ project.Teams.prototype = {
     return -1
   },
   updatedb: function () {
-    var fullist = {}
+    let fullist = {}
     for (member in teamlist) {
-      var currentlist = []
-      for (var eachpoke = 3; eachpoke < teamlist[member].children.length; eachpoke++) {
+      let currentlist = []
+      for (let eachpoke = 3; eachpoke < teamlist[member].children.length; eachpoke++) {
         currentlist.push(teamlist[member].children[eachpoke].frame)
       }
       fullist[teamlist[member].children[1].text] = currentlist
@@ -142,7 +142,7 @@ project.Teams.prototype = {
   },
   saveteam: function () {
     if (teamname.value == '') teamname.setText('no name')
-    var thisteam = []
+    let thisteam = []
     if (currentTeam.children.length > 0 && this.checkname(teamname.value) == -1) {
       for (member in currentTeam.children) thisteam.push(currentTeam.children[member].frame)
       drawteam(teamlist[teamlist.length] = game.add.group(), thisteam, teamname.value, sectioncolors[0])
@@ -157,9 +157,9 @@ project.Teams.prototype = {
     return this
   },
   deleteteam: function () {
-    var which = this.checkname(teamname.value)
+    let which = this.checkname(teamname.value)
     if (which >= 0) {
-      var deleted = teamlist.splice(which, 1)
+      let deleted = teamlist.splice(which, 1)
       deleted[0].destroy(true)
     }
     this

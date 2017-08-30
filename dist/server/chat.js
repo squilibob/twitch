@@ -1,4 +1,17 @@
-function chatbot () {
+  '/chat/clientoptions',
+  '/chat/tmi.min',
+  '/chat/chatvariables',
+  '/chat/tm',
+  '/chat/natures',
+  '/chat/hiddenpowers',
+  '/chat/twemoji.min',
+  '/chat/chatfunctions',
+  '/chat/chatapi',
+  '/chat/chaticon',
+  '/chat/chatsocket',
+  '/chat/pokemonparse',
+
+  function chatbot () {
   let joinAnnounced = []
 
   client.on('hosted', function (channel, username, total, autohost) {

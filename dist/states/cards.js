@@ -4,12 +4,12 @@
 // level
 // types
 
-project.Cards = function (game) {
-  var
+project.Cards = (function (game) {
+  let
     cards,
     cardsgroup,
     menu
-}
+})
 
 project.Cards.prototype = {
   preload: function () {
@@ -23,22 +23,22 @@ project.Cards.prototype = {
     menu.addMultiple(menubuttons)
     scaleup(menu)
 
-    var MAXHEIGHT = 384
-    var LINEWIDTH = 8
-    var FILLCOLOR = 0x71bcfd
-    var LINECOLOR = 0xa86bfb
-    var strokecolor = 0xb8dbff
-    var numbercolor = 0xffffff
+    let MAXHEIGHT = 384
+    let LINEWIDTH = 8
+    let FILLCOLOR = 0x71bcfd
+    let LINECOLOR = 0xa86bfb
+    let strokecolor = 0xb8dbff
+    let numbercolor = 0xffffff
 
-    var FILLCOLOR2 = 0xfdad71
-    var LINECOLOR2 = 0xfdfc71
-    var strokecolor2 = 0xfec3b7
+    let FILLCOLOR2 = 0xfdad71
+    let LINECOLOR2 = 0xfdfc71
+    let strokecolor2 = 0xfec3b7
 
-    var BACKCOLOR = 0x333232
-    var POKEMONS = 36
-    var color = 0xcbe4ff
-    var scaled = 0.6
-    var blocked = 32
+    let BACKCOLOR = 0x333232
+    let POKEMONS = 36
+    let color = 0xcbe4ff
+    let scaled = 0.6
+    let blocked = 32
 
     cardsgroup = []
     cards = JSON.parse(game.storage.getItem('cards'))
@@ -82,7 +82,7 @@ project.Cards.prototype = {
     // setScale(card18, scaled);
   },
   card: function (group, x, y, POKEMONS, LEVEL, MAXHEIGHT, LINEWIDTH, FILLCOLOR, LINECOLOR, color, strokecolor, numbercolor, BACKCOLOR) {
-    var graphics = []
+    let graphics = []
     graphics[0] = game.add.graphics(0, 0)
     graphics[0].beginFill(BACKCOLOR, 1)
     graphics[0].drawRoundedRect(0, 0, 256, MAXHEIGHT)
@@ -93,7 +93,7 @@ project.Cards.prototype = {
     graphics[1].scale.setTo(3)
     graphics[1].frame = POKEMONS
 
-    var newtextstyle = {
+    let newtextstyle = {
       font: 'Extra-Cool',
       fontSize: '30px ',
                 // fontSize: Presets.fontsize.toString() + 'px ',
@@ -158,7 +158,7 @@ project.Cards.prototype = {
     newtextstyle.fill = hexstring(numbercolor)
     newtextstyle.stroke = hexstring(strokecolor)
     newtextstyle.strokeThickness = 6
-    var value = Math.floor((pokedex[POKEMONS]['Sp. Attack'] / 10 + pokedex[POKEMONS]['Sp. Defense']) / 2) % 10
+    let value = Math.floor((pokedex[POKEMONS]['Sp. Attack'] / 10 + pokedex[POKEMONS]['Sp. Defense']) / 2) % 10
     if (value == 0) value = '+'
     graphics[9] = game.add.text(256 - LINEWIDTH, MAXHEIGHT / 2, value, newtextstyle)
     graphics[9].anchor.setTo(0.85, 0.5)
@@ -193,7 +193,7 @@ project.Cards.prototype = {
 }
 
 // project.Main = function(game) {
-//   var buttons;
+//   let buttons;
 // };
 
 // project.Main.prototype = {
@@ -204,8 +204,8 @@ project.Cards.prototype = {
 //     return whichButton.children[0].graphicsData[0].shape.width;
 //   },
 //   addButton: function(text, color, nextstate){
-//     var x = buttonstyle.position.x;
-//     for (var nextbutton = 1; nextbutton <= buttons.length; nextbutton++)
+//     let x = buttonstyle.position.x;
+//     for (let nextbutton = 1; nextbutton <= buttons.length; nextbutton++)
 //       x += this.getWidth(buttons[nextbutton-1]);
 //     textButton.define(buttons[buttons.length] = this.add.group(), this, text, x, buttonstyle.position.y, color);
 //     buttons[buttons.length-1].onChildInputDown.add(this.onClick, nextstate);

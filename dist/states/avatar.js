@@ -1,6 +1,6 @@
-project.Avatar = function (game) {
-  var menu, av, rot, avatars, chosen, hover, sunicon, moonicon
-}
+project.Avatar = (function (game) {
+  let menu, av, rot, avatars, chosen, hover, sunicon, moonicon
+})
 
 project.Avatar.prototype = {
   preload: function () {
@@ -37,17 +37,17 @@ project.Avatar.prototype = {
     av = []
     rot = 0.45
     hover = -1
-    var nextx = Useravatars.x / 4
-    // var nexty = Presets.padding + Useravatars.y/(buttonstyle.horizontalorientation ? 2 : 4);
-    var nexty = Presets.padding + (buttonstyle.horizontalorientation ? menu.getBounds().height : 0) + Useravatars.y / 4
+    let nextx = Useravatars.x / 4
+    // let nexty = Presets.padding + Useravatars.y/(buttonstyle.horizontalorientation ? 2 : 4);
+    let nexty = Presets.padding + (buttonstyle.horizontalorientation ? menu.getBounds().height : 0) + Useravatars.y / 4
 
     avatars = this.add.group()
     chosen = game.add.sprite(Useravatars.x / 2, Presets.padding + (buttonstyle.horizontalorientation ? menubuttons[0].getBounds().height : 0) + Useravatars.y / 2, 'avatar', 0)
     chosen.mask = this.addmask(chosen, 1)
     if (game.storage.getItem('avatar')) if (parseInt(game.storage.getItem('avatar')) >= 0 && parseInt(game.storage.getItem('avatar')) < Useravatars.total) chosen.frame = 1 + parseInt(game.storage.getItem('avatar'))
-    // for (var nextavatar = 0; nextavatar < Math.floor(Presets.width / (Useravatars.x/2 - 1)); nextavatar++) {
+    // for (let nextavatar = 0; nextavatar < Math.floor(Presets.width / (Useravatars.x/2 - 1)); nextavatar++) {
 
-    for (var nextavatar = 0; nextavatar < Useravatars.total; nextavatar++) {
+    for (let nextavatar = 0; nextavatar < Useravatars.total; nextavatar++) {
       while (game.math.distance(chosen.x, chosen.y, nextx, nexty) < Useravatars.x * 0.8) nextx++
       av.push(game.add.sprite(nextx, nexty, 'avatar', nextavatar))
       nextx = nextx + Useravatars.x / 2
@@ -99,7 +99,7 @@ project.Avatar.prototype = {
   update: function () {
     rot += 0.05
     this.rotate(chosen)
-    for (var nextavatar = 0; nextavatar < Useravatars.total; nextavatar++) {
+    for (let nextavatar = 0; nextavatar < Useravatars.total; nextavatar++) {
       if (nextavatar == hover) {
         this.rotate(avatars.children[nextavatar])
         if (avatars.children[nextavatar].alpha < 1) avatars.children[nextavatar].alpha += 0.025

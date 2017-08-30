@@ -30,9 +30,9 @@ function inputform (placeHolder, max, InputType) {
     width: max * Presets.fontsize / 1.5,
     zoom: true
   }
-};
+}
 
-var textButton = {
+let textButton = {
   onOver: function (whichbutton) {
     whichbutton.parent.setAll('tint', Presets.highlightedstate)
   },
@@ -43,8 +43,8 @@ var textButton = {
     whichbutton.parent.setAll('tint', Presets.pressedstate)
   },
   create: function (game, text, color) {
-    var buttonelement = []
-    var textstyle = {
+    let buttonelement = []
+    let textstyle = {
       backgroundColor: hexstring(color),
       boundsAlignH: 'center',
       boundsAlignV: 'middle',
@@ -76,7 +76,7 @@ var textButton = {
   }
 }
 
-var numberButton = {
+let numberButton = {
   onOver: function (whichbutton) {
     whichbutton.parent.setAll('tint', Presets.highlightedstate)
   },
@@ -84,13 +84,13 @@ var numberButton = {
     whichbutton.parent.setAll('tint', Presets.normalstate)
   },
   onClick: function (whichbutton) {
-    var newvalue = parseInt(whichbutton.parent.children[1].text) + whichbutton.value
+    let newvalue = parseInt(whichbutton.parent.children[1].text) + whichbutton.value
     whichbutton.parent.setAll('tint', Presets.pressedstate)
     if (newvalue >= 0 && newvalue < 10) { whichbutton.parent.children[1].setText(newvalue.toString()) }
   },
   create: function (game, text, value, color) {
-    var buttonelement = []
-    var textstyle = {
+    let buttonelement = []
+    let textstyle = {
       backgroundColor: 'transparent',
       boundsAlignH: 'center',
       boundsAlignV: 'middle',
@@ -155,9 +155,9 @@ var numberButton = {
   }
 }
 
-var textInput = {
+let textInput = {
   label: function (group, game, options) {
-    var style = {
+    let style = {
       backgroundColor: 'transparent',
       boundsAlignH: 'center',
       boundsAlignV: 'middle',
@@ -169,7 +169,7 @@ var textInput = {
       textAlign: 'left',
       stroke: 0
     }
-    var temp = game.add.text(options.x, options.y, options.label + ':', style)
+    let temp = game.add.text(options.x, options.y, options.label + ':', style)
     temp.x -= temp.getBounds().width
     temp.anchor.setTo(0, 0.1)
     return temp
@@ -178,7 +178,7 @@ var textInput = {
     return game.add.inputField(options.x + options.margin + options.divider, options.y, inputform(options.placeholder, options.charwidth, options.type))
   },
   create: function (group, game, options) {
-    var fields = []
+    let fields = []
     fields.push(this.input(group, game, options))
     if (options.label) {
       fields.push(this.label(group, game, options))
@@ -192,7 +192,7 @@ var textInput = {
   }
 }
 
-var selector = {
+let selector = {
   textinput: function (group, game, options) {
     return game.add.inputField(options.x, options.y, {
       backgroundColor: Presets.bgcolor,
@@ -238,9 +238,9 @@ var selector = {
     })
   },
   validatename: function (name) {
-    var counter = 0
+    let counter = 0
     if (name.length < 1) return null
-    var namelength = name.length
+    let namelength = name.length
     while ((pokedex[counter].Pokemon.toLowerCase() != name.toLowerCase()) && (counter < pokedex.length - 1)) {
       counter++
     }
@@ -269,7 +269,7 @@ var selector = {
   },
   update: function (child) {
     if (child.value) {
-      var value = (child.frame ? child.frame + 1 : (isNaN(parseInt(child.value)) ? value = this.validatename(child.value) : child.value))
+      let value = (child.frame ? child.frame + 1 : (isNaN(parseInt(child.value)) ? value = this.validatename(child.value) : child.value))
       this.set(child.parent.children, value)
     }
     return child.parent
@@ -278,7 +278,7 @@ var selector = {
     overlayselect.create(which, 'A')
   },
   create: function (group, game, options) {
-    var fields = []
+    let fields = []
     fields.push(this.textinput(group, game, options))
     fields.push(this.sprite(group, game, options))
     fields[1].inputEnabled = true
@@ -317,8 +317,8 @@ function setScale (group, size) {
 }
 
 function rate (teamtoassess) {
-  var teamscore = 0
-  var assess = []
+  let teamscore = 0
+  let assess = []
   for (member in teamtoassess) { assess[assess.length] = pokedex[teamtoassess[member]] }
   for (member in assess) {
     for (checktier in Tiers) {
@@ -332,17 +332,17 @@ function rate (teamtoassess) {
 }
 
 function drawteam (group, members, name, color) {
-  var team = []
-  var TeamTier = 0
-  for (var currentmember = 0; currentmember < members.length; currentmember++) {
+  let team = []
+  let TeamTier = 0
+  for (let currentmember = 0; currentmember < members.length; currentmember++) {
     team.push(game.add.sprite(spritesheet.x * currentmember, 0, 'spritesheet', members[currentmember]))
     team[team.length - 1].anchor.setTo(0.5)
-    for (var check = 0; check < Tiers.length; check++) {
+    for (let check = 0; check < Tiers.length; check++) {
       if (pokedex[members[currentmember]].Tier == Tiers[check] && check > TeamTier) TeamTier = check
     }
   }
 
-  var textstyle = {
+  let textstyle = {
     backgroundColor: hexstring(color),
     boundsAlignH: 'center',
     boundsAlignV: 'middle',
@@ -354,12 +354,12 @@ function drawteam (group, members, name, color) {
     textAlign: 'left',
     stroke: 0
   }
-  var buttontext = game.add.text(spritesheet.x * members.length, 0, name.toLowerCase(), textstyle)
+  let buttontext = game.add.text(spritesheet.x * members.length, 0, name.toLowerCase(), textstyle)
   buttontext.anchor.setTo(0, 0.5)
-  var tiertext = game.add.text(spritesheet.x * (members.length + 0.5) + buttontext.getBounds().width, 0, Tiers[TeamTier], textstyle)
+  let tiertext = game.add.text(spritesheet.x * (members.length + 0.5) + buttontext.getBounds().width, 0, Tiers[TeamTier], textstyle)
   tiertext.anchor.setTo(0, 0.5)
 
-  var buttonelement = game.add.graphics(0, 0)
+  let buttonelement = game.add.graphics(0, 0)
   buttonelement.beginFill(color, 1)
     // .drawRoundedRect(-spritesheet.x/2-8, -spritesheet.y/2-8, spritesheet.x*(1.5+members.length)+buttontext.getBounds().width+tiertext.getBounds().width+16, spritesheet.y+16)
     .drawRoundedRect(-spritesheet.x / 2 - 8, (spritesheet.y + Presets.padding * 2 > buttontext.getBounds().height ? -spritesheet.y / 2 - 8 : buttontext.getBounds().y), spritesheet.x * (1.5 + members.length) + buttontext.getBounds().width + tiertext.getBounds().width + Presets.padding * 2, (spritesheet.y + Presets.padding * 2 > buttontext.getBounds().height ? spritesheet.y + Presets.padding * 2 : buttontext.getBounds().height))
@@ -375,9 +375,9 @@ function drawteam (group, members, name, color) {
 }
 
 function alphabeticalpokelist (requestedletter) {
-  var namelist = {}
+  let namelist = {}
   for (poke in pokedex) {
-    var current = pokedex[poke].Pokemon.substr(0, 1)
+    let current = pokedex[poke].Pokemon.substr(0, 1)
     if (!namelist[current]) namelist[current] = []
     namelist[current].push(pokedex[poke])
   }
@@ -388,10 +388,10 @@ function alphabeticalpokelist (requestedletter) {
   return namelist
 }
 
-var overlayselect = {
+let overlayselect = {
   // originx: 0, originy: 0, maxwidth: 0,
   renew: function (which) {
-    var letter = which.parent.letter
+    let letter = which.parent.letter
     destination = which.parent.parent.destination
     which.parent.parent.destroy(true)
     this.create(destination, letter)
@@ -401,15 +401,15 @@ var overlayselect = {
     which.parent.destroy(true)
   },
   create: function (destination, show) {
-    var overlaygraphic = game.add.graphics(0, 0)
-    var overlayletters = []
-    var group = game.add.group()
-    var pokemongroup = game.add.group()
-    var maxwidth = 0
+    let overlaygraphic = game.add.graphics(0, 0)
+    let overlayletters = []
+    let group = game.add.group()
+    let pokemongroup = game.add.group()
+    let maxwidth = 0
 
     overlaycurrentposition = {x: 0, y: 0}
 
-    var alphabet = []
+    let alphabet = []
     for (letter in alphabeticalpokelist()) {
       if (!show) show = letter
       alphabet.push(letter)
@@ -442,10 +442,10 @@ var overlayselect = {
     return group
   },
   list: function (group, originx, originy, letter, maxwidth) {
-    var list = []
-    var pokemon = alphabeticalpokelist(letter)
-    var x = originx
-    var y = originy
+    let list = []
+    let pokemon = alphabeticalpokelist(letter)
+    let x = originx
+    let y = originy
     for (poke in pokemon) {
       list[list.length] = game.add.sprite(x, y, 'spritesheet')
       list[list.length - 1].frame = pokemon[poke].id - 1

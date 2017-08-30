@@ -1,4 +1,4 @@
-var footergame = new Phaser.Game(1600, 220, Phaser.AUTO, 'footer')
+let footergame = new Phaser.Game(1600, 220, Phaser.AUTO, 'footer')
 
 project.Footer = function () {
   states = {}
@@ -8,7 +8,7 @@ project.Footer.prototype = {
 
   preload: function () {
     footergame.load.script('Pokemotions', '/states/pokemotions.js')
-    // var script;
+    // let script;
     // for (testscript in preloadscripts) {
     //   if (typeof(preloadscripts[testscript]) == 'object')
     //     for (key in preloadscripts[testscript]) {

@@ -1,5 +1,5 @@
-project.Pokedex = function (game) {
-  var
+project.Pokedex = (function (game) {
+  let
     filter,
     fullteam,
     rated,
@@ -63,12 +63,12 @@ project.Pokedex = function (game) {
     bonusgroup,
     winner
 
-  var
+  let
     scale,
     statvalue,
     statmax,
     menu
-}
+})
 
 project.Pokedex.prototype = {
   preload: function () {
@@ -114,15 +114,15 @@ project.Pokedex.prototype = {
       //     team_to_rate = winner.team;
       //   }
       // };
-    for (var name in teams) {
+    for (let name in teams) {
       if (!team_name) team_name = name
       if (!teams[team_name]) team_name = name
     }
-    if (!team_to_rate) var team_to_rate = teams ? teams[team_name] : [0, 3, 6]
-    var teamarray = []
+    if (!team_to_rate) team_to_rate = teams ? teams[team_name] : [0, 3, 6]
+    let teamarray = []
     totalbonuses = 0
 
-    for (var currentmember = 0; currentmember < team_to_rate.length; currentmember++) {
+    for (let currentmember = 0; currentmember < team_to_rate.length; currentmember++) {
       teamarray.push(game.add.sprite(spritesheet.x * currentmember, 0, 'spritesheet', team_to_rate[currentmember]))
       teamarray[teamarray.length - 1].inputEnabled = true
     }
@@ -142,14 +142,14 @@ project.Pokedex.prototype = {
 
     if (pokedexoptions.scoring) {
         // rated = game.add.text(fullteam.getBounds().x+fullteam.getBounds().width, fullteam.getBounds().y, ' = ' + rate(team_to_rate), textstyle);
-      var textpad = ''
-      paddingloop: for (var textpadding = 0; textpadding < rate(team_to_rate).toString().length; textpadding++) textpad += '0'
+      let textpad = ''
+      paddingloop: for (let textpadding = 0; textpadding < rate(team_to_rate).toString().length; textpadding++) textpad += '0'
       textButton.define(rated = game.add.group(), game, (textpad + rate(team_to_rate)).substr(-textpadding), fullteam.getBounds().x + fullteam.getBounds().width + 8, fullteam.getBounds().y + 8, sectioncolors[4])
       rated.onChildInputDown.add(this.toggle, this)
 
       bonusgroup = this.add.group()
 
-      var bonuses = []
+      let bonuses = []
       numberButton.define(bonuses[0] = this.add.group(), game, 'kills', 0, 0, 0, sectioncolors[1])
       numberButton.define(bonuses[1] = this.add.group(), game, 'crits', 0, bonuses[0].getBounds().x + bonuses[0].getBounds().width + Presets.padding * 2, 0, sectioncolors[3])
       numberButton.define(bonuses[2] = this.add.group(), game, 'hax', 0, bonuses[1].getBounds().x + bonuses[1].getBounds().width + Presets.padding * 2, 0, sectioncolors[2])
@@ -165,8 +165,8 @@ project.Pokedex.prototype = {
     }
   },
   total: function () {
-    var runningtotal = 0
-    var thisbonus
+    let runningtotal = 0
+    let thisbonus
     for (countchild in bonusgroup.children) {
       thisbonus = parseInt(bonusgroup.children[countchild].children[1].text)
         // console.log(parseInt(countchild));
@@ -181,7 +181,7 @@ project.Pokedex.prototype = {
     return runningtotal + parseInt(rated.children[1].text)
   },
   toggle: function () {
-    var can_change = true
+    let can_change = true
     for (max in statmax) {
       if (statvalue[max] != statmax[max]) can_change = false
     }
@@ -214,8 +214,8 @@ project.Pokedex.prototype = {
     statvaluelabel[statcount].setText(statvalue[statcount])
   },
   gradient: function (options) {
-    var myBitmap = game.add.bitmapData(options.length, options.height)
-    var grd = myBitmap.context.createLinearGradient(0, 0, options.length, 1)
+    let myBitmap = game.add.bitmapData(options.length, options.height)
+    let grd = myBitmap.context.createLinearGradient(0, 0, options.length, 1)
     grd.addColorStop(options.balance[0], hexstring(options.start))
     grd.addColorStop(options.balance[1], hexstring(options.end))
     myBitmap.context.fillStyle = grd
@@ -240,7 +240,7 @@ project.Pokedex.prototype = {
   change: function (which) {
     if (!pokemoncontainer.visible) return this
 
-    var color = {
+    let color = {
       Green: 0x00ff00,
       Red: 0xff0000,
       Blue: 0x0000ff,
@@ -254,24 +254,24 @@ project.Pokedex.prototype = {
     }
 
     thepokemon = which.frame
-    var dexinfo = pokedex[thepokemon]
-    var alphacolor = 1
+    let dexinfo = pokedex[thepokemon]
+    let alphacolor = 1
     scale = dexspritesheet.y * 1
-    var span = 1
-    var textoffset = 8
-    var textcolor = 0x000000
-    var softcolor = 0x7f7f7f
-    var brightcolor = 0xffffff
+    let span = 1
+    let textoffset = 8
+    let textcolor = 0x000000
+    let softcolor = 0x7f7f7f
+    let brightcolor = 0xffffff
 
     pokemoncontainer.x = pokedexoptions.dex.x
     pokemoncontainer.y = pokedexoptions.dex.y
-    var x = 0
-    var y = 0
+    let x = 0
+    let y = 0
 
     pokemonname = this.text({obj: pokemonname, text: dexinfo['Pokemon'].toLowerCase(), fontsize: scale / 4, color: brightcolor, newx: x + textoffset, newy: y})
     y += pokemonname.getBounds().height
 
-    var pokemonsprite = game.add.sprite(0, 0, 'dexspritesheet')
+    let pokemonsprite = game.add.sprite(0, 0, 'dexspritesheet')
 
     pokemonsprite.x = x
     pokemonsprite.y = y
@@ -312,8 +312,8 @@ project.Pokedex.prototype = {
     y = 0
     weaklabel = this.text({obj: weaklabel, text: 'weak to ', fontsize: scale / 4, color: softcolor, newx: x, newy: y + textoffset})
     x += scale
-    var weaktoindex = -1
-    var contextthis = this
+    let weaktoindex = -1
+    let contextthis = this
     Object.keys(typechart).forEach(function (elementindex, index) {
       if (typechart[elementindex][dexinfo['Type']] * (dexinfo['Secondary'] == '' ? 1 : typechart[elementindex][dexinfo['Secondary']]) > 1) {
         weaktoindex++
@@ -324,7 +324,7 @@ project.Pokedex.prototype = {
         x += scale
       }
     })
-    for (var weakloop = 0; weakloop <= weaktoindex; weakloop++) {
+    for (let weakloop = 0; weakloop <= weaktoindex; weakloop++) {
       infocontainer.addChild(weakto[weakloop])
       infocontainer.addChild(weaktolabel[weakloop])
     }
@@ -337,8 +337,8 @@ project.Pokedex.prototype = {
     resistslabel = this.text({obj: resistslabel, text: 'resists ', fontsize: scale / 4, color: softcolor, newx: x, newy: y + textoffset})
     x += scale
 
-    var resistanttoindex = -1
-    var contextthis = this
+    let resistanttoindex = -1
+    contextthis = this
     Object.keys(typechart).forEach(function (elementindex, index) {
       if (typechart[elementindex][dexinfo['Type']] * (dexinfo['Secondary'] == '' ? 1 : typechart[elementindex][dexinfo['Secondary']]) < 1 && typechart[elementindex][dexinfo['Type']] * (dexinfo['Secondary'] == '' ? 1 : typechart[elementindex][dexinfo['Secondary']]) > 0) {
         resistanttoindex++
@@ -349,7 +349,7 @@ project.Pokedex.prototype = {
         x += scale
       }
     })
-    for (var resistantloop = 0; resistantloop <= resistanttoindex; resistantloop++) {
+    for (let resistantloop = 0; resistantloop <= resistanttoindex; resistantloop++) {
       infocontainer.addChild(resistantto[resistantloop])
       infocontainer.addChild(resistanttolabel[resistantloop])
     }
@@ -362,8 +362,8 @@ project.Pokedex.prototype = {
     y += Math.floor(scale / 4) + textoffset
     immunelabel = this.text({obj: immunelabel, text: 'immune ', fontsize: scale / 4, color: softcolor, newx: x, newy: y + textoffset})
     x += scale
-    var immunetoindex = -1
-    var contextthis = this
+    let immunetoindex = -1
+    contextthis = this
     Object.keys(typechart).forEach(function (elementindex, index) {
       if (typechart[elementindex][dexinfo['Type']] * (dexinfo['Secondary'] == '' ? 1 : typechart[elementindex][dexinfo['Secondary']]) == 0) {
         immunetoindex++
@@ -374,7 +374,7 @@ project.Pokedex.prototype = {
         x += scale
       }
     })
-    for (var immuneloop = 0; immuneloop <= immunetoindex; immuneloop++) {
+    for (let immuneloop = 0; immuneloop <= immunetoindex; immuneloop++) {
       infocontainer.addChild(immuneto[immuneloop])
       infocontainer.addChild(immunetolabel[immuneloop])
     }
@@ -452,9 +452,9 @@ project.Pokedex.prototype = {
       // y = 0;
 
     if (dexinfo['Gender'] >= 0) {
-      var genderwidth = scale * 2 - textoffset
-      var genderbalance = []
-      var gendertext = ''
+      let genderwidth = scale * 2 - textoffset
+      let genderbalance = []
+      let gendertext = ''
       if (Math.sign((50 - dexinfo['Gender']) * -2) > 0) genderbalance.push((50 - dexinfo['Gender']) * -2 / 100)
       else genderbalance.push(0)
       if (Math.sign((50 - dexinfo['Gender']) * -2) < 0) genderbalance.push(1 - (50 - dexinfo['Gender']) * 2 / 100)
@@ -479,7 +479,7 @@ project.Pokedex.prototype = {
       // ability.visible = (dexinfo["Ability"].toLowerCase() != '' );
 
       // evslabel = this.text({obj: evslabel, text: "evs: ", fontsize: scale/4, color: softcolor, newx: x, newy: y});
-      // var evlist = '';
+      // let evlist = '';
       // for (ev in dexinfo['EVs']){
       //   evlist += ev + ': ' + dexinfo['EVs'][ev] + ' ';
       // }
@@ -562,8 +562,8 @@ project.Pokedex.prototype = {
     y = 0
 
     span = 2
-    var stat, statcolor
-    for (var statcount = 0; statcount <= 5; statcount++) {
+    let stat, statcolor
+    for (let statcount = 0; statcount <= 5; statcount++) {
       switch (statcount) {
         case 0: stat = 'HP'; statcolor = HPcolor; break
         case 1: stat = 'Attack'; statcolor = Attcolor; break
@@ -604,7 +604,7 @@ project.Pokedex.prototype = {
       .endFill()
     bg[0].x = (bg[2].getBounds().width - bg[2].getBounds().x + 4) / 2
     bg[0].y = (bg[2].getBounds().height + bg[2].getBounds().y + 4) / 2
-    var bordercolor = color[dexinfo.Color] || 0xffffff
+    let bordercolor = color[dexinfo.Color] || 0xffffff
     bg[0]
         .clear()
         .beginFill(bordercolor)
@@ -623,7 +623,7 @@ project.Pokedex.prototype = {
       dexinfo = pokedex[+pokemoncontainer.children[2].text]
       this.change({frame: +pokemoncontainer.children[2].text - 1})
     }
-    for (var statcount = 0; statcount <= 5; statcount++) {
+    for (let statcount = 0; statcount <= 5; statcount++) {
       if (statvalue[statcount] + 10 < statmax[statcount]) statvalue[statcount]++
       if (statvalue[statcount] < statmax[statcount]) {
         statvalue[statcount]++
@@ -639,7 +639,7 @@ project.Pokedex.prototype = {
     bg[0].angle += 0.4
   },
   init: function () {
-    var textstyle = {
+    let textstyle = {
       backgroundColor: 'transparent',
       fill: Presets.fill,
       fillAlpha: 1,
@@ -721,7 +721,7 @@ project.Pokedex.prototype = {
     pokemoncontainer.addChild(typebg)
     pokemoncontainer.addChild(type1)
     pokemoncontainer.addChild(type2)
-    for (var statcount = 0; statcount <= 5; statcount++) {
+    for (let statcount = 0; statcount <= 5; statcount++) {
       statcontainer
       .addChild(statbar[statcount])
       .addChild(statname[statcount])

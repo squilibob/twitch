@@ -54,6 +54,7 @@ ul {
 	margin: 8px 24px;
 	padding: 0;
 }
+
 .chat-kill {
 	opacity: 0 !important;
 	transform: rotateX(-90deg) !important;
@@ -69,7 +70,6 @@ ul {
 	margin: 0;
 	padding:0;
 	opacity: 1;
-  	flex-direction: row-reverse;
 	transition: all 0.75s cubic-bezier(.36,-0.64,.34,1.76);
 	transform-origin: bottom left;
 }

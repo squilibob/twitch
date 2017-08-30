@@ -1,5 +1,5 @@
-project.Raffle = function (game) {
-  var
+project.Raffle = (function (game) {
+  let
     cards,
     // displaygroup,
     // queuegroup,
@@ -21,7 +21,7 @@ project.Raffle = function (game) {
     winnercircle,
     // allraffle,
     menu
-}
+})
 
 project.Raffle.prototype = {
   preload: function () {
@@ -74,11 +74,11 @@ project.Raffle.prototype = {
       };
       if (spinspeed) arrow.rotation += spinspeed / 100
 
-    //   for (var movement = 0; movement < spinspeed; movement++) {
+    //   for (let movement = 0; movement < spinspeed; movement++) {
     //     displaygroup.subAll('x', 1)
 
     //     if (displaygroup.children.length > 1) {
-    //       var showcurrent = Math.floor(displaygroup.children.length / 2)
+    //       let showcurrent = Math.floor(displaygroup.children.length / 2)
     //       spinuser.frame = displaygroup.children[showcurrent].frame
     //       spinusername.setText(displaygroup.children[showcurrent].username)
     //     }
@@ -102,15 +102,15 @@ project.Raffle.prototype = {
   },
   fillchart: function () {
     if (Presets.showdonutchart) {
-      var graphics = []
-      var text = []
-      var percent = []
-      var icons = []
-      var totalchance = 0
-      var startradian = 0
-      var endradian = radian
-      var arc = 0
-      var totalusers = 0
+      let graphics = []
+      let text = []
+      let percent = []
+      let icons = []
+      let totalchance = 0
+      let startradian = 0
+      let endradian = radian
+      let arc = 0
+      let totalusers = 0
       for (user in usersraffle) {
         if (usersraffle[user].entered) {
           totalchance += usersraffle[user].chance
@@ -118,14 +118,13 @@ project.Raffle.prototype = {
         }
       }
       arrow.visible = winnercircle.visible = totalusers > 0
-
       for (user in usersraffle) {
         if (usersraffle[user].entered) {
-          var userchance = radian * usersraffle[user].chance / totalchance
+          let userchance = radian * usersraffle[user].chance / totalchance
           endradian = startradian + userchance
           usersraffle[user].startradian = startradian
           usersraffle[user].endradian = endradian
-          var angle = (startradian + endradian) / 2
+          let angle = (startradian + endradian) / 2
           graphics.push(game.add.graphics(0, 0))
           graphics[graphics.length - 1]
             .clear()
@@ -135,24 +134,24 @@ project.Raffle.prototype = {
           text.push(game.add.text(0, 0, usersraffle[user].id, { font: '24px Arial', fill: hexstring(sectioncolors[arc % sectioncolors.length])}))
           if (angle > Math.PI / 2 && angle < Math.PI * 3 / 2) text[text.length - 1].angle = -game.math.radToDeg(angle) - 180
           else text[text.length - 1].angle = -game.math.radToDeg(angle)
-          var coords = this.findpoint(0, 0, -angle, donutchartradius + text[text.length - 1].getBounds().width / 2)
+          donutcoords = this.findpoint(0, 0, -angle, donutchartradius + text[text.length - 1].getBounds().width / 2)
           with_object(text[text.length - 1], {
-            x: coords.x,
-            y: coords.y
+            x: donutcoords.x,
+            y: donutcoords.y
           })
             .anchor.setTo(0.5)
-          var coords = this.findpoint(0, 0, -angle, donutchartradius + text[text.length - 1].getBounds().width + playersprite.x / 2)
-          icons.push(game.add.sprite(coords.x, coords.y, 'playersprite'))
+          donutcoords = this.findpoint(0, 0, -angle, donutchartradius + text[text.length - 1].getBounds().width + playersprite.x / 2)
+          icons.push(game.add.sprite(donutcoords.x, donutcoords.y, 'playersprite'))
           with_object(icons[icons.length - 1], {
             frame: usersraffle[user].displayicon * 4,
             angle: text[text.length - 1].angle
           })
             .anchor.setTo(0.5)
           percent.push(game.add.text(0, 0, Math.floor(usersraffle[user].chance / totalchance * 1000) / 10 + '% ', { font: '24px Arial', fill: hexstring(sectioncolors[arc % sectioncolors.length])}))
-          var coords = this.findpoint(0, 0, -angle, donutchartradius * 0.85 - percent[percent.length - 1].getBounds().width / 2)
+          donutcoords = this.findpoint(0, 0, -angle, donutchartradius * 0.85 - percent[percent.length - 1].getBounds().width / 2)
           with_object(percent[percent.length - 1], {
-            x: coords.x,
-            y: coords.y,
+            x: donutcoords.x,
+            y: donutcoords.y,
             angle: text[text.length - 1].angle
           })
             .anchor.setTo(0.5)
@@ -161,7 +160,7 @@ project.Raffle.prototype = {
           if (totalusers % sectioncolors.length == 1 && arc == totalusers - 1) arc++
         }
       }
-      var mask = game.add.graphics(0, 0)
+      let mask = game.add.graphics(0, 0)
       mask
         .beginFill(0x1c0f0c)
         .drawCircle(0, 0, donutchartradius * 1.75)
@@ -185,14 +184,14 @@ project.Raffle.prototype = {
   // fillraffle: function (members) {
   //   displaygroup.removeAll(true)
   //   queuegroup.removeAll(true)
-  //   var xoffset = 0
-  //   var maxwidth = Math.ceil(Presets.width / playersprite.x)
-  //   var temp = []
+  //   let xoffset = 0
+  //   let maxwidth = Math.ceil(Presets.width / playersprite.x)
+  //   let temp = []
   //   for (member in members) {
   //     if (members[member].entered) {
-  //       for (var index = 0; index < members[member].chance; index++) {
-  //         var x = xoffset + index * playersprite.x
-  //         var y = 0
+  //       for (let index = 0; index < members[member].chance; index++) {
+  //         let x = xoffset + index * playersprite.x
+  //         let y = 0
   //         // while (x > Presets.width){
   //         //   x -= Presets.width+playersprite.x;
   //         //   y += playersprite.y;
@@ -238,8 +237,8 @@ project.Raffle.prototype = {
     scaleup(menu)
     yoffset = buttonstyle.horizontalorientation ? menu.getBounds().height + Presets.padding : 0
 
-    var padding = 32
-    var textstyle = {
+    let padding = 32
+    let textstyle = {
       backgroundColor: 'transparent',
       fill: Presets.fill,
       fillAlpha: 1,
@@ -305,7 +304,7 @@ project.Raffle.prototype = {
     }
 
       // previouswinner
-    var contextthis = this
+    let contextthis = this
     if (socket.hasListeners('receive raffle') == false) {
       socket.on('receive raffle', function (fullraffle) {
         usersraffle = []

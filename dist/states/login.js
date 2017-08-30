@@ -1,13 +1,13 @@
-project.Login = function (game) {
-  var
+project.Login = (function (game) {
+  let
     form,
     focused,
     button,
     buttonbox
-}
+})
 project.Login.prototype = {
   create: function () {
-    var
+    let
       margin = Presets.padding,
       divider = Presets.width / 6,
       x = 0,
@@ -66,7 +66,7 @@ project.Login.prototype = {
     }
   },
   connect: function () {
-    var logindetails = this.logindetails()
+    let logindetails = this.logindetails()
     if (logindetails.id && logindetails.ign) {
       form[2].children[0].setText(this.validatefc(form[2].children[0].value))
       form[3].children[0].setText(this.validatefc(form[3].children[0].value))
@@ -81,26 +81,26 @@ project.Login.prototype = {
   },
 
   update: function () {
-    var pushupdate = null
-    for (var testfc = 2; testfc <= 4; testfc++) {
-      var testlength
+    let pushupdate = null
+    for (let testfc = 2; testfc <= 4; testfc++) {
+      let testlength
       if (form[testfc].children[0].focus == false && form[testfc].children[0].value > 0 && form[testfc].children[0].value < 1000) form[testfc].children[0].setText(this.validatefc(form[testfc].children[0].value))
       if (/^[0-9]+$/.test(form[testfc].children[0].value) == false && form[testfc].children[0].value.length > 0) {
-        var testno = /[0-9]+/g.exec(form[testfc].children[0].value)
+        let testno = /[0-9]+/g.exec(form[testfc].children[0].value)
         form[testfc].children[0].setText(testno ? testno.toString() : '')
       }
     }
 
     tab = game.input.keyboard.addKey(Phaser.KeyCode.TAB)
     if (tab.downDuration(1)) {
-      for (var blurform = 5; blurform < 8; blurform++) {
-        for (var checkfocus = 0; checkfocus < form[blurform].children.length; checkfocus++) {
+      for (let blurform = 5; blurform < 8; blurform++) {
+        for (let checkfocus = 0; checkfocus < form[blurform].children.length; checkfocus++) {
           if (form[blurform].children[checkfocus].focus == true && form[blurform].children[checkfocus].value) {
             pushupdate = {form: blurform, child: checkfocus}
           }
         }
       }
-      for (var blurform = 0; blurform < form.length; blurform++) {
+      for (let blurform = 0; blurform < form.length; blurform++) {
         if (form[blurform].children[0].focus) focused = blurform
         form[blurform].children[0].endFocus()
         form[blurform].children[0].focus = false
