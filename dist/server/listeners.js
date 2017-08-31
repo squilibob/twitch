@@ -100,126 +100,57 @@ module.exports = function(expressServer) {
       })
     })
 
-    socket.on ("Ask for pokedex", function(){
-        socket.emit("Receive pokedex", expressServer.cache.pokedex)
-    })
+    socket.on ("Ask for pokedex", function(){ socket.emit("Receive pokedex", expressServer.cache.pokedex) }) //replace with Ask for table
 
-    socket.on ("Ask for typechart", function(){
-      socket.emit("Receive typechart", expressServer.cache.typechart)
-    })
+    socket.on ("Ask for typechart", function(){ socket.emit("Receive typechart", expressServer.cache.typechart) })//replace with Ask for table
 
     socket.on ("Ask for table", (dbname) => socket.emit("receive " + dbname.toLowerCase(), expressServer.cached[dbname]))
 
-    socket.on ("Insert pokedex", function(payload){
-    console.log(payload["id"],payload["Pokemon"])
-    r.table('Pokedex').
-    get(payload["id"]).
-      replace(payload).
-      run(conn, function(err, result) {
-        if (err) throw err
-        console.log(JSON.stringify(result, null, 2))
-      })
+    socket.on ("Insert pokedex", async function(payload){  //all these need to be a single socket call like Ask for table
+      console.log(payload["id"],payload["Pokemon"])
+      let result = expressServer.dbcall.put(r, conn, 'Pokedex', payload)
+      console.log(JSON.stringify(result, null, 2))
     })
 
-    socket.on ("Insert ability", function(payload){
-    r.table('Abilities').
-    get(payload["id"]).
-      replace(payload).
-      run(conn, function(err, result) {
-        if (err) throw err
-        console.log(JSON.stringify(result, null, 2))
-      })
+    socket.on ("Insert ability", function(payload){//all these need to be a single socket call like Ask for table
+      let result = expressServer.dbcall.put(r, conn, 'Abilities', payload)
+      console.log(JSON.stringify(result, null, 2))
     })
 
-    socket.on ("Insert move", function(payload){
-    r.table('Moves').
-    get(payload["id"]).
-      replace(payload).
-      run(conn, function(err, result) {
-        if (err) throw err
-        console.log(JSON.stringify(result, null, 2))
-      })
+    socket.on ("Insert move", function(payload){//all these need to be a single socket call like Ask for table
+      let result = expressServer.dbcall.put(r, conn, 'Moves', payload)
+      console.log(JSON.stringify(result, null, 2))
     })
 
-    socket.on ("Insert bttv", function(payload){
-    r.table('Bttv').
-    get(payload["id"]).
-      replace(payload).
-      run(conn, function(err, result) {
-        if (err) throw err
-        console.log(JSON.stringify(result, null, 2))
-      })
+    socket.on ("Insert bttv", function(payload){//all these need to be a single socket call like Ask for table
+      let result = expressServer.dbcall.put(r, conn, 'Bttv', payload)
+      console.log(JSON.stringify(result, null, 2))
     })
 
-    socket.on ("Insert ffz", function(payload){
-    r.table('Ffz').
-    get(payload["id"]).
-      replace(payload).
-      run(conn, function(err, result) {
-        if (err) throw err
-        console.log(JSON.stringify(result, null, 2))
-      })
+    socket.on ("Insert ffz", function(payload){//all these need to be a single socket call like Ask for table
+      let result = expressServer.dbcall.put(r, conn, 'Ffz', payload)
+      console.log(JSON.stringify(result, null, 2))
     })
 
-    socket.on("pokemon cry", function(poke){
-      io.emit("playsound", ('000' + poke).substr(-3))
-    })
+    socket.on("pokemon cry", function(poke){ io.emit("playsound", ('000' + poke).substr(-3)) })
 
-    socket.on("update vote", function(){
-      sendVoteUpdate()
-    })
+    socket.on("update vote", async function(){ io.emit('receive vote', await expressServer.dbcall.gettable(r, conn, 'Vote')) })
 
-    socket.on("Vote poll", function(payload){
-      expressServer.dbcall.votepoll(payload)
-    })
+    socket.on("Vote poll", payload => expressServer.dbcall.votepoll(r, conn, payload))
 
-    socket.on("Send vote", function(payload){
-      r.table('Vote')
-      .get(payload.id)
-      .replace({id: payload.id, vote: payload.vote}).
-      run(conn, function(err, result) {
-        if (err) throw err
-      })
-    })
+    socket.on("Send vote", payload => expressServer.dbcall.sendvote(r, conn, payload))
 
-    socket.on("Show vote", function(){
-      r.table('Vote')
-      .get('system')
-      .run(conn, function(err, result) {
-        if (err) throw err
-        else socket.emit("Vote options", result)
-      })
-    })
+    socket.on("Show vote", () => socket.emit("Vote options", result))
 
-    socket.on("send fusion", function(firstpoke, secondpoke){
-      io.emit('show fusion', firstpoke, secondpoke)
-    })
+    socket.on("send fusion", (firstpoke, secondpoke) => io.emit('show fusion', firstpoke, secondpoke))
 
-    socket.on('Request vote', function() {
-      var current = []
-      r.db('Users').table('Vote')
-        .run(conn, function(err, cursor) {
-          cursor.toArray(function(err, result) {
-            if (err) console.log('error not found')
-            else {
-              if (result[0] == undefined || result == []) current = []
-              else socket.emit('receive vote', result)
-            }
-          })
-        })
-    })
+    socket.on('Request vote', async function(){ io.emit('receive vote', await expressServer.dbcall.gettable(r, conn, 'Vote')) })
 
-    socket.on('request user fc', async function(username) {
-      socket.emit('user fc', await dbcall.getfc(r, conn, username.toLowerCase()))
-    })
+    socket.on('request user fc', async function(username) { socket.emit('user fc', await dbcall.getfc(r, conn, username.toLowerCase())) })
 
-    socket.on('request avatar', async function(channel, user, message, self) {
-      socket.emit('receive avatar', channel, user, message, self, await dbcall.getavatar(r, conn, user.username.toLowerCase()))
-    })
+    socket.on('request avatar', async function(channel, user, message, self) { socket.emit('receive avatar', channel, user, message, self, await dbcall.getavatar(r, conn, user.username.toLowerCase())) })
 
-    socket.on('request badge', async function(user) {
-      socket.emit('receive badge', username, await dbcall.getbadge(user.username.toLowerCase()))
-    })
+    socket.on('request badge', async function(user) { socket.emit('receive badge', username, await dbcall.getbadge(user.username.toLowerCase())) })
 
     socket.on('update avatar', function(username, newavatar) {
       username = username.toLowerCase()
@@ -233,9 +164,7 @@ module.exports = function(expressServer) {
       .run(conn, null)
     })
 
-    socket.on('request user pokes', function(username) {
-      sendUserPokes(username)
-    })
+    socket.on('request user pokes', function(username) { sendUserPokes(username) })
 
     socket.on('request unvalidated', function() {
       r.table('Users')
@@ -293,17 +222,11 @@ module.exports = function(expressServer) {
       })
     })
 
-    socket.on('followed', function(person) {
-      socket.emit('new follower', person)
-    })
+    socket.on('followed', function(person) { socket.emit('new follower', person) })
 
-    socket.on('metaphone', function(meta, message) {
-      socket.emit('texttopika', meta, message)
-    })
+    socket.on('metaphone', function(meta, message) { socket.emit('texttopika', meta, message) })
 
-    socket.on('won raffle', function(person) {
-      database.rafflewinner(conn, person)
-    })
+    socket.on('won raffle', function(person) { database.rafflewinner(conn, person) })
 
     socket.on('manually enter raffle', function(username, displayicon) {
       r.table('Users').get(username)
@@ -325,13 +248,9 @@ module.exports = function(expressServer) {
       })
     })
 
-    socket.on('enter raffle', function(username, displayicon, team_name, team) {
-      database.raffleChangeUser(conn, username.toLowerCase(), 12, true, displayicon, team_name, team)
-    })
+    socket.on('enter raffle', function(username, displayicon, team_name, team) { database.raffleChangeUser(conn, username.toLowerCase(), 12, true, displayicon, team_name, team) })
 
-    socket.on('leave raffle', function(username, displayicon, team_name) {
-      database.raffleChangeUser(conn, username.toLowerCase(), 12, false, displayicon, '', [0])
-    })
+    socket.on('leave raffle', function(username, displayicon, team_name) { database.raffleChangeUser(conn, username.toLowerCase(), 12, false, displayicon, '', [0]) })
 
     socket.on('clear raffle', function() {
       r.db('Users').table('Raffle').delete()
@@ -343,9 +262,7 @@ module.exports = function(expressServer) {
       })
     })
 
-    socket.on('send raffle', function(needupdate) {
-      sendRaffleUpdate(needupdate)
-    })
+    socket.on('send raffle', function(needupdate) { sendRaffleUpdate(needupdate) })
 
     socket.on('send emote', function(payload) {
       io.emit('receive emote', payload)
@@ -353,42 +270,15 @@ module.exports = function(expressServer) {
       socket.emit('receive emote', payload)
     })
 
-    socket.on('update leaderboard', function(entry) {
-      r.db('Users').table('Leaderboard').get(entry.id)
-      .replace(entry).run(conn, function(err, result) {
-        if (err) throw err
-        if (result.errors) console.log(result.first_error)
-      })
-    })
+    socket.on('update leaderboard', entry => expressServer.dbcall.updateleaderboard(r, conn, entry))
 
-    socket.on('create new player', function(payload) {
-      socket.emit('receive new player', payload)
-    })
+    socket.on('create new player', function(payload) { socket.emit('receive new player', payload) })
 
 
-    socket.on('send leaderboard', function() {
-      var current = []
-      r.db('Users').table('Leaderboard')
-        .run(conn, function(err, cursor) {
-          cursor.toArray(function(err, result) {
-            if (err) console.log('error not found')
-            else {
-              if (result[0] == undefined || result == []) current = []
-              else current = result
-              socket.emit('receive leaderboard', current)
-            }
-          })
-        })
-    })
-    socket.on('clear leaderboard', function() {
-      r.db('Users').table('Leaderboard').delete()
-      .run(conn, function(err, result) {
-        if (err) throw err
-        if (result) {
-          if (result.errors) console.log(result.first_error)
-        }
-      })
-    })
+    socket.on('send leaderboard', async function(){ io.emit('receive leaderboard', await expressServer.dbcall.gettable(r, conn, 'Leaderboard')) })
+
+    socket.on('clear leaderboard', () => expressServer.dbcall.clearleaderboard(r, conn))
+
   function sendUserPokes (username) {
     r.table('Users').filter(r.row('id').eq(username.toLowerCase()))
     .without('pokevalues')
@@ -411,20 +301,7 @@ module.exports = function(expressServer) {
     })
   }
 
-  function sendVoteUpdate(){
-    var current = []
-    r.db('Users').table('Vote')
-      .run(conn, function(err, cursor) {
-        cursor.toArray(function(err, result) {
-          if (err) console.log('error not found')
-          else {
-            if (result == [] || result[0] == undefined) current = []
-            else current = result
-            io.emit('receive vote', current)
-          }
-        })
-      })
-  }
+
 
   function sendRaffleUpdate(updated){
     var current = []
