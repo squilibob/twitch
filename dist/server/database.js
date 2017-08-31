@@ -115,6 +115,17 @@ exports.votepoll = function(r, conn, payload) {
   .catch(error => reject(error))
 }
 
+exports.put = function(r, conn, table, payload) {
+  return new Promise(function(resolve, reject) {
+    r.table('table')
+    .get(payload["id"])
+    .replace(payload)
+    .run(conn)
+    .then(result => resolve(result))
+    .catch(error => reject(error))
+  })
+}
+
 exports.gettable = function(r, conn, dbname) {
   return new Promise(function(resolve, reject) {
     r.db('Users').table(dbname)
@@ -125,7 +136,40 @@ exports.gettable = function(r, conn, dbname) {
     })
 }
 
-// exports.getavatar = function(r, conn, username) {
+exports.updateleaderboard = function(r, conn, entry) {
+  r.db('Users').table('Leaderboard')
+  .get(entry.id)
+  .replace(entry)
+  .run(conn)
+  .catch(error => reject(error))
+}
+
+exports.clearleaderboard = function(r, conn) {
+  r.db('Users').table('Leaderboard')
+  .delete()
+  .run(conn)
+  .catch(error => reject(error))
+}
+
+exports.sendvote = function(r, conn, payload) {
+  r.table('Vote')
+  .get(payload.id)
+  .replace({id: payload.id, vote: payload.vote})
+  .run(conn)
+  .catch(error => reject(error))
+}
+
+exports.showvote = function(r, conn, payload) {
+  return new Promise(function(resolve, reject) {
+    r.table('Vote')
+    .get('system')
+    .then(cursor => cursor.toArray())
+    .then(result => { resolve(result) })
+    .catch(error => reject(error))
+  })
+}
+
+// exports.getavatar = async function(r, conn, username) {
 //   return new Promise(function(resolve, reject) {
 //   })
 // }
