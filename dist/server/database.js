@@ -168,8 +168,77 @@ exports.showvote = function(r, conn, payload) {
     .catch(error => reject(error))
   })
 }
+exports.updateavatar = function(r, conn, username, newavatar) {
+  r.table('Users')
+  .get(username.toLowerCase())
+  .update({"avatar": newavatar})
+  .run(conn)
+  .catch(error => reject(error))
+}
 
-// exports.getavatar = async function(r, conn, username) {
+exports.updatebadge = function(r, conn, username, newbadge) {
+  r.table('Users')
+  .get(username.toLowerCase())
+  .update({"badge": newbadge})
+  .run(conn)
+  .catch(error => reject(error))
+}
+
+exports.setcurrentteam = function(r, conn, name, payload) {
+  r.table('Users')
+  .get(name.toLowerCase())
+  .replace(function (row) {
+      return row
+        .without("active")
+        .merge({
+          "active": payload
+        })
+   })
+  .run(conn)
+  .catch(error => reject(error))
+}
+
+exports.saveuserpokes = function(r, conn, name, payload) {
+    r.table('Users')
+    .get(name.toLowerCase())
+    .replace(function (row) {
+        return row
+          .without("teams")
+          .merge({
+            "teams": payload
+          })
+       })
+  .run(conn)
+  .catch(error => reject(error))
+}
+
+exports.validatefc = function(r, conn, username) {
+  let starter = [191, 298, 401, 010, 013, 265, 280, 129, 349, 664, 011, 014, 172, 266, 268, 174, 194, 236, 665, 161, 173, 261, 270, 273, 440, 412]
+  r.table('Users')
+  .get(username)
+  .update({cards: [{'poke': starter[Math.floor(Math.random()*starter.length)], 'level': 1}], validated: true})
+  .run(conn)
+  .catch(error => reject(error))
+}
+
+exports.clearraffle = function() {
+  r.db('Users')
+  .table('Raffle')
+  .delete()
+  .run(conn)
+  .catch(error => reject(error))
+}
+
+exports.manuallyenterraffle = function(r, conn, username, displayicon) {
+  return new Promise(function(resolve, reject) {
+    r.table('Users')
+    .get(username)
+    .run(conn)
+    .then(result => { resolve(result.cards[0].poke) })
+    .catch(error => reject(error))
+  })
+}
+// exports.getavatar = function(r, conn, username) {
 //   return new Promise(function(resolve, reject) {
 //   })
 // }

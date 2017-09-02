@@ -152,75 +152,30 @@ module.exports = function(expressServer) {
 
     socket.on('request badge', async function(user) { socket.emit('receive badge', username, await dbcall.getbadge(user.username.toLowerCase())) })
 
-    socket.on('update avatar', function(username, newavatar) {
-      username = username.toLowerCase()
-      r.table('Users').get(username).update({"avatar": newavatar})
-      .run(conn, null)
-    })
+    socket.on('update avatar', (username, newavatar)  => expressServer.dbcall.updateavatar(r, conn, username, newavatar))
 
-    socket.on('update badge', function(username, newbadge) {
-      username = username.toLowerCase()
-      r.table('Users').get(username).update({"badge": newbadge})
-      .run(conn, null)
-    })
+    socket.on('update badge', (username, newbadge) => expressServer.dbcall.updatebadge(r, conn, username, newbadge))
 
     socket.on('request user pokes', function(username) { sendUserPokes(username) })
 
-    socket.on('request unvalidated', function() {
-      r.table('Users')
-      .filter({validated: false})
-      .run(conn, function(err, cursor) {
-        cursor.toArray(function(err, result) {
-          if (err || result[0] == undefined || result == []) console.log('user not found')
-          else {
-            socket.emit('unvalidated users', result)
-          }
-        })
-      })
-    })
+    // socket.on('request unvalidated', function() {
+    //   r.table('Users')
+    //   .filter({validated: false})
+    //   .run(conn, function(err, cursor) {
+    //     cursor.toArray(function(err, result) {
+    //       if (err || result[0] == undefined || result == []) console.log('user not found')
+    //       else {
+    //         socket.emit('unvalidated users', result)
+    //       }
+    //     })
+    //   })
+    // })
 
-    socket.on('set current team', function(name, payload){
-      console.log(payload)
-      name = name.toLowerCase()
-      // r.db('Users').table('Users').get(name).update({"teams" : payload})
-      r.db('Users').table('Users').get(name).replace(function (row) {
-          return row
-            .without("active")
-            .merge({
-              "active": payload
-            })
-       })
-      .run(conn, function(err, result) {
-        if (err) throw err
-        if (result.errors) console.log(result.first_error)
-      })
-    })
+    socket.on('set current team', (name, payload) =>  expressServer.dbcall.setcurrentteam(r, conn, name, payload))
 
+    socket.on('save user pokes', (name, payload) =>  expressServer.dbcall.saveuserpokes(r, conn, name, payload))
 
-    socket.on('save user pokes', function(name, payload){
-      name = name.toLowerCase()
-      // r.db('Users').table('Users').get(name).update({"teams" : payload})
-      r.db('Users').table('Users').get(name).replace(function (row) {
-          return row
-            .without("teams")
-            .merge({
-              "teams": payload
-            })
-       })
-      .run(conn, function(err, result) {
-        if (err) throw err
-        if (result.errors) console.log(result.first_error)
-      })
-    })
-
-    socket.on('validate fc', function(username) {
-      var starter = [191, 298, 401, 010, 013, 265, 280, 129, 349, 664, 011, 014, 172, 266, 268, 174, 194, 236, 665, 161, 173, 261, 270, 273, 440, 412]
-      r.db('Users').table('Users').get(username).update({cards: [{'poke': starter[Math.floor(Math.random()*starter.length)], 'level': 1}], validated: true})
-      .run(conn, function(err, result) {
-        if (err) throw err
-        if (result.errors) console.log(result.first_error)
-      })
-    })
+    socket.on('validate fc', (username) =>  expressServer.dbcall.validatefc(r, conn, username))
 
     socket.on('followed', function(person) { socket.emit('new follower', person) })
 
@@ -228,39 +183,15 @@ module.exports = function(expressServer) {
 
     socket.on('won raffle', function(person) { database.rafflewinner(conn, person) })
 
-    socket.on('manually enter raffle', function(username, displayicon) {
-      r.table('Users').get(username)
-      .run(conn, function(err, result) {
-        if (err) socket.emit('invalid raffle user', username)
-        else {
-          database.raffleChangeUser(conn, username.toLowerCase(), 12, true, result.cards[0].poke)
-        }
-      })
-    })
+    socket.on('manually enter raffle', async function(username, displayicon) { database.raffleChangeUser(conn, username.toLowerCase(), 12, true, await expressServer.dbcall.manuallyenterraffle(r, conn, username, displayicon)) })
 
-    socket.on('manually leave raffle', function(username, displayicon) {
-      r.table('Users').get(username)
-      .run(conn, function(err, result) {
-        if (err) socket.emit('invalid raffle user', username)
-        else {
-          database.raffleChangeUser(conn, username.toLowerCase(), 12, false, result.cards[0].poke)
-        }
-      })
-    })
+    socket.on('manually leave raffle', async function(username, displayicon) { database.raffleChangeUser(conn, username.toLowerCase(), 12, false, await expressServer.dbcall.manuallyenterraffle(r, conn, username, displayicon)) })
 
     socket.on('enter raffle', function(username, displayicon, team_name, team) { database.raffleChangeUser(conn, username.toLowerCase(), 12, true, displayicon, team_name, team) })
 
     socket.on('leave raffle', function(username, displayicon, team_name) { database.raffleChangeUser(conn, username.toLowerCase(), 12, false, displayicon, '', [0]) })
 
-    socket.on('clear raffle', function() {
-      r.db('Users').table('Raffle').delete()
-      .run(conn, function(err, result) {
-        if (err) throw err
-        if (result) {
-          if (result.errors) console.log(result.first_error)
-        }
-      })
-    })
+    socket.on('clear raffle', ()  => expressServer.dbcall.clearraffle())
 
     socket.on('send raffle', function(needupdate) { sendRaffleUpdate(needupdate) })
 
