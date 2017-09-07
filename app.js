@@ -9,10 +9,21 @@ expressServer.database = require('rethinkdb')
 expressServer.dbcall = require('./dist/server/database')
 require('./dist/server/routes')(expressServer)
 
+async function fillcache(server) {
+  return {
+    pokedex: await server.dbcall.gettable(server.database, server.connection, 'Pokedex'),
+    typechart: await server.dbcall.gettable(server.database, server.connection, 'TypeChart'),
+    Moves: await server.dbcall.gettable(server.database, server.connection, 'Moves'),
+    Abilities: await server.dbcall.gettable(server.database, server.connection, 'Abilities'),
+    Bttv: await server.dbcall.gettable(server.database, server.connection, 'Bttv'),
+    Ffz: await server.dbcall.gettable(server.database, server.connection, 'Ffz')
+  }
+}
 
 expressServer.database.connect(defaultDB).then((c) => {
 	expressServer.connection = c
-     expressServer.cached = require('./dist/server/fillcache')
+     fillcache(expressServer).then(result => expressServer.cached = result)
+
 	expressServer.database.table('Vote').changes().run(expressServer.connection, function(err, cursor) {
      if (err) throw err
      else {
