@@ -13,6 +13,7 @@
     "express": "4.15.x",
     "rethinkdb": "2.3.x",
     "socket.io": "2.0.x",
-    "socket.io-client": "2.0.x"
+    "socket.io-client": "2.0.x",
+    "tmi.js": "^1.2.1"
   }
 }

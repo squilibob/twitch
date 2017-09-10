@@ -1,33 +1,32 @@
-
 // chat icon display functions
-function pokify (text) {
+exports.pokify = function(text) {
   let location
   let skippoke = -1
   location = text.toLowerCase().indexOf('mewtwo')
   if (location >= 0) {
     let xpos = spritesheet.rowlen * spritesheet.x - ((149 % spritesheet.rowlen) * spritesheet.x),
-      ypos = Math.ceil(pokedex.length / spritesheet.rowlen) * spritesheet.y - (Math.floor(149 / spritesheet.rowlen) * spritesheet.y)
+      ypos = Math.ceil(cached.pokedex.length / spritesheet.rowlen) * spritesheet.y - (Math.floor(149 / spritesheet.rowlen) * spritesheet.y)
     text = text.slice(0, location) + '<span class="w3-tooltip sprsheet" style="background-position: ' + xpos + 'px ' + ypos + 'px;"><span class="w3-text">M&#8203;ewtwo</span></span>' + text.slice(location + 6)
   }
   location = text.toLowerCase().indexOf('nature')
   if (location >= 0) {
     skippoke = 177
   }
-  pokifyloop: for (let pokes = pokedex.length - 1; pokes >= 0; pokes--) {
-    if (pokes != skippoke - 1 && text.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) {
+  pokifyloop: for (let pokes = cached.pokedex.length - 1; pokes >= 0; pokes--) {
+    if (pokes != skippoke - 1 && text.toLowerCase().indexOf(cached.pokedex[pokes].Pokemon.toLowerCase()) >= 0) {
       if (autocry) socket.emit('pokemon cry', pokes + 1)
-      let location = text.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()),
-        namelength = pokedex[pokes].Pokemon.length
+      let location = text.toLowerCase().indexOf(cached.pokedex[pokes].Pokemon.toLowerCase()),
+        namelength = cached.pokedex[pokes].Pokemon.length
       let xpos = spritesheet.rowlen * spritesheet.x - ((pokes % spritesheet.rowlen) * spritesheet.x),
-        ypos = Math.ceil(pokedex.length / spritesheet.rowlen) * spritesheet.y - (Math.floor(pokes / spritesheet.rowlen) * spritesheet.y)
-      text = text.slice(0, location) + '<span class="w3-tooltip sprsheet" style="background-position: ' + xpos + 'px ' + ypos + 'px;"><span class="w3-text">' + pokedex[pokes].Pokemon.slice(0, pokedex[pokes].Pokemon.length - 1) + '&#8203;' + pokedex[pokes].Pokemon.slice(pokedex[pokes].Pokemon.length - 1, pokedex[pokes].Pokemon.length) + '</span></span>' + text.slice(location + namelength, text.length)
+        ypos = Math.ceil(cached.pokedex.length / spritesheet.rowlen) * spritesheet.y - (Math.floor(pokes / spritesheet.rowlen) * spritesheet.y)
+      text = text.slice(0, location) + '<span class="w3-tooltip sprsheet" style="background-position: ' + xpos + 'px ' + ypos + 'px;"><span class="w3-text">' + cached.pokedex[pokes].Pokemon.slice(0, cached.pokedex[pokes].Pokemon.length - 1) + '&#8203;' + cached.pokedex[pokes].Pokemon.slice(cached.pokedex[pokes].Pokemon.length - 1, cached.pokedex[pokes].Pokemon.length) + '</span></span>' + text.slice(location + namelength, text.length)
       pokes++
     }
   }
   return text
 }
 
-function ffz (text) {
+exports.ffz = function(text) {
   ffzloop: for (set in emoticons.ffz) {
     emoteloop: for (emote in emoticons.ffz[set].emoticons) {
       let sizeurl = 1
@@ -39,7 +38,7 @@ function ffz (text) {
   return text
 }
 
-function bttv (text) {
+exports.bttv = function(text) {
   bttvloop: for (set in emoticons.bttv) {
     let thisemote = emoticons.bttv[set].code
     if (text.indexOf(thisemote) >= 0) text = text.replace(new RegExp(thisemote, 'g'), '<img class="emoticon" src="https://cdn.betterttv.net/emote/' + emoticons.bttv[set].id + '/1x"/>')
@@ -47,7 +46,7 @@ function bttv (text) {
   return text
 }
 
-function formatEmotes (text, emotes) {
+exports.formatEmotes = function(text, emotes) {
   let splitText = text.split('')
 
   for (let i in emotes) {
@@ -69,13 +68,13 @@ function formatEmotes (text, emotes) {
   return htmlEntities(splitText).join('')
 }
 
-function createBadge (name) {
+exports.createBadge = function(name) {
   let badge = document.createElement('div')
   badge.className = 'chat-badge-' + name
   return badge
 }
 
-function badges (chan, user, isBot) {
+exports.badges = function(chan, user, isBot) {
   let chatBadges = document.createElement('span')
   chatBadges.className = 'chat-badges'
 

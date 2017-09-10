@@ -1,5 +1,5 @@
 // api call functions
-function header (id, endpoint, extraparams, version) {
+function header(id, endpoint, extraparams, version) {
   if (!version) version = 5
   let paramstring = ''
   if (id) paramstring += '/' + id
@@ -11,7 +11,7 @@ function header (id, endpoint, extraparams, version) {
   return paramstring
 }
 
-function checkAvatar (obj) {
+exports.checkAvatar = async function(user) {
   let existed = false
   if (!(obj.user || {}).username) return existed
   if (useravatars[obj.user.username] == undefined) {
@@ -42,7 +42,7 @@ function checkAvatar (obj) {
   return existed
 }
 
-function getViewers (channel) {
+exports.getViewers = function(channel) {
   client.api({
     url: 'https://api.twitch.tv/kraken/streams' + header(channel)
   }, function (err, res, body) {
@@ -60,7 +60,7 @@ function getViewers (channel) {
   })
 }
 
-function getStart (channel) {
+exports.getStart = function(channel) {
   client.api({
     url: 'https://api.twitch.tv/kraken/streams' + header(channel)
   }, function (err, res, body) {
@@ -70,14 +70,14 @@ function getStart (channel) {
   })
 }
 
-function checkfollowers (userid, hidenotify, current) {
+exports.checkfollowers = function(userid, hidenotify, current) {
   let maxcursor = 100
   if (!current) current = 0
   client.api({
     url: 'https://api.twitch.tv/kraken/channels' + header(userid, 'follows', 'offset=' + current + '&limit=' + maxcursor)
   }, function (err, res, body) {
     if (body) {
-      if (current + body.follows.length < body._total) checkfollowers(userid, hidenotify, current + body.follows.length)
+      if (current + body.follows.length < body._total) exports.checkfollowers(userid, hidenotify, current + body.follows.length)
       followerloop: for (viewer in body.follows) {
         if (!followers[body.follows[viewer].user.name]) {
           let datefollowed = new Date(body.follows[viewer].created_at)
@@ -93,7 +93,7 @@ function checkfollowers (userid, hidenotify, current) {
   })
 }
 
-function checkstreamer (username) {
+exports.checkstreamer = function(username) {
   client.api({
     url: 'https://api.twitch.tv/kraken/channels' + header(username)
   }, function (err, res, body) {

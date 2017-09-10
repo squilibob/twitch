@@ -1,17 +1,26 @@
-  '/chat/clientoptions',
-  '/chat/tmi.min',
-  '/chat/chatvariables',
-  '/chat/tm',
-  '/chat/natures',
-  '/chat/hiddenpowers',
-  '/chat/twemoji.min',
-  '/chat/chatfunctions',
-  '/chat/chatapi',
-  '/chat/chaticon',
-  '/chat/chatsocket',
-  '/chat/pokemonparse',
+const tmi = require('tmi.js')
+global.clientOptions = require('./chat/clientoptions')
+global.client = new tmi.client(clientOptions)
+  // require('./chat/tm')
+  // require('./chat/natures')
+  // require('./chat/hiddenpowers')
+const {dehash, capitalize, htmlEntities, checkImageExists, chatNotice, timeout, clearChat, hosting, submitchat, dequeue, parseraffle, urlDecode, isMod, checkPoke, checkDb, checkMoves, checkExist} = require('./chat/chatfunctions')
+const {checkAvatar, getViewers, getStart, checkfollowers, checkstreamer} = require('./chat/chatapi')
+const {parseMessage} = require('./chat/chatbackend')
 
-  function chatbot () {
+module.exports = function(expressServer) {
+require('./chat/chatsocket')(client, expressServer.socket)
+
+let TwitchID = '32218175',
+  botDelay = 1, // Number of seconds between each bot message
+  showConnectionNotices = true // Show messages like "Connected" and "Disconnected"
+  global.followers = {}
+  global.queue = {
+    channel: clientOptions.channels[0],
+    messages: [],
+    lastMessage: Date.now()
+  }
+
   let joinAnnounced = []
 
   client.on('hosted', function (channel, username, total, autohost) {
@@ -20,7 +29,10 @@
     if (typeof (total) === 'number') { chatNotice(username + ' is now ' + (autohost ? 'auto' : '') + 'hosting ' + chan + ' for ' + total + ' viewer' + (total !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes') } else chatNotice(username + ' is now ' + (autohost ? 'auto' : '') + 'hosting ' + chan + '.', null, null, 'chat-hosting-yes')
   })
 
-  client.addListener('message', parseMessage)
+  client.addListener('message', function(channel, user, message, self) {
+    checkAvatar(user)
+    .then(avatar => parseMessage(channel, user, message, self, avatar, expressServer))
+  })
   client.addListener('timeout', timeout)
   client.addListener('clearchat', clearChat)
   client.addListener('hosting', hosting)
@@ -82,17 +94,12 @@
   })
 
   client.connect()
-  socket.emit('send raffle', true)
-  socket.emit('Ask for table', 'Moves')
-  socket.emit('Ask for table', 'Abilities')
-  socket.emit('Ask for table', 'Bttv')
-  socket.emit('Ask for table', 'Ffz')
 
   let timers = [
-    window.setInterval(getViewers, 525000, TwitchID),
-    window.setInterval(repeating_notice_website, 3000000),
-    window.setInterval(repeating_notice_signup, 7200000),
-    window.setInterval(checkfollowers, 180000, TwitchID, false),
-    window.setInterval(dequeue, 1000 * botDelay || 1000)
+    setInterval(getViewers, 525000, TwitchID),
+    // setInterval(repeating_notice_website, 3000000),
+    // setInterval(repeating_notice_signup, 7200000),
+    setInterval(checkfollowers, 180000, TwitchID, false),
+    setInterval(dequeue, 1000 * botDelay, botDelay)
   ]
 }

@@ -22,8 +22,6 @@ async function fillcache(server) {
 
 expressServer.database.connect(defaultDB).then((c) => {
 	expressServer.connection = c
-     fillcache(expressServer).then(result => expressServer.cached = result)
-
 	expressServer.database.table('Vote').changes().run(expressServer.connection, function(err, cursor) {
      if (err) throw err
      else {
@@ -42,9 +40,13 @@ expressServer.database.connect(defaultDB).then((c) => {
 		})
           }
 	})
-  expressServer.io.on('connection', function(socket){
-    expressServer.socket = socket
-	require('./dist/server/listeners')(expressServer)
-  })
+  fillcache(expressServer)
+    .then(result => global.cached = result)
+    .then(
+      expressServer.io.on('connection', function(socket){
+        expressServer.socket = socket
+    	   require('./dist/server/listeners')(expressServer)
+        require('./dist/server/chat')(expressServer)
+      }))
 
 })

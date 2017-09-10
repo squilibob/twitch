@@ -1,21 +1,34 @@
-  function parseMessage (channel, user, message, self) {
+const {dehash, capitalize, htmlEntities, checkImageExists, chatNotice, timeout, clearChat, hosting, submitchat, dequeue, parseraffle, urlDecode, isMod, checkPoke, checkDb, checkMoves, checkExist} = require('./chatfunctions')
+const {checkAvatar, getViewers, getStart, checkfollowers, checkstreamer} = require('./chatapi')
+const {pokify, ffz, bttv, formatEmotes, createBadge, badges} = require('./chaticon')
+const {findpoke, validatetype, weakTo, resistantTo, effective} = require('./pokemonparse')
+
+let started,
+  maxpokes = 802,
+  minfollowerstoshoutout = 100,
+  TwitchID = '32218175',
+  botDelay = 1, // Number of seconds between each bot message
+  autocry = false, // Play the pokemon's cry sound whenever it is mentioned in chat
+  participants = {},
+  streamers = []
+
+exports.parseMessage = function(channel, user, message, self, avatar, expressServer) {
     if (user['message-type'] != 'chat' && user['message-type'] != 'action') return false
     var messagepayload = {
       channel: dehash(channel),
       user: user,
       message: message,
       self: self,
-      pokemon: checkPoke(message)
+      pokemon: checkPoke(message, maxpokes)
     }
 
     var modmessage = isMod(user)
-    var userexisted = checkAvatar(messagepayload)
     var question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which'] // 'who ', 'why ', 'did ',
     var containsquestion = checkExist(message, question, true)
     var response
     var displaycommand = true
 
-    if (!self && userexisted) {
+    if (!self) {
       commandparseloop: for (command in parser) {
         var cmdexist = false
         var cmdarr = parser[command].altcmds ? [command].concat(parser[command].altcmds) : [command]
@@ -42,12 +55,12 @@
     messagepayload.message = parseurl.message
     var image = parseurl.image
 
-    if (!self && userexisted && containsquestion && !response && messagepayload.pokemon.length) { response = checkDb(messagepayload) }
+    if (!self && containsquestion && !response && messagepayload.pokemon.length) { response = checkDb(messagepayload) }
 
-    if (!self && userexisted && containsquestion && !response) { response = checkMoves(messagepayload) }
+    if (!self && containsquestion && !response) { response = checkMoves(messagepayload) }
 
-    userexisted && displaycommand && handleChat(messagepayload.channel, messagepayload.user, messagepayload.message, messagepayload.self, useravatars[user.username], image)
-    if (response && userexisted) submitchat(response)
+    displaycommand && expressServer.socket.emit('chat', messagepayload.channel, messagepayload.user, messagepayload.message, messagepayload.self, avatar, image)
+    response && submitchat(response)
   }
 
   var parser = {
@@ -598,7 +611,7 @@
         if (obj.pokemon[0].Evos.length > 0) { reply += obj.pokemon[0].Pokemon + ' evolves into ' }
         evolutionsloop: for (var count = 0; count < obj.pokemon[0].Evos.length; count++) {
           reply += obj.pokemon[0].Evos[count]
-          reply += ' (' + pokedex[findpoke(obj.pokemon[0].Evos[count]) - 1].Evolve + ') '
+          reply += ' (' + cached.pokedex[findpoke(obj.pokemon[0].Evos[count]) - 1].Evolve + ') '
           if (count + 2 == obj.pokemon[0].Evos.length) reply += ' and '
           else if (count + 1 < obj.pokemon[0].Evos.length) reply += ', '
         }
@@ -695,11 +708,11 @@
       action: function (obj) {
         if (obj.pokemon.length) return
         var response
-        abilityloop: for (ability in abilities) {
+        abilityloop: for (ability in cached.abilities) {
           if (obj.message.toLowerCase().indexOf(ability.toLowerCase()) >= 0) {
             if (obj.message.toLowerCase().indexOf('pokemon') >= 0) {
               var hasability = []
-              for (testpoke of pokedex) {
+              for (testpoke of cached.pokedex) {
                 for (testability of testpoke.Ability) { if (testability == ability) hasability.push(testpoke.Pokemon) }
               }
               if (hasability.length) response = 'the pokemon with the ability ' + ability + ' are: '
@@ -710,7 +723,7 @@
                 }
                 response += (hasability.length - response_length) + ' more'
               }
-            } else response = ability + ': ' + abilities[ability]
+            } else response = ability + ': ' + cached.abilities[ability]
           }
         }
         return response
@@ -780,7 +793,7 @@
         if (!self.fetch) {
           return
         }
-        var bttvurl = obj.parameters.length ? 'https://api.betterttv.net/2/channels/' + obj.parameters[0] : bttvemotesurl
+        var bttvurl = obj.parameters.length ? 'https://betterttv.net/2/channels/' + obj.parameters[0] : bttvemotesurl
         fetch(bttvurl).then(function (response) {
           var contentType = response.headers.get('content-type')
           if (contentType && contentType.indexOf('application/json') !== -1) {
@@ -814,7 +827,7 @@
         if (!self.fetch) {
           return
         }
-        var ffzurl = obj.parameters.length ? 'https://api.frankerfacez.com/v1/room/' + obj.parameters[0] : ffzemotesurl
+        var ffzurl = obj.parameters.length ? 'https://frankerfacez.com/v1/room/' + obj.parameters[0] : ffzemotesurl
         fetch(ffzurl).then(function (response) {
           var contentType = response.headers.get('content-type')
           if (contentType && contentType.indexOf('application/json') !== -1) {

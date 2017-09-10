@@ -1043,7 +1043,7 @@
       game.load.crossOrigin = 'anonymous'
       */
 
-  function handleChat (chan, user, message, self, avatar, image) {
+  function handleChat (chan, user, message, self, image) {
     var name = user.username,
       chatLine = document.createElement('li'),
       chatAlignment = document.createElement('div'),
@@ -1104,7 +1104,7 @@
       var chatAvatar = document.createElement('img')
       chatAvatar.className = 'chat-avatar'
       chatAvatar.dataset.hide = ''
-      chatAvatar.src = (avatar == null || avatar == -1 ? defaultavatar : avatar)
+      chatAvatar.src = defaultavatar //(avatar == null || avatar == -1 ? defaultavatar : avatar)
     } else {
       var chatAvatar = document.createElement('span')
       chatAvatar.className = 'avs'
