@@ -244,7 +244,7 @@ exports.sendraffleupdate = function(r, conn) {
     r.db('Users').table('Raffle')
     .run(conn)
     .then(cursor => cursor.toArray())
-    .then(result => { resolve(current) })
+    .then(result => { resolve(result) })
     .catch(error => reject(error))
   })
 }
@@ -341,7 +341,6 @@ exports.newuser = function(r, conn, payload) {
       }
     })
 }
-
 
 
 exports.requesttoconnect = function(r, conn, username) {

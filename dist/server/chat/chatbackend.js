@@ -12,14 +12,17 @@ let started,
   participants = {},
   streamers = []
 
-exports.parseMessage = function(channel, user, message, self, avatar, expressServer) {
+exports.parseMessage = async function(channel, user, message, self, avatar, expressServer) {
     if (user['message-type'] != 'chat' && user['message-type'] != 'action') return false
     var messagepayload = {
       channel: dehash(channel),
       user: user,
       message: message,
       self: self,
-      pokemon: checkPoke(message, maxpokes)
+      pokemon: checkPoke(message, maxpokes),
+      dbcall: expressServer.dbcall,
+      conn: expressServer.connection,
+      r: expressServer.database
     }
 
     var modmessage = isMod(user)
@@ -44,7 +47,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
           }
           messagepayload.parameters = parameters
           if (cmdexist) {
-            response = parser[command].action(messagepayload)
+            response = await parser[command].action(messagepayload).catch(err => console.log(err))
           }
           displaycommand = parser[command].requires.display
         }
@@ -77,7 +80,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         return 'This bot was created by squilibob. It is open source and available at https://github.com/squilibob/twitch'
       }
     },
@@ -94,7 +97,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: true
       },
-      action: function (obj) {
+      action: async function (obj) {
         client.join(obj.parameters[0])
         return false
       }
@@ -112,7 +115,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: true
       },
-      action: function (obj) {
+      action: async function (obj) {
         if (!obj.parameters[0]) return false
         client.say(obj.channel, '/me we are now going to raid ' + obj.parameters[0] + ' please go to http://twitch.tv/' + obj.parameters[0] + ' and type the raid message:')
         client.say(obj.channel, 'тo proтecт тнe cнaт froм devasтaтιon, тo υnιтe spaммers wιтнιn oυr naтιon, тo denoυnce тнe evιls of вans and мods, тo eхтend oυr spaм тo тнe space aвove. copy! pasтe! тwιтcн cнaт, scroll aт тнe speed of lιgнт! Ragequιт now or prepare тo fιgнт!')
@@ -133,7 +136,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1, // refactor
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var response
         var findtm = parseInt(obj.message.slice(obj.message.toLowerCase().indexOf('tm') + 2, obj.message.toLowerCase().indexOf('tm') + 5))
         if (findtm > 0 && findtm < 101) { tmnameloop: for (var key in tm[findtm - 1]) response = 'TM' + findtm + ' ' + key + ' can be obtained at ' + tm[findtm - 1][key] } else {
@@ -159,7 +162,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1, // refactor
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var response
         if (obj.message.toLowerCase().indexOf('hm') >= 0) {
           var findtm = parseInt(obj.message.slice(obj.message.toLowerCase().indexOf('hm') + 2, obj.message.toLowerCase().indexOf('hm') + 5))
@@ -185,7 +188,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1, // refactor
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var response
         hiddenpowerloop: for (hptype in hiddenpower) { if (obj.message.toLowerCase().indexOf(hptype) >= 0) response = 'in order to get hidden power ' + hptype + ' your pokemon needs IVs to be hp: ' + hiddenpower[hptype][0] + ' att: ' + hiddenpower[hptype][1] + ' def: ' + hiddenpower[hptype][2] + ' sp. att: ' + hiddenpower[hptype][3] + ' sp. def: ' + hiddenpower[hptype][4] + ' speed: ' + hiddenpower[hptype][5] }
         return response
@@ -204,7 +207,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 2,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var response
         var fc = []
         var validfc = true
@@ -251,11 +254,12 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 0,
         modonly: false
       },
-      action: function (obj) {
-        var notyou = null
-        fcloop: for (person in useravatars) { if (obj.message.toLowerCase().indexOf(person.toLowerCase()) >= 0) notyou = person.toLowerCase() }
-        socket.emit('request user fc', notyou == null ? obj.user.username.toLowerCase() : notyou)
-        return false
+      action: async function (obj) {
+        // var notyou = null
+        // fcloop: for (person in useravatars) { if (obj.message.toLowerCase().indexOf(person.toLowerCase()) >= 0) notyou = person.toLowerCase() }
+        // socket.emit('request user fc', notyou == null ? obj.user.username.toLowerCase() : notyou)
+        let user = await obj.dbcall.getfc(obj.r, obj.conn, obj.user.username.toLowerCase()).catch(err => console.log(err))
+        return user.id + "'s friend code is " + user.fc[0] + '-' + user.fc[1] + '-' + user.fc[2] + ' IGN ' + user.ign
       }
     },
     '!reload': {
@@ -271,7 +275,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 0,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         delete useravatars[obj.user.username]
         socket.emit('request avatar', obj.channel, obj.user, obj.user.username + ': reloaded avatar image', false)
         socket.emit('request badge', obj.user)
@@ -291,7 +295,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 0,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         socket.emit('manually enter raffle', obj.user.username, Math.floor(Math.random() * 719))
         return false
       }
@@ -309,7 +313,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 0,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         socket.emit('manually leave raffle', obj.user.username, Math.floor(Math.random() * 719))
         return false
       }
@@ -327,7 +331,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 0,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var voteoption = obj.message.split(' ');
         (voteoption.length > 1 && voteoption[0].indexOf('!vote') >= 0) ? socket.emit('Send vote', {id: obj.user.username.toLowerCase(), vote: capitalize(voteoption[1].toLowerCase())}) : socket.emit('Show vote')
         return false
@@ -346,7 +350,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 0,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var response = 'The bot keywords for ' + obj.channel + ' are'
         for (command in parser) {
           response += ' ' + command
@@ -368,7 +372,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var response
         var now = new Date()
         var uptime = now - started
@@ -395,7 +399,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         return watching.chatters.length.toLocaleString() + ' in chat ' + watching.viewers.toLocaleString() + ' reported viewers'
       }
     },
@@ -412,7 +416,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 0,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var response = obj.user.username + ' is not a follower'
         if (followers[obj.user.username.toLowerCase()]) response = obj.user.username + ' followed ' + followers[obj.user.username.toLowerCase()].followed
         return response
@@ -431,7 +435,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var response
         if (obj.pokemon[0]['Egg Group I']) {
           if (obj.pokemon[0]['Egg Group II'] && obj.pokemon[0]['Egg Group II'] != ' ') response = obj.pokemon[0].Pokemon + ' is in egg groups ' + obj.pokemon[0]['Egg Group I'] + ' & ' + obj.pokemon[0]['Egg Group II']
@@ -453,7 +457,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 0,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var response
         response = obj.pokemon[0].Pokemon + ' will reward the EVs:'
         evloop: for (ev in obj.pokemon[0].EVs) response += ' ' + obj.pokemon[0].EVs[ev] + ' x ' + ev
@@ -473,7 +477,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var response
         if (Object.keys(participants).length > 0) {
           response = Object.keys(participants).length + ' in the raffle: '
@@ -506,7 +510,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 0,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         typeof (obj.pokemon[0].id === 'number') && socket.emit('pokemon cry', obj.pokemon[0].id)
         return false
       }
@@ -524,7 +528,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var response
         if (obj.pokemon[0]) {
           response = obj.pokemon[0].Pokemon + ' is weak to ' + weakTo(obj.pokemon[0].Type, obj.pokemon[0].Secondary).join(', ')
@@ -550,7 +554,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var response = 'Does not resist anything'
         if (obj.pokemon[0]) {
           var list = resistantTo(obj.pokemon[0].Type, obj.pokemon[0].Secondary)
@@ -579,7 +583,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var response
         obj.message.split(' ').forEach((strength, index) => {
           var list = effective(strength)
@@ -601,7 +605,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 0,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var reply = ''
         var dexno = obj.pokemon[0]
         if (obj.pokemon[0].Prevo) {
@@ -611,7 +615,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         if (obj.pokemon[0].Evos.length > 0) { reply += obj.pokemon[0].Pokemon + ' evolves into ' }
         evolutionsloop: for (var count = 0; count < obj.pokemon[0].Evos.length; count++) {
           reply += obj.pokemon[0].Evos[count]
-          reply += ' (' + cached.pokedex[findpoke(obj.pokemon[0].Evos[count]) - 1].Evolve + ') '
+          reply += ' (' + pokedex[findpoke(obj.pokemon[0].Evos[count]) - 1].Evolve + ') '
           if (count + 2 == obj.pokemon[0].Evos.length) reply += ' and '
           else if (count + 1 < obj.pokemon[0].Evos.length) reply += ', '
         }
@@ -631,7 +635,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 0,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var reply = ''
         if (obj.pokemon[0].Location) reply += obj.pokemon[0].Pokemon + ' SuMo locations: ' + obj.pokemon[0].Location
         else if (obj.pokemon[0].locationORAS) reply += obj.pokemon[0].Pokemon + ' ORAS locations: ' + obj.pokemon[0].locationORAS
@@ -652,7 +656,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 0,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         return 'We do raffles for battles. You must sign up to join raffles and then use !enter. Signup webpage: squi.li or !signup. !raffle will show if you are entered'
       }
     },
@@ -669,7 +673,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var reply
         if (obj.message.toLowerCase().indexOf('+') > 0 && obj.message.toLowerCase().indexOf('-') > 0) {
           var plus = obj.message.slice(obj.message.toLowerCase().indexOf('+') + 1).split(' ')
@@ -705,14 +709,14 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         if (obj.pokemon.length) return
         var response
-        abilityloop: for (ability in cached.abilities) {
+        abilityloop: for (ability in abilities) {
           if (obj.message.toLowerCase().indexOf(ability.toLowerCase()) >= 0) {
             if (obj.message.toLowerCase().indexOf('pokemon') >= 0) {
               var hasability = []
-              for (testpoke of cached.pokedex) {
+              for (testpoke of pokedex) {
                 for (testability of testpoke.Ability) { if (testability == ability) hasability.push(testpoke.Pokemon) }
               }
               if (hasability.length) response = 'the pokemon with the ability ' + ability + ' are: '
@@ -723,7 +727,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
                 }
                 response += (hasability.length - response_length) + ' more'
               }
-            } else response = ability + ': ' + cached.abilities[ability]
+            } else response = ability + ': ' + abilities[ability]
           }
         }
         return response
@@ -742,7 +746,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 0,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var fusion = 'http://images.alexonsager.net/pokemon/fused/' + (obj.pokemon[0].id) + '/' + (obj.pokemon[0].id) + '.' + (obj.pokemon[1].id) + '.png'
         if (typeof (obj.pokemon[0].id) === 'number' && typeof (obj.pokemon[1].id) === 'number') {
           if (obj.pokemon[0].id > 0 && obj.pokemon[0].id < 152 && obj.pokemon[1].id > 0 && obj.pokemon[1].id < 152) {
@@ -765,7 +769,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         var response = obj.pokemon[0].Pokemon + ' stats: '
         response += obj.pokemon[0].HP + '/'
         response += obj.pokemon[0].Attack + '/'
@@ -789,7 +793,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: true
       },
-      action: function (obj) {
+      action: async function (obj) {
         if (!self.fetch) {
           return
         }
@@ -823,7 +827,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: true
       },
-      action: function (obj) {
+      action: async function (obj) {
         if (!self.fetch) {
           return
         }
@@ -857,7 +861,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: true
       },
-      action: function (obj) {
+      action: async function (obj) {
         var title
         var options = obj.message.substr(obj.message.toLowerCase().indexOf('!poll') + '!poll'.length).split('|')
         title = options.shift()
@@ -878,7 +882,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 0,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         socket.emit('update vote')
       }
     },
@@ -895,7 +899,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 1,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         if (!obj.message.length) return
         var map = {
           'A': '∀',
@@ -983,7 +987,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
         parameters: 0,
         modonly: false
       },
-      action: function (obj) {
+      action: async function (obj) {
         return "We don't use discord, join us on the twitch app chat server at https://invite.twitch.tv/EdlanMizliPaws"
       }
     }
@@ -999,7 +1003,7 @@ exports.parseMessage = function(channel, user, message, self, avatar, expressSer
    //     parameters: 1,
    //     modonly: false
    //   },
-   //   action: function(obj){
+   //   action: async function(obj){
    //     var response;
 
    //     return response;

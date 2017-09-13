@@ -10,7 +10,7 @@ module.exports = function(expressServer) {
   socket.on('request to connect', async function(msg){
     if (msg.id != '' && msg.id != undefined) {
       console.log('user: ' + msg.id, 'connecting...')
-      let connected = await dbcall.requesttoconnect(r, conn, msg.id.toLowerCase())
+      let connected = await dbcall.requesttoconnect(r, conn, msg.id.toLowerCase()).catch(err => console.log(err))
       if (!connected) {
         createanewuser(msg)
       } else {
@@ -25,6 +25,20 @@ module.exports = function(expressServer) {
   //    if (err) console.log(err)
   //  })
   // })
+
+    // expressServer.database.table('Vote')
+  //   .changes()
+  //   .run(expressServer.connection)
+  //   .then(result => sendVoteUpdate())
+  //   .catch(err => console.log(err))
+
+  r.table('Raffle')
+    .changes()
+    .run(conn)
+    .then(result => sendRaffleUpdate(true))
+    .catch(err => console.log(err))
+
+
   socket.on('disconnect', () => console.log('user disconnected', socket.id))
   socket.on('new user', payload => dbcall.newuser(r, conn, payload))
   socket.on("send fusion", (firstpoke, secondpoke) => io.emit('show fusion', firstpoke, secondpoke))
@@ -49,48 +63,48 @@ module.exports = function(expressServer) {
   socket.on('update leaderboard', entry => dbcall.updateleaderboard(r, conn, entry))
   socket.on('create new player', payload => socket.emit('receive new player', payload))
   socket.on('clear leaderboard', () => dbcall.clearleaderboard(r, conn))
-  socket.on ("Ask for pokedex", function(){ socket.emit("Receive pokedex", expressServer.cache.pokedex) }) //replace with Ask for table
-  socket.on ("Ask for typechart", function(){ socket.emit("Receive typechart", expressServer.cache.typechart) })//replace with Ask for table
-  socket.on ("Ask for table", async function(dbname) { socket.emit("receive " + await dbname.toLowerCase(), expressServer.cached[dbname]) })
-  socket.on("update vote", async function(){ io.emit('receive vote', await dbcall.gettable(r, conn, 'Vote')) })
-  socket.on('Request vote', async function(){ io.emit('receive vote', await dbcall.gettable(r, conn, 'Vote')) })
-  socket.on('request user fc', async function(username) { socket.emit('user fc', await dbcall.getfc(r, conn, username.toLowerCase())) })
-  socket.on('request avatar', async function(channel, user, message, self) { socket.emit('receive avatar', channel, user, message, self, await dbcall.getavatar(r, conn, user.username.toLowerCase())) })
-  socket.on('request badge', async function(user) { socket.emit('receive badge', username, await dbcall.getbadge(user.username.toLowerCase())) })
-  socket.on('manually enter raffle', async function(username, displayicon) { database.raffleChangeUser(conn, username.toLowerCase(), 12, true, await dbcall.manuallyenterraffle(r, conn, username, displayicon)) })
-  socket.on('manually leave raffle', async function(username, displayicon) { database.raffleChangeUser(conn, username.toLowerCase(), 12, false, await dbcall.manuallyenterraffle(r, conn, username, displayicon)) })
-  socket.on('send leaderboard', async function(){ io.emit('receive leaderboard', await dbcall.gettable(r, conn, 'Leaderboard')) })
+//  socket.on ("Ask for pokedex", function(){ socket.emit("Receive pokedex", expressServer.pokedex) }) //replace with Ask for table
+  // socket.on ("Ask for typechart", function(){ socket.emit("Receive typechart", expressServer.typechart) })//replace with Ask for table
+  socket.on ("Ask for table", async function(dbname) { socket.emit("receive " + await dbname.toLowerCase(), expressServer.cached[dbname]).catch(err => console.log(err)) })
+  socket.on("update vote", async function(){ io.emit('receive vote', await dbcall.gettable(r, conn, 'Vote').catch(err => console.log(err))) })
+  socket.on('Request vote', async function(){ io.emit('receive vote', await dbcall.gettable(r, conn, 'Vote').catch(err => console.log(err))) })
+  socket.on('request user fc', async function(username) { socket.emit('user fc', await dbcall.getfc(r, conn, username.toLowerCase()).catch(err => console.log(err))) })
+  socket.on('request avatar', async function(channel, user, message, self) { socket.emit('receive avatar', channel, user, message, self, await dbcall.getavatar(r, conn, user.username.toLowerCase()).catch(err => console.log(err))) })
+  socket.on('request badge', async function(user) { socket.emit('receive badge', username, await dbcall.getbadge(user.username.toLowerCase()).catch(err => console.log(err))) })
+  socket.on('manually enter raffle', async function(username, displayicon) { database.raffleChangeUser(conn, username.toLowerCase(), 12, true, await dbcall.manuallyenterraffle(r, conn, username, displayicon).catch(err => console.log(err))) })
+  socket.on('manually leave raffle', async function(username, displayicon) { database.raffleChangeUser(conn, username.toLowerCase(), 12, false, await dbcall.manuallyenterraffle(r, conn, username, displayicon).catch(err => console.log(err))) })
+  socket.on('send leaderboard', async function(){ io.emit('receive leaderboard', await dbcall.gettable(r, conn, 'Leaderboard')).catch(err => console.log(err)) })
 
   socket.on ("Insert pokedex", async function(payload){  //all these need to be a single socket call like Ask for table
     console.log(payload["id"],payload["Pokemon"])
-    let result = await dbcall.put(r, conn, 'Pokedex', payload)
+    let result = await dbcall.put(r, conn, 'Pokedex', payload).catch(err => console.log(err))
     console.log(JSON.stringify(result, null, 2))
   })
 
   socket.on ("Insert ability", function(payload){//all these need to be a single socket call like Ask for table
-    let result = dbcall.put(r, conn, 'Abilities', payload)
+    let result = dbcall.put(r, conn, 'Abilities', payload).catch(err => console.log(err))
     console.log(JSON.stringify(result, null, 2))
   })
 
   socket.on ("Insert move", function(payload){//all these need to be a single socket call like Ask for table
-    let result = dbcall.put(r, conn, 'Moves', payload)
+    let result = dbcall.put(r, conn, 'Moves', payload).catch(err => console.log(err))
     console.log(JSON.stringify(result, null, 2))
   })
 
   socket.on ("Insert bttv", function(payload){//all these need to be a single socket call like Ask for table
-    let result = dbcall.put(r, conn, 'Bttv', payload)
+    let result = dbcall.put(r, conn, 'Bttv', payload).catch(err => console.log(err))
     console.log(JSON.stringify(result, null, 2))
   })
 
   socket.on ("Insert ffz", function(payload){//all these need to be a single socket call like Ask for table
-    let result = dbcall.put(r, conn, 'Ffz', payload)
+    let result = dbcall.put(r, conn, 'Ffz', payload).catch(err => console.log(err))
     console.log(JSON.stringify(result, null, 2))
   })
 
-  async function sendUserPokes (username) { io.emit('user pokes', await dbcall.senduserpokes(username)) }
+  async function sendUserPokes (username) { io.emit('user pokes', await dbcall.senduserpokes(username).catch(err => console.log(err))) }
 
   async function sendRaffleUpdate(updated){
-    let current = await dbcall.sendraffleupdate(r, conn)
+    let current = await dbcall.sendraffleupdate(r, conn).catch(err => console.log(err))
     io.emit('receive raffle', current)
     if (updated) io.emit('raffle update', current)
   }
@@ -101,7 +115,7 @@ module.exports = function(expressServer) {
     if (payload.id != '' && payload.id != undefined && payload.fc[0] >0 && payload.fc[0] < 10000 && payload.fc[1] >0 && payload.fc[1] < 10000  && payload.fc[2] >0 && payload.fc[2] < 10000  && payload.ign != '' && payload.ign != undefined) {
       // payload.id = payload.id.split(' ')[0]
       payload.id = payload.id.trim()
-      io.emit('someone signed up', await dbcall.createanewuser(r, conn, payload, starter[Math.floor(Math.random()*starter.length)]))
+      io.emit('someone signed up', await dbcall.createanewuser(r, conn, payload, starter[Math.floor(Math.random()*starter.length)]).catch(err => console.log(err)))
     } else console.log('user not created, there was missing information')
   }
 }

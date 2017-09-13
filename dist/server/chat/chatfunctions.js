@@ -33,8 +33,8 @@ exports.checkImageExists = function (imageUrl, callBack) {
 
 }
 
-exports.chatNotice = function (information, noticeFadeDelay, level, additionalClasses) {
-
+exports.chatNotice = function (socket, information, noticeFadeDelay, level, additionalClasses) {
+  socket.emit('notice', information, noticeFadeDelay, level, additionalClasses)
 }
 
 exports.timeout = function (channel, username) {
@@ -42,7 +42,7 @@ exports.timeout = function (channel, username) {
   if (!recentTimeouts.hasOwnProperty(channel)) recentTimeouts[channel] = {}
   if (!recentTimeouts[channel].hasOwnProperty(username) || recentTimeouts[channel][username] + 1000 * 10 < +new Date()) {
     recentTimeouts[channel][username] = +new Date()
-    chatNotice(capitalize(username) + ' was timed-out in ' + capitalize(dehash(channel)), 1000, 1, 'chat-delete-timeout')
+    chatNotice(socket, capitalize(username) + ' was timed-out in ' + capitalize(dehash(channel)), 1000, 1, 'chat-delete-timeout')
   }
   let toHide = document.querySelectorAll('.chat-line[data-channel="' + channel + '"][data-username="' + username + '"]:not(.chat-timedout) .chat-message')
   for (let i in toHide) {
@@ -54,12 +54,9 @@ exports.timeout = function (channel, username) {
   }
 }
 
-exports.clearChat = function (channel) {
+exports.clearChat = function (socket, channel) {
   if (!doChatClears) return false
-
-
-
-  chatNotice('Chat was cleared in channel ' + capitalize(dehash(channel)), 1000, 1, 'chat-delete-clear')
+  chatNotice(socket, 'Chat was cleared in channel ' + capitalize(dehash(channel)), 1000, 1, 'chat-delete-clear')
 }
 
 exports.hosting = function (channel, target, total, unhost) {
@@ -68,9 +65,9 @@ exports.hosting = function (channel, target, total, unhost) {
   let chan = capitalize(dehash(channel))
   if (!unhost) {
     let targ = capitalize(target)
-    chatNotice(chan + ' is now hosting ' + targ + ' for ' + total + ' viewer' + (total !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes')
+    chatNotice(socket, chan + ' is now hosting ' + targ + ' for ' + total + ' viewer' + (total !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes')
   } else {
-    chatNotice(chan + ' is no longer hosting.', null, null, 'chat-hosting-no')
+    chatNotice(socket, chan + ' is no longer hosting.', null, null, 'chat-hosting-no')
   }
 }
 
@@ -136,24 +133,24 @@ exports.checkPoke = function (message, maxpokes) {
   message = message.toLowerCase().replace('nature', '') // fixes Natu false positive
   let listofpokemon = []
   if (message.toLowerCase().indexOf('mewtwo') >= 0) {
-    listofpokemon.push(cached.pokedex[149])
+    listofpokemon.push(pokedex[149])
     message = message.toLowerCase().replace('mewtwo', '')
   }
   pokemonnameloop: for (let pokes = maxpokes - 1; pokes >= 0; pokes--) {
-    if (message.toLowerCase().indexOf(cached.pokedex[pokes].Pokemon.toLowerCase()) >= 0) {
-      if (cached.pokedex[pokes].Forme) {
+    if (message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) {
+      if (pokedex[pokes].Forme) {
         let mergeforme
-        findformeloop: for (forme in cached.pokedex[pokes].Forme) {
+        findformeloop: for (forme in pokedex[pokes].Forme) {
           if (message.toLowerCase().indexOf(forme.toLowerCase()) >= 0) {
-            mergeforme = JSON.parse(JSON.stringify(cached.pokedex[pokes]))
-            mergeformeloop: for (merge in cached.pokedex[pokes].Forme[forme]) { mergeforme[merge] = cached.pokedex[pokes].Forme[forme][merge] }
+            mergeforme = JSON.parse(JSON.stringify(pokedex[pokes]))
+            mergeformeloop: for (merge in pokedex[pokes].Forme[forme]) { mergeforme[merge] = pokedex[pokes].Forme[forme][merge] }
             mergeforme.Pokemon = forme
             listofpokemon.push(mergeforme)
           }
         }
-        !mergeforme && listofpokemon.push(cached.pokedex[pokes])
-      } else listofpokemon.push(cached.pokedex[pokes])
-      message = message.substr(0, message.toLowerCase().indexOf(cached.pokedex[pokes].Pokemon.toLowerCase())) + message.substr(message.toLowerCase().indexOf(cached.pokedex[pokes].Pokemon.toLowerCase()) + cached.pokedex[pokes].Pokemon.length)
+        !mergeforme && listofpokemon.push(pokedex[pokes])
+      } else listofpokemon.push(pokedex[pokes])
+      message = message.substr(0, message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase())) + message.substr(message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()) + pokedex[pokes].Pokemon.length)
     }
   }
   if (!listofpokemon.length) return []
@@ -215,7 +212,7 @@ exports.checkMoves = function (obj) {
   let dexno = obj.pokemon.length ? obj.pokemon[0].id : -1
   let response
   let fullmove = ''
-  moveloop: for (move in cached.moves) {
+  moveloop: for (move in moves) {
     let testmessage = (dexno > -1) ? message.toLowerCase().replace(obj.pokemon[0].Pokemon.toLowerCase(), '').split(' ') : message.toLowerCase().split(' ')
     let testIndex = false
     let testmove = move.toLowerCase().split(' ')
@@ -228,13 +225,13 @@ exports.checkMoves = function (obj) {
     }
     if (testIndex && fullmove.indexOf(move.toLowerCase()) < 0) {
       fullmove = move.toLowerCase()
-      property = Object.keys(cached.moves[move])
-      response = move + ': ' + cached.moves[move].Description
+      property = Object.keys(moves[move])
+      response = move + ': ' + moves[move].Description
       moveproploop: for (key in property) {
-        if (message.toLowerCase().indexOf(property[key].toLowerCase()) >= 0) { response = move + ' ' + property[key] + ': ' + cached.moves[move][property[key]] }
+        if (message.toLowerCase().indexOf(property[key].toLowerCase()) >= 0) { response = move + ' ' + property[key] + ': ' + moves[move][property[key]] }
         if (message.toLowerCase().indexOf('pokemon') >= 0) {
           let learnlist = []
-          pokemoveloop: for (poke in cached.moves[move].Pokemon) {
+          pokemoveloop: for (poke in moves[move].Pokemon) {
             learnlist.push(poke)
           }
           response = 'The pokemon that can learn ' + move + ' are: '
@@ -247,13 +244,13 @@ exports.checkMoves = function (obj) {
           }
         }
         if (dexno > -1) {
-          if (cached.moves[move].Pokemon[obj.pokemon[0].Pokemon]) {
+          if (moves[move].Pokemon[obj.pokemon[0].Pokemon]) {
             response = obj.pokemon[0].Pokemon + ' learns ' + move
-            if (typeof (cached.moves[move].Pokemon[obj.pokemon[0].Pokemon]) === 'number') { response += ' at level ' + cached.moves[move].Pokemon[obj.pokemon[0].Pokemon] } else
-            if (cached.moves[move].Pokemon[obj.pokemon[0].Pokemon].toLowerCase() == 'start') response = obj.pokemon[0].Pokemon + ' starts with the move ' + move
+            if (typeof (moves[move].Pokemon[obj.pokemon[0].Pokemon]) === 'number') { response += ' at level ' + moves[move].Pokemon[obj.pokemon[0].Pokemon] } else
+            if (moves[move].Pokemon[obj.pokemon[0].Pokemon].toLowerCase() == 'start') response = obj.pokemon[0].Pokemon + ' starts with the move ' + move
             else
-              if (cached.moves[move].Pokemon[obj.pokemon[0].Pokemon].toLowerCase() == 'egg') response += ' as an egg move by breeding'
-              else response += ' by ' + cached.moves[move].Pokemon[obj.pokemon[0].Pokemon]
+              if (moves[move].Pokemon[obj.pokemon[0].Pokemon].toLowerCase() == 'egg') response += ' as an egg move by breeding'
+              else response += ' by ' + moves[move].Pokemon[obj.pokemon[0].Pokemon]
           } else response = obj.pokemon[0].Pokemon + ' does not learn ' + move
         }
       }

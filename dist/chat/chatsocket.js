@@ -2,9 +2,9 @@
 socket.on('chat', function (chan, user, message, self, avatar, image) {
   handleChat(chan, user, message, self, avatar, image)
 })
-socket.on('whisper password', function (user, password) {
-  let temptext = 'Your password is ' + pokedex[password[0] - 1].Pokemon + ' - ' + pokedex[password[1] - 1].Pokemon + ' - ' + pokedex[password[2] - 1].Pokemon
-  client.whisper(user, temptext)
+
+socket.on('notice', function (information, noticeFadeDelay, level, additionalClasses) {
+  chatNotice(information, noticeFadeDelay, level, additionalClasses)
 })
 
 socket.on('user fc', function (user) {

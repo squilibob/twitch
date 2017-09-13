@@ -5,21 +5,21 @@ exports.pokify = function(text) {
   location = text.toLowerCase().indexOf('mewtwo')
   if (location >= 0) {
     let xpos = spritesheet.rowlen * spritesheet.x - ((149 % spritesheet.rowlen) * spritesheet.x),
-      ypos = Math.ceil(cached.pokedex.length / spritesheet.rowlen) * spritesheet.y - (Math.floor(149 / spritesheet.rowlen) * spritesheet.y)
+      ypos = Math.ceil(pokedex.length / spritesheet.rowlen) * spritesheet.y - (Math.floor(149 / spritesheet.rowlen) * spritesheet.y)
     text = text.slice(0, location) + '<span class="w3-tooltip sprsheet" style="background-position: ' + xpos + 'px ' + ypos + 'px;"><span class="w3-text">M&#8203;ewtwo</span></span>' + text.slice(location + 6)
   }
   location = text.toLowerCase().indexOf('nature')
   if (location >= 0) {
     skippoke = 177
   }
-  pokifyloop: for (let pokes = cached.pokedex.length - 1; pokes >= 0; pokes--) {
-    if (pokes != skippoke - 1 && text.toLowerCase().indexOf(cached.pokedex[pokes].Pokemon.toLowerCase()) >= 0) {
+  pokifyloop: for (let pokes = pokedex.length - 1; pokes >= 0; pokes--) {
+    if (pokes != skippoke - 1 && text.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) {
       if (autocry) socket.emit('pokemon cry', pokes + 1)
-      let location = text.toLowerCase().indexOf(cached.pokedex[pokes].Pokemon.toLowerCase()),
-        namelength = cached.pokedex[pokes].Pokemon.length
+      let location = text.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()),
+        namelength = pokedex[pokes].Pokemon.length
       let xpos = spritesheet.rowlen * spritesheet.x - ((pokes % spritesheet.rowlen) * spritesheet.x),
-        ypos = Math.ceil(cached.pokedex.length / spritesheet.rowlen) * spritesheet.y - (Math.floor(pokes / spritesheet.rowlen) * spritesheet.y)
-      text = text.slice(0, location) + '<span class="w3-tooltip sprsheet" style="background-position: ' + xpos + 'px ' + ypos + 'px;"><span class="w3-text">' + cached.pokedex[pokes].Pokemon.slice(0, cached.pokedex[pokes].Pokemon.length - 1) + '&#8203;' + cached.pokedex[pokes].Pokemon.slice(cached.pokedex[pokes].Pokemon.length - 1, cached.pokedex[pokes].Pokemon.length) + '</span></span>' + text.slice(location + namelength, text.length)
+        ypos = Math.ceil(pokedex.length / spritesheet.rowlen) * spritesheet.y - (Math.floor(pokes / spritesheet.rowlen) * spritesheet.y)
+      text = text.slice(0, location) + '<span class="w3-tooltip sprsheet" style="background-position: ' + xpos + 'px ' + ypos + 'px;"><span class="w3-text">' + pokedex[pokes].Pokemon.slice(0, pokedex[pokes].Pokemon.length - 1) + '&#8203;' + pokedex[pokes].Pokemon.slice(pokedex[pokes].Pokemon.length - 1, pokedex[pokes].Pokemon.length) + '</span></span>' + text.slice(location + namelength, text.length)
       pokes++
     }
   }

@@ -1,7 +1,7 @@
 // socket functions
 module.exports = function(client, socket) {
   socket.on('whisper password', function (user, password) {
-    let temptext = 'Your password is ' + cached.pokedex[password[0] - 1].Pokemon + ' - ' + cached.pokedex[password[1] - 1].Pokemon + ' - ' + cached.pokedex[password[2] - 1].Pokemon
+    let temptext = 'Your password is ' + pokedex[password[0] - 1].Pokemon + ' - ' + pokedex[password[1] - 1].Pokemon + ' - ' + pokedex[password[2] - 1].Pokemon
     client.whisper(user, temptext)
   })
 
@@ -46,15 +46,15 @@ module.exports = function(client, socket) {
   //  let TeamTier = 0;
   //  for (let j=0; j < 6; j++) {
   //    for (let check=0; check < Tiers.length; check++){
-  //      if (cached.pokedex[team[j]].Tier == Tiers[check] && check > TeamTier) TeamTier = check;
+  //      if (pokedex[team[j]].Tier == Tiers[check] && check > TeamTier) TeamTier = check;
   //    }
   //  }
   //  let replyText = name + ' is ';
   //  let total = 0;
   //  for (let poke = 0; poke < team.length; poke++){
   //    total += team[poke];
-  //    replyText = replyText + cached.pokedex[team[poke]].Pokemon + ' ';
-  //    if (Tiers[TeamTier] != cached.pokedex[team[poke]].Tier) replyText = replyText + ' (' + cached.pokedex[team[poke]].Tier + ') ';
+  //    replyText = replyText + pokedex[team[poke]].Pokemon + ' ';
+  //    if (Tiers[TeamTier] != pokedex[team[poke]].Tier) replyText = replyText + ' (' + pokedex[team[poke]].Tier + ') ';
   //  }
   //  replyText = Tiers[TeamTier] + replyText;
   //  if (total > 21) submitchat(replyText);
@@ -69,7 +69,7 @@ module.exports = function(client, socket) {
   })
 
   socket.on('someone signed up', function (name) {
-    chatNotice(name + ' has created an account', 10000, 1)
+    chatNotice(socket, name + ' has created an account', 10000, 1)
   })
 
   socket.on('invalid raffle user', function (username) {

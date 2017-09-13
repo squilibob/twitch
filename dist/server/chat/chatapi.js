@@ -11,35 +11,15 @@ function header(id, endpoint, extraparams, version) {
   return paramstring
 }
 
-exports.checkAvatar = async function(user) {
-  let existed = false
-  if (!(obj.user || {}).username) return existed
-  if (useravatars[obj.user.username] == undefined) {
-    if (followers[obj.user.username]) { if (followers[obj.user.username].logo) useravatars[obj.user.username] = followers[obj.user.username].logo }
-    socket.emit('request avatar', obj.channel, obj.user, obj.message, obj.self)
-    socket.emit('request badge', obj.user)
-    socket.emit('create new player', {name: obj.user.username, poke: Math.floor(Math.random() * 151)})
-    if (obj.user.username != obj.channel && !obj.self) checkstreamer(obj.user['user-id'])
-  } else {
-    existed = true
-    if (useravatars[obj.user.username] < 0 && obj.user['user-id']) {
-      if (typeof useravatars[obj.user.username] === 'number') {
-        client.api({
-          url: 'https://api.twitch.tv/kraken/users' + header(obj.user['user-id'])
-        }, function (err, res, body) {
-          if (body.logo) {
-            checkImageExists(body.logo, function (existsImage) {
-              if (existsImage) {
-                useravatars[obj.user.username] = body.logo
-                socket.emit('newest chatter', body.logo)
-              }
-            })
-          }
-        })
-      }
-    }
-  }
-  return existed
+exports.checkAvatar = function(username) {
+  return new Promise(function(resolve, reject) {
+    client.api({
+      url: 'https://api.twitch.tv/kraken/users' + header(username)
+    }, function (err, res, body) {
+      let avatar= body.logo ? body.logo : 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png'
+      resolve(avatar)
+    })
+  })
 }
 
 exports.getViewers = function(channel) {
@@ -70,21 +50,21 @@ exports.getStart = function(channel) {
   })
 }
 
-exports.checkfollowers = function(userid, hidenotify, current) {
+exports.checkfollowers = function(socket, userid, hidenotify, current) {
   let maxcursor = 100
   if (!current) current = 0
   client.api({
     url: 'https://api.twitch.tv/kraken/channels' + header(userid, 'follows', 'offset=' + current + '&limit=' + maxcursor)
   }, function (err, res, body) {
     if (body) {
-      if (current + body.follows.length < body._total) exports.checkfollowers(userid, hidenotify, current + body.follows.length)
+      if (current + body.follows.length < body._total) exports.checkfollowers(socket, userid, hidenotify, current + body.follows.length)
       followerloop: for (viewer in body.follows) {
         if (!followers[body.follows[viewer].user.name]) {
           let datefollowed = new Date(body.follows[viewer].created_at)
      // followers[body.follows[viewer].user.name] = {logo: body.follows[viewer].user.logo, followed: Math.floor((Date.now() - datefollowed))/8.64e7) + ' days ago (' + body.follows[viewer].created_at.split('T').shift().split('-').reverse().join('/') + ')'};
           followers[body.follows[viewer].user.name] = {logo: body.follows[viewer].user.logo, followed: Math.floor((Date.now() - datefollowed) / 8.64e7) + ' days ago (' + datefollowed.toDateString() + ')'}
           if (!hidenotify) {
-            chatNotice(body.follows[viewer].user.name + ' is now following (follower #' + Object.keys(followers).length.toLocaleString() + ')', 10000, 1)
+            chatNotice(socket, body.follows[viewer].user.name + ' is now following (follower #' + Object.keys(followers).length.toLocaleString() + ')', 10000, 1)
             socket.emit('followed', body.follows[viewer].user.name)
           }
         }
