@@ -42,7 +42,7 @@ exports.timeout = function (channel, username) {
   if (!recentTimeouts.hasOwnProperty(channel)) recentTimeouts[channel] = {}
   if (!recentTimeouts[channel].hasOwnProperty(username) || recentTimeouts[channel][username] + 1000 * 10 < +new Date()) {
     recentTimeouts[channel][username] = +new Date()
-    chatNotice(socket, capitalize(username) + ' was timed-out in ' + capitalize(dehash(channel)), 1000, 1, 'chat-delete-timeout')
+    exports.chatNotice(socket, exports.capitalize(username) + ' was timed-out in ' + exports.capitalize(exports.dehash(channel)), 1000, 1, 'chat-delete-timeout')
   }
   let toHide = document.querySelectorAll('.chat-line[data-channel="' + channel + '"][data-username="' + username + '"]:not(.chat-timedout) .chat-message')
   for (let i in toHide) {
@@ -56,18 +56,18 @@ exports.timeout = function (channel, username) {
 
 exports.clearChat = function (socket, channel) {
   if (!doChatClears) return false
-  chatNotice(socket, 'Chat was cleared in channel ' + capitalize(dehash(channel)), 1000, 1, 'chat-delete-clear')
+  exports.chatNotice(socket, 'Chat was cleared in channel ' + exports.capitalize(exports.dehash(channel)), 1000, 1, 'chat-delete-clear')
 }
 
 exports.hosting = function (channel, target, total, unhost) {
-  if (!showHosting) return false
+  // if (!showHosting) return false
   if (total == '-') total = 0
-  let chan = capitalize(dehash(channel))
+  let chan = exports.capitalize(exports.dehash(channel))
   if (!unhost) {
-    let targ = capitalize(target)
-    chatNotice(socket, chan + ' is now hosting ' + targ + ' for ' + total + ' viewer' + (total !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes')
+    let targ = exports.capitalize(target)
+    exports.chatNotice(socket, chan + ' is now hosting ' + targ + ' for ' + total + ' viewer' + (total !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes')
   } else {
-    chatNotice(socket, chan + ' is no longer hosting.', null, null, 'chat-hosting-no')
+    exports.chatNotice(socket, chan + ' is no longer hosting.', null, null, 'chat-hosting-no')
   }
 }
 

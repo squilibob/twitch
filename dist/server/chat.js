@@ -13,6 +13,7 @@ module.exports = function(expressServer) {
   botDelay = 1, // Number of seconds between each bot message
   showConnectionNotices = true // Show messages like "Connected" and "Disconnected"
   global.followers = {}
+  global.watching = {}
   global.useravatars = {}
   global.queue = {
     channel: clientOptions.channels[0],

@@ -1,5 +1,5 @@
 // api call functions
-function header(id, endpoint, extraparams, version) {
+function header (id, endpoint, extraparams, version) {
   if (!version) version = 5
   let paramstring = ''
   if (id) paramstring += '/' + id
@@ -14,29 +14,41 @@ function header(id, endpoint, extraparams, version) {
 exports.checkAvatar = function(username) {
   return new Promise(function(resolve, reject) {
     client.api({
-      url: 'https://api.twitch.tv/kraken/users' + header(username)
+      url: 'https://api.twitch.tv/helix/users?id=' + username,
+      headers: {
+          "Client-ID":  clientOptions.options.clientId
+      }
+    // })
+  //   .then(result => resolve(body.data[0].profile_image_url ? body.data[0].profile_image_url : 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png'))
+  //   .catch(err => console.log(err))
+  // })
     }, function (err, res, body) {
-      let avatar= body.logo ? body.logo : 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png'
+      let avatar= body.data[0].profile_image_url ? body.data[0].profile_image_url : 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png'
       resolve(avatar)
     })
   })
 }
 
 exports.getViewers = function(channel) {
-  client.api({
-    url: 'https://api.twitch.tv/kraken/streams' + header(channel)
-  }, function (err, res, body) {
-    if (((body || {}).stream || {}).viewers) watching.viewers = body.stream.viewers
-    if (((body || {}).stream || {}).channel) {
-      client.api({
-        url: 'http://tmi.twitch.tv/group/user' + header(body.stream.channel.name, 'chatters', null, 3)
-      }, function (err, res, tmibody) {
-        if ((tmibody || {}).data) {
-          watching.chatters = tmibody.data.chatters.viewers
-          socket.emit('send emote', {message: watching.chatters.length.toLocaleString() + ' in chat ' + watching.viewers.toLocaleString() + ' reported viewers', picture: 5})
-        }
-      })
-    }
+  return new Promise(function(resolve, reject) {
+    client.api({
+      url: 'https://api.twitch.tv/helix/streams?user_login=' + 'twitchplayspokemon',//channel,
+      headers: {
+          "Client-ID":  clientOptions.options.clientId
+      }
+    }, function (err, res, body) {
+      if (((body || {}).data || {})[0]) watching.viewers = body.data[0].viewer_count
+      if (((body || {}).data || {})[0].type) {
+        client.api({
+          url: 'http://tmi.twitch.tv/group/user' + header(body.data[0].user_login, 'chatters', null, 3)
+        }, function (err, res, tmibody) {
+          if ((tmibody || {}).data) {
+            watching.chatters = tmibody.data.chatters.viewers
+            socket.emit('send emote', {message: watching.chatters.length.toLocaleString() + ' in chat ' + watching.viewers.toLocaleString() + ' reported viewers', picture: 5})
+          }
+        })
+      }
+    })
   })
 }
 
@@ -73,9 +85,9 @@ exports.checkfollowers = function(socket, userid, hidenotify, current) {
   })
 }
 
-exports.checkstreamer = function(username) {
+exports.checkstreamer = function(username) {  // waiting for new API to have all this data
   client.api({
-    url: 'https://api.twitch.tv/kraken/channels' + header(username)
+    url: 'https://api.twitch.tv/helix/channels' + header(username)
   }, function (err, res, body) {
     if (body) {
       displaystreamer(body.name, body.profile_banner ? body.profile_banner : body.logo, body.followers, body.views, body.url)

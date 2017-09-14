@@ -10,15 +10,17 @@ expressServer.dbcall = require('./dist/server/database')
 require('./dist/server/routes')(expressServer)
 global.cached = {}
 
-async function fillcache(server) {
-  return {
-    pokedex: await server.dbcall.gettable(server.database, server.connection, 'Pokedex').catch(err => console.log(err)),
-    typechart: await server.dbcall.gettable(server.database, server.connection, 'TypeChart').catch(err => console.log(err)),
-    Moves: await server.dbcall.gettable(server.database, server.connection, 'Moves').catch(err => console.log(err)),
-    Abilities: await server.dbcall.gettable(server.database, server.connection, 'Abilities').catch(err => console.log(err)),
-    Bttv: await server.dbcall.gettable(server.database, server.connection, 'Bttv').catch(err => console.log(err)),
-    Ffz: await server.dbcall.gettable(server.database, server.connection, 'Ffz').catch(err => console.log(err))
+function db_id_to_duple(original) {
+  let finalarray = []
+  original.forEach(elem => {
+    for(key in elem) {
+      if (elem[key] !== elem.id) {
+        finalarray[elem.id-1]={}
+        finalarray[elem.id-1][key] = elem[key]
+      }
     }
+  })
+  return finalarray
 }
 
 expressServer.database.connect(defaultDB)
@@ -29,7 +31,11 @@ async function dothings(c){
   expressServer.connection = c
   global.pokedex = await expressServer.dbcall.gettable(expressServer.database, expressServer.connection, 'Pokedex').catch(err => console.log(err))
   global.typechart = await expressServer.dbcall.gettable(expressServer.database, expressServer.connection, 'TypeChart').catch(err => console.log(err))
-  global.Moves = await expressServer.dbcall.gettable(expressServer.database, expressServer.connection, 'Moves').catch(err => console.log(err))
+  global.moves = await expressServer.dbcall.gettable(expressServer.database, expressServer.connection, 'Moves').catch(err => console.log(err))
+  global.tm = db_id_to_duple(await expressServer.dbcall.gettable(expressServer.database, expressServer.connection, 'Tm').catch(err => console.log(err)))
+  global.hm = db_id_to_duple(await expressServer.dbcall.gettable(expressServer.database, expressServer.connection, 'Hm').catch(err => console.log(err)))
+  global.natures = await expressServer.dbcall.gettable(expressServer.database, expressServer.connection, 'Natures').catch(err => console.log(err))
+  global.hiddenpower = await expressServer.dbcall.gettable(expressServer.database, expressServer.connection, 'HiddenPowers').catch(err => console.log(err))
   global.Abilities = await expressServer.dbcall.gettable(expressServer.database, expressServer.connection, 'Abilities').catch(err => console.log(err))
   global.Bttv = await expressServer.dbcall.gettable(expressServer.database, expressServer.connection, 'Bttv').catch(err => console.log(err))
   global.Ffz = await expressServer.dbcall.gettable(expressServer.database, expressServer.connection, 'Ffz').catch(err => console.log(err))

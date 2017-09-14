@@ -39,7 +39,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
 
         if (!self && cmdexist) {
           var parameters = []
-          if (parser[command].requires.pokemon.length > 0 && messagepayload.pokemon.length < parser[command].requires.pokemon.length) cmdexist = false
+          if (messagepayload.pokemon.length < parser[command].requires.pokemon) cmdexist = false
           if (parser[command].requires.question && !containsquestion) cmdexist = false
           if (parser[command].requires.modonly && !modmessage) cmdexist = false
           if (parser[command].requires.parameters) {
@@ -76,7 +76,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: false,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1,
         modonly: false
       },
@@ -93,7 +93,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: true,
         exclusive: true,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1,
         modonly: true
       },
@@ -111,7 +111,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: false,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1,
         modonly: true
       },
@@ -132,7 +132,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: true,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1, // refactor
         modonly: false
       },
@@ -158,7 +158,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: true,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1, // refactor
         modonly: false
       },
@@ -184,13 +184,14 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: true,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1, // refactor
         modonly: false
       },
       action: async function (obj) {
         var response
-        hiddenpowerloop: for (hptype in hiddenpower) { if (obj.message.toLowerCase().indexOf(hptype) >= 0) response = 'in order to get hidden power ' + hptype + ' your pokemon needs IVs to be hp: ' + hiddenpower[hptype][0] + ' att: ' + hiddenpower[hptype][1] + ' def: ' + hiddenpower[hptype][2] + ' sp. att: ' + hiddenpower[hptype][3] + ' sp. def: ' + hiddenpower[hptype][4] + ' speed: ' + hiddenpower[hptype][5] }
+        hiddenpowerloop: for (hptype of hiddenpower) {
+          if (obj.message.toLowerCase().indexOf(hptype.id) >= 0) response = 'in order to get hidden power ' + hptype.id + ' your pokemon needs IVs to be hp: ' + hptype.iv[0] + ' att: ' + hptype.iv[1] + ' def: ' + hptype.iv[2] + ' sp. att: ' + hptype.iv[3] + ' sp. def: ' + hptype.iv[4] + ' speed: ' + hptype.iv[5] }
         return response
       }
     },
@@ -203,7 +204,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 2,
         modonly: false
       },
@@ -250,7 +251,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 0,
         modonly: false
       },
@@ -271,7 +272,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 0,
         modonly: false
       },
@@ -291,7 +292,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: false,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 0,
         modonly: false
       },
@@ -309,7 +310,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 0,
         modonly: false
       },
@@ -327,7 +328,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 0,
         modonly: false
       },
@@ -346,7 +347,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: false,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 0,
         modonly: false
       },
@@ -368,7 +369,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1,
         modonly: false
       },
@@ -395,7 +396,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1,
         modonly: false
       },
@@ -412,7 +413,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 0,
         modonly: false
       },
@@ -473,7 +474,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: false,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1,
         modonly: false
       },
@@ -524,7 +525,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: true,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1,
         modonly: false
       },
@@ -550,7 +551,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: true,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1,
         modonly: false
       },
@@ -579,7 +580,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: true,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1,
         modonly: false
       },
@@ -652,7 +653,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: false,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 0,
         modonly: false
       },
@@ -669,7 +670,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: true,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1,
         modonly: false
       },
@@ -705,7 +706,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: true,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1,
         modonly: false
       },
@@ -789,7 +790,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1,
         modonly: true
       },
@@ -823,7 +824,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1,
         modonly: true
       },
@@ -857,7 +858,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: true,
         exclusive: true,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1,
         modonly: true
       },
@@ -878,7 +879,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: true,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 0,
         modonly: false
       },
@@ -895,7 +896,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         display: false,
         exclusive: false,
-        pokemon: false,
+        pokemon: 0,
         parameters: 1,
         modonly: false
       },
@@ -983,7 +984,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         question: false,
         exclusive: false,
         display: true,
-        pokemon: false,
+        pokemon: 0,
         parameters: 0,
         modonly: false
       },
@@ -999,7 +1000,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
    //     question: true,
    //     exclusive: false,
     //    display: true,
-   //     pokemon: false,
+   //     pokemon: 0,
    //     parameters: 1,
    //     modonly: false
    //   },
