@@ -12,7 +12,7 @@ let started,
   participants = {},
   streamers = []
 
-exports.parseMessage = async function(channel, user, message, self, avatar, expressServer) {
+exports.parseMessage = async function(channel, user, message, self, avatar, badge, expressServer) {
     if (user['message-type'] != 'chat' && user['message-type'] != 'action') return false
     var messagepayload = {
       channel: dehash(channel),
@@ -62,7 +62,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
 
     if (!self && containsquestion && !response) { response = checkMoves(messagepayload) }
 
-    displaycommand && expressServer.socket.emit('chat', messagepayload.channel, messagepayload.user, messagepayload.message, messagepayload.self, avatar, image)
+    displaycommand && expressServer.socket.emit('chat', messagepayload.channel, messagepayload.user, messagepayload.message, messagepayload.self, avatar, badge, image)
     response && submitchat(response)
   }
 
@@ -235,7 +235,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
             fc: fc
           }
           if (validfc) {
-            socket.emit('new user', payload)
+            obj.dbcall.newuser(r, conn, payload)
             response = 'create: twitch username: ' + obj.user.username + ' IGN: ' + ign + ' fc: ' + fc.join('-')
           } else response = fc.join('-') + ' ' + ign + ' is invalid combination of fc and ign. Please include your ign and fc like this: !signup squilibob 3609-1058-1166'
         } else response = obj.message + ' invalid please include your ign and fc like this: !signup squilibob 3609-1058-1166'
@@ -278,9 +278,9 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
       },
       action: async function (obj) {
         delete useravatars[obj.user.username]
-        socket.emit('request avatar', obj.channel, obj.user, obj.user.username + ': reloaded avatar image', false)
-        socket.emit('request badge', obj.user)
-        return false
+        useravatars[user.username] = await expressServer.dbcall.getavatar(expressServer.database, expressServer.connection, obj.user.username)
+        badges[user.username] = await expressServer.dbcall.getbadge(expressServer.database, expressServer.connection, obj.user.username)
+        return  obj.user.username + ': reloaded avatar image'
       }
     },
     '!enter': {
@@ -297,7 +297,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         modonly: false
       },
       action: async function (obj) {
-        socket.emit('manually enter raffle', obj.user.username, Math.floor(Math.random() * 719))
+        obj.dbcall.manualraffle(expressServer.database, expressServer.connection, obj.user.username, true)
         return false
       }
     },
@@ -315,7 +315,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         modonly: false
       },
       action: async function (obj) {
-        socket.emit('manually leave raffle', obj.user.username, Math.floor(Math.random() * 719))
+        obj.dbcall.manualraffle(expressServer.database, expressServer.connection, obj.user.username, true)
         return false
       }
     },
@@ -333,7 +333,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, expr
         modonly: false
       },
       action: async function (obj) {
-        var voteoption = obj.message.split(' ');
+        var voteoption = obj.message.split(' ')
         (voteoption.length > 1 && voteoption[0].indexOf('!vote') >= 0) ? socket.emit('Send vote', {id: obj.user.username.toLowerCase(), vote: capitalize(voteoption[1].toLowerCase())}) : socket.emit('Show vote')
         return false
       }

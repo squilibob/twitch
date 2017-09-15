@@ -4,10 +4,10 @@
       if (err) throw err
       if (result) {
         if (result.errors) console.log(result.first_error)
-        else modifyRaffleUser(conn, username, result.chance, entered, displayicon)
+        else exports.modifyRaffleUser(conn, username, result.chance, entered, displayicon)
       }
       else {
-        modifyRaffleUser(conn, username, defaultchance, entered, displayicon)
+        exports.modifyRaffleUser(conn, username, defaultchance, entered, displayicon)
       }
     })
   }
@@ -229,14 +229,12 @@ exports.clearraffle = function() {
   .catch(error => reject(error))
 }
 
-exports.manuallyenterraffle = function(r, conn, username, displayicon) {
-  return new Promise(function(resolve, reject) {
-    r.table('Users')
-    .get(username)
-    .run(conn)
-    .then(result => { resolve(result.cards[0].poke) })
-    .catch(error => reject(error))
-  })
+exports.manualraffle = function(r, conn, username, enter) {
+  r.table('Users')
+  .get(username)
+  .run(conn)
+  .then(result => { exports.raffleChangeUser(username.toLowerCase(), 12, enter, result.cards[0].poke) })
+  .catch(error => reject(error))
 }
 
 exports.sendraffleupdate = function(r, conn) {

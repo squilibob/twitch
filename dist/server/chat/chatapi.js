@@ -85,13 +85,17 @@ exports.checkfollowers = function(socket, userid, hidenotify, current) {
   })
 }
 
-exports.checkstreamer = function(username) {  // waiting for new API to have all this data
-  client.api({
-    url: 'https://api.twitch.tv/helix/channels' + header(username)
-  }, function (err, res, body) {
-    if (body) {
-      displaystreamer(body.name, body.profile_banner ? body.profile_banner : body.logo, body.followers, body.views, body.url)
-      socket.emit('send emote', {message: 'hi ' + body.name, picture: 9})
-    }
+exports.checkstreamer = function(userId) {  // waiting for new API to have all this data
+  return new Promise(function(resolve, reject) {
+    client.api({
+      url: 'https://api.twitch.tv/kraken/channels' + header(userId)
+    }, function (err, res, body) {
+      console.log(body)
+      if (body) {
+        resolve(body.name, body.profile_banner ? body.profile_banner : body.logo, body.followers, body.views, body.url)
+        // socket.emit('send emote', {message: 'hi ' + body.name, picture: 9})
+      }
+      else reject(err)
+    })
   })
 }

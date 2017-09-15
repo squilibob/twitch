@@ -3,6 +3,10 @@ socket.on('chat', function (chan, user, message, self, avatar, image) {
   handleChat(chan, user, message, self, avatar, image)
 })
 
+socket.on('displaystreamer', function (username, banner, followamount, views, url) {
+  displaystreamer(username, banner, followamount, views, url)
+})
+
 socket.on('notice', function (information, noticeFadeDelay, level, additionalClasses) {
   chatNotice(information, noticeFadeDelay, level, additionalClasses)
 })

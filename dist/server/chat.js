@@ -15,6 +15,7 @@ module.exports = function(expressServer) {
   global.followers = {}
   global.watching = {}
   global.useravatars = {}
+  global.badges = {}
   global.queue = {
     channel: clientOptions.channels[0],
     messages: [],
@@ -31,11 +32,14 @@ module.exports = function(expressServer) {
 
   client.addListener('message', async function(channel, user, message, self) {
     if (!useravatars[user.username]) {
-      useravatars[user.username] = await expressServer.dbcall.getavatar(expressServer.database, expressServer.connection, user.username)
-      // also I need to do checkstreamer expressServer.socket call here
+      useravatars[user.username] = await expressServer.dbcall.getavatar(expressServer.database, expressServer.connection, user.username).catch(err => console.log(err))
+      expressServer.socket.emit('displaystreamer', await checkstreamer(TwitchID))
+    }
+    if (!badges[user.username]) {
+      badges[user.username] = await expressServer.dbcall.getbadge(expressServer.database, expressServer.connection, user.username).catch(err => console.log(err))
     }
     if (useravatars[user.username] < 0) useravatars[user.username] = await checkAvatar(user['user-id']).catch(err => console.log(err))
-    parseMessage(channel, user, message, self, useravatars[user.username], expressServer)
+    parseMessage(channel, user, message, self, useravatars[user.username], badges[user.username], expressServer)
   })
   client.addListener('timeout', timeout)
   client.addListener('clearchat', clearChat, expressServer.socket)
