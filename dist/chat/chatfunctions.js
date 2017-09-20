@@ -40,25 +40,27 @@ function checkImageExists (imageUrl, callBack) {
   imageData.src = imageUrl
 }
 
-function chatNotice (information, noticeFadeDelay, level, additionalClasses) {
+function chatNotice (obj) {
   let ele = document.createElement('li')
   ele.className = 'chat-line chat-notice'
-  ele.innerHTML = information
-  if (additionalClasses !== undefined) {
-    if (Array.isArray(additionalClasses)) additionalClasses = additionalClasses.join(' ')
-    ele.className += ' ' + additionalClasses
+  ele.innerHTML = obj.text
+  if (obj.class !== undefined) {
+    if (Array.isArray(obj.class)) obj.class = obj.class.join(' ')
+    ele.className += ' ' + obj.class
   }
-  if (typeof level === 'number' && level != 0) ele.dataset.level = level
+  if (typeof obj.level === 'number' && obj.level != 0) ele.dataset.level = obj.level
   chat.appendChild(ele)
-  if (typeof noticeFadeDelay === 'number') {
+  if (typeof obj.fadedelay === 'number') {
     setTimeout(function () {
       ele.dataset.faded = ''
-    }, noticeFadeDelay || 500)
+    }, obj.fadedelay || 500)
   }
   return ele
 }
 
-function timeout (channel, username) {
+function timeout (obj) {
+  channel = obj.channel
+  username = obj.username
   if (!doTimeouts) return false
   if (!recentTimeouts.hasOwnProperty(channel)) recentTimeouts[channel] = {}
   if (!recentTimeouts[channel].hasOwnProperty(username) || recentTimeouts[channel][username] + 1000 * 10 < +new Date()) {
@@ -87,13 +89,13 @@ function clearChat (channel) {
   chatNotice('Chat was cleared in channel ' + capitalize(dehash(channel)), 1000, 1, 'chat-delete-clear')
 }
 
-function hosting (channel, target, total, unhost) {
+function hosting (obj) {
   if (!showHosting) return false
-  if (total == '-') total = 0
-  let chan = capitalize(dehash(channel))
-  if (!unhost) {
-    let targ = capitalize(target)
-    chatNotice(chan + ' is now hosting ' + targ + ' for ' + total + ' viewer' + (total !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes')
+  if (obj.total == '-') obj.total = 0
+  let chan = capitalize(dehash(obj.channel))
+  if (!obj.unhost) {
+    let targ = capitalize(obj.target)
+    chatNotice(chan + ' is now hosting ' + targ + ' for ' + obj.total + ' viewer' + (obj.total !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes')
   } else {
     chatNotice(chan + ' is no longer hosting.', null, null, 'chat-hosting-no')
   }
@@ -295,4 +297,14 @@ function checkExist (checkstring, checkarray, separateword) {
     }
   }
   return exist
+}
+
+function getChunks(){
+  const {process} = require('./metaphone')
+  let chunks = []
+  for (word of message.split(' ')) {
+    chunks.push(process(word).length)
+  }
+  return chunks
+
 }

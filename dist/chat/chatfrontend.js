@@ -1,6 +1,6 @@
-  function displaystreamer (username, banner, followamount, views, url) {
-    if (!followamount || followamount <= minfollowerstoshoutout) return false
-    if (banner == null) banner = defaultavatar
+  function displaystreamer(obj) {
+    if (!obj.followers || obj.followers <= minfollowerstoshoutout) return false
+    if (obj.banner == null) obj.banner = defaultavatar
     var chatLine = document.createElement('li')
     var chatLineBanner = document.createElement('li')
     var chatBanner = document.createElement('img')
@@ -17,18 +17,18 @@
     chatStreamerViews.className = 'chat-shoutout'
     chatLineBanner.appendChild(chatBanner)
     chatBanner.className = 'chat-image'
-    chatBanner.src = banner
-    chatStreamerName.innerHTML = username
-    chatStreamerFollowers.innerHTML = followamount.toLocaleString() + ' followers'
-    chatStreamerViews.innerHTML = views.toLocaleString() + ' views'
+    chatBanner.src = obj.banner
+    chatStreamerName.innerHTML = obj.username
+    chatStreamerFollowers.innerHTML = obj.followers.toLocaleString() + ' followers'
+    chatStreamerViews.innerHTML = obj.views.toLocaleString() + ' views'
     chatLine.appendChild(chatStreamerName)
     chatLine.appendChild(chatStreamerFollowers)
     chatLine.appendChild(chatStreamerViews)
     chatBanner.onload = function () {
       chat.appendChild(chatLineBanner)
       chat.appendChild(chatLine)
-      submitchat('check out ' + username + ' at ' + url)
-      streamers.push(username)
+      submitchat('check out ' + obj.username + ' at ' + obj.url)
+      streamers.push(obj.username)
     }
   }
 
@@ -45,8 +45,14 @@
       game.load.crossOrigin = 'anonymous'
       */
 
-  function handleChat (chan, user, message, self, avatar, image) {
-    var name = user.username,
+  function handleChat (obj) {
+    var name = obj.user.username,
+      user = obj.user,
+      message = obj.message,
+      self = obj.self,
+      avatar = obj.avatar,
+      image = obj.image,
+      chan = dehash(obj.channel),
       chatLine = document.createElement('li'),
       chatAlignment = document.createElement('div'),
       chatChannel = document.createElement('span'),

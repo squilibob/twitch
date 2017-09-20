@@ -1,4 +1,4 @@
-  exports.raffleChangeUser = function(r, conn, username, defaultchance, entered, displayicon){
+  exports.raffleChangeUser = function(username, defaultchance, entered, displayicon){
     r.db('Users').table('Raffle').get(username)
     .run(conn, function(err, result) {
       if (err) throw err
@@ -12,7 +12,7 @@
     })
   }
 
-  exports.rafflewinner = function(r, conn, username){
+  exports.rafflewinner = function(username){
     r.db('Users').table('Raffle').get(username)
     .run(conn, function(err, result) {
       if (err) throw err
@@ -42,7 +42,7 @@
     })
   }
 
-  exports.modifyRaffleUser = function(r, conn, username, chance, entered, displayicon) {
+  exports.modifyRaffleUser = function(username, chance, entered, displayicon) {
   r.db('Users').table('Raffle').get(username).replace({
     id: username,
     chance: chance,
@@ -55,7 +55,7 @@
   })
   }
 
-exports.getfc = function(r, conn, username) {
+exports.getfc = function(username) {
   return new Promise(function(resolve, reject) {
     r.table('Users').filter(r.row('id').eq(username.toLowerCase()))
       .pluck('id', 'fc', 'ign')
@@ -66,7 +66,7 @@ exports.getfc = function(r, conn, username) {
   })
 }
 
-exports.getavatar = function(r, conn, username) {
+exports.getavatar = function(username) {
   return new Promise(function(resolve, reject) {
     r.table('Users').filter(r.row('id').eq(username))
     .getField('avatar')
@@ -77,7 +77,7 @@ exports.getavatar = function(r, conn, username) {
   })
 }
 
-exports.getbadge = function(r, conn, username) {
+exports.getbadge = function(username) {
   return new Promise(function(resolve, reject) {
     r.table('Users').filter(r.row('id').eq(username.toLowerCase()))
     .getField('badge')
@@ -88,7 +88,7 @@ exports.getbadge = function(r, conn, username) {
   })
 }
 
-// exports.getpokedex = function(r, conn) {
+// exports.getpokedex = function() {
 //   return new Promise(function(resolve, reject) {
 //     r.db('Users').table('Pokedex')
 //     .run(conn)
@@ -98,7 +98,7 @@ exports.getbadge = function(r, conn, username) {
 //   })
 // }
 
-// exports.gettypechart = function(r, conn) {
+// exports.gettypechart = function() {
 //   return new Promise(function(resolve, reject) {
 //     r.db('Users').table('TypeChart')
 //     .run(conn)
@@ -107,7 +107,7 @@ exports.getbadge = function(r, conn, username) {
 //     .catch(error => reject(error))
 //   })
 // }
-exports.votepoll = function(r, conn, payload) {
+exports.votepoll = function(payload) {
   r.table('Vote')
   .get('system')
   .replace({id: 'system', options: payload.options, title: payload.title})
@@ -115,7 +115,7 @@ exports.votepoll = function(r, conn, payload) {
   .catch(error => reject(error))
 }
 
-exports.put = function(r, conn, table, payload) {
+exports.put = function(table, payload) {
   return new Promise(function(resolve, reject) {
     r.table('table')
     .get(payload["id"])
@@ -126,7 +126,7 @@ exports.put = function(r, conn, table, payload) {
   })
 }
 
-exports.gettable = function(r, conn, dbname) {
+exports.gettable = function(dbname) {
   return new Promise(function(resolve, reject) {
     r.db('Users').table(dbname)
     .run(conn)
@@ -136,7 +136,7 @@ exports.gettable = function(r, conn, dbname) {
     })
 }
 
-exports.updateleaderboard = function(r, conn, entry) {
+exports.updateleaderboard = function(entry) {
   r.db('Users').table('Leaderboard')
   .get(entry.id)
   .replace(entry)
@@ -144,14 +144,14 @@ exports.updateleaderboard = function(r, conn, entry) {
   .catch(error => reject(error))
 }
 
-exports.clearleaderboard = function(r, conn) {
+exports.clearleaderboard = function() {
   r.db('Users').table('Leaderboard')
   .delete()
   .run(conn)
   .catch(error => reject(error))
 }
 
-exports.sendvote = function(r, conn, payload) {
+exports.sendvote = function(payload) {
   r.table('Vote')
   .get(payload.id)
   .replace({id: payload.id, vote: payload.vote})
@@ -159,7 +159,7 @@ exports.sendvote = function(r, conn, payload) {
   .catch(error => reject(error))
 }
 
-exports.showvote = function(r, conn, payload) {
+exports.showvote = function(payload) {
   return new Promise(function(resolve, reject) {
     r.table('Vote')
     .get('system')
@@ -168,7 +168,7 @@ exports.showvote = function(r, conn, payload) {
     .catch(error => reject(error))
   })
 }
-exports.updateavatar = function(r, conn, username, newavatar) {
+exports.updateavatar = function(username, newavatar) {
   r.table('Users')
   .get(username.toLowerCase())
   .update({"avatar": newavatar})
@@ -176,7 +176,7 @@ exports.updateavatar = function(r, conn, username, newavatar) {
   .catch(error => reject(error))
 }
 
-exports.updatebadge = function(r, conn, username, newbadge) {
+exports.updatebadge = function(username, newbadge) {
   r.table('Users')
   .get(username.toLowerCase())
   .update({"badge": newbadge})
@@ -184,7 +184,7 @@ exports.updatebadge = function(r, conn, username, newbadge) {
   .catch(error => reject(error))
 }
 
-exports.setcurrentteam = function(r, conn, name, payload) {
+exports.setcurrentteam = function(name, payload) {
   r.table('Users')
   .get(name.toLowerCase())
   .replace(function (row) {
@@ -198,7 +198,7 @@ exports.setcurrentteam = function(r, conn, name, payload) {
   .catch(error => reject(error))
 }
 
-exports.saveuserpokes = function(r, conn, name, payload) {
+exports.saveuserpokes = function(name, payload) {
     r.table('Users')
     .get(name.toLowerCase())
     .replace(function (row) {
@@ -212,7 +212,7 @@ exports.saveuserpokes = function(r, conn, name, payload) {
   .catch(error => reject(error))
  }
 
-exports.validatefc = function(r, conn, username) {
+exports.validatefc = function(username) {
   let starter = [191, 298, 401, 010, 013, 265, 280, 129, 349, 664, 011, 014, 172, 266, 268, 174, 194, 236, 665, 161, 173, 261, 270, 273, 440, 412]
   r.table('Users')
   .get(username)
@@ -229,7 +229,7 @@ exports.clearraffle = function() {
   .catch(error => reject(error))
 }
 
-exports.manualraffle = function(r, conn, username, enter) {
+exports.manualraffle = function(username, enter) {
   r.table('Users')
   .get(username)
   .run(conn)
@@ -237,7 +237,7 @@ exports.manualraffle = function(r, conn, username, enter) {
   .catch(error => reject(error))
 }
 
-exports.sendraffleupdate = function(r, conn) {
+exports.sendraffleupdate = function() {
   return new Promise(function(resolve, reject) {
     r.db('Users').table('Raffle')
     .run(conn)
@@ -247,7 +247,7 @@ exports.sendraffleupdate = function(r, conn) {
   })
 }
 
-exports.senduserpokes = function(r, conn, username) {
+exports.senduserpokes = function(username) {
   return new Promise(function(resolve, reject) {
     r.table('Users').filter(r.row('id').eq(username.toLowerCase()))
     .without('pokevalues')
@@ -284,7 +284,7 @@ exports.newuser = function(payload) {
   })
 }
 
-exports.createanewuser = function(r, conn, payload, firstcard) {
+exports.createanewuser = function(payload, firstcard) {
   return new Promise(function(resolve, reject) {
         r.table('Users').insert(payload).run(conn, function(err, result) {
           if (err) throw err
@@ -324,10 +324,10 @@ exports.createanewuser = function(r, conn, payload, firstcard) {
   })
 }
 
-exports.newuser = function(r, conn, payload) {
+exports.newuser = function(payload) {
     r.table('Users').get(payload.id.toLowerCase())
     .run(conn, function(err, cursor) {
-      if (!cursor || err) createanewuser(r, conn, payload) //////////////fix
+      if (!cursor || err) createanewuser(payload) //////////////fix
       else {
         r.table('Users').get(payload.id.toLowerCase()).update({
           ign: payload.ign,
@@ -341,7 +341,7 @@ exports.newuser = function(r, conn, payload) {
 }
 
 
-exports.requesttoconnect = function(r, conn, username) {
+exports.requesttoconnect = function(username) {
   return new Promise(function(resolve, reject) {
     r.table('Users').filter(r.row('id').eq(username))
     .run(conn)

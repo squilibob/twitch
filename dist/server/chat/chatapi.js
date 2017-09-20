@@ -62,22 +62,21 @@ exports.getStart = function(channel) {
   })
 }
 
-exports.checkfollowers = function(socket, userid, hidenotify, current) {
+exports.checkfollowers = function(Twitch, hidenotify, current) {
   let maxcursor = 100
   if (!current) current = 0
   client.api({
-    url: 'https://api.twitch.tv/kraken/channels' + header(userid, 'follows', 'offset=' + current + '&limit=' + maxcursor)
+    url: 'https://api.twitch.tv/kraken/channels' + header(Twitch.id, 'follows', 'offset=' + current + '&limit=' + maxcursor)
   }, function (err, res, body) {
     if (body) {
-      if (current + body.follows.length < body._total) exports.checkfollowers(socket, userid, hidenotify, current + body.follows.length)
+      if (current + body.follows.length < body._total) exports.checkfollowers(Twitch, hidenotify, current + body.follows.length)
       followerloop: for (viewer in body.follows) {
         if (!followers[body.follows[viewer].user.name]) {
           let datefollowed = new Date(body.follows[viewer].created_at)
      // followers[body.follows[viewer].user.name] = {logo: body.follows[viewer].user.logo, followed: Math.floor((Date.now() - datefollowed))/8.64e7) + ' days ago (' + body.follows[viewer].created_at.split('T').shift().split('-').reverse().join('/') + ')'};
           followers[body.follows[viewer].user.name] = {logo: body.follows[viewer].user.logo, followed: Math.floor((Date.now() - datefollowed) / 8.64e7) + ' days ago (' + datefollowed.toDateString() + ')'}
           if (!hidenotify) {
-            chatNotice(socket, body.follows[viewer].user.name + ' is now following (follower #' + Object.keys(followers).length.toLocaleString() + ')', 10000, 1)
-            socket.emit('followed', body.follows[viewer].user.name)
+            chatqueue[Twitch.id].store('follower', {username: body.follows[viewer].user.name, number:Object.keys(followers).length.toLocaleString()})
           }
         }
       }
@@ -90,10 +89,14 @@ exports.checkstreamer = function(userId) {  // waiting for new API to have all t
     client.api({
       url: 'https://api.twitch.tv/kraken/channels' + header(userId)
     }, function (err, res, body) {
-      console.log(body)
       if (body) {
-        resolve(body.name, body.profile_banner ? body.profile_banner : body.logo, body.followers, body.views, body.url)
-        // socket.emit('send emote', {message: 'hi ' + body.name, picture: 9})
+        resolve({
+          username: body.name,
+          banner: body.profile_banner ? body.profile_banner : body.logo,
+          followers: body.followers,
+          views: body.views,
+          url: body.url})
+                  // socket.emit('send emote', {message: 'hi ' + body.name, picture: 9})
       }
       else reject(err)
     })

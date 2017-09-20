@@ -1,5 +1,31 @@
 function chatbot () {
   let joinAnnounced = []
+  socket.on('chat', payload => handleChat(payload))
+  socket.on('notice', payload => chatNotice(payload))
+  socket.on('displaystreamer', payload => displaystreamer(payload))
+  socket.on('clear', payload => clearChat(payload))
+  socket.on('bits', payload => chatNotice({notice: payload.userstate.username + ' has donated ' + payload.userstate.bits + ' bits', fadedelay: 10000, level:1}))
+  socket.on('subscriber', payload => chatNotice({notice: payload.username + ' has subscribed (' + payload.method + ')', fadedelay: 10000, level:1}))
+  socket.on('timeout', payload =>  timeout(payload))
+  socket.on('starthost', payload => hosting(payload.channel, payload.target, payload.total, true))
+  socket.on('stophost', payload => hosting(payload, '-', '-', true))
+      // command -
+
+      // metaphone - chunks: await getChunks(message), message: 'pikachu said:\n' + message + '\n(from ' + username + ' new subscriber)'
+      // follower - {username: number:}
+  /*
+    Ban - Username has been banned on a channel.
+    Emoteonly - Channel enabled or disabled emote-only mode.
+    Followersonly - Channel enabled or disabled followers-only mode.
+    Mod - Someone got modded on a channel.
+    Notice - Received a notice from server.
+    Resub - Username has resubbed on a channel.
+    Roomstate - The current state of the channel.
+    Subscription - Username has subscribed to a channel.
+    Unmod - Someone got unmodded on a channel.
+*/
+
+  socket.emit('chatbot', {  id: TwitchID,  channel: clientOptions.channels[0]  })
   // client.on('hosted', function (channel, username, total, autohost) {
   //   let chan = dehash(channel)
   //   chan = capitalize(chan)

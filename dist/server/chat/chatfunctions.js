@@ -33,16 +33,12 @@ exports.checkImageExists = function (imageUrl, callBack) {
 
 }
 
-exports.chatNotice = function (socket, information, noticeFadeDelay, level, additionalClasses) {
-  socket.emit('notice', information, noticeFadeDelay, level, additionalClasses)
-}
-
-exports.timeout = function (channel, username) {
+exports.timeout = function (Twitch, username) {
   if (!doTimeouts) return false
   if (!recentTimeouts.hasOwnProperty(channel)) recentTimeouts[channel] = {}
   if (!recentTimeouts[channel].hasOwnProperty(username) || recentTimeouts[channel][username] + 1000 * 10 < +new Date()) {
     recentTimeouts[channel][username] = +new Date()
-    exports.chatNotice(socket, exports.capitalize(username) + ' was timed-out in ' + exports.capitalize(exports.dehash(channel)), 1000, 1, 'chat-delete-timeout')
+    chatqueue[Twitch.id]('timeout', {username: username, channel:exports.dehash(channel)})
   }
   let toHide = document.querySelectorAll('.chat-line[data-channel="' + channel + '"][data-username="' + username + '"]:not(.chat-timedout) .chat-message')
   for (let i in toHide) {
@@ -54,20 +50,19 @@ exports.timeout = function (channel, username) {
   }
 }
 
-exports.clearChat = function (socket, channel) {
-  if (!doChatClears) return false
-  exports.chatNotice(socket, 'Chat was cleared in channel ' + exports.capitalize(exports.dehash(channel)), 1000, 1, 'chat-delete-clear')
+exports.clearChat = function (Twitch) {
+  chatqueue[Twitch.id]('clear', exports.capitalize(exports.dehash(Twitch.channel)))
 }
 
-exports.hosting = function (channel, target, total, unhost) {
+exports.hosting = function (Twitch, target, total, unhost) {
   // if (!showHosting) return false
   if (total == '-') total = 0
-  let chan = exports.capitalize(exports.dehash(channel))
+  let chan = exports.capitalize(exports.dehash(Twitch.channel))
   if (!unhost) {
     let targ = exports.capitalize(target)
-    exports.chatNotice(socket, chan + ' is now hosting ' + targ + ' for ' + total + ' viewer' + (total !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes')
+    chatqueue[Twitch.id]('starthost', {channel: chan, target: targ, total: total})
   } else {
-    exports.chatNotice(socket, chan + ' is no longer hosting.', null, null, 'chat-hosting-no')
+    chatqueue[Twitch.id]('stophost', chan)
   }
 }
 
@@ -75,18 +70,18 @@ exports.submitchat = function (text) {
 
 
 
-  queue.messages.push(text)
+  botqueue.messages.push(text)
 }
 
 exports.dequeue = function (delay) {
-  if (Date.now() - queue.lastMessage > (1000 * delay || 1000) && queue.messages.length) {
-    if (queue.messages.join(' / ').length < 500) {
-      client.say(queue.channel, queue.messages.join(' / '))
-      queue.messages = []
+  if (Date.now() - botqueue.lastMessage > (1000 * delay || 1000) && botqueue.messages.length) {
+    if (botqueue.messages.join(' / ').length < 500) {
+      client.say(botqueue.channel, botqueue.messages.join(' / '))
+      botqueue.messages = []
     } else {
-      client.say(queue.channel, queue.messages.shift())
+      client.say(botqueue.channel, botqueue.messages.shift())
     }
-    queue.lastMessage = Date.now()
+    botqueue.lastMessage = Date.now()
   }
 }
 
@@ -271,3 +266,15 @@ exports.checkExist = function (checkstring, checkarray, separateword) {
   }
   return exist
 }
+
+exports.getChunks = function(message) {
+  return new Promise(function(resolve, reject) {
+    const {process} = require('./metaphone')
+    let chunks = []
+    for (word of message.split(' ')) {
+      chunks.push(process(word).length)
+    }
+    resolve(chunks)
+  })
+}
+

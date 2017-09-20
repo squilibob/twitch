@@ -1,6 +1,5 @@
-const {dehash, capitalize, htmlEntities, checkImageExists, chatNotice, timeout, clearChat, hosting, submitchat, dequeue, parseraffle, urlDecode, isMod, checkPoke, checkDb, checkMoves, checkExist} = require('./chatfunctions')
+const {dehash, capitalize, htmlEntities, checkImageExists, timeout, hosting, submitchat, dequeue, parseraffle, urlDecode, isMod, checkPoke, checkDb, checkMoves, checkExist} = require('./chatfunctions')
 const {checkAvatar, getViewers, getStart, checkfollowers, checkstreamer} = require('./chatapi')
-const {pokify, ffz, bttv, formatEmotes, createBadge, badges} = require('./chaticon')
 const {findpoke, validatetype, weakTo, resistantTo, effective} = require('./pokemonparse')
 
 let started,
@@ -12,17 +11,14 @@ let started,
   participants = {},
   streamers = []
 
-exports.parseMessage = async function(channel, user, message, self, avatar, badge, expressServer) {
+exports.parseMessage = async function(Twitch, user, message, self, avatar, badge) {
     if (user['message-type'] != 'chat' && user['message-type'] != 'action') return false
     var messagepayload = {
-      channel: dehash(channel),
+      channel: dehash(Twitch.channel),
       user: user,
       message: message,
       self: self,
       pokemon: checkPoke(message, maxpokes),
-      dbcall: expressServer.dbcall,
-      conn: expressServer.connection,
-      r: expressServer.database
     }
 
     var modmessage = isMod(user)
@@ -62,7 +58,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, badg
 
     if (!self && containsquestion && !response) { response = checkMoves(messagepayload) }
 
-    displaycommand && expressServer.socket.emit('chat', messagepayload.channel, messagepayload.user, messagepayload.message, messagepayload.self, avatar, badge, image)
+    displaycommand && chatqueue[Twitch.id].store('chat', {channel:Twitch.channel, message: messagepayload.message, user: messagepayload.user, self: messagepayload.self, avatar: avatar, badge: badge, image: image})
     response && submitchat(response)
   }
 
@@ -235,7 +231,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, badg
             fc: fc
           }
           if (validfc) {
-            obj.dbcall.newuser(r, conn, payload)
+            dbcall.newuser(payload)
             response = 'create: twitch username: ' + obj.user.username + ' IGN: ' + ign + ' fc: ' + fc.join('-')
           } else response = fc.join('-') + ' ' + ign + ' is invalid combination of fc and ign. Please include your ign and fc like this: !signup squilibob 3609-1058-1166'
         } else response = obj.message + ' invalid please include your ign and fc like this: !signup squilibob 3609-1058-1166'
@@ -259,7 +255,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, badg
         // var notyou = null
         // fcloop: for (person in useravatars) { if (obj.message.toLowerCase().indexOf(person.toLowerCase()) >= 0) notyou = person.toLowerCase() }
         // socket.emit('request user fc', notyou == null ? obj.user.username.toLowerCase() : notyou)
-        let user = await obj.dbcall.getfc(obj.r, obj.conn, obj.user.username.toLowerCase()).catch(err => console.log(err))
+        let user = await dbcall.getfc(obj.user.username.toLowerCase()).catch(err => console.log(err))
         return user.id + "'s friend code is " + user.fc[0] + '-' + user.fc[1] + '-' + user.fc[2] + ' IGN ' + user.ign
       }
     },
@@ -278,8 +274,8 @@ exports.parseMessage = async function(channel, user, message, self, avatar, badg
       },
       action: async function (obj) {
         delete useravatars[obj.user.username]
-        useravatars[user.username] = await expressServer.dbcall.getavatar(expressServer.database, expressServer.connection, obj.user.username)
-        badges[user.username] = await expressServer.dbcall.getbadge(expressServer.database, expressServer.connection, obj.user.username)
+        useravatars[user.username] = await dbcall.getavatar(obj.user.username)
+        badges[user.username] = await dbcall.getbadge(obj.user.username)
         return  obj.user.username + ': reloaded avatar image'
       }
     },
@@ -297,7 +293,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, badg
         modonly: false
       },
       action: async function (obj) {
-        obj.dbcall.manualraffle(expressServer.database, expressServer.connection, obj.user.username, true)
+        dbcall.manualraffle(obj.user.username, true)
         return false
       }
     },
@@ -315,7 +311,7 @@ exports.parseMessage = async function(channel, user, message, self, avatar, badg
         modonly: false
       },
       action: async function (obj) {
-        obj.dbcall.manualraffle(expressServer.database, expressServer.connection, obj.user.username, true)
+        dbcall.manualraffle(obj.user.username, true)
         return false
       }
     },
