@@ -2,31 +2,36 @@ const {dehash, capitalize, hosting, timeout, clearChat, submitchat, dequeue, par
 const {checkAvatar, getViewers, getStart, checkfollowers, checkstreamer} = require('./chat/chatapi')
 const {parseMessage} = require('./chat/chatbackend')
 
-global.chatqueue = {}
-global.followers = {}
-global.watching = {}
-global.useravatars = {}
-global.badges = {}
-
 class Store {
-  constructor() {
+  constructor(backlog) {
     this.queue = []
+    this.history = []
+    this.backlog = backlog
   }
   store(type, obj) {
     this.queue.push({type, obj})
     this.release()
   }
+  archive(payload) {
+    this.history.push(payload)
+    this.history = this.history.slice(-this.backlog)
+  }
+  restore(){
+    (this.socket && this.history.length) &&this.socket.emit('history', this.history)
+  }
   release() {
      (this.socket && this.queue.length) &&  this.emit(this.queue.shift())
   }
   emit(payload) {
+    payload.type === 'chat' && this.archive(payload)
     this.socket.emit(payload.type, payload.obj, this.release())
   }
 }
 
 module.exports = function(Twitch) {
-  global.chatqueue[Twitch.id] = new Store()
-
+  global.chatqueue[Twitch.id] = new Store(Twitch.backlog)
+  // global.participants = await dbcall.sendraffleupdate().catch(err => console.log(err)) || {}
+  console.log(chatqueue)
   global.botqueue = {
     channel: Twitch.channel,
     messages: [],
@@ -62,9 +67,11 @@ module.exports = function(Twitch) {
   })
   client.addListener('timeout', timeout)
   client.addListener('clearchat', clearChat, Twitch)
-  client.addListener('hosting', hosting)
+  client.addListener('hosting', function(target, total) {
+    hosting(Twitch, target, total, false)
+  })
   client.addListener('unhost', function (channel, viewers) {
-    hosting(channel, null, viewers, true)
+    hosting(Twitch, channel, null, true)
   })
 
   client.addListener('connecting', function (address, port) { if (showConnectionNotices) chatqueue[Twitch.id].store('notice', {text: address + ':' + port, fadedelay:1000, level:-4, class:'chat-connection-good-connecting'}) })

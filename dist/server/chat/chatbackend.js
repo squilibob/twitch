@@ -5,16 +5,14 @@ const {findpoke, validatetype, weakTo, resistantTo, effective} = require('./poke
 let started,
   maxpokes = 802,
   minfollowerstoshoutout = 100,
-  TwitchID = '32218175',
   botDelay = 1, // Number of seconds between each bot message
-  autocry = false, // Play the pokemon's cry sound whenever it is mentioned in chat
-  participants = {},
-  streamers = []
+  autocry = false // Play the pokemon's cry sound whenever it is mentioned in chat
 
 exports.parseMessage = async function(Twitch, user, message, self, avatar, badge) {
     if (user['message-type'] != 'chat' && user['message-type'] != 'action') return false
     var messagepayload = {
       channel: dehash(Twitch.channel),
+      twitchID: Twitch.id,
       user: user,
       message: message,
       self: self,
@@ -24,7 +22,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
     var modmessage = isMod(user)
     var question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which'] // 'who ', 'why ', 'did ',
     var containsquestion = checkExist(message, question, true)
-    var response
+    let response
     var displaycommand = true
 
     if (!self) {
@@ -133,7 +131,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        var response
+        let response
         var findtm = parseInt(obj.message.slice(obj.message.toLowerCase().indexOf('tm') + 2, obj.message.toLowerCase().indexOf('tm') + 5))
         if (findtm > 0 && findtm < 101) { tmnameloop: for (var key in tm[findtm - 1]) response = 'TM' + findtm + ' ' + key + ' can be obtained at ' + tm[findtm - 1][key] } else {
           tmnumberloop: for (num = tm.length; num > 0; num--) {
@@ -159,7 +157,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        var response
+        let response
         if (obj.message.toLowerCase().indexOf('hm') >= 0) {
           var findtm = parseInt(obj.message.slice(obj.message.toLowerCase().indexOf('hm') + 2, obj.message.toLowerCase().indexOf('hm') + 5))
           if (findtm > 0 && findtm < 8) { hmloop: for (var key in hm[findtm - 1]) response = 'HM' + findtm + ' ' + key + ' can be obtained in ORAS at ' + hm[findtm - 1][key] } else {
@@ -185,7 +183,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        var response
+        let response
         hiddenpowerloop: for (hptype of hiddenpower) {
           if (obj.message.toLowerCase().indexOf(hptype.id) >= 0) response = 'in order to get hidden power ' + hptype.id + ' your pokemon needs IVs to be hp: ' + hptype.iv[0] + ' att: ' + hptype.iv[1] + ' def: ' + hptype.iv[2] + ' sp. att: ' + hptype.iv[3] + ' sp. def: ' + hptype.iv[4] + ' speed: ' + hptype.iv[5] }
         return response
@@ -205,7 +203,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        var response
+        let response
         var fc = []
         var validfc = true
         if (obj.message.toLowerCase().indexOf('-') >= 0) {
@@ -311,7 +309,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        dbcall.manualraffle(obj.user.username, true)
+        dbcall.manualraffle(obj.user.username, false)
         return false
       }
     },
@@ -330,7 +328,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
       },
       action: async function (obj) {
         var voteoption = obj.message.split(' ')
-        (voteoption.length > 1 && voteoption[0].indexOf('!vote') >= 0) ? socket.emit('Send vote', {id: obj.user.username.toLowerCase(), vote: capitalize(voteoption[1].toLowerCase())}) : socket.emit('Show vote')
+        (voteoption.length > 1 && voteoption[0].indexOf('!vote') >= 0) ? dbcall.sendvote({id: obj.user.username.toLowerCase(), vote: capitalize(voteoption[1].toLowerCase())}) : chatqueue[obj.TwitchID].store('showvote', await dbcall.showvote('Show vote'))
         return false
       }
     },
@@ -348,7 +346,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        var response = 'The bot keywords for ' + obj.channel + ' are'
+        let response = 'The bot keywords for ' + obj.channel + ' are'
         for (command in parser) {
           response += ' ' + command
           if (parser[command].altcmds.length > 0) response += ' (or ' + parser[command].altcmds.join(' ') + ')'
@@ -370,16 +368,11 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        var response
-        var now = new Date()
-        var uptime = now - started
-        if ((isNaN(uptime))) {
-          getStart(TwitchID)
-        } else {
-          var hours = Math.floor((uptime % 86400000) / 3600000) // should really simplify this
-          var minutes = Math.floor(((uptime % 86400000) % 3600000) / 60000)
-          response = ('Stream has been live for ' + hours + (minutes < 10 ? ':0' : ':') + minutes)
-        }
+        let response
+        let uptime = new Date() - await getStart(obj.TwitchID)
+        let hours = Math.floor((uptime % 86400000) / 3600000)
+        let minutes = Math.floor(((uptime % 86400000) % 3600000) / 60000)
+        response = ('Stream has been live for ' + hours + (minutes < 10 ? ':0' : ':') + minutes)
         return response
       }
     },
@@ -414,7 +407,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        var response = obj.user.username + ' is not a follower'
+        let response = obj.user.username + ' is not a follower'
         if (followers[obj.user.username.toLowerCase()]) response = obj.user.username + ' followed ' + followers[obj.user.username.toLowerCase()].followed
         return response
       }
@@ -433,7 +426,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        var response
+        let response
         if (obj.pokemon[0]['Egg Group I']) {
           if (obj.pokemon[0]['Egg Group II'] && obj.pokemon[0]['Egg Group II'] != ' ') response = obj.pokemon[0].Pokemon + ' is in egg groups ' + obj.pokemon[0]['Egg Group I'] + ' & ' + obj.pokemon[0]['Egg Group II']
           else if (obj.pokemon[0]['Egg Group I'].length) response = obj.pokemon[0].Pokemon + ' is in egg group ' + obj.pokemon[0]['Egg Group I']
@@ -455,7 +448,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        var response
+        let response
         response = obj.pokemon[0].Pokemon + ' will reward the EVs:'
         evloop: for (ev in obj.pokemon[0].EVs) response += ' ' + obj.pokemon[0].EVs[ev] + ' x ' + ev
         return response
@@ -475,7 +468,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        var response
+        let response
         if (Object.keys(participants).length > 0) {
           response = Object.keys(participants).length + ' in the raffle: '
           var totalraffle = 0
@@ -508,7 +501,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        typeof (obj.pokemon[0].id === 'number') && socket.emit('pokemon cry', obj.pokemon[0].id)
+        typeof (obj.pokemon[0].id === 'number') && chatqueue[obj.TwitchID].store('pokemon cry', obj.pokemon[0].id)
         return false
       }
     },
@@ -526,7 +519,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        var response
+        let response
         if (obj.pokemon[0]) {
           response = obj.pokemon[0].Pokemon + ' is weak to ' + weakTo(obj.pokemon[0].Type, obj.pokemon[0].Secondary).join(', ')
         } else {
@@ -552,7 +545,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        var response = 'Does not resist anything'
+        let response = 'Does not resist anything'
         if (obj.pokemon[0]) {
           var list = resistantTo(obj.pokemon[0].Type, obj.pokemon[0].Secondary)
           response = obj.pokemon[0].Pokemon + ' is resistant to ' + (list.resist.length > 0 ? list.resist.join(', ') : 'nothing')
@@ -581,7 +574,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        var response
+        let response
         obj.message.split(' ').forEach((strength, index) => {
           var list = effective(strength)
           if (list.length > 0) response = validatetype(strength) + ' is super effective against ' + list.join(', ')
@@ -708,7 +701,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
       },
       action: async function (obj) {
         if (obj.pokemon.length) return
-        var response
+        let response
         abilityloop: for (ability in abilities) {
           if (obj.message.toLowerCase().indexOf(ability.toLowerCase()) >= 0) {
             if (obj.message.toLowerCase().indexOf('pokemon') >= 0) {
@@ -744,11 +737,11 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        var fusion = 'http://images.alexonsager.net/pokemon/fused/' + (obj.pokemon[0].id) + '/' + (obj.pokemon[0].id) + '.' + (obj.pokemon[1].id) + '.png'
+        // var fusion = 'http://images.alexonsager.net/pokemon/fused/' + (obj.pokemon[0].id) + '/' + (obj.pokemon[0].id) + '.' + (obj.pokemon[1].id) + '.png'
         if (typeof (obj.pokemon[0].id) === 'number' && typeof (obj.pokemon[1].id) === 'number') {
           if (obj.pokemon[0].id > 0 && obj.pokemon[0].id < 152 && obj.pokemon[1].id > 0 && obj.pokemon[1].id < 152) {
            // handleChat(obj.channel, obj.user, '', true, -1, fusion);
-            socket.emit('send fusion', obj.pokemon[0].id, obj.pokemon[1].id)
+            chatqueue[TwitchID].store('send fusion', obj.pokemon[0].id, obj.pokemon[1].id)
           }
         }
       }
@@ -767,7 +760,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        var response = obj.pokemon[0].Pokemon + ' stats: '
+        let response = obj.pokemon[0].Pokemon + ' stats: '
         response += obj.pokemon[0].HP + '/'
         response += obj.pokemon[0].Attack + '/'
         response += obj.pokemon[0].Defense + '/'
@@ -1001,7 +994,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
    //     modonly: false
    //   },
    //   action: async function(obj){
-   //     var response;
+   //     let response;
 
    //     return response;
    //   }

@@ -140,9 +140,9 @@ project.Layout.prototype = {
         decoded && fx.play(which)
       })
     }
-    if (socket.hasListeners('new follower') == false) {
-      socket.on('new follower', function (who) {
-        overlayqueue.push({type:'follower', value: who})
+    if (socket.hasListeners('follower') == false) {
+      socket.on('follower', function (payload) {
+        overlayqueue.push({type:'follower', value: payload.username})
         // followed.push(who)
       })
     }

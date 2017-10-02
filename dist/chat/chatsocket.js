@@ -11,19 +11,19 @@
 //   chatNotice(information, noticeFadeDelay, level, additionalClasses)
 // })
 
-socket.on('user fc', function (user) {
-  if (typeof (user) === 'string') submitchat(user)
-  else submitchat(user.id + "'s friend code is " + user.fc[0] + '-' + user.fc[1] + '-' + user.fc[2] + ' IGN ' + user.ign)
-})
+// socket.on('user fc', function (user) {
+//   if (typeof (user) === 'string') submitchat(user)
+//   else submitchat(user.id + "'s friend code is " + user.fc[0] + '-' + user.fc[1] + '-' + user.fc[2] + ' IGN ' + user.ign)
+// })
 
-socket.on('receive avatar', function (channel, user, message, self, avatar) {
-  useravatars[user.username] = avatar
-  handleChat(channel, user, message, self, avatar)
-})
+// socket.on('receive avatar', function (channel, user, message, self, avatar) {
+//   useravatars[user.username] = avatar
+//   handleChat(channel, user, message, self, avatar)
+// })
 
-socket.on('receive badge', function (username, badge) {
-  userbadges[username] = badge
-})
+// socket.on('receive badge', function (username, badge) {
+//   userbadges[username] = badge
+// })
 
 socket.on('receive moves', function (movespayload) {
   for (move in movespayload) {
@@ -70,8 +70,8 @@ socket.on('raffle winner', function (person) {
   submitchat(person + ' has won the raffle')
 })
 
-socket.on('raffle update', function (newraffle) {
-  parseraffle(newraffle)
+socket.on('raffle update', function (payload) {
+  parseraffle(payload.raffle)
 })
 
 socket.on('someone signed up', function (name) {

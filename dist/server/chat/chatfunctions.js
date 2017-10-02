@@ -4,7 +4,7 @@ exports.dehash = function (channel) {
 }
 
 exports.capitalize = function (n) {
-  return n[0].toUpperCase() + n.substr(1)
+  return n === undefined ? n : n[0].toUpperCase() + n.substr(1)
 }
 
 exports.htmlEntities = function (html) {
@@ -38,7 +38,7 @@ exports.timeout = function (Twitch, username) {
   if (!recentTimeouts.hasOwnProperty(channel)) recentTimeouts[channel] = {}
   if (!recentTimeouts[channel].hasOwnProperty(username) || recentTimeouts[channel][username] + 1000 * 10 < +new Date()) {
     recentTimeouts[channel][username] = +new Date()
-    chatqueue[Twitch.id]('timeout', {username: username, channel:exports.dehash(channel)})
+    chatqueue[Twitch.id].store('timeout', {username: username, channel:exports.dehash(channel)})
   }
   let toHide = document.querySelectorAll('.chat-line[data-channel="' + channel + '"][data-username="' + username + '"]:not(.chat-timedout) .chat-message')
   for (let i in toHide) {
@@ -51,7 +51,7 @@ exports.timeout = function (Twitch, username) {
 }
 
 exports.clearChat = function (Twitch) {
-  chatqueue[Twitch.id]('clear', exports.capitalize(exports.dehash(Twitch.channel)))
+  chatqueue[Twitch.id].store('clear', exports.capitalize(exports.dehash(Twitch.channel)))
 }
 
 exports.hosting = function (Twitch, target, total, unhost) {
@@ -60,9 +60,9 @@ exports.hosting = function (Twitch, target, total, unhost) {
   let chan = exports.capitalize(exports.dehash(Twitch.channel))
   if (!unhost) {
     let targ = exports.capitalize(target)
-    chatqueue[Twitch.id]('starthost', {channel: chan, target: targ, total: total})
+    chatqueue[Twitch.id].store('starthost', {channel: chan, target: targ, total: total})
   } else {
-    chatqueue[Twitch.id]('stophost', chan)
+    chatqueue[Twitch.id].store('stophost', chan)
   }
 }
 

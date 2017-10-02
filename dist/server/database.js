@@ -4,10 +4,10 @@
       if (err) throw err
       if (result) {
         if (result.errors) console.log(result.first_error)
-        else exports.modifyRaffleUser(conn, username, result.chance, entered, displayicon)
+        else exports.modifyRaffleUser(username, result.chance, entered, displayicon)
       }
       else {
-        exports.modifyRaffleUser(conn, username, defaultchance, entered, displayicon)
+        exports.modifyRaffleUser(username, defaultchance, entered, displayicon)
       }
     })
   }
@@ -43,17 +43,34 @@
   }
 
   exports.modifyRaffleUser = function(username, chance, entered, displayicon) {
-  r.db('Users').table('Raffle').get(username).replace({
-    id: username,
-    chance: chance,
-    entered: entered,
-    displayicon:displayicon,
+  r.db('Users').table('Raffle').get(username)
+    .replace({
+      id: username,
+      chance: chance,
+      entered: entered,
+      displayicon:displayicon,
+    })
+    .run(conn)
+    .catch(error => reject(error))
+}
+
+exports.manualraffle = function(username, enter) {
+  r.table('Users')
+  .get(username)
+  .run(conn)
+  .then(result => { exports.raffleChangeUser(username.toLowerCase(), 12, enter, result.cards[0].poke) })
+  .catch(error => reject(error))
+}
+
+exports.sendraffleupdate = function() {
+  return new Promise(function(resolve, reject) {
+    r.db('Users').table('Raffle')
+    .run(conn)
+    .then(cursor => cursor.toArray())
+    .then(result => { resolve(result || {}) })
+    .catch(error => reject(error))
   })
-  .run(conn, function(err, result) {
-    if (err) throw err
-    if (result.errors) console.log(result.first_error)
-  })
-  }
+}
 
 exports.getfc = function(username) {
   return new Promise(function(resolve, reject) {
@@ -61,7 +78,7 @@ exports.getfc = function(username) {
       .pluck('id', 'fc', 'ign')
       .run(conn)
       .then(cursor => cursor.toArray())
-      .then(result => { resolve(result[0]) })
+      .then(result => { resolve(result ? result[0] : null) })
       .catch(error => reject(error))
   })
 }
@@ -83,7 +100,7 @@ exports.getbadge = function(username) {
     .getField('badge')
     .run(conn)
     .then(cursor => cursor.toArray())
-    .then(result => { resolve(result[0]) })
+    .then(result => { resolve(result ? result[0] : null) })
     .catch(error => reject(error))
   })
 }
@@ -159,7 +176,7 @@ exports.sendvote = function(payload) {
   .catch(error => reject(error))
 }
 
-exports.showvote = function(payload) {
+exports.showvote = function() {
   return new Promise(function(resolve, reject) {
     r.table('Vote')
     .get('system')
@@ -229,24 +246,6 @@ exports.clearraffle = function() {
   .catch(error => reject(error))
 }
 
-exports.manualraffle = function(username, enter) {
-  r.table('Users')
-  .get(username)
-  .run(conn)
-  .then(result => { exports.raffleChangeUser(username.toLowerCase(), 12, enter, result.cards[0].poke) })
-  .catch(error => reject(error))
-}
-
-exports.sendraffleupdate = function() {
-  return new Promise(function(resolve, reject) {
-    r.db('Users').table('Raffle')
-    .run(conn)
-    .then(cursor => cursor.toArray())
-    .then(result => { resolve(result) })
-    .catch(error => reject(error))
-  })
-}
-
 exports.senduserpokes = function(username) {
   return new Promise(function(resolve, reject) {
     r.table('Users').filter(r.row('id').eq(username.toLowerCase()))
@@ -284,44 +283,46 @@ exports.newuser = function(payload) {
   })
 }
 
-exports.createanewuser = function(payload, firstcard) {
-  return new Promise(function(resolve, reject) {
-        r.table('Users').insert(payload).run(conn, function(err, result) {
-          if (err) throw err
-          if (result.errors) console.log(result.first_error)
-          else {
-            r.table('Users').get(payload.id).update({
-              validated: false,
-              cards: [{'poke': firstcard, 'level': 1}],
-              active: "default",
-              avatar: -1,
-              teams: {
-                  "default": [
-                      0 ,
-                      1 ,
-                      2 ,
-                      3 ,
-                      4 ,
-                      5
-                  ]}
-            }).run(conn, function(err, result) {
-              if (err) throw err
-              if (result.errors) console.log(result.first_error)
-              // else socket.emit('login accepted', result[0])
-            })
-            database.raffleChangeUser(conn, payload.id.toLowerCase(), 12, true, firstcard, "default", [
-                      0 ,
-                      1 ,
-                      2 ,
-                      3 ,
-                      4 ,
-                      5
-                  ])
-            resolve(payload.id)
-            // socket.broadcast.emit('someone signed up',payload.id)
-          }
-        })
-  })
+exports.createanewuser = function(payload, firstcard) { //wtf fix this
+  // return new Promise(function(resolve, reject) {
+  //       r.table('Users')
+  //       .insert(payload)
+  //       .run(conn, function(err, result) {
+  //         if (err) throw err
+  //         if (result.errors) console.log(result.first_error)
+  //         else {
+  //           r.table('Users').get(payload.id).update({
+  //             validated: false,
+  //             cards: [{'poke': firstcard, 'level': 1}],
+  //             active: "default",
+  //             avatar: -1,
+  //             teams: {
+  //                 "default": [
+  //                     0 ,
+  //                     1 ,
+  //                     2 ,
+  //                     3 ,
+  //                     4 ,
+  //                     5
+  //                 ]}
+  //           }).run(conn, function(err, result) {
+  //             if (err) throw err
+  //             if (result.errors) console.log(result.first_error)
+  //             // else socket.emit('login accepted', result[0])
+  //           })
+  //           exports.raffleChangeUser(payload.id.toLowerCase(), 12, true, firstcard, "default", [
+  //                     0 ,
+  //                     1 ,
+  //                     2 ,
+  //                     3 ,
+  //                     4 ,
+  //                     5
+  //                 ])
+  //           resolve(payload.id)
+  //           // socket.broadcast.emit('someone signed up',payload.id)
+  //         }
+  //       })
+  // })
 }
 
 exports.newuser = function(payload) {

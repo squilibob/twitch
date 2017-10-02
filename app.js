@@ -38,6 +38,15 @@ async function init(c){
   global.Abilities = await dbcall.gettable('Abilities').catch(err => console.log(err))
   global.Bttv = await dbcall.gettable('Bttv').catch(err => console.log(err))
   global.Ffz = await dbcall.gettable('Ffz').catch(err => console.log(err))
+  global.participants = {} // maybe use a Map instead of an object
+  global.chatqueue = {}
+  global.useravatars = {}
+  global.badges = {}
+  global.streamers = []
+  // the following need to be for each stream
+  global.followers = {}
+  global.watching = {chatters: [], viewers: 0}
+
   console.log('cache ready', pokedex.length)
   require('./dist/server/instances')(expressServer)
 }
