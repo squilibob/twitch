@@ -4,7 +4,7 @@ exports.dehash = function (channel) {
 }
 
 exports.capitalize = function (n) {
-  return n === undefined ? n : n[0].toUpperCase() + n.substr(1)
+  return n === undefined ? '' : n[0].toUpperCase() + n.substr(1)
 }
 
 exports.htmlEntities = function (html) {
@@ -124,8 +124,8 @@ exports.isMod = function (user) {
   return false
 }
 
-exports.checkPoke = function (message, maxpokes) {
-  message = message.toLowerCase().replace('nature', '') // fixes Natu false positive
+exports.checkPoke = function (originalmessage, maxpokes) {
+  let message = originalmessage.toLowerCase().replace('nature', '') // fixes Natu false positive
   let listofpokemon = []
   if (message.toLowerCase().indexOf('mewtwo') >= 0) {
     listofpokemon.push(pokedex[149])
@@ -149,8 +149,9 @@ exports.checkPoke = function (message, maxpokes) {
     }
   }
   if (!listofpokemon.length) return []
+
   return listofpokemon.sort(function (a, b) {
-    return message.indexOf(a.Pokemon.toLowerCase()) - message.indexOf(b.Pokemon.toLowerCase())
+    return originalmessage.toLowerCase().indexOf(a.Pokemon.toLowerCase()) - originalmessage.toLowerCase().indexOf(b.Pokemon.toLowerCase())
   })
 }
 

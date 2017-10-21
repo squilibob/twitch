@@ -229,7 +229,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
             fc: fc
           }
           if (validfc) {
-            dbcall.newuser(payload)
+            dbcall.newuser('Users', payload)
             response = 'create: twitch username: ' + obj.user.username + ' IGN: ' + ign + ' fc: ' + fc.join('-')
           } else response = fc.join('-') + ' ' + ign + ' is invalid combination of fc and ign. Please include your ign and fc like this: !signup squilibob 3609-1058-1166'
         } else response = obj.message + ' invalid please include your ign and fc like this: !signup squilibob 3609-1058-1166'
@@ -253,7 +253,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         // var notyou = null
         // fcloop: for (person in useravatars) { if (obj.message.toLowerCase().indexOf(person.toLowerCase()) >= 0) notyou = person.toLowerCase() }
         // socket.emit('request user fc', notyou == null ? obj.user.username.toLowerCase() : notyou)
-        let user = await dbcall.getfc(obj.user.username.toLowerCase()).catch(err => console.log(err))
+        let user = await dbcall.getfc('Users', obj.user.username.toLowerCase()).catch(err => console.log(err))
         return user.id + "'s friend code is " + user.fc[0] + '-' + user.fc[1] + '-' + user.fc[2] + ' IGN ' + user.ign
       }
     },
@@ -272,8 +272,8 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
       },
       action: async function (obj) {
         delete useravatars[obj.user.username]
-        useravatars[user.username] = await dbcall.getavatar(obj.user.username)
-        badges[user.username] = await dbcall.getbadge(obj.user.username)
+        useravatars[user.username] = await dbcall.getavatar('Users', obj.user.username)
+        badges[user.username] = await dbcall.getbadge('Users', obj.user.username)
         return  obj.user.username + ': reloaded avatar image'
       }
     },
@@ -291,7 +291,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        dbcall.manualraffle(obj.user.username, true)
+        dbcall.manualraffle('Users', obj.user.username, true)
         return false
       }
     },
@@ -309,7 +309,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        dbcall.manualraffle(obj.user.username, false)
+        dbcall.manualraffle('Users', obj.user.username, false)
         return false
       }
     },
@@ -328,7 +328,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
       },
       action: async function (obj) {
         var voteoption = obj.message.split(' ')
-        (voteoption.length > 1 && voteoption[0].indexOf('!vote') >= 0) ? dbcall.sendvote({id: obj.user.username.toLowerCase(), vote: capitalize(voteoption[1].toLowerCase())}) : chatqueue[obj.TwitchID].store('showvote', await dbcall.showvote('Show vote'))
+        (voteoption.length > 1 && voteoption[0].indexOf('!vote') >= 0) ? dbcall.sendvote('Users', {id: obj.user.username.toLowerCase(), vote: capitalize(voteoption[1].toLowerCase())}) : chatqueue[obj.twitchID].store('showvote', await dbcall.showvote('Users', 'Show vote'))
         return false
       }
     },
@@ -369,7 +369,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
       },
       action: async function (obj) {
         let response
-        let uptime = new Date() - await getStart(obj.TwitchID)
+        let uptime = new Date() - await getStart(obj.twitchID)
         let hours = Math.floor((uptime % 86400000) / 3600000)
         let minutes = Math.floor(((uptime % 86400000) % 3600000) / 60000)
         response = ('Stream has been live for ' + hours + (minutes < 10 ? ':0' : ':') + minutes)
@@ -501,7 +501,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        typeof (obj.pokemon[0].id === 'number') && chatqueue[obj.TwitchID].store('pokemon cry', obj.pokemon[0].id)
+        typeof (obj.pokemon[0].id === 'number') && chatqueue[obj.twitchID].store('pokemon cry', obj.pokemon[0].id)
         return false
       }
     },
@@ -737,12 +737,14 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        // var fusion = 'http://images.alexonsager.net/pokemon/fused/' + (obj.pokemon[0].id) + '/' + (obj.pokemon[0].id) + '.' + (obj.pokemon[1].id) + '.png'
+        let fused = []
         if (typeof (obj.pokemon[0].id) === 'number' && typeof (obj.pokemon[1].id) === 'number') {
-          if (obj.pokemon[0].id > 0 && obj.pokemon[0].id < 152 && obj.pokemon[1].id > 0 && obj.pokemon[1].id < 152) {
-           // handleChat(obj.channel, obj.user, '', true, -1, fusion);
-            chatqueue[TwitchID].store('send fusion', obj.pokemon[0].id, obj.pokemon[1].id)
-          }
+          if (obj.pokemon[0].id > 0 && obj.pokemon[0].id < 392 && obj.pokemon[1].id > 0 && obj.pokemon[1].id < 392) {
+             fused.push(obj.pokemon[0].id)
+             obj.pokemon[1] && fused.push(obj.pokemon[1].id)
+             obj.pokemon[2] && fused.push(obj.pokemon[2].id)
+             chatqueue[obj.twitchID].store('show fusion', fused)
+           }
         }
       }
     },

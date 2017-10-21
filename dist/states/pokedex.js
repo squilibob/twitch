@@ -170,12 +170,17 @@ project.Pokedex.prototype = {
     for (countchild in bonusgroup.children) {
       thisbonus = parseInt(bonusgroup.children[countchild].children[1].text)
         // console.log(parseInt(countchild));
-      switch (parseInt(countchild)) {
-        case 0: runningtotal += thisbonus * points_system.score_for_kill; break
-        case 1: runningtotal += thisbonus * points_system.score_for_crit; break
-        case 2: runningtotal += thisbonus * points_system.score_for_hax; break
-        case 3: runningtotal -= thisbonus * points_system.penalty_for_clause; break
-      }
+        runningtotal += [thisbonus * points_system.score_for_kill,
+         thisbonus * points_system.score_for_crit,
+         thisbonus * points_system.score_for_hax,
+        -(thisbonus * points_system.penalty_for_clause)][parseInt(countchild)]
+
+      // switch (parseInt(countchild)) {
+      //   case 0: runningtotal += thisbonus * points_system.score_for_kill; break
+      //   case 1: runningtotal += thisbonus * points_system.score_for_crit; break
+      //   case 2: runningtotal += thisbonus * points_system.score_for_hax; break
+      //   case 3: runningtotal -= thisbonus * points_system.penalty_for_clause; break
+      // }
     }
       // console.log(thisbonus, runningtotal);
     return runningtotal + parseInt(rated.children[1].text)

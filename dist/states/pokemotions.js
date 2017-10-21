@@ -18,14 +18,13 @@ project.Pokemotions.prototype = {
   preload: function () {
     footergame.load.spritesheet('pokemotevulpix', '/img/pokemotions.png', 206, 236)
     footergame.load.spritesheet('playerpoke', '/img/gen6.png', 32, 32)
-    for (let currentfuse = 1; currentfuse < 152; currentfuse++) {
-      let cachename = 'fuse' + currentfuse
-      let currentfusion = '/img/fusion/' + currentfuse + '.png'
-      let loading = footergame.load.spritesheet(cachename, currentfusion, 240, 240)
-    }
+    footergame.load.spritesheet('faces', '/img/fuseface.png', 96, 96, 493)
+    footergame.load.spritesheet('bodies', '/img/fusebody.png', 96, 96, 493)
   },
   create: function () {
     fusionqueue = []
+    footergame.mask = [255, 19, 252, 254, 167, 255, 164, 0, 166, 123, 0, 124, 254, 209, 255, 77, 0, 78, 1, 231, 23, 160, 252, 70, 17, 160, 6, 34, 73, 11, 0, 52, 246, 112, 141, 248, 7, 14, 149, 11, 14, 77, 246, 197, 0, 248, 221, 112, 148, 143, 8, 76, 74, 12, 240, 0, 0, 247, 125, 125, 146, 14, 8, 71, 11, 11]
+    footergame.bmds = []
     runningfusionanimation = false
     this.game.stage.backgroundColor = 0x1c0f0c
     txtstyle = {
@@ -47,6 +46,8 @@ project.Pokemotions.prototype = {
     maxvelocity = 36
     this.firstround()
     this.addsocketlisteners(this)
+
+    // fusionqueue.push([37, 25])
   },
   addsocketlisteners: function (_this) {
     if (socket.hasListeners('receive emote') == false) {
@@ -68,8 +69,8 @@ project.Pokemotions.prototype = {
     }
 
     if (socket.hasListeners('show fusion') == false) {
-      socket.on('show fusion', function (firstpoke, secondpoke) {
-        fusionqueue.push({firstpoke: firstpoke, secondpoke: secondpoke})
+      socket.on('show fusion', function (fused) {
+        fusionqueue.push(fused)
       })
     }
 
@@ -202,19 +203,63 @@ project.Pokemotions.prototype = {
   },
   fusionshow: function (fusions) {
     runningfusionanimation = true
-    firstpoke = fusions.firstpoke
-    secondpoke = fusions.secondpoke
-    leftfuse = footergame.add.sprite(0, 0, 'fuse' + firstpoke)
-    leftfuse.frame = firstpoke - 1
-    rightfuse = footergame.add.sprite(footergame.width - 240, 0, 'fuse' + secondpoke)
-    rightfuse.frame = secondpoke - 1
-    fusion = footergame.add.sprite(footergame.world.centerX, 0, 'fuse' + firstpoke)
-    fusion.frame = secondpoke - 1
+    leftfuse = this.redrawsprite(this.newbody([fusions[0],fusions[0]]).children)
+    rightfuse = this.redrawsprite(this.newbody([fusions[1],fusions[1]]).children)
+    rightfuse.x = footergame.width - 96
+    fusion = this.redrawsprite(this.newbody(fusions).children)
+    fusion.x = footergame.world.centerX - 144
+    this.headcorrect(fusion.children[1], fusions)
     fusion.alpha = 0
     footergame.add.tween(leftfuse).to({ x: footergame.world.centerX - 120 }, 1000, Phaser.Easing.Sinusoidal.In, true)
     footergame.add.tween(rightfuse).to({ x: footergame.world.centerX - 120 }, 1000, Phaser.Easing.Sinusoidal.In, true)
       .onComplete.add(this.destroy, this)
   },
+  newbody: function(which){
+    let fusiongroup = footergame.add.group()
+    let face = footergame.add.sprite(0, 0,'faces')
+    let body = footergame.add.sprite(0, 0,'bodies')
+    face.frame = which[0] - 1
+    body.frame = which[1] - 1
+    fusiongroup.addChild(body)
+    fusiongroup.addChild(face)
+    fusiongroup.visible = false
+    return fusiongroup
+  },
+  redrawsprite: function(original) {
+    let redrawn = footergame.add.group()
+    redrawn.addChild(footergame.add.sprite(0,0, this.recolor(this.bitmap(original[0], 0, 0), original[0].frame)))
+    redrawn.addChild(footergame.head = footergame.add.sprite(0,0, this.recolor(this.bitmap(original[1], 0, 0), original[0].frame)))
+    redrawn.scale.setTo(3)
+    return redrawn
+  },
+  headcorrect: function(obj, which) {
+    let head = which[0] - 1
+    let body = which[1] - 1
+    obj.scale.x = obj.scale.y = pokedex[head].Faces[0].scale/pokedex[body].Faces[0].scale
+    obj.x = pokedex[head].Faces[0].x - pokedex[body].Faces[0].x
+    obj.y = pokedex[head].Faces[0].y - pokedex[body].Faces[0].y
+    console.log(obj.scale.x, obj.x, obj.y)
+  },
+  bitmap: function(bitmapdata, x, y) {
+    footergame.bmds.push(footergame.make.bitmapData())
+    footergame.bmds[footergame.bmds.length-1].load(bitmapdata)
+    return footergame.bmds[footergame.bmds.length-1]
+  },
+  destroyBitmaps: function() {
+  for (bmd of footergame.bmds) {
+      bmd.destroy()
+    }
+  },
+  recolor: function(img, thisfuse) {
+    for (let colorindex = 0; colorindex < footergame.mask.length; colorindex+= 3) {
+      let colarr
+      for (col in pokedex[thisfuse].Color) {
+        colarr = pokedex[thisfuse].Color[col]
+      }
+      img.replaceRGB(footergame.mask[colorindex], footergame.mask[colorindex+1], footergame.mask[colorindex+2], 255, colarr[colorindex], colarr[colorindex+1], colarr[colorindex+2], 255)
+    }
+    return img
+  } ,
   fusionmake: function () {
     let fusionfadeout = footergame.add.tween(fusion).to({ alpha: 0 }, 8000, Phaser.Easing.Linear.None, false)
     fusionfadeout.onComplete.add(this.emptyfusion, this)
@@ -377,10 +422,4 @@ project.Pokemotions.prototype = {
       this.decideDirection()
     }
   }
-}
-
-function  getRandomIntInclusive(min, max) {
-  min = Math.ceil(min)
-  max = Math.floor(max) + 1
-  return ("0" + (Math.floor(Math.random() * max) + 1)).substr(-2)
 }

@@ -4,7 +4,7 @@ function dehash (channel) {
 }
 
 function capitalize (n) {
-  return n[0].toUpperCase() + n.substr(1)
+  return n === undefined ? '' : n[0].toUpperCase() + n.substr(1)
 }
 
 function htmlEntities (html) {
@@ -135,6 +135,7 @@ function parseraffle (raff) {
 function urlDecode (message) {
   let checkall = message.split(' ')
   extensionloop: for (i in checkall) {
+    // if (['.png', '.gif', '.jpg'].forEach())
     if (checkall[i].toLowerCase().indexOf('.png') >= 0 || checkall[i].toLowerCase().indexOf('.gif') >= 0 || checkall[i].toLowerCase().indexOf('.jpg') >= 0) {
       return {
         image: checkall[i],

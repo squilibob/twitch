@@ -1,12 +1,14 @@
 const {dehash, capitalize, hosting, timeout, clearChat, submitchat, dequeue, parseraffle, urlDecode, isMod, checkPoke, checkDb, checkMoves, checkExist, getChunks} = require('./chat/chatfunctions')
 const {checkAvatar, getViewers, getStart, checkfollowers, checkstreamer} = require('./chat/chatapi')
 const {parseMessage} = require('./chat/chatbackend')
+const {process} = require('./chat/metaphone')
 
 class Store {
-  constructor(backlog) {
+  constructor(backlog, logtypes) {
     this.queue = []
     this.history = []
-    this.backlog = backlog
+    this.backlog = typeof(backlog) === 'number' ? backlog : 0
+    this.logtypes = Array.isArray(logtypes) ? logtypes : []
   }
   store(type, obj) {
     this.queue.push({type, obj})
@@ -17,21 +19,20 @@ class Store {
     this.history = this.history.slice(-this.backlog)
   }
   restore(){
-    (this.socket && this.history.length) &&this.socket.emit('history', this.history)
+    (this.socket && this.history.length) && this.socket.emit('history', this.history)
   }
   release() {
-     (this.socket && this.queue.length) &&  this.emit(this.queue.shift())
+     (this.socket && this.queue.length) && this.emit(this.queue.shift())
   }
   emit(payload) {
-    payload.type === 'chat' && this.archive(payload)
+    this.logtypes.includes(payload.type) && this.archive(payload)
     this.socket.emit(payload.type, payload.obj, this.release())
   }
 }
 
 module.exports = function(Twitch) {
-  global.chatqueue[Twitch.id] = new Store(Twitch.backlog)
-  // global.participants = await dbcall.sendraffleupdate().catch(err => console.log(err)) || {}
-  console.log(chatqueue)
+  global.chatqueue[Twitch.id] = new Store(Twitch.backlog, ['chat'])
+  // global.participants = await dbcall.sendraffleupdate('Users').catch(err => console.log(err)) || {}
   global.botqueue = {
     channel: Twitch.channel,
     messages: [],
@@ -56,11 +57,11 @@ module.exports = function(Twitch) {
 
   client.addListener('message', async function(channel, user, message, self) {
     if (!useravatars[user.username]) {
-      useravatars[user.username] = await dbcall.getavatar(user.username).catch(err => console.log(err))
+      useravatars[user.username] = await dbcall.getavatar('Users', user.username).catch(err => console.log(err))
       chatqueue[Twitch.id].store('displaystreamer', await checkstreamer(user['user-id']))
     }
     if (!badges[user.username]) {
-      badges[user.username] = await dbcall.getbadge(user.username).catch(err => console.log(err))
+      badges[user.username] = await dbcall.getbadge('Users', user.username).catch(err => console.log(err))
     }
     if (useravatars[user.username] < 0) useravatars[user.username] = await checkAvatar(user['user-id']).catch(err => console.log(err))
     parseMessage(Twitch, user, message, self, useravatars[user.username], badges[user.username])

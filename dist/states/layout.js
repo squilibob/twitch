@@ -99,7 +99,7 @@ project.Layout.prototype = {
         bloblen = 0
         for (current in counts[emotion][blob]) {
           let len
-          switch (counts[emotion][blob][current]) {
+           switch (counts[emotion][blob][current]) {
             case 'Short': len = 0.5
             break
             case 'Normal': len = 1
