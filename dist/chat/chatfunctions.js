@@ -65,7 +65,7 @@ function timeout (obj) {
   if (!recentTimeouts.hasOwnProperty(channel)) recentTimeouts[channel] = {}
   if (!recentTimeouts[channel].hasOwnProperty(username) || recentTimeouts[channel][username] + 1000 * 10 < +new Date()) {
     recentTimeouts[channel][username] = +new Date()
-    chatNotice(capitalize(username) + ' was timed-out in ' + capitalize(dehash(channel)), 1000, 1, 'chat-delete-timeout')
+    chatNotice({text: capitalize(username) + ' was timed-out in ' + capitalize(dehash(channel)), fadedelay:1000, level:1, class:'chat-delete-timeout'})
   }
   let toHide = document.querySelectorAll('.chat-line[data-channel="' + channel + '"][data-username="' + username + '"]:not(.chat-timedout) .chat-message')
   for (let i in toHide) {
@@ -86,19 +86,17 @@ function clearChat (channel) {
       h.className += ' chat-cleared'
     }
   }
-  chatNotice('Chat was cleared in channel ' + capitalize(dehash(channel)), 1000, 1, 'chat-delete-clear')
+  chatNotice({text: 'Chat was cleared in channel ' + capitalize(dehash(channel)), fadedelay:1000, level:1, class:'chat-delete-clear'})
 }
 
-function hosting (obj) {
+function host (obj) {
   if (!showHosting) return false
-  if (obj.total == '-') obj.total = 0
-  let chan = capitalize(dehash(obj.channel))
-  if (!obj.unhost) {
-    let targ = capitalize(obj.target)
-    chatNotice(chan + ' is now hosting ' + targ + ' for ' + obj.total + ' viewer' + (obj.total !== 1 ? 's' : '') + '.', null, null, 'chat-hosting-yes')
-  } else {
-    chatNotice(chan + ' is no longer hosting.', null, null, 'chat-hosting-no')
-  }
+  let text = {
+    hosted: obj.username + ' is now hosting ' + capitalize(dehash(obj.channel)),
+    hosting: capitalize(dehash(obj.channel)) + ' is now hosting ' + obj.username,
+    stopped: capitalize(dehash(obj.channel)) + ' stopped hosting'
+  }[obj.type] + (obj.viewers ? ' for ' + obj.viewers + ' viewer' + (obj.viewers !== 1 ? 's' : '') : '')
+  chatNotice({text: text, fadedelay:null, level:null, class:'chat-hosting-yes'})
 }
 
 function submitchat (text) {

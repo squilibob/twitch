@@ -43,8 +43,8 @@ project.Cards.prototype = {
     cardsgroup = []
     cards = JSON.parse(game.storage.getItem('cards'))
     for (card in cards) {
-      this.card(cardsgroup[cardsgroup.length] = this.add.group(), blocked + card * 256 * scaled, buttonstyle.horizontalorientation ? menu.getBounds().height + Presets.padding * 2 : 0, cards[card].poke, cards[card].level, MAXHEIGHT, LINEWIDTH, FILLCOLOR, LINECOLOR, color, strokecolor, numbercolor, BACKCOLOR)
-      setScale(cardsgroup[cardsgroup.length - 1], 0.6)
+      this.card(cardsgroup.push(this.add.group(), blocked + card * 256 * scaled, buttonstyle.horizontalorientation ? menu.getBounds().height + Presets.padding * 2 : 0, cards[card].poke, cards[card].level, MAXHEIGHT, LINEWIDTH, FILLCOLOR, LINECOLOR, color, strokecolor, numbercolor, BACKCOLOR))
+      setScale(cardsgroup.last, 0.6)
     }
 
     // this.card(cardtemplate = this.add.group(), blocked+0, 150, POKEMONS, 1, MAXHEIGHT, LINEWIDTH, FILLCOLOR, LINECOLOR, color, strokecolor, numbercolor, BACKCOLOR);
@@ -107,16 +107,16 @@ project.Cards.prototype = {
     }
 
     graphics[2] = game.add.text(0, 0, pokedex[POKEMONS].Pokemon.toLowerCase(), newtextstyle)
-    graphics[2].setTextBounds(graphics[1].x, graphics[1].y + graphics[graphics.length - 1].getBounds().height / 2 + graphics[1].scale.y * graphics[1].getBounds().height / 2)
+    graphics[2].setTextBounds(graphics[1].x, graphics[1].y + graphics.last.getBounds().height / 2 + graphics[1].scale.y * graphics[1].getBounds().height / 2)
     graphics[2].anchor.setTo(0.5)
 
     graphics[3] = game.add.text(0, 0, LEVEL, newtextstyle)
-    graphics[3].setTextBounds(graphics[1].x, graphics[1].y - graphics[graphics.length - 1].getBounds().height / 2 - graphics[1].scale.y * graphics[1].getBounds().height / 2)
+    graphics[3].setTextBounds(graphics[1].x, graphics[1].y - graphics.last.getBounds().height / 2 - graphics[1].scale.y * graphics[1].getBounds().height / 2)
     graphics[3].anchor.setTo(0.5, 0.25)
 
     graphics[4] = game.add.text(0, 0, 'level', newtextstyle)
     graphics[4].anchor.setTo(0.5)
-    graphics[4].setTextBounds(graphics[1].x, graphics[1].y - graphics[graphics.length - 1].getBounds().height / 2 - graphics[graphics.length - 2].getBounds().height / 2 - graphics[1].scale.y * graphics[1].getBounds().height / 2)
+    graphics[4].setTextBounds(graphics[1].x, graphics[1].y - graphics.last.getBounds().height / 2 - graphics[graphics.length - 2].getBounds().height / 2 - graphics[1].scale.y * graphics[1].getBounds().height / 2)
 
     graphics[5] = game.add.graphics(0, 0)
     graphics[5].beginFill(FILLCOLOR)
@@ -207,8 +207,8 @@ project.Cards.prototype = {
 //     let x = buttonstyle.position.x;
 //     for (let nextbutton = 1; nextbutton <= buttons.length; nextbutton++)
 //       x += this.getWidth(buttons[nextbutton-1]);
-//     textButton.define(buttons[buttons.length] = this.add.group(), this, text, x, buttonstyle.position.y, color);
-//     buttons[buttons.length-1].onChildInputDown.add(this.onClick, nextstate);
+//     textButton.define(buttons.push(this.add.group(), this, text, x, buttonstyle.position.y, color))
+//     buttons.last.onChildInputDown.add(this.onClick, nextstate);
 //   },
 //   create: function(){
 //     buttons = [];

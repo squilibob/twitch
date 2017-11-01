@@ -1,3 +1,14 @@
+if (!Array.prototype.hasOwnProperty('last')) {
+    Object.defineProperty(Array.prototype, 'last', {
+      get: function last() {
+        return this[this.length - 1]
+      },
+      set: function last(newValue) {
+        this[this.length - 1] = newValue
+      }
+    })
+}
+
 function hexstring (color) {
   return '#' + ('000000' + color.toString(16)).substr(-6)
 }
@@ -319,7 +330,9 @@ function setScale (group, size) {
 function rate (teamtoassess) {
   let teamscore = 0
   let assess = []
-  for (member in teamtoassess) { assess[assess.length] = pokedex[teamtoassess[member]] }
+  for (member in teamtoassess) {
+    assess.push(pokedex[teamtoassess[member]])
+  }
   for (member in assess) {
     for (checktier in Tiers) {
       if (Tiers[checktier] == assess[member].Tier) {
@@ -336,7 +349,7 @@ function drawteam (group, members, name, color) {
   let TeamTier = 0
   for (let currentmember = 0; currentmember < members.length; currentmember++) {
     team.push(game.add.sprite(spritesheet.x * currentmember, 0, 'spritesheet', members[currentmember]))
-    team[team.length - 1].anchor.setTo(0.5)
+    team.last.anchor.setTo(0.5)
     for (let check = 0; check < Tiers.length; check++) {
       if (pokedex[members[currentmember]].Tier == Tiers[check] && check > TeamTier) TeamTier = check
     }
@@ -416,17 +429,17 @@ let overlayselect = {
     }
     alphabet.sort()
     for (letter in alphabet) {
-      textButton.define(overlayletters[overlayletters.length] = game.add.group(), game, '  ' + alphabet[letter] + '  ', overlaycurrentposition.x, overlaycurrentposition.y, sectioncolors[5])
-      overlaycurrentposition.x += overlayletters[overlayletters.length - 1].getBounds().width + Presets.padding
+      textButton.define(overlayletters.push(game.add.group(), game, '  ' + alphabet[letter] + '  ', overlaycurrentposition.x, overlaycurrentposition.y, sectioncolors[5]))
+      overlaycurrentposition.x += overlayletters.last.getBounds().width + Presets.padding
       if (overlaycurrentposition.x > maxwidth) maxwidth = overlaycurrentposition.x
-      if (overlaycurrentposition.x + overlayletters[overlayletters.length - 1].getBounds().width + Presets.padding > (mobile ? 500 : game.world.width)) {
+      if (overlaycurrentposition.x + overlayletters.last.getBounds().width + Presets.padding > (mobile ? 500 : game.world.width)) {
         overlaycurrentposition.x = 0
-        overlaycurrentposition.y += overlayletters[overlayletters.length - 1].getBounds().height + Presets.padding
+        overlaycurrentposition.y += overlayletters.last.getBounds().height + Presets.padding
       }
-      overlayletters[overlayletters.length - 1].letter = alphabet[letter]
-      overlayletters[overlayletters.length - 1].onChildInputDown.add(this.renew, this)
+      overlayletters.last.letter = alphabet[letter]
+      overlayletters.last.onChildInputDown.add(this.renew, this)
     }
-    overlaycurrentposition.y += overlayletters[overlayletters.length - 1].getBounds().height + Presets.padding
+    overlaycurrentposition.y += overlayletters.last.getBounds().height + Presets.padding
     pokemongroup = this.list(pokemongroup, 0, overlaycurrentposition.y, show, maxwidth)
     overlaycurrentposition.y = pokemongroup.getBounds().y + pokemongroup.getBounds().height
 
@@ -447,17 +460,17 @@ let overlayselect = {
     let x = originx
     let y = originy
     for (poke in pokemon) {
-      list[list.length] = game.add.sprite(x, y, 'spritesheet')
-      list[list.length - 1].frame = pokemon[poke].id - 1
-      list[list.length - 1].inputEnabled = true
-      list[list.length - 1].events.onInputDown.add(this.send, this)
-      x += list[list.length - 1].width + Presets.padding
-      if (x + list[list.length - 1].width + Presets.padding > maxwidth) {
+      list.push(game.add.sprite(x, y, 'spritesheet'))
+      list.last.frame = pokemon[poke].id - 1
+      list.last.inputEnabled = true
+      list.last.events.onInputDown.add(this.send, this)
+      x += list.last.width + Presets.padding
+      if (x + list.last.width + Presets.padding > maxwidth) {
         x = originx
-        y += list[list.length - 1].height + Presets.padding
+        y += list.last.height + Presets.padding
       }
     }
-    y += list[list.length - 1].height + Presets.padding
+    y += list.last.height + Presets.padding
     group.addMultiple(list)
     return group
   }

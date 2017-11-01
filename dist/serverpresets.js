@@ -20,6 +20,7 @@ const Presets = {
 }
 const preloadscripts = [
   'consts',
+  '/js/polyfill',
   '/js/phaser-super-storage.min',
   '/js/localstorage',
   '/js/dex',
@@ -37,18 +38,18 @@ const preloadscripts = [
   {'Layout': '/states/layout'},
   // {'Blank': '/states/blank'},
   '/chat/clientoptions',
-  '/chat/tmi.min',
+  // '/chat/tmi.min',
   '/chat/chatvariables',
-  '/chat/tm',
-  '/chat/natures',
-  '/chat/hiddenpowers',
+  // '/chat/tm',
+  // '/chat/natures',
+  // '/chat/hiddenpowers',
   '/chat/twemoji.min',
   '/js/metaphone',
   '/chat/chatfunctions',
-  '/chat/chatapi',
+  // '/chat/chatapi',
   '/chat/chaticon',
-  '/chat/chatsocket',
-  '/chat/pokemonparse',
+  // '/chat/chatsocket',
+  // '/chat/pokemonparse',
   '/chat/chatfrontend',
   '/chat/chat'
 ]

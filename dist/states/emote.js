@@ -60,10 +60,10 @@ project.Emote.prototype = {
         x = 0
         y += height
       }
-      poke[poke.length] = game.add.sprite(x, y, 'pokemotevulpix')
-      poke[poke.length - 1].frame = i
-      poke[poke.length - 1].inputEnabled = true
-      poke[poke.length - 1].events.onInputDown.add(this.sendemote)
+      poke.push(game.add.sprite(x, y, 'pokemotevulpix'))
+      poke.last.frame = i
+      poke.last.inputEnabled = true
+      poke.last.events.onInputDown.add(this.sendemote)
     }
   }
 }

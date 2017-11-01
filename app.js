@@ -5,6 +5,7 @@ expressServer.server = require('http').Server(expressServer.app)
 expressServer.io = require('socket.io')(expressServer.server)
 expressServer.path = __dirname
 require('./dist/server/routes')(expressServer)
+require('./dist/js/polyfill')
 
 global.r = require('rethinkdb')
 
@@ -29,13 +30,14 @@ async function init(c){
   global.conn = c
   global.dbcall = require('./dist/server/database')
   global.pokedex = await dbcall.gettable('Users', 'Pokedex').catch(err => console.log(err))
+  pokedex.sort((a, b) => a.id - b.id)
   global.typechart = await dbcall.gettable('Users', 'TypeChart').catch(err => console.log(err))
   global.moves = await dbcall.gettable('Users', 'Moves').catch(err => console.log(err))
   global.tm = db_id_to_duple(await dbcall.gettable('Users', 'Tm').catch(err => console.log(err)))
   global.hm = db_id_to_duple(await dbcall.gettable('Users', 'Hm').catch(err => console.log(err)))
   global.natures = await dbcall.gettable('Users', 'Natures').catch(err => console.log(err))
   global.hiddenpower = await dbcall.gettable('Users', 'HiddenPowers').catch(err => console.log(err))
-  global.Abilities = await dbcall.gettable('Users', 'Abilities').catch(err => console.log(err))
+  global.abilities = await dbcall.gettable('Users', 'Abilities').catch(err => console.log(err))
   global.Bttv = await dbcall.gettable('Users', 'Bttv').catch(err => console.log(err))
   global.Ffz = await dbcall.gettable('Users', 'Ffz').catch(err => console.log(err))
   global.participants = {} // maybe use a Map instead of an object

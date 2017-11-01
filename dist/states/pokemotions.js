@@ -46,8 +46,6 @@ project.Pokemotions.prototype = {
     maxvelocity = 36
     this.firstround()
     this.addsocketlisteners(this)
-
-    // fusionqueue.push([37, 25])
   },
   addsocketlisteners: function (_this) {
     if (socket.hasListeners('receive emote') == false) {
@@ -113,21 +111,22 @@ project.Pokemotions.prototype = {
     }
     if (increment > 0) increment = (maxheight - 40) / increment
     for (option in options) {
-      listvotes[listvotes.length] = footergame.add.graphics(0, 0)
-      listvotes[listvotes.length - 1].beginFill(sectioncolors[(listvotes.length - 1) % sectioncolors.length])
-      listvotes[listvotes.length - 1].drawRect((listvotes.length - 1) * (footergame.world.width / options.length < maxwidth ? footergame.world.width / options.length : maxwidth), footergame.world.height - increment * options[option].tally, listvotes.length + (footergame.world.width / options.length < maxwidth ? footergame.world.width / options.length - 20 : maxwidth - 20), increment * options[option].tally)
-      listvotes[listvotes.length - 1].endFill()
-      listtext[listtext.length] = footergame.add.text(listvotes[listvotes.length - 1].getBounds().width / 2 + listvotes[listvotes.length - 1].getBounds().x, listvotes[listvotes.length - 1].getBounds().y + 6, options[option].name + ' - ' + options[option].tally, txtstyle)
-      listtext[listtext.length - 1].inputEnabled = true
-      listtext[listtext.length - 1].anchor.x = 0.5
-      listtext[listtext.length - 1].anchor.y = listtext[listtext.length - 1].getBounds().height + listtext[listtext.length - 1].y > footergame.world.height ? 1 : 0
+      listvotes.push(footergame.add.graphics(0, 0))
+      console.log('listvotes', listvotes)
+      listvotes.last.beginFill(sectioncolors[(listvotes.length - 1) % sectioncolors.length])
+      listvotes.last.drawRect((listvotes.length - 1) * (footergame.world.width / options.length < maxwidth ? footergame.world.width / options.length : maxwidth), footergame.world.height - increment * options[option].tally, listvotes.length + (footergame.world.width / options.length < maxwidth ? footergame.world.width / options.length - 20 : maxwidth - 20), increment * options[option].tally)
+      listvotes.last.endFill()
+      listtext.push(footergame.add.text(listvotes.last.getBounds().width / 2 + listvotes.last.getBounds().x, listvotes.last.getBounds().y + 6, options[option].name + ' - ' + options[option].tally, txtstyle))
+      listtext.last.inputEnabled = true
+      listtext.last.anchor.x = 0.5
+      listtext.last.anchor.y = listtext.last.getBounds().height + listtext.last.y > footergame.world.height ? 1 : 0
       let placeholdy = footergame.world.height - increment * options[option].tally
-      listvotes[listvotes.length - 1].y = footergame.world.height - increment * lowestvote
-      footergame.add.tween(listvotes[listvotes.length - 1]).to({ y: 0}, 2000, Phaser.Easing.Bounce.Out, true)
-      if (listtext[listtext.length - 1].anchor.y == 0) {
-        let placeholdy = listtext[listtext.length - 1].y// -listtext[listtext.length-1].getBounds().height/2;
-        listtext[listtext.length - 1].y = footergame.world.height - increment * lowestvote
-        footergame.add.tween(listtext[listtext.length - 1]).to({ y: placeholdy}, 2000, Phaser.Easing.Bounce.Out, true)
+      listvotes.last.y = footergame.world.height - increment * lowestvote
+      footergame.add.tween(listvotes.last).to({ y: 0}, 2000, Phaser.Easing.Bounce.Out, true)
+      if (listtext.last.anchor.y == 0) {
+        let placeholdy = listtext.last.y// -listtext.last.getBounds().height/2;
+        listtext.last.y = footergame.world.height - increment * lowestvote
+        footergame.add.tween(listtext.last).to({ y: placeholdy}, 2000, Phaser.Easing.Bounce.Out, true)
       }
     }
     listgroup.addChild(questiontext)
@@ -166,19 +165,17 @@ project.Pokemotions.prototype = {
 
     newtest = []
 
-    newtest[newtest.length] = footergame.add.sprite(footergame.world.width, 0, 'pokemotevulpix')
-    newtest[newtest.length - 1].frame = picture
-    newtest[newtest.length - 1].offset = 160
-    this.addtween(newtest[newtest.length - 1])
+    newtest.push(footergame.add.sprite(footergame.world.width, 0, 'pokemotevulpix'))
+    newtest.last.frame = picture
+    newtest.last.offset = 160
+    this.addtween(newtest.last)
 
-    let testarray = Array.from(message)
-
-    for (letter in testarray) {
-      newtest[newtest.length] = footergame.add.text(footergame.world.width, 32, testarray[letter], test)
-      newtest[newtest.length - 1].alpha = 0
-      if (newtest.length - 1 > 0) newtest[newtest.length - 1].offset = newtest[newtest.length - 2].offset + newtest[newtest.length - 2].getBounds().width + 24
-      else newtest[newtest.length - 1].offset = 0
-      this.addtween(newtest[newtest.length - 1])
+    for (letter of Array.from(message)) {
+      newtest.push(footergame.add.text(footergame.world.width, 32, letter, test))
+      newtest.last.alpha = 0
+      if (newtest.length - 1 > 0) newtest.last.offset = newtest[newtest.length - 2].offset + newtest[newtest.length - 2].getBounds().width + 24
+      else newtest.last.offset = 0
+      this.addtween(newtest.last)
     }
     let tempgroup = footergame.add.group()
     tempgroup.addMultiple(newtest)
@@ -203,8 +200,8 @@ project.Pokemotions.prototype = {
   },
   fusionshow: function (fusions) {
     runningfusionanimation = true
-    leftfuse = this.redrawsprite(this.newbody([fusions[0],fusions[0]]).children)
-    rightfuse = this.redrawsprite(this.newbody([fusions[1],fusions[1]]).children)
+    leftfuse = this.redrawsprite(this.newbody(Array(3).fill(fusions[0])).children)
+    rightfuse = this.redrawsprite(this.newbody(Array(3).fill(fusions[1])).children)
     rightfuse.x = footergame.width - 96
     fusion = this.redrawsprite(this.newbody(fusions).children)
     fusion.x = footergame.world.centerX - 144
@@ -218,39 +215,42 @@ project.Pokemotions.prototype = {
     let fusiongroup = footergame.add.group()
     let face = footergame.add.sprite(0, 0,'faces')
     let body = footergame.add.sprite(0, 0,'bodies')
-    face.frame = which[0] - 1
-    body.frame = which[1] - 1
+    let skin = footergame.add.sprite(0, 0,'bodies')
+    face.frame = which[0]
+    body.frame = which[1]
+    skin.frame = which.last
     fusiongroup.addChild(body)
     fusiongroup.addChild(face)
+    fusiongroup.addChild(skin)
     fusiongroup.visible = false
     return fusiongroup
   },
   redrawsprite: function(original) {
     let redrawn = footergame.add.group()
-    redrawn.addChild(footergame.add.sprite(0,0, this.recolor(this.bitmap(original[0], 0, 0), original[0].frame)))
-    redrawn.addChild(footergame.head = footergame.add.sprite(0,0, this.recolor(this.bitmap(original[1], 0, 0), original[0].frame)))
+    redrawn.addChild(footergame.add.sprite(0,0, this.recolor(this.bitmap(original[0], 0, 0), original.last.frame)))
+    redrawn.addChild(footergame.head = footergame.add.sprite(0,0, this.recolor(this.bitmap(original[1], 0, 0), original.last.frame)))
     redrawn.scale.setTo(3)
     return redrawn
   },
   headcorrect: function(obj, which) {
-    let head = which[0] - 1
-    let body = which[1] - 1
+    let head = which[0]
+    let body = which[1]
     obj.scale.x = obj.scale.y = pokedex[head].Faces[0].scale/pokedex[body].Faces[0].scale
     obj.x = pokedex[head].Faces[0].x - pokedex[body].Faces[0].x
     obj.y = pokedex[head].Faces[0].y - pokedex[body].Faces[0].y
-    console.log(obj.scale.x, obj.x, obj.y)
   },
   bitmap: function(bitmapdata, x, y) {
     footergame.bmds.push(footergame.make.bitmapData())
-    footergame.bmds[footergame.bmds.length-1].load(bitmapdata)
-    return footergame.bmds[footergame.bmds.length-1]
+    footergame.bmds.last.load(bitmapdata)
+    return footergame.bmds.last
   },
   destroyBitmaps: function() {
-  for (bmd of footergame.bmds) {
-      bmd.destroy()
+    while (footergame.bmds.length) {
+      bmd.pop().destroy()
     }
   },
   recolor: function(img, thisfuse) {
+    console.log('thisfuse', thisfuse, pokedex[thisfuse].Color, pokedex[thisfuse].id)
     for (let colorindex = 0; colorindex < footergame.mask.length; colorindex+= 3) {
       let colarr
       for (col in pokedex[thisfuse].Color) {
@@ -326,6 +326,7 @@ project.Pokemotions.prototype = {
     }
   },
   toggleplayerdirection: function (whichplayer) {
+    console.log('whichplayer.enemytarget', whichplayer.enemytarget)
     whichplayer.body.velocity.x *= -1
     whichplayer.scale.x *= -1
     whichplayer.children[0].scale.x = Math.sign(whichplayer.scale.x)
@@ -333,38 +334,45 @@ project.Pokemotions.prototype = {
   checkBounds: function () {
     for (checkplayer of player) {
       let playerdirection = Math.sign(checkplayer.body.velocity.x)
-        // console.log(checkplayer.x+maxvelocity, footergame.world.width);
       if ((checkplayer.x - checkplayer.body.width < 0 && playerdirection == -1) || (checkplayer.x + checkplayer.body.width >= footergame.world.width && playerdirection == 1)) {
         this.toggleplayerdirection(checkplayer)
       }
     }
   },
+  drawHpBar: function(target, health) {
+    target
+        .clear()
+        .lineStyle(1, 0xffffff, 0.5)
+        .beginFill(Phaser.Color.getColor32(255, 80, Math.floor(health / 100 * 255), 80))
+        .drawRect(-16 * health / 100, -20, 32 * health / 100, 6)
+        .endFill()
+  },
   checkHP: function () {
     let playersalive = false
     for (checkplayer of player) {
       (checkplayer.health < 1) && checkplayer.kill()
-        // barcolor = parseInt('0x50' + ('00' + Math.floor(checkplayer.health/100 * 255).toString(16)).substr(-2) + '00', 16);
-      barcolor = Phaser.Color.getColor32(255, 80, Math.floor(checkplayer.health / 100 * 255), 80)
+      this.drawHpBar(checkplayer.children[1], checkplayer.health)
+      // barcolor = Phaser.Color.getColor32(255, 80, Math.floor(checkplayer.health / 100 * 255), 80)
 
-      checkplayer.children[1]
-          .clear()
-          .lineStyle(1, 0xffffff, 0.5)
-          .beginFill(barcolor)
-          .drawRect(-16 * checkplayer.health / 100, -20, 32 * checkplayer.health / 100, 6)
-          .endFill()
+      // checkplayer.children[1]
+      //     .clear()
+      //     .lineStyle(1, 0xffffff, 0.5)
+      //     .beginFill(barcolor)
+      //     .drawRect(-16 * checkplayer.health / 100, -20, 32 * checkplayer.health / 100, 6)
+      //     .endFill()
       if (checkplayer.alive) playersalive = true
     }
     let enemiesalive = false
     for (checkenemy of enemy) {
       (checkenemy.health < 1) && checkenemy.kill()
-        // barcolor = parseInt('0x' + ('00' + Math.floor(checkenemy.health/100 * 255).toString(16)).substr(-2) + '0000', 16);
-      barcolor = Phaser.Color.getColor32(255, Math.floor(checkenemy.health / 100 * 255), 0, 0)
-      checkenemy.children[0]
-          .clear()
-          .lineStyle(1, 0xffffff, 0.5)
-          .beginFill(barcolor)
-          .drawRect(-16 * checkenemy.health / 100, -20, 32 * checkenemy.health / 100, 6)
-          .endFill()
+      this.drawHpBar(checkenemy.children[0], checkenemy.health)
+      // barcolor = Phaser.Color.getColor32(255, Math.floor(checkenemy.health / 100 * 255), 0, 0)
+      // checkenemy.children[0]
+      //     .clear()
+      //     .lineStyle(1, 0xffffff, 0.5)
+      //     .beginFill(barcolor)
+      //     .drawRect(-16 * checkenemy.health / 100, -20, 32 * checkenemy.health / 100, 6)
+      //     .endFill()
       if (checkenemy.alive) enemiesalive = true
     }
     if (!enemiesalive && playersalive) this.nextround()
@@ -383,34 +391,50 @@ project.Pokemotions.prototype = {
     }
     for (currentplayer of player) {
       currentplayer.enemytarget = null
-      for (currentenemy of enemy) {
-        if (currentplayer.alive && currentenemy.alive && Math.abs(currentplayer.x - currentenemy.x) < 60) {
+      enemy
+        .filter(currentenemy => currentplayer.alive && currentenemy.alive && Math.abs(currentplayer.x - currentenemy.x) < 60)
+        .forEach(currentenemy => {
           currentenemy.animations.play('walk', 4, true)
           currentenemy.alpha = 0.5
           if (Math.sign(currentplayer.x - currentenemy.x)) currentenemy.scale.x = -currentplayer.scale.x
           currentplayer.body.velocity.x = 0
           currentplayer.enemytarget = currentenemy.position.x
-            // currentenemy.enemytarget = currentplayer.position.x;
-        }
-      }
-      if (!currentplayer.enemytarget && Math.abs(currentplayer.body.velocity.x) < maxvelocity) currentplayer.body.velocity.x = maxvelocity * -Math.sign(currentplayer.scale.x)
+        })
+      if (!currentplayer.enemytarget && Math.abs(currentplayer.body.velocity.x) < maxvelocity) this.resumeMotion(currentplayer)
+     }
         // if (!currentplayer.enemytarget && Math.abs(currentplayer.body.velocity.x) < maxvelocity) currentplayer.body.velocity.x = currentplayer.body.velocity.x+Math.random(Math.abs(maxvelocity-currentplayer.body.velocity.x))* -Math.sign(currentplayer.scale.x);
-    }
+    // }
+  },
+  resumeMotion: function (target) {
+    target.body.velocity.x = maxvelocity * -Math.sign(target.scale.x)
   },
   calcAttack: function () {
-    for (currentplayer of player) {
-      if (currentplayer.alive) {
-        for (currentenemy of enemy) {
-          if (currentplayer.enemytarget == currentenemy.x) {
+    player
+      .filter(currentplayer => currentplayer.alive)
+      .forEach(currentplayer => {
+        enemy
+          .filter(currentenemy => currentplayer.enemytarget == currentenemy.x)
+          .forEach(currentenemy => {
             currentenemy.setHealth(currentenemy.health - 1)
             currentplayer.setHealth(currentplayer.health - 0.125)
-          }
-        }
-      }
-    }
+          })
+      })
+    // for (currentplayer of player) {
+    //   if (currentplayer.alive) {
+    //     for (currentenemy of enemy) {
+    //       if (currentplayer.enemytarget == currentenemy.x) {
+    //         currentenemy.setHealth(currentenemy.health - 1)
+    //         currentplayer.setHealth(currentplayer.health - 0.125)
+    //       }
+    //     }
+    //   }
+    // }
   },
   decideDirection: function () {
-    for (currentplayer of player) if (!currentplayer.enemytarget && Math.random() < 0.002) this.toggleplayerdirection(currentplayer)
+    player
+      .filter(currentplayer => !currentplayer.enemytarget && Math.random() < 0.002)
+      .forEach(currentplayer => this.toggleplayerdirection(currentplayer))
+    // for (currentplayer of player) if (!currentplayer.enemytarget && Math.random() < 0.002) this.toggleplayerdirection(currentplayer)
   },
   update: function () {
     if (fusionqueue.length && !runningfusionanimation) this.fusionshow(fusionqueue.shift())

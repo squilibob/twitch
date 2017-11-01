@@ -162,9 +162,9 @@ project.Layout.prototype = {
       pikaword = []
       for (character in counts[pikaemotion][parseInt(randomsound.split(' ')[1])-1]) {
         pikaword.push([ "ピ", "カ", "チャ", "ピカ", "ブレ", "ピカチュウ", "ピカチャ", "ピカ ピ", "ピ ピカ" ][[ "Pi", "Ka", "Cha", "Pika", "Bree", "Pikachu", "Pikacha", "Pika Pi", "Pi Pika" ].indexOf(character)])
-        // pikatextqueue[pikatextqueue.length - 1].pivot.x = 0
-        // pikatextqueue[pikatextqueue.length - 1].pivot.y = 800
-        // pikatextqueue[pikatextqueue.length - 1].angle = 90
+        // pikatextqueue.last.pivot.x = 0
+        // pikatextqueue.last.pivot.y = 800
+        // pikatextqueue.last.angle = 90
       }
       pikacharqueue.push(pikaword.join(' '))
       pikamessage.push(randomsound)
@@ -177,8 +177,8 @@ project.Layout.prototype = {
       texttopika.play(pikaqueue.shift()).onStop.add(() => { pikachutalking = false }, this)
       if (pikacharqueue.length) {
         pikatextqueue.push(game.add.text(textorigin.x, textorigin.y, pikacharqueue.shift(), pikatxtstyle))
-        pikatextqueue[pikatextqueue.length-1].pivot.y = 800
-        pikatextqueue[pikatextqueue.length-1].angle = 90
+        pikatextqueue.last.pivot.y = 800
+        pikatextqueue.last.angle = 90
       }
     }
   },

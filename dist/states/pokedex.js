@@ -124,7 +124,7 @@ project.Pokedex.prototype = {
 
     for (let currentmember = 0; currentmember < team_to_rate.length; currentmember++) {
       teamarray.push(game.add.sprite(spritesheet.x * currentmember, 0, 'spritesheet', team_to_rate[currentmember]))
-      teamarray[teamarray.length - 1].inputEnabled = true
+      teamarray.last.inputEnabled = true
     }
 
     fullteam.addMultiple(teamarray)

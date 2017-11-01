@@ -34,42 +34,14 @@ exports.checkImageExists = function (imageUrl, callBack) {
 }
 
 exports.timeout = function (Twitch, username) {
-  if (!doTimeouts) return false
-  if (!recentTimeouts.hasOwnProperty(channel)) recentTimeouts[channel] = {}
-  if (!recentTimeouts[channel].hasOwnProperty(username) || recentTimeouts[channel][username] + 1000 * 10 < +new Date()) {
-    recentTimeouts[channel][username] = +new Date()
     chatqueue[Twitch.id].store('timeout', {username: username, channel:exports.dehash(channel)})
-  }
-  let toHide = document.querySelectorAll('.chat-line[data-channel="' + channel + '"][data-username="' + username + '"]:not(.chat-timedout) .chat-message')
-  for (let i in toHide) {
-    let h = toHide[i]
-    if (typeof h === 'object') {
-      h.innerText = '<Message deleted>'
-      h.parentElement.className += ' chat-timedout'
-    }
-  }
 }
 
 exports.clearChat = function (Twitch) {
   chatqueue[Twitch.id].store('clear', exports.capitalize(exports.dehash(Twitch.channel)))
 }
 
-exports.hosting = function (Twitch, target, total, unhost) {
-  // if (!showHosting) return false
-  if (total == '-') total = 0
-  let chan = exports.capitalize(exports.dehash(Twitch.channel))
-  if (!unhost) {
-    let targ = exports.capitalize(target)
-    chatqueue[Twitch.id].store('starthost', {channel: chan, target: targ, total: total})
-  } else {
-    chatqueue[Twitch.id].store('stophost', chan)
-  }
-}
-
 exports.submitchat = function (text) {
-
-
-
   botqueue.messages.push(text)
 }
 
@@ -155,7 +127,99 @@ exports.checkPoke = function (originalmessage, maxpokes) {
   })
 }
 
+// make a list of keys first - func name: "getkeys"
+// if asked pokemon by name then for each pokemon by name return each keys "answer" - func name "formatsingle"
+// if asked how many pokemon - func name: "composite"
+function filterMessage(message) {
+  let ignore = ['pokemon', 'evs', 'evolve', 'faces']
+  let substitutions = {
+    'Height': ['high', 'tall'],
+    'Mass': ['heavy', 'weigh', ' kilo'],
+    'Sp.':  ['special']
+  }
+  return message
+    .split(' ')
+    .filter(item => !ignore.includes(item.toLowerCase()))
+    .map(item => {
+      for (sub in substitutions) {
+        if (substitutions[sub].includes(item.toLowerCase())) return sub
+      }
+      return item
+    })
+    .join(' ')
+}
+
+function getKeyList(poke, msg) {
+  let message = msg.toLowerCase()
+  let keys = []
+  Object.keys(poke)
+    .map(item => item.toLowerCase())
+    .reverse()
+    .forEach(field => {
+      let found = message.indexOf(field)
+      if (found >= 0) {
+        keys.push(message.substr(found, field.length))
+        message = message.replace(field, '')
+      }
+    })
+  return keys.reverse()
+}
+
+function keyValuePair(poke, key) {
+  let substitutions = {
+    'ability': 'possible ability to have',
+    'catch': 'catch rate',
+    'hatch': 'hatch rate',
+    'evolve': 'evolution',
+    'expv': 'base experience given',
+    'gender': 'chance of being female gender',
+    'item': 'recommended item',
+    'nature': 'recommended nature'
+  }
+  let suffixes = {
+    'Height': 'm',
+    'Mass': 'kg',
+    'Gender': '%',
+    'Ability': ' (hidden ability)'
+  }
+  let value = []
+  let field = poke[key]
+  if (field === undefined) return { key: [],  value: [] }
+  if (Array.isArray(field)) {
+    value = field
+  } else if (typeof(field) === 'object') {
+     value  = Object.keys(field)
+  } else value =[field]
+  value.last = value.last + (suffixes[key] === undefined ? '' : suffixes[key])
+  return {
+    key: substitutions[key.toLowerCase()] || key,
+    value: value
+  }
+}
+
+   //POKEMON's KEY KEYSUFFIX, [is, are] VALUE SUFFIX
+  // must check if VALUE is an object and only return the key of that object for Color and Forme
+
 exports.checkDb = function (obj) {
+
+  // suffixes
+  // 'Height' 'm'
+  // 'Mass' 'kg'
+  // 'Gender' '%'
+  // 'Ability' '(hidden ability)'
+
+  //KEYSUFFIX
+  //possible ability to have
+  //catch rate
+  //hatch rate
+  //evolution
+  //base experience given
+  //chance of being female gender
+  //recommended item
+  //recommended nature
+
+  //POKEMON's KEY [KEYSUFFIX, KEYSUFFIXplural] [is, are] VALUE SUFFIX
+  // must check if VALUE is an object and only return the key of that object for Color and Forme
   let message = obj.message
   let dexno = obj.pokemon[0]
 
@@ -165,36 +229,36 @@ exports.checkDb = function (obj) {
 
   testtypeloop: for (let iterate in command) {
     iterate = parseInt(iterate)
-    if (command[iterate].indexOf('type') >= 0 && obj.pokemon[0].Secondary) {
-      response = obj.pokemon[0].Pokemon + ' types are ' + obj.pokemon[0].Type + '/' + obj.pokemon[0].Secondary
+    if (command[iterate].indexOf('type') >= 0 && dexno.Secondary) {
+      response = dexno.Pokemon + ' types are ' + dexno.Type + '/' + dexno.Secondary
     } else {
-      sploop: for (let key in obj.pokemon[0]) {
+      sploop: for (let key in dexno) {
         if (iterate + 1 < command.length && (command[iterate] == 'sp.' || command[iterate] == 'special')) {
           sp = true
           if ('sp. ' + command[iterate + 1] == key.toLowerCase()) {
-            response = obj.pokemon[0].Pokemon + ' ' + key + ': ' + obj.pokemon[0][key]
+            response = dexno.Pokemon + ' ' + key + ': ' + dexno[key]
           }
         } else {
           if (command[iterate] == key.toLowerCase() && key != 'Pokemon' && key != 'EVs' && key != 'Forme' && key != 'Evolve' && key != 'Ability' && sp == false) {
-            if (obj.pokemon[0][key] !== undefined) if (obj.pokemon[0][key].length) response = obj.pokemon[0].Pokemon + ' ' + key + ': ' + obj.pokemon[0][key]
-            if (key == 'Nature' || key == 'Attack' || key == 'Defense' || key == 'Speed') {
+            if (dexno[key] !== undefined) if (dexno[key].length) response = dexno.Pokemon + ' ' + key + ': ' + dexno[key]
+            if (key == 'Nature' || key == 'Attack' || key == 'Defense' || key == 'Speed') { //conflict check against moves
               let tempresponse = checkMoves(obj)
               if (tempresponse) response = tempresponse
             }
           }
           if ((command[iterate] == key.toLowerCase() || command[iterate] == 'abilities') && key == 'Ability') {
-            if (obj.pokemon[0][key].length) {
-              response = obj.pokemon[0].Pokemon + ' has the abilit' + (obj.pokemon[0][key].length > 0 ? 'y' : 'ies') + ' ' + obj.pokemon[0].Ability.join(', ')
-              if (obj.pokemon[0][key].length > 2) response += ' (hidden ability)'
+            if (dexno[key].length) {
+              response = dexno.Pokemon + ' has the abilit' + (dexno[key].length > 0 ? 'y' : 'ies') + ' ' + dexno.Ability.join(', ')
+              if (dexno[key].length > 2) response += ' (hidden ability)'
             }
           }
           if ((command[iterate] == key.toLowerCase() || command[iterate] == 'formes') && key == 'Forme') {
-            response = obj.pokemon[0].Pokemon + ' Formes are'
-            for (forme in obj.pokemon[0].Forme) response += ', ' + forme
+            response = dexno.Pokemon + ' Formes are'
+            for (forme in dexno.Forme) response += ', ' + forme
           }
-          if (key == 'Mass' && (command[iterate].indexOf('mass') >= 0 || command[iterate] == 'heavy' || command[iterate].indexOf('weigh') >= 0)) response = obj.pokemon[0].Pokemon + "'s mass is " + obj.pokemon[0][key] + ' kg'
+          if (key == 'Mass' && (command[iterate].indexOf('mass') >= 0 || command[iterate] == 'heavy' || command[iterate].indexOf('weigh') >= 0)) response = dexno.Pokemon + "'s mass is " + dexno[key] + ' kg'
        // if (key == 'Mass' && command[iterate] == key.toLowerCase()) response += ' kg';
-          if (key == 'Height' && (command[iterate] == 'height' || command[iterate] == 'high' || command[iterate] == 'tall')) response = obj.pokemon[0].Pokemon + "'s height is " + obj.pokemon[0][key] + ' m'
+          if (key == 'Height' && (command[iterate] == 'height' || command[iterate] == 'high' || command[iterate] == 'tall')) response = dexno.Pokemon + "'s height is " + dexno[key] + ' m'
        // if (key == 'Height' && command[iterate] == key.toLowerCase()) response += ' m';
         }
       }
@@ -271,10 +335,11 @@ exports.checkExist = function (checkstring, checkarray, separateword) {
 exports.getChunks = function(message) {
   return new Promise(function(resolve, reject) {
     const {process} = require('./metaphone')
-    let chunks = []
-    for (word of message.split(' ')) {
-      chunks.push(process(word).length)
-    }
+    let chunks = message.split(' ').map(word => process(word).length)
+    // let chunks = []
+    // for (word of message.split(' ')) {
+    //   chunks.push(process(word).length)
+    // }
     resolve(chunks)
   })
 }

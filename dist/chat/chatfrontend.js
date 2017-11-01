@@ -1,3 +1,5 @@
+  var connectedchannels = []
+
   function displaystreamer(obj) {
     if (!obj.followers || obj.followers <= minfollowerstoshoutout) return false
     if (obj.banner == null) obj.banner = defaultavatar
@@ -31,19 +33,6 @@
       streamers.push(obj.username)
     }
   }
-
-/*
-          socket.on('newchatter', function (avatar){
-            console.log(avatar)
-                if (typeof(avatar) !== 'number') tempload = game.load.image('temp1', avatar, 32, 32)
-                tempload.onLoadComplete.add(_this.work, _this)
-                tempload.start()
-          })
-  work: function () {
-    game.add.sprite(300, 300, 'temp1')
-  },
-      game.load.crossOrigin = 'anonymous'
-      */
 
   function handleChat (obj) {
     var name = obj.user.username,
@@ -101,6 +90,7 @@
     chatLine.dataset.hide = ''
     chatLine.dataset.username = name
     chatLine.dataset.channel = chan
+    !connectedchannels.includes(chan) && connectedchannels.push(chan)
 
     if (user['message-type'] == 'action') {
       chatLine.className += ' chat-action'
@@ -108,7 +98,6 @@
     chatChannel.className = 'chat-channel'
     chatChannel.innerHTML = chan
 
-    console.log(avatar)
     if (typeof avatar !== 'number' || avatar < 0) {
       var chatAvatar = document.createElement('img')
       chatAvatar.className = 'chat-avatar'
@@ -144,7 +133,7 @@
       chatAlignment.appendChild(chatBadge)
     }
     streamers.includes(name) && chatAlignment.appendChild(chatStreamer)
-    if (showChannel && client.channels.length > 1) chatAlignment.appendChild(chatChannel)
+    if (showChannel && connectedchannels.length > 1) chatAlignment.appendChild(chatChannel)
     chatAlignment.appendChild(chatTime)
     chatLine.appendChild(chatAlignment)
 

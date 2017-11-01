@@ -29,38 +29,58 @@ exports.checkAvatar = function(username) {
   })
 }
 
-exports.getViewers = function(channel) {
-  return new Promise(function(resolve, reject) {
-    client.api({
-      url: 'https://api.twitch.tv/helix/streams?user_login=' + 'twitchplayspokemon',//channel,
-      headers: {
-          "Client-ID":  clientOptions.options.clientId
-      }
-    }, function (err, res, body) {
-      if (((body || {}).data || {})[0]) watching.viewers = body.data[0].viewer_count
+exports.getViewers = function(Twitch, channel) {
+  client.api({
+    url: 'https://api.twitch.tv/helix/streams?user_login=' + channel,
+    headers: {
+        "Client-ID":  clientOptions.options.clientId
+    }
+  }, function (err, res, body) {
+    if (((body || {}).data || {})) {
+      watching.viewers = body.data[0].viewer_count
       if (((body || {}).data || {})[0].type) {
         client.api({
           url: 'http://tmi.twitch.tv/group/user' + header(body.data[0].user_login, 'chatters', null, 3)
         }, function (err, res, tmibody) {
           if ((tmibody || {}).data) {
             watching.chatters = tmibody.data.chatters.viewers
-            socket.emit('send emote', {message: watching.chatters.length.toLocaleString() + ' in chat ' + watching.viewers.toLocaleString() + ' reported viewers', picture: 5})
-          }
+            chatqueue[Twitch.id].store('audience', watching)          }
         })
       }
-    })
+    }
   })
 }
 
 exports.getStart = function(channel) {
-  client.api({
-    url: 'https://api.twitch.tv/kraken/streams' + header(channel)
-  }, function (err, res, body) {
-    if ((body || {}).stream) {
-      started = new Date(body.stream.created_at)
-    }
+  return new Promise(function(resolve, reject) {
+    client.api({
+      url: 'https://api.twitch.tv/helix/streams?user_id=' + channel,
+      headers: {
+          "Client-ID":  clientOptions.options.clientId
+      }
+    }, function (err, res, body) {
+      err && console.log('err', err)
+      body ? body.data.forEach(field => resolve(new Date(field.started_at))) : reject(err)
+    })
   })
 }
+  // client.api({
+  //   url: 'https://api.twitch.tv/kraken/streams' + header(channel)
+  // }, function (err, res, body) {
+  //   if ((body || {}).stream) {
+  //     started = new Date(body.stream.created_at)
+  //   }
+  // })
+// }
+// exports.getStart = function(channel) {
+//   client.api({
+//     url: 'https://api.twitch.tv/kraken/streams' + header(channel)
+//   }, function (err, res, body) {
+//     if ((body || {}).stream) {
+//       started = new Date(body.stream.created_at)
+//     }
+//   })
+// }
 
 exports.checkfollowers = function(Twitch, hidenotify, current) {
   let maxcursor = 100

@@ -11,13 +11,13 @@ menubuttons.prototype = {
     let x = buttonstyle.x
     let y = buttonstyle.y
     for (let nextbutton = 1; nextbutton <= menubuttons.length; nextbutton++) { buttonstyle.horizontalorientation ? x += menubuttons[nextbutton - 1].children[0].graphicsData[0].shape.width : y += menubuttons[nextbutton - 1].children[0].graphicsData[0].shape.height }
-    textButton.define(menubuttons[menubuttons.length] = game.add.group(), game, text, x, y, color)
-    menubuttons[menubuttons.length - 1].onChildInputDown.add(this.onClick, nextstate)
+    textButton.define(menubuttons.push(game.add.group(), game, text, x, y, color))
+    menubuttons.last.onChildInputDown.add(this.onClick, nextstate)
     if (Presets.autohide) {
-      menubuttons[menubuttons.length - 1].setAll('alpha', 0)
-      menubuttons[menubuttons.length - 1].onChildInputDown.add(this.show, menubuttons[menubuttons.length - 1])
-      menubuttons[menubuttons.length - 1].onChildInputOver.add(this.show, menubuttons[menubuttons.length - 1])
-      menubuttons[menubuttons.length - 1].onChildInputOut.add(this.hide, menubuttons[menubuttons.length - 1])
+      menubuttons.last.setAll('alpha', 0)
+      menubuttons.last.onChildInputDown.add(this.show, menubuttons.last)
+      menubuttons.last.onChildInputOver.add(this.show, menubuttons.last)
+      menubuttons.last.onChildInputOut.add(this.hide, menubuttons.last)
     }
   },
   hide: function (whichbutton) {

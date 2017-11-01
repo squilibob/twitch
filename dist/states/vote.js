@@ -75,21 +75,21 @@ project.Vote.prototype = {
     }
     if (increment > 0) increment = (maxheight - 40) / increment
     for (option in options) {
-      listvotes[listvotes.length] = game.add.graphics(0, 0)
-      listvotes[listvotes.length - 1].beginFill(sectioncolors[(listvotes.length - 1) % sectioncolors.length])
-      listvotes[listvotes.length - 1].drawRect((listvotes.length - 1) * (game.world.width / options.length < maxwidth ? game.world.width / options.length : maxwidth), game.world.height - increment * options[option].tally, listvotes.length + (game.world.width / options.length < maxwidth ? game.world.width / options.length - 20 : maxwidth - 20), increment * options[option].tally)
-      listvotes[listvotes.length - 1].endFill()
-      listtext[listtext.length] = game.add.text(listvotes[listvotes.length - 1].getBounds().width / 2 + listvotes[listvotes.length - 1].getBounds().x, listvotes[listvotes.length - 1].getBounds().y + 6, options[option].name + ' - ' + options[option].tally, txtstyle)
-      listtext[listtext.length - 1].inputEnabled = true
-      listtext[listtext.length - 1].anchor.x = 0.5
-      listtext[listtext.length - 1].anchor.y = listtext[listtext.length - 1].getBounds().height + listtext[listtext.length - 1].y > game.world.height ? 1 : 0
+      listvotes.push(game.add.graphics(0, 0))
+      listvotes.last.beginFill(sectioncolors[(listvotes.length - 1) % sectioncolors.length])
+      listvotes.last.drawRect((listvotes.length - 1) * (game.world.width / options.length < maxwidth ? game.world.width / options.length : maxwidth), game.world.height - increment * options[option].tally, listvotes.length + (game.world.width / options.length < maxwidth ? game.world.width / options.length - 20 : maxwidth - 20), increment * options[option].tally)
+      listvotes.last.endFill()
+      listtext.push(game.add.text(listvotes.last.getBounds().width / 2 + listvotes.last.getBounds().x, listvotes.last.getBounds().y + 6, options[option].name + ' - ' + options[option].tally, txtstyle))
+      listtext.last.inputEnabled = true
+      listtext.last.anchor.x = 0.5
+      listtext.last.anchor.y = listtext.last.getBounds().height + listtext.last.y > game.world.height ? 1 : 0
       let placeholdy = game.world.height - increment * options[option].tally
-      listvotes[listvotes.length - 1].y = game.world.height - increment * lowestvote
-      game.add.tween(listvotes[listvotes.length - 1]).to({ y: 0}, 2000, Phaser.Easing.Bounce.Out, true)
-      if (listtext[listtext.length - 1].anchor.y == 0) {
-        let placeholdy = listtext[listtext.length - 1].y// -listtext[listtext.length-1].getBounds().height/2;
-        listtext[listtext.length - 1].y = game.world.height - increment * lowestvote
-        game.add.tween(listtext[listtext.length - 1]).to({ y: placeholdy}, 2000, Phaser.Easing.Bounce.Out, true)
+      listvotes.last.y = game.world.height - increment * lowestvote
+      game.add.tween(listvotes.last).to({ y: 0}, 2000, Phaser.Easing.Bounce.Out, true)
+      if (listtext.last.anchor.y == 0) {
+        let placeholdy = listtext.last.y// -listtext.last.getBounds().height/2;
+        listtext.last.y = game.world.height - increment * lowestvote
+        game.add.tween(listtext.last).to({ y: placeholdy}, 2000, Phaser.Easing.Bounce.Out, true)
       }
     }
     listgroup.addChild(questiontext)

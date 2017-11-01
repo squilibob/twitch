@@ -67,11 +67,13 @@ project.Raffle.prototype = {
       if (spinspeed == 0) {
         testRad = radian - (arrow.rotation - Math.PI * 0.5) % radian
 
-        for (user of usersraffle) {
-          if (testRad > user.startradian && testRad < user.endradian) this.winraffle(user.id)
-        }
+        let drawnwinner = usersraffle.find(user => testRad > user.startradian && testRad < user.endradian)
+        drawnwinner && this.winraffle(drawnwinner.id)
+        // for (user of usersraffle) {
+        //   if (testRad > user.startradian && testRad < user.endradian) this.winraffle(user.id)
+        // }
         spinslow = 0
-      };
+      }
       if (spinspeed) arrow.rotation += spinspeed / 100
 
     //   for (let movement = 0; movement < spinspeed; movement++) {
@@ -89,7 +91,7 @@ project.Raffle.prototype = {
     //           if (displaygroup.children[member].x < -playersprite.x) {
     //             queuegroup.addChild(displaygroup.children[member])
     //             displaygroup.addChild(queuegroup.children[0])
-    //             displaygroup.children[displaygroup.children.length - 1].x = displaygroup.children[displaygroup.children.length - 2].x + displaygroup.children[displaygroup.children.length - 1].width
+    //             displaygroup.children.last.x = displaygroup.children[displaygroup.children.length - 2].x + displaygroup.children.last.width
     //           }
     //         }
     //       }
@@ -126,33 +128,34 @@ project.Raffle.prototype = {
           usersraffle[user].endradian = endradian
           let angle = (startradian + endradian) / 2
           graphics.push(game.add.graphics(0, 0))
-          graphics[graphics.length - 1]
+          graphics
+            .last
             .clear()
             .beginFill(sectioncolors[arc % sectioncolors.length])
             .arc(0, 0, donutchartradius, -startradian, -endradian, true, 360)
             .endFill()
           text.push(game.add.text(0, 0, usersraffle[user].id, { font: '24px Arial', fill: hexstring(sectioncolors[arc % sectioncolors.length])}))
-          if (angle > Math.PI / 2 && angle < Math.PI * 3 / 2) text[text.length - 1].angle = -game.math.radToDeg(angle) - 180
-          else text[text.length - 1].angle = -game.math.radToDeg(angle)
-          donutcoords = this.findpoint(0, 0, -angle, donutchartradius + text[text.length - 1].getBounds().width / 2)
-          with_object(text[text.length - 1], {
+          if (angle > Math.PI / 2 && angle < Math.PI * 3 / 2) text.last.angle = -game.math.radToDeg(angle) - 180
+          else text.last.angle = -game.math.radToDeg(angle)
+          donutcoords = this.findpoint(0, 0, -angle, donutchartradius + text.last.getBounds().width / 2)
+          with_object(text.last, {
             x: donutcoords.x,
             y: donutcoords.y
           })
             .anchor.setTo(0.5)
-          donutcoords = this.findpoint(0, 0, -angle, donutchartradius + text[text.length - 1].getBounds().width + playersprite.x / 2)
+          donutcoords = this.findpoint(0, 0, -angle, donutchartradius + text.last.getBounds().width + playersprite.x / 2)
           icons.push(game.add.sprite(donutcoords.x, donutcoords.y, 'playersprite'))
-          with_object(icons[icons.length - 1], {
+          with_object(icons.last, {
             frame: usersraffle[user].displayicon * 4,
-            angle: text[text.length - 1].angle
+            angle: text.last.angle
           })
             .anchor.setTo(0.5)
           percent.push(game.add.text(0, 0, Math.floor(usersraffle[user].chance / totalchance * 1000) / 10 + '% ', { font: '24px Arial', fill: hexstring(sectioncolors[arc % sectioncolors.length])}))
-          donutcoords = this.findpoint(0, 0, -angle, donutchartradius * 0.85 - percent[percent.length - 1].getBounds().width / 2)
-          with_object(percent[percent.length - 1], {
+          donutcoords = this.findpoint(0, 0, -angle, donutchartradius * 0.85 - percent.last.getBounds().width / 2)
+          with_object(percent.last, {
             x: donutcoords.x,
             y: donutcoords.y,
-            angle: text[text.length - 1].angle
+            angle: text.last.angle
           })
             .anchor.setTo(0.5)
           startradian = endradian
@@ -197,8 +200,8 @@ project.Raffle.prototype = {
   //         //   y += playersprite.y;
   //         // }
   //         temp.push(game.add.sprite(x, yoffset + y, 'playersprite'))
-  //         temp[temp.length - 1].frame = members[member].displayicon * 4
-  //         temp[temp.length - 1]['username'] = members[member].id
+  //         temp.last.frame = members[member].displayicon * 4
+  //         temp.last['username'] = members[member].id
   //         if (displaygroup.children.length < maxwidth && temp.length > maxwidth) {
   //           displaygroup.addMultiple(temp)
   //           temp = []

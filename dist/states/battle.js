@@ -26,7 +26,7 @@ project.Battle.prototype = {
     //   let TeamTier = 0;
     //   for (let currentmember = 0; currentmember < members.length; currentmember++){
     //     team.push(game.add.sprite(spritesheet.x*currentmember, 0, 'spritesheet', members[currentmember]));
-    //     team[team.length-1].anchor.setTo(0.5);
+    //     team.last.anchor.setTo(0.5);
     //       for (let check=0; check < Tiers.length; check++){
     //         if (pokedex[members[currentmember]].Tier == Tiers[check] && check > TeamTier) TeamTier = check;
     //       }
@@ -100,7 +100,7 @@ project.Battle.prototype = {
         temp[3].endFill()
         currentline += temp[0].getBounds().height + Presets.padding
         board.push(game.add.group())
-        board[board.length - 1].addMultiple(temp)
+        board.last.addMultiple(temp)
 
         let dim = {x: leaderboardlabel.x - Presets.padding, y: leaderboardlabel.y - Presets.padding, width: 0, height: leaderboardlabel.getBounds().height + Presets.padding}
         for (grp in board) {

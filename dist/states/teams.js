@@ -66,9 +66,9 @@ project.Teams.prototype = {
   newmember: function (index) {
     if (pokedex[index].Forme) console.log('has forme', pokedex[index].Forme)
     currentTeam.create(0, 0, 'spritesheet', index)
-    currentTeam.children[currentTeam.children.length - 1].scale.setTo(scale)
-    currentTeam.children[currentTeam.children.length - 1].inputEnabled = true
-    currentTeam.children[currentTeam.children.length - 1].events.onInputDown.add(this.removefromteam, this)
+    currentTeam.children.last.scale.setTo(scale)
+    currentTeam.children.last.inputEnabled = true
+    currentTeam.children.last.events.onInputDown.add(this.removefromteam, this)
     this.positioncurrent()
     currentTeam.y = teampadding.height - saveteam.getBounds().height - currentTeam.getBounds().height
     return this
@@ -116,9 +116,9 @@ project.Teams.prototype = {
     for (let name in teams) {
       if (!team_name) team_name = name
       drawteam(teamlist[teamlist.length] = game.add.group(), teams[name], name, sectioncolors[teamlist.length % sectioncolors.length])
-      teamlist[teamlist.length - 1].onChildInputOver.add(this.onOver, this)
-      teamlist[teamlist.length - 1].onChildInputOut.add(this.onOut, this)
-      teamlist[teamlist.length - 1].onChildInputDown.add(this.onClick, this)
+      teamlist.last.onChildInputOver.add(this.onOver, this)
+      teamlist.last.onChildInputOut.add(this.onOut, this)
+      teamlist.last.onChildInputDown.add(this.onClick, this)
     }
     this.positionteams()
     if (migrateteam) this.updatedb()
@@ -145,10 +145,10 @@ project.Teams.prototype = {
     let thisteam = []
     if (currentTeam.children.length > 0 && this.checkname(teamname.value) == -1) {
       for (member in currentTeam.children) thisteam.push(currentTeam.children[member].frame)
-      drawteam(teamlist[teamlist.length] = game.add.group(), thisteam, teamname.value, sectioncolors[0])
-      teamlist[teamlist.length - 1].onChildInputOver.add(this.onOver, this)
-      teamlist[teamlist.length - 1].onChildInputOut.add(this.onOut, this)
-      teamlist[teamlist.length - 1].onChildInputDown.add(this.onClick, this)
+      drawteam(teamlist.push(game.add.group(), thisteam, teamname.value, sectioncolors[0]))
+      teamlist.last.onChildInputOver.add(this.onOver, this)
+      teamlist.last.onChildInputOut.add(this.onOut, this)
+      teamlist.last.onChildInputDown.add(this.onClick, this)
 
       this
         .positionteams()

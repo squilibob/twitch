@@ -1,6 +1,7 @@
 const {dehash, capitalize, htmlEntities, checkImageExists, timeout, hosting, submitchat, dequeue, parseraffle, urlDecode, isMod, checkPoke, checkDb, checkMoves, checkExist} = require('./chatfunctions')
 const {checkAvatar, getViewers, getStart, checkfollowers, checkstreamer} = require('./chatapi')
 const {findpoke, validatetype, weakTo, resistantTo, effective} = require('./pokemonparse')
+const  response_length = 12
 
 let started,
   maxpokes = 802,
@@ -8,10 +9,10 @@ let started,
   botDelay = 1, // Number of seconds between each bot message
   autocry = false // Play the pokemon's cry sound whenever it is mentioned in chat
 
-exports.parseMessage = async function(Twitch, user, message, self, avatar, badge) {
+exports.parseMessage = async function(Twitch, user, channel, message, self, avatar, badge) {
     if (user['message-type'] != 'chat' && user['message-type'] != 'action') return false
     var messagepayload = {
-      channel: dehash(Twitch.channel),
+      channel: dehash(channel),
       twitchID: Twitch.id,
       user: user,
       message: message,
@@ -52,11 +53,11 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
     messagepayload.message = parseurl.message
     var image = parseurl.image
 
-    if (!self && containsquestion && !response && messagepayload.pokemon.length) { response = checkDb(messagepayload) }
+    //if (!self && containsquestion && !response && messagepayload.pokemon.length) { response = checkDb(messagepayload) }
 
     if (!self && containsquestion && !response) { response = checkMoves(messagepayload) }
 
-    displaycommand && chatqueue[Twitch.id].store('chat', {channel:Twitch.channel, message: messagepayload.message, user: messagepayload.user, self: messagepayload.self, avatar: avatar, badge: badge, image: image})
+    displaycommand && chatqueue[Twitch.id].store('chat', {channel:messagepayload.channel, message: messagepayload.message, user: messagepayload.user, self: messagepayload.self, avatar: avatar, badge: badge, image: image})
     response && submitchat(response)
   }
 
@@ -92,8 +93,26 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: true
       },
       action: async function (obj) {
-        client.join(obj.parameters[0])
+        await client.join(obj.parameters[0])
         return false
+      }
+    },
+    '!part': {
+      altcmds: [],
+      help: 'this command leaves chat of another twitch streamers channel',
+      times: 0,
+      requires:
+      {
+        question: false,
+        display: true,
+        exclusive: true,
+        pokemon: 0,
+        parameters: 1,
+        modonly: true
+      },
+      action: async function (obj) {
+        let success = await client.part(dehash(obj.parameters[0]))
+        return dehash(success.pop()) === dehash(obj.parameters[0]) ? 'parted ' + obj.parameters[0] : false
       }
     },
     '!raid': {
@@ -132,7 +151,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
       },
       action: async function (obj) {
         let response
-        var findtm = parseInt(obj.message.slice(obj.message.toLowerCase().indexOf('tm') + 2, obj.message.toLowerCase().indexOf('tm') + 5))
+        let findtm = parseInt(obj.message.slice(obj.message.toLowerCase().indexOf('tm') + 2, obj.message.toLowerCase().indexOf('tm') + 5))
         if (findtm > 0 && findtm < 101) { tmnameloop: for (var key in tm[findtm - 1]) response = 'TM' + findtm + ' ' + key + ' can be obtained at ' + tm[findtm - 1][key] } else {
           tmnumberloop: for (num = tm.length; num > 0; num--) {
             tmnamefromnumberloop: for (var key in tm[num - 1]) {
@@ -159,7 +178,7 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
       action: async function (obj) {
         let response
         if (obj.message.toLowerCase().indexOf('hm') >= 0) {
-          var findtm = parseInt(obj.message.slice(obj.message.toLowerCase().indexOf('hm') + 2, obj.message.toLowerCase().indexOf('hm') + 5))
+          let findtm = parseInt(obj.message.slice(obj.message.toLowerCase().indexOf('hm') + 2, obj.message.toLowerCase().indexOf('hm') + 5))
           if (findtm > 0 && findtm < 8) { hmloop: for (var key in hm[findtm - 1]) response = 'HM' + findtm + ' ' + key + ' can be obtained in ORAS at ' + hm[findtm - 1][key] } else {
             hmnumberloop: for (num = 1; num < 8; num++) {
               hmnamefromnumberloop: for (var key in hm[num - 1]) { if (obj.message.toLowerCase().indexOf(key.toLowerCase()) >= 0) response = 'HM' + num + ' ' + key + ' can be obtained at ' + hm[num - 1][key] }
@@ -183,9 +202,11 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         modonly: false
       },
       action: async function (obj) {
-        let response
-        hiddenpowerloop: for (hptype of hiddenpower) {
-          if (obj.message.toLowerCase().indexOf(hptype.id) >= 0) response = 'in order to get hidden power ' + hptype.id + ' your pokemon needs IVs to be hp: ' + hptype.iv[0] + ' att: ' + hptype.iv[1] + ' def: ' + hptype.iv[2] + ' sp. att: ' + hptype.iv[3] + ' sp. def: ' + hptype.iv[4] + ' speed: ' + hptype.iv[5] }
+        let response =
+        hiddenpower
+          .filter(hptype => obj.message.toLowerCase().includes(hptype.id))
+          .map(hptype => 'in order to get hidden power ' + hptype.id + ' your pokemon needs IVs to be hp: ' + hptype.iv[0] + ' att: ' + hptype.iv[1] + ' def: ' + hptype.iv[2] + ' sp. att: ' + hptype.iv[3] + ' sp. def: ' + hptype.iv[4] + ' speed: ' + hptype.iv[5])
+          .join(' and ')
         return response
       }
     },
@@ -701,25 +722,43 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
       },
       action: async function (obj) {
         if (obj.pokemon.length) return
-        let response
-        abilityloop: for (ability in abilities) {
-          if (obj.message.toLowerCase().indexOf(ability.toLowerCase()) >= 0) {
-            if (obj.message.toLowerCase().indexOf('pokemon') >= 0) {
-              var hasability = []
-              for (testpoke of pokedex) {
-                for (testability of testpoke.Ability) { if (testability == ability) hasability.push(testpoke.Pokemon) }
+        let response = abilities
+          .filter(ability => obj.message.toLowerCase().includes(ability.id.toLowerCase()))
+          .map(ability => {
+            if (obj.message.toLowerCase().includes('pokemon')) {
+              let matches = pokedex.filter(poke => poke.Ability.includes(ability.id))
+              let hasability = 'the pokemon with the ability ' + ability.id + ' are: ' + matches
+                .splice(0, response_length)
+                .map(poke => poke.Pokemon)
+                .join(', ')
+              if (matches.length) {
+                hasability += '(' + matches.length + ' more)'
               }
-              if (hasability.length) response = 'the pokemon with the ability ' + ability + ' are: '
-              if (hasability.length < response_length + 1) response += hasability.join(', ')
-              else {
-                pokemonthatcanlearnloop: for (var learnresponse = 0; learnresponse < response_length - 1; learnresponse++) {
-                  response += hasability[learnresponse] + ', '
-                }
-                response += (hasability.length - response_length) + ' more'
-              }
-            } else response = ability + ': ' + abilities[ability]
-          }
-        }
+              return hasability
+            }
+            else {
+             return (ability.id + ': ' + ability.desc)
+            }
+          })
+        // abilityloop: for (ability in abilities) {
+          // if (obj.message.toLowerCase().indexOf(ability.toLowerCase()) >= 0) {
+            // if (obj.message.toLowerCase().includes('pokemon')) {
+              // var hasability = []
+              // for (testpoke of pokedex) {
+              //   for (testability of testpoke.Ability) { if (testability == ability.id) hasability.push(testpoke.Pokemon) }
+              // }
+              // let hasability = pokedex.filter(poke => poke.Ability === ability.id)
+              // if (hasability.length) response = 'the pokemon with the ability ' + ability.id + ' are: '
+              // if (hasability.length < response_length + 1) response += hasability.join(', ')
+              // else {
+                // pokemonthatcanlearnloop: for (var learnresponse = 0; learnresponse < response_length - 1; learnresponse++) {
+                  // response += hasability[learnresponse] + ', '
+                // }
+                // response += (hasability.length - response_length) + ' more'
+              // }
+            // } else response = ability.id + ': ' + ability.desc
+          // }
+        // })
         return response
       }
     },
@@ -740,9 +779,9 @@ exports.parseMessage = async function(Twitch, user, message, self, avatar, badge
         let fused = []
         if (typeof (obj.pokemon[0].id) === 'number' && typeof (obj.pokemon[1].id) === 'number') {
           if (obj.pokemon[0].id > 0 && obj.pokemon[0].id < 392 && obj.pokemon[1].id > 0 && obj.pokemon[1].id < 392) {
-             fused.push(obj.pokemon[0].id)
-             obj.pokemon[1] && fused.push(obj.pokemon[1].id)
-             obj.pokemon[2] && fused.push(obj.pokemon[2].id)
+             fused.push(obj.pokemon[0].id - 1)
+             obj.pokemon[1] && fused.push(obj.pokemon[1].id - 1)
+             obj.pokemon[2] && fused.push(obj.pokemon[2].id - 1)
              chatqueue[obj.twitchID].store('show fusion', fused)
            }
         }

@@ -3,13 +3,12 @@ function chatbot () {
   socket.on('chat', payload => handleChat(payload))
   socket.on('notice', payload => chatNotice(payload))
   socket.on('displaystreamer', payload => displaystreamer(payload))
-  socket.on('clear', payload => clearChat(payload))
   socket.on('bits', payload => chatNotice({notice: payload.userstate.username + ' has donated ' + payload.userstate.bits + ' bits', fadedelay: 20000, level:1}))
-  socket.on('subscriber', payload => chatNotice({notice: payload.username + ' has subscribed (' + payload.method + ')', fadedelay: 20000, level:1}))
-  socket.on('timeout', payload =>  timeout(payload))
-  socket.on('starthost', payload => hosting(payload.channel, payload.target, payload.total, true))
-  socket.on('stophost', payload => hosting(payload, '-', '-', true))
   socket.on('follower', payload => chatNotice({notice: payload.username +  ' is now following (follower #' + Object.keys(payload.number).length.toLocaleString() + ')', fadedelay: 20000, level:1}))
+  socket.on('host', payload => host(payload))
+  socket.on('subscriber', payload => chatNotice({notice: payload.username + ' has subscribed (' + payload.method + ')', fadedelay: 20000, level:1}))
+  socket.on('clear', payload => clearChat(payload))
+  socket.on('timeout', payload =>  timeout(payload))
 
 
   //justentered.length > 0 && submitchat(justentered.join(', ') + (justentered.length == 1 ? ' has' : ' have') + ' been entered into the raffle')

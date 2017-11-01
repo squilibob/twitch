@@ -41,39 +41,34 @@ module.exports = function(Twitch) {
 
   botDelay = 1, // Number of seconds between each bot message
   showConnectionNotices = true // Show messages like "Connected" and "Disconnected"
+  //start('56648155') // twitch plays pokemon
 
   let joinAnnounced = []
 
-  client.on('hosted', function (channel, username, total, autohost) {
-    let chan = dehash(channel)
-    chan = capitalize(chan)
-    if (typeof (total) === 'number') {
-      chatqueue[Twitch.id].store('notice', {text: username + ' is now ' + (autohost ? 'auto' : '') + 'hosting ' + chan + ' for ' + total + ' viewer' + (total !== 1 ? 's' : '') + '.', class: 'chat-hosting-yes' })
-    }
-    else {
-      chatqueue[Twitch.id].store('notice', {text: username + ' is now ' + (autohost ? 'auto' : '') + 'hosting ' + chan + '.', class: 'chat-hosting-yes' })
-    }
+  client.on('hosted', function (channel, username, viewers, autohost) {
+      chatqueue[Twitch.id].store('host', {type: 'hosted', channel:channel, username:username, viewers:viewers, autohost:autohost})
+  })
+  client.addListener('hosting', function(channel, target, viewers) {
+      chatqueue[Twitch.id].store('host', {type: 'hosting', channel:channel, username:target, viewers:viewers})
+  })
+  client.addListener('unhost', function (channel, viewers) {
+      chatqueue[Twitch.id].store('host', {type: 'stopped', channel:channel, viewers:viewers})
   })
 
   client.addListener('message', async function(channel, user, message, self) {
     if (!useravatars[user.username]) {
       useravatars[user.username] = await dbcall.getavatar('Users', user.username).catch(err => console.log(err))
       chatqueue[Twitch.id].store('displaystreamer', await checkstreamer(user['user-id']))
+      chatqueue[Twitch.id].store('receive new player', {poke: 1, name: user.username}) // use card for poke
     }
     if (!badges[user.username]) {
       badges[user.username] = await dbcall.getbadge('Users', user.username).catch(err => console.log(err))
     }
     if (useravatars[user.username] < 0) useravatars[user.username] = await checkAvatar(user['user-id']).catch(err => console.log(err))
-    parseMessage(Twitch, user, message, self, useravatars[user.username], badges[user.username])
+    parseMessage(Twitch, user, channel, message, self, useravatars[user.username], badges[user.username])
   })
   client.addListener('timeout', timeout)
   client.addListener('clearchat', clearChat, Twitch)
-  client.addListener('hosting', function(target, total) {
-    hosting(Twitch, target, total, false)
-  })
-  client.addListener('unhost', function (channel, viewers) {
-    hosting(Twitch, channel, null, true)
-  })
 
   client.addListener('connecting', function (address, port) { if (showConnectionNotices) chatqueue[Twitch.id].store('notice', {text: address + ':' + port, fadedelay:1000, level:-4, class:'chat-connection-good-connecting'}) })
   client.addListener('logon', function () { if (showConnectionNotices) chatqueue[Twitch.id].store('notice', {text:'Authenticating', fadedelay:1000, level:-3, class: 'chat-connection-good-logon' }) })
@@ -84,10 +79,6 @@ module.exports = function(Twitch) {
     console.log(userstate, message)
     chatqueue[Twitch.id].store('bits', {userstate: userstate, message: message})
     // Object { badges: Object, bits: "50", color: "#FF0000", display-name: "jennluv69", emotes: null, id: "9ff6f821-6419-4f9a-a4ab-f4c638012ae2", mod: false, room-id: "39392583", subscriber: false, tmi-sent-ts: "1498980326580", turbo, user-id, user-type, username}
-    let chunks = []
-    for (word of message.split(' ')) {
-      chunks.push(process(word).length)
-    }
     chatqueue[Twitch.id].store('metaphone', {chunks: await getChunks(message), message: 'pikachu said:\n' + message + '\n(from ' + userstate['display-name'] + ')'})
     // expressServer.socket.emit('metaphone', chunks, 'pikachu said:\n' + message + '\n(from ' + userstate['display-name'] + ')')
   })

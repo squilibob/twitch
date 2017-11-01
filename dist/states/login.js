@@ -17,13 +17,13 @@ project.Login.prototype = {
     focused = 0
 
     this.game.stage.backgroundColor = Presets.bgcolor
-    textInput.define(form[form.length] = this.add.group(), this, {label: 'Twitch user name', placeholder: 'Username', type: 'text', margin: Presets.padding, divider: Presets.padding, x: x + margin, y: 0, charwidth: 24})
+    textInput.define(form.push(this.add.group(), this, {label: 'Twitch user name', placeholder: 'Username', type: 'text', margin: Presets.padding, divider: Presets.padding, x: x + margin, y: 0, charwidth: 24}))
     y.next++
-    textInput.define(form[form.length] = this.add.group(), this, {label: 'In game name', placeholder: 'in game name', type: 'text', margin: Presets.padding, divider: Presets.padding, x: x + margin, y: y.spacing * y.next, charwidth: 12})
+    textInput.define(form.push(this.add.group(), this, {label: 'In game name', placeholder: 'in game name', type: 'text', margin: Presets.padding, divider: Presets.padding, x: x + margin, y: y.spacing * y.next, charwidth: 12}))
     y.next++
-    textInput.define(form[form.length] = this.add.group(), this, {label: '3DS friend code', placeholder: 'fc', type: 'number', margin: Presets.padding, divider: Presets.padding, x: x + margin, y: y.spacing * y.next, charwidth: 4})
-    textInput.define(form[form.length] = this.add.group(), this, {type: 'number', margin: Presets.padding, divider: Presets.padding, x: x + form[2].children[0].width + margin, y: y.spacing * y.next, charwidth: 4})
-    textInput.define(form[form.length] = this.add.group(), this, {type: 'number', margin: Presets.padding, divider: Presets.padding, x: x + form[2].children[0].width * 2 + margin, y: y.spacing * y.next, charwidth: 4})
+    textInput.define(form.push(this.add.group(), this, {label: '3DS friend code', placeholder: 'fc', type: 'number', margin: Presets.padding, divider: Presets.padding, x: x + margin, y: y.spacing * y.next, charwidth: 4}))
+    textInput.define(form.push(this.add.group(), this, {type: 'number', margin: Presets.padding, divider: Presets.padding, x: x + form[2].children[0].width + margin, y: y.spacing * y.next, charwidth: 4}))
+    textInput.define(form.push(this.add.group(), this, {type: 'number', margin: Presets.padding, divider: Presets.padding, x: x + form[2].children[0].width * 2 + margin, y: y.spacing * y.next, charwidth: 4}))
     y.next++
 
     textButton.define(button = this.add.group(), game, 'Save these details', 0, y.spacing * y.next, sectioncolors[1])

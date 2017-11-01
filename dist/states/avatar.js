@@ -17,7 +17,7 @@ project.Avatar.prototype = {
     menu.addMultiple(menubuttons)
 
     if (!pokedexoptions.externalteams) {
-      sunicon = game.add.sprite(menubuttons[menubuttons.length - 1].getBounds().x + menubuttons[menubuttons.length - 1].getBounds().width, 0, 'sun')
+      sunicon = game.add.sprite(menubuttons.last.getBounds().x + menubuttons.last.getBounds().width, 0, 'sun')
       sunicon.scale.setTo(0.05)
       sunicon.tint = Presets.normalstate
       sunicon.inputEnabled = true

@@ -8,6 +8,7 @@ project.Footer.prototype = {
 
   preload: function () {
     footergame.load.script('Pokemotions', '/states/pokemotions.js')
+    footergame.load.script('Polyfill', '/js/polyfill')
     // let script;
     // for (testscript in preloadscripts) {
     //   if (typeof(preloadscripts[testscript]) == 'object')
