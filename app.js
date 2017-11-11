@@ -42,6 +42,7 @@ async function init(c){
   global.Ffz = await dbcall.gettable('Users', 'Ffz').catch(err => console.log(err))
   global.participants = {} // maybe use a Map instead of an object
   global.chatqueue = {}
+  global.botqueue = {}
   global.useravatars = {}
   global.badges = {}
   global.streamers = []

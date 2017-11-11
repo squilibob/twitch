@@ -36,8 +36,9 @@ exports.getViewers = function(Twitch, channel) {
         "Client-ID":  clientOptions.options.clientId
     }
   }, function (err, res, body) {
-    if (((body || {}).data || {})) {
-      watching.viewers = body.data[0].viewer_count
+    if (((body || {}).data)) {
+      watching.viewers = body.data.length ? body.data[0].viewer_count : 0
+      if (body.data.length)
       if (((body || {}).data || {})[0].type) {
         client.api({
           url: 'http://tmi.twitch.tv/group/user' + header(body.data[0].user_login, 'chatters', null, 3)

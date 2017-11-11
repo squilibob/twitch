@@ -1,7 +1,7 @@
-const {dehash, capitalize, htmlEntities, checkImageExists, timeout, hosting, submitchat, dequeue, parseraffle, urlDecode, isMod, checkPoke, checkDb, checkMoves, checkExist} = require('./chatfunctions')
+const {dehash, capitalize, htmlEntities, checkImageExists, timeout, hosting, submitchat, dequeue, parseraffle, urlDecode, isMod, checkExist} = require('./chatfunctions')
+const {checkPoke, checkDb, getMoveList, checkMoves, compoundCheck, describeMove} = require('./fieldparse')
 const {checkAvatar, getViewers, getStart, checkfollowers, checkstreamer} = require('./chatapi')
 const {findpoke, validatetype, weakTo, resistantTo, effective} = require('./pokemonparse')
-const  response_length = 12
 
 let started,
   maxpokes = 802,
@@ -18,11 +18,13 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
       message: message,
       self: self,
       pokemon: checkPoke(message, maxpokes),
+      responseSize: botqueue[Twitch.id].responseSize
     }
 
     var modmessage = isMod(user)
     var question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which'] // 'who ', 'why ', 'did ',
     var containsquestion = checkExist(message, question, true)
+    let containsmoves = getMoveList(messagepayload)
     let response
     var displaycommand = true
 
@@ -53,12 +55,21 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
     messagepayload.message = parseurl.message
     var image = parseurl.image
 
-    //if (!self && containsquestion && !response && messagepayload.pokemon.length) { response = checkDb(messagepayload) }
-
-    if (!self && containsquestion && !response) { response = checkMoves(messagepayload) }
+    if (!self && containsquestion && !response) {
+      if (messagepayload.pokemon.length) {
+        response = checkDb(messagepayload, containsmoves)
+      } else {
+        if (messagepayload.message.toLowerCase().includes('pokemon')) {
+          response = compoundCheck(messagepayload, containsmoves)
+          // if (containsmoves.length && !response) response =  checkMoves(messagepayload, containsmoves)
+        } else {
+          if (containsmoves.length) response = describeMove(containsmoves, messagepayload.message)
+        }
+      }
+    }
 
     displaycommand && chatqueue[Twitch.id].store('chat', {channel:messagepayload.channel, message: messagepayload.message, user: messagepayload.user, self: messagepayload.self, avatar: avatar, badge: badge, image: image})
-    response && submitchat(response)
+    response && submitchat(response, Twitch.id)
   }
 
   var parser = {
@@ -433,48 +444,6 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
         return response
       }
     },
-    'egg group': {
-      altcmds: [],
-      help: 'this command displays what egg groups a pokemon is in',
-      times: 0,
-      requires:
-      {
-        question: false,
-        display: true,
-        exclusive: false,
-        pokemon: 1,
-        parameters: 1,
-        modonly: false
-      },
-      action: async function (obj) {
-        let response
-        if (obj.pokemon[0]['Egg Group I']) {
-          if (obj.pokemon[0]['Egg Group II'] && obj.pokemon[0]['Egg Group II'] != ' ') response = obj.pokemon[0].Pokemon + ' is in egg groups ' + obj.pokemon[0]['Egg Group I'] + ' & ' + obj.pokemon[0]['Egg Group II']
-          else if (obj.pokemon[0]['Egg Group I'].length) response = obj.pokemon[0].Pokemon + ' is in egg group ' + obj.pokemon[0]['Egg Group I']
-        }
-        return response
-      }
-    },
-    'ev': {
-      altcmds: ['evs'],
-      help: 'this command shows what effort values a defeated pokemon will yield',
-      times: 0,
-      requires:
-      {
-        question: true,
-        display: true,
-        exclusive: true,
-        pokemon: 1,
-        parameters: 0,
-        modonly: false
-      },
-      action: async function (obj) {
-        let response
-        response = obj.pokemon[0].Pokemon + ' will reward the EVs:'
-        evloop: for (ev in obj.pokemon[0].EVs) response += ' ' + obj.pokemon[0].EVs[ev] + ' x ' + ev
-        return response
-      }
-    },
     '!raffle': {
       altcmds: [],
       help: 'this command shows a users chance to win the raffle if they are in the raffle',
@@ -654,6 +623,24 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
         if (reply != obj.message && reply != '') { return reply }
       }
     },
+   '!more': {
+     altcmds: [],
+     help: 'this command shows the pokemon that were omitted in the previous search due to space restrictions',
+     requires :
+     {
+       question: false,
+       exclusive: false,
+       display: false,
+       pokemon: 0,
+       parameters: 0,
+       modonly: false
+     },
+     action: async function(obj){
+        let more = botqueue[obj.twitchID].more.length > botqueue[obj.twitchID].responseSize ? '... ' + (botqueue[obj.twitchID].more.length - botqueue[obj.twitchID].responseSize) + ' more' : ''
+        let response = botqueue[obj.twitchID].more.splice(0, botqueue[obj.twitchID].responseSize).join(', ')
+        return response + more
+     }
+   },
     '!battle': {
       altcmds: [],
       help: 'this command dispays help on how to battle',
@@ -707,61 +694,84 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
         return reply
       }
     },
-    'abilit': {
-      altcmds: [],
-      help: 'this command displays the abilities of a pokemon',
-      times: 0,
-      requires:
-      {
-        question: true,
-        display: true,
-        exclusive: false,
-        pokemon: 0,
-        parameters: 1,
-        modonly: false
-      },
-      action: async function (obj) {
-        if (obj.pokemon.length) return
-        let response = abilities
-          .filter(ability => obj.message.toLowerCase().includes(ability.id.toLowerCase()))
-          .map(ability => {
-            if (obj.message.toLowerCase().includes('pokemon')) {
-              let matches = pokedex.filter(poke => poke.Ability.includes(ability.id))
-              let hasability = 'the pokemon with the ability ' + ability.id + ' are: ' + matches
-                .splice(0, response_length)
-                .map(poke => poke.Pokemon)
-                .join(', ')
-              if (matches.length) {
-                hasability += '(' + matches.length + ' more)'
-              }
-              return hasability
-            }
-            else {
-             return (ability.id + ': ' + ability.desc)
-            }
-          })
-        // abilityloop: for (ability in abilities) {
-          // if (obj.message.toLowerCase().indexOf(ability.toLowerCase()) >= 0) {
-            // if (obj.message.toLowerCase().includes('pokemon')) {
-              // var hasability = []
-              // for (testpoke of pokedex) {
-              //   for (testability of testpoke.Ability) { if (testability == ability.id) hasability.push(testpoke.Pokemon) }
-              // }
-              // let hasability = pokedex.filter(poke => poke.Ability === ability.id)
-              // if (hasability.length) response = 'the pokemon with the ability ' + ability.id + ' are: '
-              // if (hasability.length < response_length + 1) response += hasability.join(', ')
-              // else {
-                // pokemonthatcanlearnloop: for (var learnresponse = 0; learnresponse < response_length - 1; learnresponse++) {
-                  // response += hasability[learnresponse] + ', '
-                // }
-                // response += (hasability.length - response_length) + ' more'
-              // }
-            // } else response = ability.id + ': ' + ability.desc
-          // }
-        // })
-        return response
-      }
-    },
+  // 'egg group': {
+  //     altcmds: [],
+  //     help: 'this command displays what egg groups a pokemon is in',
+  //     times: 0,
+  //     requires:
+  //     {
+  //       question: false,
+  //       display: true,
+  //       exclusive: false,
+  //       pokemon: 1,
+  //       parameters: 1,
+  //       modonly: false
+  //     },
+  //     action: async function (obj) {
+  //       let response
+  //       if (obj.pokemon[0]['Egg Group I']) {
+  //         if (obj.pokemon[0]['Egg Group II'] && obj.pokemon[0]['Egg Group II'] != ' ') response = obj.pokemon[0].Pokemon + ' is in egg groups ' + obj.pokemon[0]['Egg Group I'] + ' & ' + obj.pokemon[0]['Egg Group II']
+  //         else if (obj.pokemon[0]['Egg Group I'].length) response = obj.pokemon[0].Pokemon + ' is in egg group ' + obj.pokemon[0]['Egg Group I']
+  //       }
+  //       return response
+  //     }
+  //   },
+  //   'ev': {
+  //     altcmds: ['evs'],
+  //     help: 'this command shows what effort values a defeated pokemon will yield',
+  //     times: 0,
+  //     requires:
+  //     {
+  //       question: true,
+  //       display: true,
+  //       exclusive: true,
+  //       pokemon: 1,
+  //       parameters: 0,
+  //       modonly: false
+  //     },
+  //     action: async function (obj) {
+  //       let response
+  //       response = obj.pokemon[0].Pokemon + ' will reward the EVs:'
+  //       evloop: for (ev in obj.pokemon[0].EVs) response += ' ' + obj.pokemon[0].EVs[ev] + ' x ' + ev
+  //       return response
+  //     }
+  //   },
+  //   'abilit': {
+  //     altcmds: [],
+  //     help: 'this command displays the abilities of a pokemon',
+  //     times: 0,
+  //     requires:
+  //     {
+  //       question: true,
+  //       display: true,
+  //       exclusive: false,
+  //       pokemon: 0,
+  //       parameters: 1,
+  //       modonly: false
+  //     },
+  //     action: async function (obj) {
+  //       if (obj.pokemon.length) return
+  //       let response = abilities
+  //         .filter(ability => obj.message.toLowerCase().includes(ability.id.toLowerCase()))
+  //         .map(ability => {
+  //           if (obj.message.toLowerCase().includes('pokemon')) {
+  //             let matches = pokedex.filter(poke => poke.Ability.includes(ability.id))
+  //             let hasability = 'the pokemon with the ability ' + ability.id + ' are: ' + matches
+  //               .splice(0, response_length)
+  //               .map(poke => poke.Pokemon)
+  //               .join(', ')
+  //             if (matches.length) {
+  //               hasability += '(' + matches.length + ' more)'
+  //             }
+  //             return hasability
+  //           }
+  //           else {
+  //            return (ability.id + ': ' + ability.desc)
+  //           }
+  //         })
+         // return response
+      // }
+    // },
     '!fuse': {
       altcmds: [],
       help: 'this command displays alexonsager fusion on the stream',
@@ -837,7 +847,7 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
                 for (key in json.emotes) {
                   socket.emit('Insert bttv', json.emotes[key])
                 }
-                submitchat('loaded ' + json.emotes.length + ' emotes')
+                chatqueue[obj.twitchID].store('notice', {text:'loaded ' + json.emotes.length + ' emotes', fadedelay:1000, level:-4})
                 socket.emit('Ask for table', 'Bttv')
               }
             })
@@ -870,7 +880,7 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
               if ((json || {}).sets) {
                 for (key in json.sets) {
                   socket.emit('Insert ffz', json.sets[key])
-                  submitchat('loaded ' + json.sets[key].emoticons.length + ' emotes from ' + json.sets[key].title)
+                  chatqueue[obj.twitchID].store('notice', {text:'loaded ' + json.sets[key].emoticons.length + ' emotes from ' + json.sets[key].title, fadedelay:1000, level:-4})
                 }
                 socket.emit('Ask for table', 'Ffz')
               }

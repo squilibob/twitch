@@ -33,10 +33,12 @@ class Store {
 module.exports = function(Twitch) {
   global.chatqueue[Twitch.id] = new Store(Twitch.backlog, ['chat'])
   // global.participants = await dbcall.sendraffleupdate('Users').catch(err => console.log(err)) || {}
-  global.botqueue = {
+  global.botqueue[Twitch.id] = {
     channel: Twitch.channel,
     messages: [],
-    lastMessage: Date.now()
+    lastMessage: Date.now(),
+    more: [],
+    responseSize: 12
   }
 
   botDelay = 1, // Number of seconds between each bot message
@@ -65,7 +67,7 @@ module.exports = function(Twitch) {
       badges[user.username] = await dbcall.getbadge('Users', user.username).catch(err => console.log(err))
     }
     if (useravatars[user.username] < 0) useravatars[user.username] = await checkAvatar(user['user-id']).catch(err => console.log(err))
-    parseMessage(Twitch, user, channel, message, self, useravatars[user.username], badges[user.username])
+    parseMessage(Twitch, user, channel, message, self, useravatars[user.username], badges[user.username]).catch(err => console.log(err))
   })
   client.addListener('timeout', timeout)
   client.addListener('clearchat', clearChat, Twitch)
@@ -121,6 +123,6 @@ module.exports = function(Twitch) {
     // setInterval(repeating_notice_website, 3000000),
     // setInterval(repeating_notice_signup, 7200000),
     setInterval(checkfollowers, 180000, Twitch, false),
-    setInterval(dequeue, 1000 * botDelay, botDelay)
+    setInterval(dequeue, 1000 * botDelay, botDelay, Twitch.id)
   ]
 }
