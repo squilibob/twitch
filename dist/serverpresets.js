@@ -22,7 +22,7 @@ const preloadscripts = [
   'consts',
   '/js/phaser-super-storage.min',
   '/js/localstorage',
-  '/js/polyfill',
+  // '/js/polyfill',
   '/js/dex',
   '/js/phaser-input',
   '/js/helperfunctions',
