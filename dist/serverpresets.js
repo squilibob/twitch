@@ -20,9 +20,9 @@ const Presets = {
 }
 const preloadscripts = [
   'consts',
-  '/js/polyfill',
   '/js/phaser-super-storage.min',
   '/js/localstorage',
+  '/js/polyfill',
   '/js/dex',
   '/js/phaser-input',
   '/js/helperfunctions',
@@ -44,7 +44,7 @@ const preloadscripts = [
   // '/chat/natures',
   // '/chat/hiddenpowers',
   '/chat/twemoji.min',
-  '/js/metaphone',
+  '/server/chat/metaphone',
   '/chat/chatfunctions',
   // '/chat/chatapi',
   '/chat/chaticon',
