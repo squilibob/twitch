@@ -309,42 +309,42 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
         return  obj.user.username + ': reloaded avatar image'
       }
     },
-    '!enter': {
-      altcmds: [],
-      help: 'this command enters the user into the raffle',
-      times: 0,
-      requires:
-      {
-        question: false,
-        display: false,
-        exclusive: false,
-        pokemon: 0,
-        parameters: 0,
-        modonly: false
-      },
-      action: async function (obj) {
-        dbcall.manualraffle('Users', obj.user.username, true)
-        return false
-      }
-    },
-    '!leave': {
-      altcmds: [],
-      help: 'this command removes a user from the raffle',
-      times: 0,
-      requires:
-      {
-        question: false,
-        display: true,
-        exclusive: false,
-        pokemon: 0,
-        parameters: 0,
-        modonly: false
-      },
-      action: async function (obj) {
-        dbcall.manualraffle('Users', obj.user.username, false)
-        return false
-      }
-    },
+    // '!enter': {
+    //   altcmds: [],
+    //   help: 'this command enters the user into the raffle',
+    //   times: 0,
+    //   requires:
+    //   {
+    //     question: false,
+    //     display: false,
+    //     exclusive: false,
+    //     pokemon: 0,
+    //     parameters: 0,
+    //     modonly: false
+    //   },
+    //   action: async function (obj) {
+    //     dbcall.manualraffle('Users', obj.user.username, true)
+    //     return false
+    //   }
+    // },
+    // '!leave': {
+    //   altcmds: [],
+    //   help: 'this command removes a user from the raffle',
+    //   times: 0,
+    //   requires:
+    //   {
+    //     question: false,
+    //     display: true,
+    //     exclusive: false,
+    //     pokemon: 0,
+    //     parameters: 0,
+    //     modonly: false
+    //   },
+    //   action: async function (obj) {
+    //     dbcall.manualraffle('Users', obj.user.username, false)
+    //     return false
+    //   }
+    // },
     '!vote': {
       altcmds: [],
       help: 'this command votes for a poll option',
@@ -617,9 +617,12 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
       },
       action: async function (obj) {
         var reply = ''
-        if (obj.pokemon[0].Location) reply += obj.pokemon[0].Pokemon + ' SuMo locations: ' + obj.pokemon[0].Location
+        if (obj.pokemon[0].Location) {
+          if (Array.isArray(obj.pokemon[0].Location)) reply += obj.pokemon[0].Pokemon + ' USUM locations: ' + obj.pokemon[0].Location.join(', ')
+          else reply += obj.pokemon[0].Pokemon + ' SuMo locations: ' + obj.pokemon[0].Location
+        } else if (obj.pokemon[0].SuMo) reply += obj.pokemon[0].Pokemon + ' SuMo locations: ' + obj.pokemon[0].SuMo
         else if (obj.pokemon[0].locationORAS) reply += obj.pokemon[0].Pokemon + ' ORAS locations: ' + obj.pokemon[0].locationORAS
-        else reply = 'No location in ORAS for ' + obj.pokemon[0].Pokemon
+        else reply = 'No location for ' + obj.pokemon[0].Pokemon
         if (reply != obj.message && reply != '') { return reply }
       }
     },

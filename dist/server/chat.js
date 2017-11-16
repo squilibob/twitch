@@ -125,4 +125,5 @@ module.exports = function(Twitch) {
     setInterval(checkfollowers, 180000, Twitch, false),
     setInterval(dequeue, 1000 * botDelay, botDelay, Twitch.id)
   ]
+
 }

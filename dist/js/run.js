@@ -99,6 +99,8 @@ project.Init.prototype = {
     game.stage.disableVisibilityChange = true
     game.plugins.add(Fabrique.Plugins.InputField)
     game.plugins.add(Fabrique.Plugins.SuperStorage)
+    // game.plugins.add( Phaser.Plugin.StateTransition)
+
     for (statename in states) { game.state.add(statename, project[statename]) }
     this.socketready = new Phaser.Signal()
     this.socketready.add(this.ready, this)

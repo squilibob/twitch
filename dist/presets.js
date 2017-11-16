@@ -24,12 +24,14 @@ const preloadscripts = [
   '/js/phaser-super-storage.min',
   '/js/localstorage',
   '/js/phaser-input',
+  '/js/phaser-state-transition.min',
   '/js/dex',
   '/js/helperfunctions',
   {'Login': '/states/login'},
   {'Avatar': '/states/avatar'},
   {'Teams': '/states/teams'},
   {'Raffle': '/states/raffle'},
+  {'Blank': '/states/blank'},
   // {'Battle': '/states/battle'},
   {'Vote': '/states/vote'},
   {'Emote': '/states/emote'}
@@ -37,7 +39,7 @@ const preloadscripts = [
   // {'Pokedex': '/states/pokedex'},
 ]
 
-const firststate = 'Login'
+const firststate = 'Blank'
 
 const pokedexoptions = {
   scoring: false,
