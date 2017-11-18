@@ -3,6 +3,8 @@ module.exports = function(io, socket) {
   socket.on('chatbot', function(Twitch) {
     chatqueue[Twitch.id].socket = socket
     chatqueue[Twitch.id].release()
+    chatqueue[Twitch.id].store('ffz', Ffz)
+    chatqueue[Twitch.id].store('bttv', Bttv)
   })
 
   socket.on('request to connect', async function(msg){

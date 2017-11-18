@@ -23,7 +23,8 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
 
     var modmessage = isMod(user)
     var question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which'] // 'who ', 'why ', 'did ',
-    var containsquestion = checkExist(message, question, true)
+    // var containsquestion = checkExist(message, question, true)
+    let containsquestion = question.includes(message.split(' ').shift())
     let containsmoves = getMoveList(messagepayload)
     let response
     var displaycommand = true

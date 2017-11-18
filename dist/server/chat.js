@@ -126,4 +126,17 @@ module.exports = function(Twitch) {
     setInterval(dequeue, 1000 * botDelay, botDelay, Twitch.id)
   ]
 
+ // let tm = require('./TM')
+ // tm.forEach((item, index) => {
+ //  let thismove = Object.keys(item).shift()
+ //  if ( item[thismove] !== 'I dunno') {
+ //    let send = {
+ //      id: index+1
+ //    }
+ //    send[thismove] = item[thismove]
+ //    console.log('',send)
+ //    dbcall.put('Users', 'Tm', send).catch(err => console.log(err))
+ //  }
+ // })
+
 }

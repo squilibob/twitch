@@ -1,6 +1,8 @@
 function chatbot () {
   let joinAnnounced = []
   socket.on('chat', payload => handleChat(payload))
+  socket.on('ffz', payload => emoticons.ffz = emoticons.ffz.concat(payload))
+  socket.on('bttv', payload => emoticons.bttv = emoticons.bttv.concat(payload))
   socket.on('notice', payload => chatNotice(payload))
   socket.on('displaystreamer', payload => displaystreamer(payload))
   socket.on('bits', payload => chatNotice({notice: payload.userstate.username + ' has donated ' + payload.userstate.bits + ' bits', fadedelay: 20000, level:1}))

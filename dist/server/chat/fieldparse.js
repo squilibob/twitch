@@ -133,6 +133,7 @@ function filterByType(key, msg) {
     } else if (['lower', 'fewer', '<', 'less', 'slower', 'under'].some(item => message.includes(item))) {
       comparison = ' < '
     }
+    if (!message.match(new RegExp('\\d+'))) return false
     let numbers = message
       .match(new RegExp('\\d+'))
       .map(num => parseInt(num))
@@ -210,6 +211,7 @@ exports.getMoveList =function(obj) {
 }
 
 function pruneArray(arr, obj) {
+  if (!arr.length) return false
   arrSize = obj.responseSize
   botqueue[obj.twitchID].more = arr.slice(arrSize)
   return arr.slice(0, arrSize).join(', ') + (' ' + arr.length > arrSize ? '... ' + (arr.length - arrSize) + ' more' : '')

@@ -89,7 +89,7 @@ exports.checkfollowers = function(Twitch, hidenotify, current) {
   client.api({
     url: 'https://api.twitch.tv/kraken/channels' + header(Twitch.id, 'follows', 'offset=' + current + '&limit=' + maxcursor)
   }, function (err, res, body) {
-    if (body) {
+    if (body && body.follows) {
       if (current + body.follows.length < body._total) exports.checkfollowers(Twitch, hidenotify, current + body.follows.length)
       followerloop: for (viewer in body.follows) {
         if (!followers[body.follows[viewer].user.name]) {

@@ -24,7 +24,6 @@ project.Layout.prototype = {
   preload: function () {
     game.load.spritesheet('pikachuhi', '/img/pikachu hi.png', 800, 800)
     game.load.spritesheet('pikachudance', '/img/pikachu dance.png', 99, 99)
-    game.load.image('kappa', 'https://static-cdn.jtvnw.net/emoticons/v1/25/3.0')
     game.load.image('followerbg', '/img/paint.png')
     game.load.audio('followersound', '/audio/ability.mp3')
     game.load.audiosprite('cries', '/audio/cries.ogg', '/audio/cries.json', game.audioJSON.cries)
