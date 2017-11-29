@@ -1,11 +1,10 @@
 const {dehash, capitalize, htmlEntities, checkImageExists, timeout, hosting, submitchat, dequeue, parseraffle, urlDecode, isMod, checkExist} = require('./chatfunctions')
 const {checkPoke, checkDb, getMoveList, checkMoves, compoundCheck, describeMove} = require('./fieldparse')
 const {checkAvatar, getViewers, getStart, checkfollowers, checkstreamer} = require('./chatapi')
-const {findpoke, validatetype, weakTo, resistantTo, effective} = require('./pokemonparse')
+const {findpoke, typeMatchup, effective} = require('./pokemonparse')
 
 let started,
   maxpokes = 802,
-  minfollowerstoshoutout = 100,
   botDelay = 1, // Number of seconds between each bot message
   autocry = false // Play the pokemon's cry sound whenever it is mentioned in chat
 
@@ -24,7 +23,7 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
     var modmessage = isMod(user)
     var question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which'] // 'who ', 'why ', 'did ',
     // var containsquestion = checkExist(message, question, true)
-    let containsquestion = question.includes(message.split(' ').shift())
+    let containsquestion = question.includes(message.toLowerCase().split(' ').shift())
     let containsmoves = getMoveList(messagepayload)
     let response
     var displaycommand = true
@@ -135,7 +134,7 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
       {
         question: false,
         display: false,
-        exclusive: false,
+        exclusive: true,
         pokemon: 0,
         parameters: 1,
         modonly: true
@@ -248,9 +247,7 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
           parseign.trim(' ').split(' ').forEach((name, index) => {
             if (name.indexOf('!') < 0 && name.toLowerCase() != 'fc' && name.toLowerCase() != 'ign' && name.toLowerCase() != 'name') ign = name
           })
-          fccode.split('-').forEach((fcnumber, index) => {
-            fc.push(fcnumber)
-          })
+          fccode.split('-').forEach((fcnumber, index) => fc.push(fcnumber))
           if (fc.length != 3) validfc = false
           validfcloop: for (number in fc) {
             if (!(fc[number] > 0 && fc[number] < 10000)) validfc = false
@@ -283,11 +280,26 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
         modonly: false
       },
       action: async function (obj) {
-        // var notyou = null
-        // fcloop: for (person in useravatars) { if (obj.message.toLowerCase().indexOf(person.toLowerCase()) >= 0) notyou = person.toLowerCase() }
-        // socket.emit('request user fc', notyou == null ? obj.user.username.toLowerCase() : notyou)
-        let user = await dbcall.getfc('Users', obj.user.username.toLowerCase()).catch(err => console.log(err))
-        return user.id + "'s friend code is " + user.fc[0] + '-' + user.fc[1] + '-' + user.fc[2] + ' IGN ' + user.ign
+        let users = await Object.keys(useravatars)
+          .map(person => person.toLowerCase())
+          .filter(person => obj.message.toLowerCase().split(' ').includes(person))
+          .map(async function (person) {
+           return await dbcall.getfc('Users', person).catch(err => console.log(err))
+          })
+          .concat([await dbcall.getfc('Users', obj.user.username.toLowerCase()).catch(err => console.log(err))])
+          return Promise.all(users)
+            .then(found => {
+              let response = 'user not found'
+              if (found.length) {
+                if (found.length > 1) found = found.filter(user=> user !== obj.user.username.toLowerCase())
+                response = found
+                  .filter(user => !!user.id)
+                  .map(user => user.id + "'s friend code is " + user.fc[0] + '-' + user.fc[1] + '-' + user.fc[2] + ' IGN ' + user.ign)
+                  .join(', ')
+              }
+              return response
+            })
+            .catch(err => console.log(err))
       }
     },
     '!reload': {
@@ -346,25 +358,25 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
     //     return false
     //   }
     // },
-    '!vote': {
-      altcmds: [],
-      help: 'this command votes for a poll option',
-      times: 0,
-      requires:
-      {
-        question: false,
-        display: true,
-        exclusive: false,
-        pokemon: 0,
-        parameters: 0,
-        modonly: false
-      },
-      action: async function (obj) {
-        var voteoption = obj.message.split(' ')
-        (voteoption.length > 1 && voteoption[0].indexOf('!vote') >= 0) ? dbcall.sendvote('Users', {id: obj.user.username.toLowerCase(), vote: capitalize(voteoption[1].toLowerCase())}) : chatqueue[obj.twitchID].store('showvote', await dbcall.showvote('Users', 'Show vote'))
-        return false
-      }
-    },
+    // '!vote': {
+    //   altcmds: [],
+    //   help: 'this command votes for a poll option',
+    //   times: 0,
+    //   requires:
+    //   {
+    //     question: false,
+    //     display: true,
+    //     exclusive: false,
+    //     pokemon: 0,
+    //     parameters: 0,
+    //     modonly: false
+    //   },
+    //   action: async function (obj) {
+    //     var voteoption = obj.message.split(' ')
+    //     (voteoption.length > 1 && voteoption[0].indexOf('!vote') >= 0) ? dbcall.sendvote('Users', {id: obj.user.username.toLowerCase(), vote: capitalize(voteoption[1].toLowerCase())}) : chatqueue[obj.twitchID].store('showvote', await dbcall.showvote('Users', 'Show vote'))
+    //     return false
+    //   }
+    // },
     '!cmd': {
       altcmds: ['!command'],
       help: 'this command shows a list of all the commands',
@@ -492,7 +504,7 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
         modonly: false
       },
       action: async function (obj) {
-        typeof (obj.pokemon[0].id === 'number') && chatqueue[obj.twitchID].store('pokemon cry', obj.pokemon[0].id)
+        typeof (obj.pokemon[0].id === 'number') && chatqueue[obj.twitchID].store('playsound', obj.pokemon[0].id.toString().padStart(3, "0"))
         return false
       }
     },
@@ -510,16 +522,7 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
         modonly: false
       },
       action: async function (obj) {
-        let response
-        if (obj.pokemon[0]) {
-          response = obj.pokemon[0].Pokemon + ' is weak to ' + weakTo(obj.pokemon[0].Type, obj.pokemon[0].Secondary).join(', ')
-        } else {
-          obj.message.split(' ').forEach((weak, index) => {
-            var list = weakTo(weak)
-            if (list.length > 0) response = validatetype(weak) + ' is weak to ' + list.join(', ')
-          })
-        }
-        return response
+        return obj.pokemon[0] ? obj.pokemon[0].Pokemon + ' is weak to ' + typeMatchup(obj.pokemon[0].Type, 'weak').join(', ') : typeMatchup(obj.message.split(' '), 'weak').join(', ')
       }
     },
     'resist': {
@@ -536,19 +539,22 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
         modonly: false
       },
       action: async function (obj) {
-        let response = 'Does not resist anything'
-        if (obj.pokemon[0]) {
-          var list = resistantTo(obj.pokemon[0].Type, obj.pokemon[0].Secondary)
-          response = obj.pokemon[0].Pokemon + ' is resistant to ' + (list.resist.length > 0 ? list.resist.join(', ') : 'nothing')
-          if (list.immune.length > 0) response += ' and immune to ' + list.immune.join(', ')
+        let response = ' '
+        let resist, immune
+        if (obj.pokemon.length) {
+          response = obj.pokemon[0].Pokemon + ' '
+          immune = typeMatchup(obj.pokemon[0].Type, 'immune')
+          resist = typeMatchup(obj.pokemon[0].Type, 'resist')
+            .filter(item => !immune.includes(item))
         } else {
-          message.split(' ').forEach((resistant, index) => {
-            var list = resistantTo(resistant)
-            if (list.resist.length > 0) response = validatetype(resistant) + ' is resistant to ' + list.resist.join(', ')
-            if (list.immune.length > 0) response += ' and immune to ' + list.immune.join(', ')
-          })
+          immune = typeMatchup(obj.message.split(' '), 'immune')
+          resist = typeMatchup(obj.message.split(' '), 'resist')
+            .filter(item => !immune.includes(item))
         }
-        return response
+        if (resist.length) response += 'resists ' + resist.join(', ')
+        if (resist.length && immune.length) response += ' and '
+        if (immune.length) response += 'is immune to ' + immune.join(', ')
+        return response.length ? response : 'does not resist anything'
       }
     },
     'strong': {
@@ -566,10 +572,11 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
       },
       action: async function (obj) {
         let response
-        obj.message.split(' ').forEach((strength, index) => {
-          var list = effective(strength)
-          if (list.length > 0) response = validatetype(strength) + ' is super effective against ' + list.join(', ')
-        })
+        if (obj.pokemon[0]) {
+          response = obj.pokemon[0].Pokemon + ' is super effective against ' + effective(obj.pokemon[0].Type).join(', ')
+        } else {
+          response = effective(obj.message.split(' ')).join(', ')
+        }
         return response
       }
     },
@@ -675,8 +682,8 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
         parameters: 1,
         modonly: false
       },
-      action: async function (obj) {
-        var reply
+      action: async function (obj) {  // Need to rewrite the loops on these to use proper es6 array methods
+        var reply = ""
         if (obj.message.toLowerCase().indexOf('+') > 0 && obj.message.toLowerCase().indexOf('-') > 0) {
           var plus = obj.message.slice(obj.message.toLowerCase().indexOf('+') + 1).split(' ')
           var minus = obj.message.slice(obj.message.toLowerCase().indexOf('-') + 1).split(' ')
@@ -684,42 +691,25 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
           else plus = plus[0]
           if (minus[0].toLowerCase() == 'special') minus = minus[0] + ' ' + minus[1]
           else minus = minus[0]
-          detectnaturesloop: for (var count = 0; count < natures.length; count++) {
-            if (natures[count].increase) {
-              if (natures[count].increase.toLowerCase() == plus.toLowerCase() &&
-           natures[count].decrease.toLowerCase() == minus.toLowerCase()) { reply = natures[count].nature + ' is +' + natures[count].increase + ' and -' + natures[count].decrease + ' and likes to eat ' + natures[count].favorite + ' berries' }
-            }
-          }
+          natures
+            .filter(nature => !!nature.increase)
+            .filter(nature => (nature.increase.toLowerCase() == plus.toLowerCase() && nature.decrease.toLowerCase() == minus.toLowerCase()))
+            .forEach(nature => reply += nature.id + ' is +' + nature.increase + ' and -' + nature.decrease + ' and likes to eat ' + nature.favorite + ' berries' )
+          // detectnaturesloop: for (var count = 0; count < natures.length; count++) {
+          //   if (natures[count].increase) {
+          //     if (natures[count].increase.toLowerCase() == plus.toLowerCase() &&
+          //  natures[count].decrease.toLowerCase() == minus.toLowerCase()) { reply = natures[count].nature + ' is +' + natures[count].increase + ' and -' + natures[count].decrease + ' and likes to eat ' + natures[count].favorite + ' berries' }
+          //   }
+          // }
         } else {
-          shownatureloop: for (var count = 0; count < natures.length; count++) {
-            if (obj.message.toLowerCase().indexOf(natures[count].nature.toLowerCase()) >= 0) reply = (natures[count].increase ? natures[count].nature + ' is +' + natures[count].increase + ' and -' + natures[count].decrease + ' and likes to eat ' + natures[count].favorite + ' berries' : natures[count].nature + ' is neutral')
-          }
+            natures
+              .filter(item => obj.message.toLowerCase().includes(item.id.toLowerCase()))
+              .forEach(nature => reply += (nature.increase ? nature.id + ' is +' + nature.increase + ' and -' + nature.decrease + ' and likes to eat ' + nature.favorite + ' berries' : nature.id + ' is neutral'))
+            // if (obj.message.toLowerCase().indexOf(natures[count].id.toLowerCase()) >= 0) reply = (natures[count].increase ? natures[count].id + ' is +' + natures[count].increase + ' and -' + natures[count].decrease + ' and likes to eat ' + natures[count].favorite + ' berries' : natures[count].id + ' is neutral')
         }
         return reply
       }
     },
-  // 'egg group': {
-  //     altcmds: [],
-  //     help: 'this command displays what egg groups a pokemon is in',
-  //     times: 0,
-  //     requires:
-  //     {
-  //       question: false,
-  //       display: true,
-  //       exclusive: false,
-  //       pokemon: 1,
-  //       parameters: 1,
-  //       modonly: false
-  //     },
-  //     action: async function (obj) {
-  //       let response
-  //       if (obj.pokemon[0]['Egg Group I']) {
-  //         if (obj.pokemon[0]['Egg Group II'] && obj.pokemon[0]['Egg Group II'] != ' ') response = obj.pokemon[0].Pokemon + ' is in egg groups ' + obj.pokemon[0]['Egg Group I'] + ' & ' + obj.pokemon[0]['Egg Group II']
-  //         else if (obj.pokemon[0]['Egg Group I'].length) response = obj.pokemon[0].Pokemon + ' is in egg group ' + obj.pokemon[0]['Egg Group I']
-  //       }
-  //       return response
-  //     }
-  //   },
   //   'ev': {
   //     altcmds: ['evs'],
   //     help: 'this command shows what effort values a defeated pokemon will yield',
@@ -740,42 +730,42 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
   //       return response
   //     }
   //   },
-  //   'abilit': {
-  //     altcmds: [],
-  //     help: 'this command displays the abilities of a pokemon',
-  //     times: 0,
-  //     requires:
-  //     {
-  //       question: true,
-  //       display: true,
-  //       exclusive: false,
-  //       pokemon: 0,
-  //       parameters: 1,
-  //       modonly: false
-  //     },
-  //     action: async function (obj) {
-  //       if (obj.pokemon.length) return
-  //       let response = abilities
-  //         .filter(ability => obj.message.toLowerCase().includes(ability.id.toLowerCase()))
-  //         .map(ability => {
-  //           if (obj.message.toLowerCase().includes('pokemon')) {
-  //             let matches = pokedex.filter(poke => poke.Ability.includes(ability.id))
-  //             let hasability = 'the pokemon with the ability ' + ability.id + ' are: ' + matches
-  //               .splice(0, response_length)
-  //               .map(poke => poke.Pokemon)
-  //               .join(', ')
-  //             if (matches.length) {
-  //               hasability += '(' + matches.length + ' more)'
-  //             }
-  //             return hasability
-  //           }
-  //           else {
-  //            return (ability.id + ': ' + ability.desc)
-  //           }
-  //         })
-         // return response
-      // }
-    // },
+    'abilit': {
+      altcmds: [],
+      help: 'this command displays the abilities of a pokemon',
+      times: 0,
+      requires:
+      {
+        question: true,
+        display: true,
+        exclusive: false,
+        pokemon: 0,
+        parameters: 1,
+        modonly: false
+      },
+      action: async function (obj) {
+        if (obj.pokemon.length || obj.message.toLowerCase().includes('pokemon')) return
+        let response = abilities
+          .filter(ability => obj.message.toLowerCase().includes(ability.id.toLowerCase()))
+          .map(ability => {
+            if (obj.message.toLowerCase().includes('pokemon')) {
+              let matches = pokedex.filter(poke => poke.Ability.includes(ability.id))
+              let hasability = 'the pokemon with the ability ' + ability.id + ' are: ' + matches
+                .splice(0, response_length)
+                .map(poke => poke.Pokemon)
+                .join(', ')
+              if (matches.length) {
+                hasability += '(' + matches.length + ' more)'
+              }
+              return hasability
+            }
+            else {
+             return (ability.id + ': ' + ability.desc)
+            }
+          })
+         return response
+      }
+    },
     '!fuse': {
       altcmds: [],
       help: 'this command displays alexonsager fusion on the stream',
@@ -816,12 +806,8 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
       },
       action: async function (obj) {
         let response = obj.pokemon[0].Pokemon + ' stats: '
-        response += obj.pokemon[0].HP + '/'
-        response += obj.pokemon[0].Attack + '/'
-        response += obj.pokemon[0].Defense + '/'
-        response += obj.pokemon[0]['Sp. Attack'] + '/'
-        response += obj.pokemon[0]['Sp. Defense'] + '/'
-        response += obj.pokemon[0].Speed
+        let stat = ['HP', 'Attack', 'Defense', 'Sp. Attack', 'Sp. Defense', 'Speed']
+        stat.forEach(stat => response += stat + ': ' + obj.pokemon[0][stat] + ' ')
         return response
       }
     },
@@ -1015,9 +1001,12 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
           '{': '}',
           '}': '{'
         }
-        return obj.message.split('').reverse().map(function (element) {
-          return map[element] || map[element.toLowerCase()] || element
-        }).join('')
+        return obj.message
+          .split(' ')
+          .reverse()
+          .filter(element => element.toLowerCase() !== '!topsyturvy')
+          .map(element => map[element] || map[element.toLowerCase()] || element)
+          .join(' ')
       }
     },
     '!discord': {

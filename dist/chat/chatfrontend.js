@@ -9,6 +9,7 @@
     var chatStreamerName = document.createElement('div')
     var chatStreamerFollowers = document.createElement('div')
     var chatStreamerViews = document.createElement('div')
+    var chatMessage = document.createElement('div')
     chatLine.ondblclick = function () {
       this.className = 'chat-kill'
       setTimeout(this.remove(), 2000)
@@ -27,10 +28,13 @@
     chatLine.appendChild(chatStreamerFollowers)
     chatLine.appendChild(chatStreamerViews)
     chatBanner.onload = function () {
+      // chatMessage.className = 'chat-message'
+      // chatMessage.dataset.hide = ''
+      // chatMessage.innerHTML = 'check out ' + obj.username + ' at ' + obj.url
+      // chatLine.appendChild(chatMessage)
+      streamers.push(obj.username)
       chat.appendChild(chatLineBanner)
       chat.appendChild(chatLine)
-      submitchat('check out ' + obj.username + ' at ' + obj.url)
-      streamers.push(obj.username)
     }
   }
 

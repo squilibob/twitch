@@ -29,15 +29,13 @@ exports.checkPoke = function (originalmessage, maxpokes) {
   })
 }
 
-// make a list of keys first - func name: "getkeys"
-// if asked pokemon by name then for each pokemon by name return each keys "answer" - func name "formatsingle"
-// if asked how many pokemon - func name: "composite"
 function filterMessage(message) {
   let ignore = ['pokemon', 'evs', 'evolve', 'faces']
   let substitutions = {
     'Height': ['high', 'tall'],
-    'Mass': ['heavy', 'weigh', ' kilo'],
-    'Sp.':  ['special']
+    'Mass': ['heavy', 'weigh', ' kilo', 'kg'],
+    'Sp.':  ['special'],
+    'Ability':  ['abilities']
   }
   return message
     .split(' ')
@@ -141,7 +139,9 @@ function filterByType(key, msg) {
     return numbers.length > 0
   }
   if (typeof(key) === 'string') return message.includes(key.toLowerCase())
-  if (Array.isArray(key)) return message.includes(key.join(' ').toLowerCase())
+  if (Array.isArray(key)) {
+    return key.some(item => message.includes(item.toLowerCase()))
+  }
   return false // things that are objects - color, EVs, Forme
 }
 
@@ -198,7 +198,7 @@ exports.getMoveList =function(obj) {
   let findmoves = []
   let sortmoves = moves
     .sort((a,b) => b.id.length-a.id.length)
-    .filter(move => message.toLowerCase().includes(move.id.toLowerCase()))
+    .filter(move => move.id.split(' ').length === 1 ? message.toLowerCase().split(' ').includes(move.id.toLowerCase()) : message.toLowerCase().includes(move.id.toLowerCase()))
 
   for (currentmove of sortmoves) {
     let found = false

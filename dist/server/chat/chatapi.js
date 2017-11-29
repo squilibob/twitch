@@ -23,7 +23,12 @@ exports.checkAvatar = function(username) {
   //   .catch(err => console.log(err))
   // })
     }, function (err, res, body) {
-      let avatar= body.data[0].profile_image_url ? body.data[0].profile_image_url : 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png'
+      let avatar
+      if (body) if (body.data) if (body.data.length)
+        avatar= body.data[0].profile_image_url ? body.data[0].profile_image_url : 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png'
+      if (!avatar || avatar.includes('user-default-pictures')){
+        avatar = ~~(Math.random()*49)
+      }
       resolve(avatar)
     })
   })
@@ -98,6 +103,7 @@ exports.checkfollowers = function(Twitch, hidenotify, current) {
           followers[body.follows[viewer].user.name] = {logo: body.follows[viewer].user.logo, followed: Math.floor((Date.now() - datefollowed) / 8.64e7) + ' days ago (' + datefollowed.toDateString() + ')'}
           if (!hidenotify) {
             chatqueue[Twitch.id].store('follower', {username: body.follows[viewer].user.name, number:Object.keys(followers).length.toLocaleString()})
+            chatqueue[Twitch.id].store('notice', {text: body.follows[viewer].user.name + ' is now following (follower #' + Object.keys(followers).length.toLocaleString()+ ')', fadedelay: 20000, level:1})
           }
         }
       }

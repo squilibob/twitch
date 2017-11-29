@@ -131,7 +131,7 @@ function dropVowels(token) {
     return token.charAt(0) + token.substr(1, token.length).replace(/[aeiou]/g, '');
 }
 
-function process(token, maxLength) {
+module.exports = function (token, maxLength) {
     maxLength == maxLength || 32;
     token = token.toLowerCase();
     token = dedup(token);

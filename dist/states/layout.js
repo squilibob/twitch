@@ -26,8 +26,8 @@ project.Layout.prototype = {
     game.load.spritesheet('pikachudance', '/img/pikachu dance.png', 99, 99)
     game.load.image('followerbg', '/img/paint.png')
     game.load.audio('followersound', '/audio/ability.mp3')
-    game.load.audiosprite('cries', '/audio/cries.ogg', '/audio/cries.json', game.audioJSON.cries)
-    game.load.audiosprite('texttopika', '/audio/pikachu.ogg', '/audio/pikachu.json', game.audioJSON.cries)
+    game.load.audiosprite('cries', '/audio/cries.ogg', '/audio/cries.json')
+    game.load.audiosprite('texttopika', '/audio/pikachu.ogg', '/audio/pikachu.json')
   },
   create: function () {
     pikawave = game.add.sprite(game.world.width / 4, game.world.height-800, 'pikachuhi')
@@ -48,7 +48,7 @@ project.Layout.prototype = {
     pikacharqueue = []
     pikachutalking = false
     decoded = false
-    game.audioJSON.cries = game.cache.getJSON('game.audioJSONcries')
+    game.audioJSON.cries = game.cache.getJSON('audiojsoncries')
     game.audioJSON.texttopika = game.cache.getJSON('texttopikajson')
     this.game.stage.backgroundColor = 0x1c0f0c
     fx = game.add.audioSprite('cries')
@@ -141,6 +141,7 @@ project.Layout.prototype = {
     }
     if (socket.hasListeners('follower') == false) {
       socket.on('follower', function (payload) {
+        console.log('payload', payload)
         overlayqueue.push({type:'follower', value: payload.username})
         // followed.push(who)
       })
@@ -215,6 +216,7 @@ project.Layout.prototype = {
     pikadance.visible = false
   },
   playsound: function () {
+    console.log('decoded')
     decoded = true
   },
   showmessage: function(message) {

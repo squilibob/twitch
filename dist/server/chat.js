@@ -1,7 +1,6 @@
 const {dehash, capitalize, hosting, timeout, clearChat, submitchat, dequeue, parseraffle, urlDecode, isMod, checkPoke, checkDb, checkMoves, checkExist, getChunks} = require('./chat/chatfunctions')
 const {checkAvatar, getViewers, getStart, checkfollowers, checkstreamer} = require('./chat/chatapi')
 const {parseMessage} = require('./chat/chatbackend')
-const {process} = require('./chat/metaphone')
 
 class Store {
   constructor(backlog, logtypes) {
@@ -43,7 +42,7 @@ module.exports = function(Twitch) {
 
   botDelay = 1, // Number of seconds between each bot message
   showConnectionNotices = true // Show messages like "Connected" and "Disconnected"
-  //start('56648155') // twitch plays pokemon
+  //('56648155') // twitch plays pokemon
 
   let joinAnnounced = []
 
@@ -60,8 +59,12 @@ module.exports = function(Twitch) {
   client.addListener('message', async function(channel, user, message, self) {
     if (!useravatars[user.username]) {
       useravatars[user.username] = await dbcall.getavatar('Users', user.username).catch(err => console.log(err))
-      chatqueue[Twitch.id].store('displaystreamer', await checkstreamer(user['user-id']))
-      chatqueue[Twitch.id].store('receive new player', {poke: 1, name: user.username}) // use card for poke
+      let obj = await checkstreamer(user['user-id'])
+      if (obj.followers && obj.followers > Twitch.shoutout && obj.username !== 'squilibob' && obj.username !== 'mikuia') {
+        chatqueue[Twitch.id].store('displaystreamer', obj)
+        submitchat('check out ' + obj.username + ' at ' + obj.url, Twitch.id)
+      }
+      chatqueue[Twitch.id].store('receive new player', {poke:  ~~(Math.random()*151), name: user.username}) // use card for poke
     }
     if (!badges[user.username]) {
       badges[user.username] = await dbcall.getbadge('Users', user.username).catch(err => console.log(err))
@@ -95,7 +98,7 @@ module.exports = function(Twitch) {
   client.addListener('connected', function (address, port) {
     showConnectionNotices && chatqueue[Twitch.id].store('notice', {text:'Connected', fadedelay:1000, level:-2, class: 'chat-connection-good-connected'})
     joinAnnounced = []
-    checkfollowers(Twitch, true)
+    checkfollowers(Twitch, false)
   })
 
   client.addListener('disconnected', function (reason) {
@@ -122,7 +125,7 @@ module.exports = function(Twitch) {
     setInterval(getViewers, 525000, Twitch.id),
     // setInterval(repeating_notice_website, 3000000),
     // setInterval(repeating_notice_signup, 7200000),
-    setInterval(checkfollowers, 180000, Twitch, false),
+    setInterval(checkfollowers, 18000, Twitch, true),
     setInterval(dequeue, 1000 * botDelay, botDelay, Twitch.id)
   ]
 

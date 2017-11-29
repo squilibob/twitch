@@ -5,10 +5,10 @@ function chatbot () {
   socket.on('bttv', payload => emoticons.bttv = emoticons.bttv.concat(payload))
   socket.on('notice', payload => chatNotice(payload))
   socket.on('displaystreamer', payload => displaystreamer(payload))
-  socket.on('bits', payload => chatNotice({notice: payload.userstate.username + ' has donated ' + payload.userstate.bits + ' bits', fadedelay: 20000, level:1}))
-  socket.on('follower', payload => chatNotice({notice: payload.username +  ' is now following (follower #' + Object.keys(payload.number).length.toLocaleString() + ')', fadedelay: 20000, level:1}))
+  socket.on('bits', payload => chatNotice({text: payload.userstate.username + ' has donated ' + payload.userstate.bits + ' bits', fadedelay: 20000, level:1}))
+  // socket.on('follower', payload => chatNotice({text: payload.username +  ' is now following (follower #' + payload.number.toString() + ')', fadedelay: 20000, level:1}))
   socket.on('host', payload => host(payload))
-  socket.on('subscriber', payload => chatNotice({notice: payload.username + ' has subscribed (' + payload.method + ')', fadedelay: 20000, level:1}))
+  socket.on('subscriber', payload => chatNotice({text: payload.username + ' has subscribed (' + payload.method + ')', fadedelay: 20000, level:1}))
   socket.on('clear', payload => clearChat(payload))
   socket.on('timeout', payload =>  timeout(payload))
 

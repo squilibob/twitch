@@ -108,7 +108,7 @@ ul {
 	max-width: 400px;
 }
 .chat-line.chat-notice[data-level] {
-	font-family: "HelveticaNeue";
+	font-family: "ChunkFive Roman";
 	font-size:24px;
 }
 .chat-line.chat-notice[data-level="-4"] {
@@ -240,7 +240,7 @@ ul {
 .chat-message
 {
 	flex:1;
-	font-family:"HelveticaNeue";
+	font-family:"ChunkFive";
 	font-size: 36px;
 	font: #fff;
 	text-rendering: optimizeLegibility;

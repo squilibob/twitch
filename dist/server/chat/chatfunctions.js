@@ -1,3 +1,4 @@
+ const processmetaphone = require('./metaphone')
 // Javascript helper functions
 exports.dehash = function (channel) {
   return typeof (channel) === 'string' ? channel.replace(/^#/, '') : channel
@@ -111,8 +112,7 @@ exports.checkExist = function (checkstring, checkarray, separateword) {
 
 exports.getChunks = function(message) {
   return new Promise(function(resolve, reject) {
-    const {process} = require('./metaphone')
-    let chunks = message.split(' ').map(word => process(word).length)
+    let chunks = message.split(' ').map(word => processmetaphone(word).length)
     // let chunks = []
     // for (word of message.split(' ')) {
     //   chunks.push(process(word).length)

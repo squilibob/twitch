@@ -1,3 +1,7 @@
+capitalize = function (n) {
+  return n === undefined ? '' : n[0].toUpperCase() + n.substr(1)
+}
+
 exports.findpoke = function(name) {
   findpokeloop: for (let i = 0; i < pokedex.length; i++) {
     if (pokedex[i].Pokemon.toLowerCase() == name.toLowerCase()) return i + 1
@@ -5,52 +9,43 @@ exports.findpoke = function(name) {
   return -1
 }
 
-exports.validatetype = function(type) {
-  type = capitalize(type.toLowerCase())
-  Object.keys(typechart).forEach((elementindex, index) => {
-    if (type.indexOf(typechart[elementindex]['Type']) >= 0) type = typechart[elementindex]['Type']
-  })
-  return type
+function validatetype(types) {
+  return types
+    .map(type => typechart.find(item => type.toLowerCase().includes(item.id.toLowerCase())))
+    .filter(type => {
+      return type})
+    .map(item => item.id)
 }
 
-exports.weakTo = function(type1, type2) {
-  type2 = type2 || ''
-  let weaknesses = []
-  type1 = validatetype(type1)
-  if (type2) type2 = validatetype(type2)
-  Object.keys(typechart).forEach((elementindex, index) => {
-    if (typechart[elementindex][type1] * (type2 == '' ? 1 : typechart[elementindex][type2]) > 1) {
-      weaknesses.push(typechart[elementindex]['Type'])
-    }
-  })
-  return weaknesses
+function compareTypeProperty(value, comparison) {
+  return {
+    weak: value > 1,
+    resist: value < 1,
+    immune: value === 0
+  }[comparison]
 }
 
-exports.resistantTo = function(type1, type2) {
-  type2 = type2 || ''
-  let typecalc = {
-    resist: [],
-    immune: []
-  }
-  type1 = validatetype(type1)
-  if (type2) type2 = validatetype(type2)
-  Object.keys(typechart).forEach((elementindex, index) => {
-    if (typechart[elementindex][type1] * (type2 == '' ? 1 : typechart[elementindex][type2]) < 1) {
-      if (typechart[elementindex][type1] * (type2 == '' ? 1 : typechart[elementindex][type2]) == 0) { typecalc.immune.push(typechart[elementindex]['Type']) } else typecalc.resist.push(typechart[elementindex]['Type'])
-    }
-  })
-  return typecalc
+exports.typeMatchup = function(types, comparison) {
+  types = validatetype(types)
+  return typechart
+    .filter(type => compareTypeProperty(types
+        .map(name => type.Elements[name])
+        .reduce((a,b) => a * b, 1), comparison))
+    .map(type => type.id)
 }
 
-exports.effective = function(type) {
-  let effectiveness = []
-  type = validatetype(type)
-  Object.keys(typechart).forEach((elementindex, index) => {
-    if (typechart[elementindex]['Type'] == type) {
-      Object.keys(typechart[elementindex]).forEach((key, value) => {
-        if (key != 'id' && parseInt(typechart[elementindex][key]) > 1) effectiveness.push(key)
-      })
-    }
-  })
-  return effectiveness
+exports.effective = function(types) {
+  types = validatetype(types)
+  return types
+    .map(type => typechart.find(item => item.id === type))
+    .map(type => {
+      let response = []
+      for (key in type.Elements) {
+        if (type.Elements[key] > 1) {
+          response.push(key)
+        }
+      }
+      return response
+    })
+    .reduce((a,b) => b.concat(a))
 }
