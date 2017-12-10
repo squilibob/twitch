@@ -32,13 +32,6 @@ module.exports = function(io, socket) {
   //   .then(result => sendVoteUpdate())
   //   .catch(err => console.log(err))
 
-  r.table('Raffle')
-    .changes()
-    .run(conn)
-    .then(result => sendRaffleUpdate(true))
-    .catch(err => console.log(err))
-
-
   socket.on('disconnect', () => console.log('user disconnected', socket.id))
   socket.on('new user', payload => dbcall.newuser('Users', payload))
   socket.on("send fusion", (firstpoke, secondpoke) => io.emit('show fusion', firstpoke, secondpoke))
@@ -52,19 +45,21 @@ module.exports = function(io, socket) {
   socket.on("pokemon cry", poke => io.emit("playsound", ('000' + poke).substr(-3))) // use .padStart for this? poke.padStart(3, '0')
   socket.on("Vote poll", payload => dbcall.votepoll('Users', payload))
   socket.on("Send vote", payload => dbcall.sendvote('Users', payload))
-  socket.on("Show vote", () => socket.emit("Vote options", result)) // wtf is this
   socket.on('request user pokes', username => sendUserPokes(username))
   socket.on('validate fc', username =>  dbcall.validatefc('Users', username))
   // socket.on('followed', person => socket.emit('new follower', person))
-  socket.on('won raffle', person => dbcall.rafflewinner('Users', person)) // wtf is this
   socket.on('clear raffle', ()  => dbcall.clearraffle('Users'))
-  socket.on('send raffle', needupdate => sendRaffleUpdate('Users', needupdate))
   socket.on('send emote', payload => io.emit('receive emote', payload))
   socket.on('update leaderboard', entry => dbcall.updateleaderboard('Users', entry))
+  socket.on("Show vote", () => socket.emit("Vote options", result)) // wtf is this
+  socket.on('won raffle', person => dbcall.rafflewinner('Users', person)) // wtf is this
   socket.on('create new player', payload => socket.emit('receive new player', payload)) //wtf is this
   socket.on('clear leaderboard', () => dbcall.clearleaderboard('Users'))
   // socket.on('manually enter raffle', username => dbcall.manualraffle(username, true))
   // socket.on('manually leave raffle', username => dbcall.manualraffle(username, true))
+  socket.on('send raffle',  async function(db, raffle) {await dbcall.sendraffleupdate(db, raffle)
+    .then(list => list.forEach(user => io.emit('raffle update', user)))
+    .catch(err => console.log(err))})
   socket.on('Ask for pokedex',  async function(simple){ io.emit('Receive pokedex', await dbcall.gettable('Users', 'Pokedex').catch(err => console.log(err))) })
   socket.on("update vote", async function(){ io.emit('receive vote', await dbcall.gettable('Users', 'Vote').catch(err => console.log(err))) })
   socket.on('Request vote', async function(){ io.emit('receive vote', await dbcall.gettable('Users', 'Vote').catch(err => console.log(err))) })
@@ -100,23 +95,6 @@ module.exports = function(io, socket) {
   })
 
   async function sendUserPokes (username) { io.emit('user pokes', await dbcall.senduserpokes('Users', username).catch(err => console.log(err))) }
-
-  async function sendRaffleUpdate(needupdate){
-    let current = await dbcall.sendraffleupdate('Users').catch(err => console.log(err))
-    let justentered = []
-    let updated = {}
-    for (person in current) {
-      if (participants[current[person].id] == undefined && current[person].entered) {
-        justentered.push(current[person].id)
-        updated[current[person].id] = current[person].chance
-      } else if (current[person].entered) {
-        updated[current[person].id] = current[person].chance
-      }
-    }
-    participants = updated
-    io.emit('receive raffle', current)
-    if (needupdate) io.emit('raffle update', {raffle: current, new: justentered})
-  }
 
   async function createanewuser(payload) {
     let starter = [198, 313, 314, 546, 661, 300, 431, 509, 677, 52, 352, 335, 619, 86, 283, 211, 296, 615, 165 , 167, 88]

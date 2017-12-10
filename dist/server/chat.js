@@ -40,6 +40,8 @@ module.exports = function(Twitch) {
     responseSize: 12
   }
 
+  dbcall.subscribetoraffle(Twitch)
+
   botDelay = 1, // Number of seconds between each bot message
   showConnectionNotices = true // Show messages like "Connected" and "Disconnected"
   //('56648155') // twitch plays pokemon
@@ -59,10 +61,10 @@ module.exports = function(Twitch) {
   client.addListener('message', async function(channel, user, message, self) {
     if (!useravatars[user.username]) {
       useravatars[user.username] = await dbcall.getavatar('Users', user.username).catch(err => console.log(err))
-      let obj = await checkstreamer(user['user-id'])
-      if (obj.followers && obj.followers > Twitch.shoutout && obj.username !== 'squilibob' && obj.username !== 'mikuia') {
+      let obj = await checkstreamer(user['user-id']).catch(err => console.log(err))
+      if (obj.followers && obj.followers > Twitch.shoutout && !self && obj.username !== 'mikuia') {
         chatqueue[Twitch.id].store('displaystreamer', obj)
-        submitchat('check out ' + obj.username + ' at ' + obj.url, Twitch.id)
+        submitchat('Check out ' + obj.username + ' at ' + obj.url, Twitch.id)
       }
       chatqueue[Twitch.id].store('receive new player', {poke:  ~~(Math.random()*151), name: user.username}) // use card for poke
     }
@@ -84,21 +86,24 @@ module.exports = function(Twitch) {
     console.log(userstate, message)
     chatqueue[Twitch.id].store('bits', {userstate: userstate, message: message})
     // Object { badges: Object, bits: "50", color: "#FF0000", display-name: "jennluv69", emotes: null, id: "9ff6f821-6419-4f9a-a4ab-f4c638012ae2", mod: false, room-id: "39392583", subscriber: false, tmi-sent-ts: "1498980326580", turbo, user-id, user-type, username}
-    chatqueue[Twitch.id].store('metaphone', {chunks: await getChunks(message), message: 'pikachu said:\n' + message + '\n(from ' + userstate['display-name'] + ')'})
-    // expressServer.socket.emit('metaphone', chunks, 'pikachu said:\n' + message + '\n(from ' + userstate['display-name'] + ')')
+    chatqueue[Twitch.id].store('metaphone', {chunks: await getChunks(message).catch(err => console.log(err)), message: 'pikachu said:\n' + message + '\n(from ' + userstate['display-name'] + ')'})
   })
 
   client.on("subscription", async function (channel, username, method, message, userstate) {
+    if (!userstate) userstate = username
+    if (!message) message = 'new subscriber'
+      console.log(username, method, message, userstate)
+    //{ prime: true,
+    // plan: 'Prime',
+  // planName: 'Channel Subscription (squilibob)' }
       chatqueue[Twitch.id].store('subscriber', {username: username, method: method, message: message})
-      console.log(userstate, message, method)
-      chatqueue[Twitch.id].store('metaphone', {chunks: await getChunks(message), message: 'pikachu said:\n' + message + '\n(from ' + username + ' new subscriber)'})
-      // expressServer.socket.emit('metaphone', chunks, 'pikachu said:\n' + message + '\n(from ' + username + ' new subscriber)')
+      chatqueue[Twitch.id].store('metaphone', {chunks: await getChunks(message).catch(err => console.log(err)), message: 'pikachu said:\n' + message + '\n(from ' + username + ' new subscriber)'})
   })
 
   client.addListener('connected', function (address, port) {
     showConnectionNotices && chatqueue[Twitch.id].store('notice', {text:'Connected', fadedelay:1000, level:-2, class: 'chat-connection-good-connected'})
     joinAnnounced = []
-    checkfollowers(Twitch, false)
+    checkfollowers(Twitch, true)
   })
 
   client.addListener('disconnected', function (reason) {
@@ -125,21 +130,7 @@ module.exports = function(Twitch) {
     setInterval(getViewers, 525000, Twitch.id),
     // setInterval(repeating_notice_website, 3000000),
     // setInterval(repeating_notice_signup, 7200000),
-    setInterval(checkfollowers, 18000, Twitch, true),
+    setInterval(checkfollowers, 18000, Twitch, false),
     setInterval(dequeue, 1000 * botDelay, botDelay, Twitch.id)
   ]
-
- // let tm = require('./TM')
- // tm.forEach((item, index) => {
- //  let thismove = Object.keys(item).shift()
- //  if ( item[thismove] !== 'I dunno') {
- //    let send = {
- //      id: index+1
- //    }
- //    send[thismove] = item[thismove]
- //    console.log('',send)
- //    dbcall.put('Users', 'Tm', send).catch(err => console.log(err))
- //  }
- // })
-
 }

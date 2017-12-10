@@ -206,16 +206,21 @@
       delete chatAvatar.dataset.hide
     }, 64)
 
-    while (document.getElementById('chat').offsetHeight > chatheight * 1.25) {
-      var oldMessages = [].slice.call(chat.children).slice(0, 1)
-      var logmsg = oldMessages[0]
-      socket.emit('log chat', logmsg.innerHTML)
-      oldMessages[0].remove()
-    // var oldMessages = [].slice.call(chat.children).slice(0, 10);
-    // for(var i in oldMessages) oldMessages[i].remove();
-    }
+    setTimeout(function () {
+      chatLine.className = 'chat-kill'
+      chatLine.dataset = null
+      // [].slice.call(chat.children).pop().remove()
+      setTimeout(function () {
+        chatLine.remove()
+      }, 2000)
+    }, killDelay)
+
     if (document.getElementById('chat').offsetHeight > chatheight) {
       chat.firstChild.className = 'chat-kill'
       chat.firstChild.dataset = null
+      // [].slice.call(chat.children).pop().remove()
+      setTimeout(function () {
+        chat.firstChild.remove()
+      }, 2000)
     }
   }

@@ -4,13 +4,20 @@ function chatbot () {
   socket.on('ffz', payload => emoticons.ffz = emoticons.ffz.concat(payload))
   socket.on('bttv', payload => emoticons.bttv = emoticons.bttv.concat(payload))
   socket.on('notice', payload => chatNotice(payload))
+  socket.on('raffle update', payload => {
+    console.log('payload', payload)
+    chatNotice({text: payload.id + (payload.entered ? ' enters' : ' leaves') + ' the raffle', fadedelay: 20000, level:1})
+  })
   socket.on('displaystreamer', payload => displaystreamer(payload))
   socket.on('bits', payload => chatNotice({text: payload.userstate.username + ' has donated ' + payload.userstate.bits + ' bits', fadedelay: 20000, level:1}))
   // socket.on('follower', payload => chatNotice({text: payload.username +  ' is now following (follower #' + payload.number.toString() + ')', fadedelay: 20000, level:1}))
   socket.on('host', payload => host(payload))
-  socket.on('subscriber', payload => chatNotice({text: payload.username + ' has subscribed (' + payload.method + ')', fadedelay: 20000, level:1}))
-  socket.on('clear', payload => clearChat(payload))
-  socket.on('timeout', payload =>  timeout(payload))
+  socket.on('subscriber', payload => chatNotice({text: payload.username + ' has subscribed (' + payload.method.plan + ') ' + payload.method.planName, fadedelay: 20000, level:1}))
+    //{ prime: true,
+    // plan: 'Prime',
+  // planName: 'Channel Subscription (squilibob)' }
+  socket.on('clear', payload => clearChat(Twitch, payload))
+  socket.on('timeout', payload =>  timeout(Twitch, payload))
 
 
   //justentered.length > 0 && submitchat(justentered.join(', ') + (justentered.length == 1 ? ' has' : ' have') + ' been entered into the raffle')
@@ -69,7 +76,7 @@ function chatbot () {
   // })
 
   // client.connect()
-  socket.emit('send raffle', true)
+  socket.emit('send raffle', 'Users', 'Raffle')
   // socket.emit('Ask for table', 'Moves')
   // socket.emit('Ask for table', 'Abilities')
   // socket.emit('Ask for table', 'Bttv')

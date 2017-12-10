@@ -2,13 +2,6 @@ capitalize = function (n) {
   return n === undefined ? '' : n[0].toUpperCase() + n.substr(1)
 }
 
-exports.findpoke = function(name) {
-  findpokeloop: for (let i = 0; i < pokedex.length; i++) {
-    if (pokedex[i].Pokemon.toLowerCase() == name.toLowerCase()) return i + 1
-  }
-  return -1
-}
-
 function validatetype(types) {
   return types
     .map(type => typechart.find(item => type.toLowerCase().includes(item.id.toLowerCase())))

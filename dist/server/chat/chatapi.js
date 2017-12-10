@@ -42,15 +42,16 @@ exports.getViewers = function(Twitch, channel) {
     }
   }, function (err, res, body) {
     if (((body || {}).data)) {
-      watching.viewers = body.data.length ? body.data[0].viewer_count : 0
+      // Twitch.watching.viewers = body.data.length ? body.data[0].viewer_count : 0
       if (body.data.length)
       if (((body || {}).data || {})[0].type) {
         client.api({
           url: 'http://tmi.twitch.tv/group/user' + header(body.data[0].user_login, 'chatters', null, 3)
         }, function (err, res, tmibody) {
           if ((tmibody || {}).data) {
-            watching.chatters = tmibody.data.chatters.viewers
-            chatqueue[Twitch.id].store('audience', watching)          }
+            // Twitch.watching.chatters = tmibody.data.chatters.viewers
+            chatqueue[Twitch.id].store('audience', {chatters: tmibody.data.chatters.viewers, watchers:body.data.length ? body.data[0].viewer_count : 0})
+          }
         })
       }
     }
@@ -97,13 +98,13 @@ exports.checkfollowers = function(Twitch, hidenotify, current) {
     if (body && body.follows) {
       if (current + body.follows.length < body._total) exports.checkfollowers(Twitch, hidenotify, current + body.follows.length)
       followerloop: for (viewer in body.follows) {
-        if (!followers[body.follows[viewer].user.name]) {
+        if (!Twitch.followers[body.follows[viewer].user.name]) {
           let datefollowed = new Date(body.follows[viewer].created_at)
      // followers[body.follows[viewer].user.name] = {logo: body.follows[viewer].user.logo, followed: Math.floor((Date.now() - datefollowed))/8.64e7) + ' days ago (' + body.follows[viewer].created_at.split('T').shift().split('-').reverse().join('/') + ')'};
-          followers[body.follows[viewer].user.name] = {logo: body.follows[viewer].user.logo, followed: Math.floor((Date.now() - datefollowed) / 8.64e7) + ' days ago (' + datefollowed.toDateString() + ')'}
+          Twitch.followers[body.follows[viewer].user.name] = {logo: body.follows[viewer].user.logo, followed: Math.floor((Date.now() - datefollowed) / 8.64e7) + ' days ago (' + datefollowed.toDateString() + ')'}
           if (!hidenotify) {
-            chatqueue[Twitch.id].store('follower', {username: body.follows[viewer].user.name, number:Object.keys(followers).length.toLocaleString()})
-            chatqueue[Twitch.id].store('notice', {text: body.follows[viewer].user.name + ' is now following (follower #' + Object.keys(followers).length.toLocaleString()+ ')', fadedelay: 20000, level:1})
+            chatqueue[Twitch.id].store('follower', {username: body.follows[viewer].user.name, number:Object.keys(Twitch.followers).length.toLocaleString()})
+            chatqueue[Twitch.id].store('notice', {text: body.follows[viewer].user.name + ' is now following (follower #' + Object.keys(Twitch.followers).length.toLocaleString()+ ')', fadedelay: 20000, level:1})
           }
         }
       }

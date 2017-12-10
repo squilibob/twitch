@@ -55,6 +55,15 @@ function chatNotice (obj) {
       ele.dataset.faded = ''
     }, obj.fadedelay || 500)
   }
+    setTimeout(function () {
+      ele.className = 'chat-kill'
+      ele.dataset = null
+      // [].slice.call(chat.children).pop().remove()
+      setTimeout(function () {
+        ele.remove()
+      }, 2000)
+    }, killDelay)
+
   return ele
 }
 

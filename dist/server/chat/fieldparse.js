@@ -30,7 +30,7 @@ exports.checkPoke = function (originalmessage, maxpokes) {
 }
 
 function filterMessage(message) {
-  let ignore = ['pokemon', 'evs', 'evolve', 'faces']
+  let ignore = ['pokemon', 'evs', 'evolve', 'faces'] //location
   let substitutions = {
     'Height': ['high', 'tall'],
     'Mass': ['heavy', 'weigh', ' kilo', 'kg'],
@@ -171,10 +171,10 @@ exports.compoundCheck = function (obj, movelist) {
   if (moves) moves = moves.length > 1 ? moves.reduce((a, b) =>  a.filter(x => b.includes(x))) : moves.shift()
   let fields = multipleSplitCheck(obj, movelist)
   fields && fields.length && compound.push(fields)
-  if (!fields || !fields.length) return exports.checkMoves(obj, movelist)
+  if ((!fields || !fields.length) && moves && moves.length) return moves.join(', ')
   moves && moves.length && compound.push(moves)
   compound = compound.length > 1 ? compound.reduce((a, b) =>  a.filter(x => b.includes(x))) : compound.shift()
-  return compound.length ? pruneArray(compound, obj) : 'No pokemon'
+  return (!compound || !compound.length) ? 'No pokemon' : pruneArray(compound, obj)
 }
 
 exports.checkDb = function (obj, movelist) {

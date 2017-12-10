@@ -62,16 +62,6 @@ exports.manualraffle = function(database, username, enter) {
   .catch(error => reject(error))
 }
 
-exports.sendraffleupdate = function(database) {
-  return new Promise(function(resolve, reject) {
-    r.db(database).table('Raffle')
-    .run(conn)
-    .then(cursor => cursor.toArray())
-    .then(result => { resolve(result || {}) })
-    .catch(error => reject(error))
-  })
-}
-
 exports.getfc = function(database, username) {
   return new Promise(function(resolve, reject) {
     r.db(database).table('Users').filter(r.row('id').eq(username.toLowerCase()))
@@ -238,14 +228,6 @@ exports.validatefc = function(database, username) {
   .catch(error => reject(error))
 }
 
-exports.clearraffle = function(database) {
-  r.db(database)
-  .table('Raffle')
-  .delete()
-  .run(conn)
-  .catch(error => reject(error))
-}
-
 exports.senduserpokes = function(database, username) {
   return new Promise(function(resolve, reject) {
     r.db(database).table('Users').filter(r.row('id').eq(username.toLowerCase()))
@@ -351,3 +333,52 @@ exports.requesttoconnect = function(database, username) {
   })
 }
 
+exports.subscribetoraffle = function(Twitch) {
+  r.table(Twitch.raffle)
+    .changes()
+    .run(conn, (err, stream) => stream.each((err, cursor) => getrafflechanges(cursor).user && chatqueue[Twitch.id].store('raffle update', getrafflechanges(cursor))))
+    .catch(err => console.log(err))
+}
+
+function getrafflechanges(cursor) {
+  let oldval = cursor.old_val
+  let newval = cursor.new_val
+  console.log('cursor', cursor)
+  if (!!oldval) return {id: oldval.id, entered: oldval.entered && !!newval, chance: oldval.chance, displayicon: oldval.displayicon}
+  if (!!newval) return {id:newval.id, entered:newval.entered, chance: newval.chance, displayicon: newval.displayicon}
+  return {id: null, entered: false, chance: 0, displayicon: 1}
+}
+  // async function sendRaffleUpdate(Twitch, needupdate){
+  //   let current = await dbcall.sendraffleupdate('Users', Twitch.raffle).catch(err => console.log(err))
+  //   let justentered = []
+  //   let updated = {}
+  //   for (person in current) {
+  //     if (participants[current[person].id] == undefined && current[person].entered) {
+  //       justentered.push(current[person].id)
+  //       updated[current[person].id] = current[person].chance
+  //     } else if (current[person].entered) {
+  //       updated[current[person].id] = current[person].chance
+  //     }
+  //   }
+  //   participants = updated
+  //   io.emit('receive raffle', current)
+  //   if (needupdate) io.emit('raffle update', {raffle: current, new: justentered})
+  // }
+
+exports.sendraffleupdate = function(database, table) {
+  return new Promise(function(resolve, reject) {
+    r.db(database).table(table)
+    .run(conn)
+    .then(cursor => cursor.toArray())
+    .then(result => { resolve(result || {}) })
+    .catch(error => reject(error))
+  })
+}
+
+exports.clearraffle = function(database) {
+  r.db(database)
+  .table('Raffle')
+  .delete()
+  .run(conn)
+  .catch(error => reject(error))
+}

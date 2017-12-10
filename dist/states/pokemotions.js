@@ -229,7 +229,7 @@ project.Pokemotions.prototype = {
     let redrawn = footergame.add.group()
     redrawn.addChild(footergame.add.sprite(0,0, this.recolor(this.bitmap(original[0], 0, 0), original.last.frame)))
     redrawn.addChild(footergame.head = footergame.add.sprite(0,0, this.recolor(this.bitmap(original[1], 0, 0), original.last.frame)))
-    redrawn.scale.setTo(3.5)
+    redrawn.scale.setTo(2.75)
     return redrawn
   },
   headcorrect: function(obj, which) {

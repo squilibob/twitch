@@ -35,20 +35,16 @@ async function init(c){
   global.moves = await dbcall.gettable('Users', 'Moves').catch(err => console.log(err))
   global.tm = db_id_to_duple(await dbcall.gettable('Users', 'Tm').catch(err => console.log(err)))
   global.hm = db_id_to_duple(await dbcall.gettable('Users', 'Hm').catch(err => console.log(err)))
-  global.natures = await dbcall.gettable('Users', 'Natures').catch(err => console.log(err))  // FIX bold didnt work
+  global.natures = await dbcall.gettable('Users', 'Natures').catch(err => console.log(err))
   global.hiddenpower = await dbcall.gettable('Users', 'HiddenPowers').catch(err => console.log(err))
   global.abilities = await dbcall.gettable('Users', 'Abilities').catch(err => console.log(err))
   global.Bttv = await dbcall.gettable('Users', 'Bttv').catch(err => console.log(err))
   global.Ffz = await dbcall.gettable('Users', 'Ffz').catch(err => console.log(err))
-  global.participants = {} // maybe use a Map instead of an object
   global.chatqueue = {}
   global.botqueue = {}
   global.useravatars = {}
   global.badges = {}
   global.streamers = []
-  // the following need to be for each stream
-  global.followers = {}
-  global.watching = {chatters: [], viewers: 0}
 
   console.log('cache ready', pokedex.length)
   require('./dist/server/instances')(expressServer)
