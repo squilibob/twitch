@@ -44,7 +44,7 @@ project.Avatar.prototype = {
     avatars = this.add.group()
     chosen = game.add.sprite(Useravatars.x / 2, Presets.padding + (buttonstyle.horizontalorientation ? menubuttons[0].getBounds().height : 0) + Useravatars.y / 2, 'avatar', 0)
     chosen.mask = this.addmask(chosen, 1)
-    if (game.storage.getItem('avatar')) if (parseInt(game.storage.getItem('avatar')) >= 0 && parseInt(game.storage.getItem('avatar')) < Useravatars.total) chosen.frame = 1 + parseInt(game.storage.getItem('avatar'))
+    if (game.storage.getItem('avatar')) if (+game.storage.getItem('avatar') >= 0 && +game.storage.getItem('avatar') < Useravatars.total) chosen.frame = 1 + +game.storage.getItem('avatar')
     // for (let nextavatar = 0; nextavatar < Math.floor(Presets.width / (Useravatars.x/2 - 1)); nextavatar++) {
 
     for (let nextavatar = 0; nextavatar < Useravatars.total; nextavatar++) {

@@ -112,7 +112,6 @@ function formatDbmessage(pokename, keys, movelist) {
         response.push(item.value.length > 1 ? 'are': 'is')
         response.push(item.value.join(', '))
       } else response.push('is', item.value === -1 ? 'none' : item.value)
-    //POKEMON's KEY [KEYSUFFIX, KEYSUFFIXplural] [is, are] VALUE SUFFIX
   })
   if (movelist.length) {
     response = response.concat(movelist
@@ -134,7 +133,7 @@ function filterByType(key, msg) {
     if (!message.match(new RegExp('\\d+'))) return false
     let numbers = message
       .match(new RegExp('\\d+'))
-      .map(num => parseInt(num))
+      .map(Number)
       .filter(num => eval(key + comparison + num))
     return numbers.length > 0
   }

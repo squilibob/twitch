@@ -4,8 +4,8 @@ exports.dehash = function (channel) {
   return typeof (channel) === 'string' ? channel.replace(/^#/, '') : channel
 }
 
-exports.capitalize = function (n) {
-  return n === undefined ? '' : n[0].toUpperCase() + n.substr(1)
+exports.capitalize = function (str) {
+  return str === undefined ? '' : str.replace(/^./,  i => i.toUpperCase())
 }
 
 exports.htmlEntities = function (html) {
@@ -26,8 +26,8 @@ exports.htmlEntities = function (html) {
   let parser = html
   html = it(parser)
 
-  if (!isArray) html = html.join('')
-  return html
+  return html.join('')
+  return isArray ? html.join('') : html
 }
 
 exports.checkImageExists = function (imageUrl, callBack) {
@@ -35,6 +35,7 @@ exports.checkImageExists = function (imageUrl, callBack) {
 }
 
 exports.timeout = function (Twitch, username) {
+    console.log('username ', username, ' timed out')
     chatqueue[Twitch.id].store('timeout', {username: username, channel:exports.dehash(channel)})
 }
 

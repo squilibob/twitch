@@ -3,8 +3,8 @@ function dehash (channel) {
   return typeof (channel) === 'string' ? channel.replace(/^#/, '') : channel
 }
 
-function capitalize (n) {
-  return n === undefined ? '' : n[0].toUpperCase() + n.substr(1)
+function capitalize (str) {
+  return str === undefined ? '' : str.replace(/^./,  i => i.toUpperCase())
 }
 
 function htmlEntities (html) {
@@ -25,8 +25,7 @@ function htmlEntities (html) {
   let parser = html
   html = it(parser)
 
-  if (!isArray) html = html.join('')
-  return html
+  return isArray ? html.join('') : html
 }
 
 function checkImageExists (imageUrl, callBack) {

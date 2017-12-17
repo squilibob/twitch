@@ -40,7 +40,7 @@ module.exports = function(Twitch) {
     responseSize: 12
   }
 
-  dbcall.subscribetoraffle(Twitch)
+  // dbcall.subscribetoraffle(Twitch)
 
   botDelay = 1, // Number of seconds between each bot message
   showConnectionNotices = true // Show messages like "Connected" and "Disconnected"
@@ -59,10 +59,11 @@ module.exports = function(Twitch) {
   })
 
   client.addListener('message', async function(channel, user, message, self) {
+    if (user.username === 'mikuia') return false
     if (!useravatars[user.username]) {
       useravatars[user.username] = await dbcall.getavatar('Users', user.username).catch(err => console.log(err))
       let obj = await checkstreamer(user['user-id']).catch(err => console.log(err))
-      if (obj.followers && obj.followers > Twitch.shoutout && !self && obj.username !== 'mikuia') {
+      if (((user || {})['user-id'] || {}) !== Twitch.id && !self && obj.followers && obj.followers > Twitch.shoutout) {
         chatqueue[Twitch.id].store('displaystreamer', obj)
         submitchat('Check out ' + obj.username + ' at ' + obj.url, Twitch.id)
       }
@@ -74,7 +75,7 @@ module.exports = function(Twitch) {
     if (useravatars[user.username] < 0) useravatars[user.username] = await checkAvatar(user['user-id']).catch(err => console.log(err))
     parseMessage(Twitch, user, channel, message, self, useravatars[user.username], badges[user.username]).catch(err => console.log(err))
   })
-  client.addListener('timeout', timeout)
+  client.addListener('timeout', timeout, Twitch)
   client.addListener('clearchat', clearChat, Twitch)
 
   client.addListener('connecting', function (address, port) { if (showConnectionNotices) chatqueue[Twitch.id].store('notice', {text: address + ':' + port, fadedelay:1000, level:-4, class:'chat-connection-good-connecting'}) })
@@ -100,10 +101,11 @@ module.exports = function(Twitch) {
       chatqueue[Twitch.id].store('metaphone', {chunks: await getChunks(message).catch(err => console.log(err)), message: 'pikachu said:\n' + message + '\n(from ' + username + ' new subscriber)'})
   })
 
-  client.addListener('connected', function (address, port) {
+  client.addListener('connected', async function (address, port) {
     showConnectionNotices && chatqueue[Twitch.id].store('notice', {text:'Connected', fadedelay:1000, level:-2, class: 'chat-connection-good-connected'})
     joinAnnounced = []
     checkfollowers(Twitch, true)
+    botqueue[Twitch.id].startTime = await getStart(Twitch.id).catch(err => console.log(err))
   })
 
   client.addListener('disconnected', function (reason) {
@@ -115,8 +117,7 @@ module.exports = function(Twitch) {
     if (username == client.getUsername()) {
       showConnectionNotices && chatqueue[Twitch.id].store('notice', {text:'Joined ' + capitalize(dehash(channel)), fadedelay:1000, level:-1, class: 'chat-room-join'})
       joinAnnounced.push(channel)
-   // getViewers(channel);
-      getStart(Twitch.id)
+      getViewers(Twitch.id)
     }
   })
 

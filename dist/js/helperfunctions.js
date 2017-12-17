@@ -95,7 +95,7 @@ let numberButton = {
     whichbutton.parent.setAll('tint', Presets.normalstate)
   },
   onClick: function (whichbutton) {
-    let newvalue = parseInt(whichbutton.parent.children[1].text) + whichbutton.value
+    let newvalue = +whichbutton.parent.children[1].text + whichbutton.value
     whichbutton.parent.setAll('tint', Presets.pressedstate)
     if (newvalue >= 0 && newvalue < 10) { whichbutton.parent.children[1].setText(newvalue.toString()) }
   },
@@ -273,14 +273,14 @@ let selector = {
   },
   set: function (group, value) {
     if (!value) value = 1
-    group[0].setText(pokedex[parseInt(value) - 1].Pokemon)
-    group[1].frame = parseInt(value) - 1
+    group[0].setText(pokedex[+value - 1].Pokemon)
+    group[1].frame = +value - 1
     group[2].setText(value)
     return group
   },
   update: function (child) {
     if (child.value) {
-      let value = (child.frame ? child.frame + 1 : (isNaN(parseInt(child.value)) ? value = this.validatename(child.value) : child.value))
+      let value = (child.frame ? child.frame + 1 : (isNaN(+child.value) ? value = this.validatename(child.value) : child.value))
       this.set(child.parent.children, value)
     }
     return child.parent
@@ -336,7 +336,7 @@ function rate (teamtoassess) {
   for (member in assess) {
     for (checktier in Tiers) {
       if (Tiers[checktier] == assess[member].Tier) {
-        teamscore += 144 / (parseInt(checktier) + 1) +
+        teamscore += 144 / (+checktier + 1) +
             540 - (assess[member]['HP'] + assess[member]['Attack'] + assess[member]['Defense'] + assess[member]['Sp. Attack'] + assess[member]['Sp. Defense'] + assess[member]['Speed'])
       }
     }

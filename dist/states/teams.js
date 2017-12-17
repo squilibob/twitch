@@ -60,7 +60,7 @@ project.Teams.prototype = {
     return this
   },
   addtoteam: function () {
-    if (currentTeam.children.length < 6) this.newmember(parseInt(selectnew.children[2].value) - 1)
+    if (currentTeam.children.length < 6) this.newmember(+selectnew.children[2].value - 1)
     return this
   },
   newmember: function (index) {

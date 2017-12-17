@@ -24,9 +24,10 @@ exports.checkAvatar = function(username) {
   // })
     }, function (err, res, body) {
       let avatar
-      if (body) if (body.data) if (body.data.length)
-        avatar= body.data[0].profile_image_url ? body.data[0].profile_image_url : 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png'
-      if (!avatar || avatar.includes('user-default-pictures')){
+      if (((body || {}).data || {}).length) {
+        avatar = body.data[0].profile_image_url ? body.data[0].profile_image_url : 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png'
+      }
+      if (!avatar || avatar.includes('user-default-pictures')) {
         avatar = ~~(Math.random()*49)
       }
       resolve(avatar)
@@ -41,9 +42,8 @@ exports.getViewers = function(Twitch, channel) {
         "Client-ID":  clientOptions.options.clientId
     }
   }, function (err, res, body) {
-    if (((body || {}).data)) {
+    if (((body || {}).data || {}).length) {
       // Twitch.watching.viewers = body.data.length ? body.data[0].viewer_count : 0
-      if (body.data.length)
       if (((body || {}).data || {})[0].type) {
         client.api({
           url: 'http://tmi.twitch.tv/group/user' + header(body.data[0].user_login, 'chatters', null, 3)
@@ -66,8 +66,8 @@ exports.getStart = function(channel) {
           "Client-ID":  clientOptions.options.clientId
       }
     }, function (err, res, body) {
-      err && console.log('err', err)
-      body ? body.data.forEach(field => resolve(new Date(field.started_at))) : reject(err)
+      ((body || {}).data) && body.data.length ? body.data.forEach(field => resolve(new Date(field.started_at))) : err ? reject(err) : resolve(Date.now())
+       // catches if the stream is not online when the users requests that the chatbot connect to irc
     })
   })
 }
@@ -95,7 +95,7 @@ exports.checkfollowers = function(Twitch, hidenotify, current) {
   client.api({
     url: 'https://api.twitch.tv/kraken/channels' + header(Twitch.id, 'follows', 'offset=' + current + '&limit=' + maxcursor)
   }, function (err, res, body) {
-    if (body && body.follows) {
+    if ((body || {}).follows) {
       if (current + body.follows.length < body._total) exports.checkfollowers(Twitch, hidenotify, current + body.follows.length)
       followerloop: for (viewer in body.follows) {
         if (!Twitch.followers[body.follows[viewer].user.name]) {

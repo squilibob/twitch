@@ -5,7 +5,7 @@ socket.on('Receive pokedex', function (payload) {
   // pokedex[payload.id-1]=payload;
   for (entry in payload) {
     // console.log(payload[entry]);
-    pokedex[parseInt(payload[entry].id) - 1] = payload[entry]
+    pokedex[+payload[entry].id - 1] = payload[entry]
   }
   console.log('receiving pokedex ' + payload.length)
   game.storage.setItem('pokedex', JSON.stringify(pokedex))

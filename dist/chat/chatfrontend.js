@@ -80,7 +80,7 @@
     }
    // else {
    //   var colortemp = color.match( /^#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/);
-   //   if (colortemp.length) var colorstring = 'rgba(' + parseInt(colortemp[colortemp.length-3], 16) + ', ' + parseInt(colortemp[colortemp.length-2], 16) + ', ' + parseInt(colortemp[colortemp.length-1], 16) + ', ' + colorbrightness + ')';
+   //   if (colortemp.length) var colorstring = 'rgba(' + +(colortemp[colortemp.length-3], 16) + ', ' + +(colortemp[colortemp.length-2], 16) + ', ' + +(colortemp[colortemp.length-1], 16) + ', ' + colorbrightness + ')';
    //   if (colorstring) color = colorstring;
    // }
 
@@ -152,7 +152,7 @@
     chatMessage.className = 'chat-message'
     chatMessage.dataset.hide = ''
    // chatMessage.style.background = color;
-    chatMessage.innerHTML = showEmotes ? formatEmotes(message, user.emotes) : htmlEntities(message)
+    chatMessage.innerHTML = showEmotes ? parseEmotes(message, user.emotes) : htmlEntities(message)
     chatMessage.innerHTML = pokify(chatMessage.innerHTML)
     chatMessage.innerHTML = ffz(chatMessage.innerHTML)
     chatMessage.innerHTML = bttv(chatMessage.innerHTML)

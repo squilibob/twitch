@@ -129,7 +129,7 @@ project.Layout.prototype = {
           bloblen += len
         }
        if (!lengths[emotion][Math.ceil(bloblen)]) lengths[emotion][Math.ceil(bloblen)] = []
-       lengths[emotion][Math.ceil(bloblen)].push(emotion + ' ' + ("00" + (parseInt(blob)+1)).substr(-2))
+       lengths[emotion][Math.ceil(bloblen)].push(emotion + ' ' + ("00" + (+blob + 1)).substr(-2))
       }
     }
   },
@@ -160,7 +160,7 @@ project.Layout.prototype = {
       while (!lengths[pikaemotion][wordlength]) wordlength--
       randomsound = lengths[pikaemotion][wordlength][Math.floor(Math.random() * lengths[pikaemotion][wordlength].length)]
       pikaword = []
-      for (character in counts[pikaemotion][parseInt(randomsound.split(' ')[1])-1]) {
+      for (character in counts[pikaemotion][+randomsound.split(' ')[1] - 1]) {
         pikaword.push([ "ピ", "カ", "チャ", "ピカ", "ブレ", "ピカチュウ", "ピカチャ", "ピカ ピ", "ピ ピカ" ][[ "Pi", "Ka", "Cha", "Pika", "Bree", "Pikachu", "Pikacha", "Pika Pi", "Pi Pika" ].indexOf(character)])
         // pikatextqueue.last.pivot.x = 0
         // pikatextqueue.last.pivot.y = 800

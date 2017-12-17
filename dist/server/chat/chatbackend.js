@@ -1,4 +1,4 @@
-const {dehash, capitalize, htmlEntities, checkImageExists, timeout, hosting, submitchat, dequeue, parseraffle, urlDecode, isMod, checkExist} = require('./chatfunctions')
+const {dehash, capitalize, checkImageExists, timeout, hosting, submitchat, dequeue, parseraffle, urlDecode, isMod, checkExist} = require('./chatfunctions')
 const {checkPoke, checkDb, getMoveList, checkMoves, compoundCheck, describeMove} = require('./fieldparse')
 const {checkAvatar, getViewers, getStart, checkfollowers, checkstreamer} = require('./chatapi')
 const {typeMatchup, effective} = require('./pokemonparse')
@@ -165,7 +165,7 @@ let image = parseurl.image
       },
       action: async function (obj) {
         let response
-        let findtm = parseInt(obj.message.slice(obj.message.toLowerCase().indexOf('tm') + 2, obj.message.toLowerCase().indexOf('tm') + 5))
+        let findtm = +obj.message.slice(obj.message.toLowerCase().indexOf('tm') + 2, obj.message.toLowerCase().indexOf('tm') + 5)
         if (findtm > 0 && findtm < 101) { tmnameloop: for (var key in tm[findtm - 1]) response = 'TM' + findtm + ' ' + key + ' can be obtained at ' + tm[findtm - 1][key] } else {
           tmnumberloop: for (num = tm.length; num > 0; num--) {
             tmnamefromnumberloop: for (var key in tm[num - 1]) {
@@ -192,7 +192,7 @@ let image = parseurl.image
       action: async function (obj) {
         let response
         if (obj.message.toLowerCase().indexOf('hm') >= 0) {
-          let findtm = parseInt(obj.message.slice(obj.message.toLowerCase().indexOf('hm') + 2, obj.message.toLowerCase().indexOf('hm') + 5))
+          let findtm = +obj.message.slice(obj.message.toLowerCase().indexOf('hm') + 2, obj.message.toLowerCase().indexOf('hm') + 5)
           if (findtm > 0 && findtm < 8) { hmloop: for (var key in hm[findtm - 1]) response = 'HM' + findtm + ' ' + key + ' can be obtained in ORAS at ' + hm[findtm - 1][key] } else {
             hmnumberloop: for (num = 1; num < 8; num++) {
               hmnamefromnumberloop: for (var key in hm[num - 1]) { if (obj.message.toLowerCase().indexOf(key.toLowerCase()) >= 0) response = 'HM' + num + ' ' + key + ' can be obtained at ' + hm[num - 1][key] }

@@ -31,7 +31,7 @@ function ffz (text) {
   ffzloop: for (set in emoticons.ffz) {
     emoteloop: for (emote in emoticons.ffz[set].emoticons) {
       let sizeurl = 1
-      sizeloop: for (size in emoticons.ffz[set].emoticons[emote].urls) { if (parseInt(size) > sizeurl) sizeurl = size }
+      sizeloop: for (size in emoticons.ffz[set].emoticons[emote].urls) { if (+size > sizeurl) sizeurl = size }
       let thisemote = emoticons.ffz[set].emoticons[emote].name
       if (text.indexOf(thisemote) >= 0) text = text.replace(new RegExp(thisemote, 'g'), '<img class="emoticon" src="http:' + emoticons.ffz[set].emoticons[emote].urls[sizeurl] + '"/>')
     }
@@ -47,7 +47,21 @@ function bttv (text) {
   return text
 }
 
-function formatEmotes (text, emotes) {
+function parseEmotes (text, emotes) {
+ let list = {}
+  for (let emote in emotes) {
+    let current = emotes[emote].shift().split('-')
+    let word = text.slice(+current.shift(), +current.pop()+1)
+    list[emote] = word
+  }
+  for (emoticon in list) {
+    text = text.replace(new RegExp(list[emoticon], 'g'), '<img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + emoticon + '/4.0">')
+  }
+  return text
+}
+
+function formatEmotes2 (text, emotes) {
+  console.log('text', text, emotes)
   let splitText = text.split('')
 
   for (let i in emotes) {
@@ -56,7 +70,7 @@ function formatEmotes (text, emotes) {
       let mote = e[j]
       if (typeof mote === 'string') {
         mote = mote.split('-')
-        mote = [parseInt(mote[0]), parseInt(mote[1])]
+        mote = [+mote[0], +mote[1]]
         let length = mote[1] - mote[0],
           empty = Array.apply(null, new Array(length + 1)).map(function () {
             return ''
