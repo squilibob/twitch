@@ -5,7 +5,7 @@ function chatbot () {
   socket.on('bttv', payload => emoticons.bttv = emoticons.bttv.concat(payload))
   socket.on('notice', payload => chatNotice(payload))
   socket.on('raffle update', payload => {
-    console.log('payload', payload)
+    payload.winner ? chatNotice({text: payload.id + ' has won the raffle', fadedelay: 24000, level:1}) :
     chatNotice({text: payload.id + (payload.entered ? ' enters' : ' leaves') + ' the raffle', fadedelay: 20000, level:1})
   })
   socket.on('displaystreamer', payload => displaystreamer(payload))
@@ -76,7 +76,7 @@ function chatbot () {
   // })
 
   // client.connect()
-  socket.emit('send raffle', 'Users', 'Raffle')
+  // socket.emit('send raffle', 'Users', 'Raffle')
   // socket.emit('Ask for table', 'Moves')
   // socket.emit('Ask for table', 'Abilities')
   // socket.emit('Ask for table', 'Bttv')

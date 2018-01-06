@@ -38,6 +38,7 @@ if (!self) {
 
     if (cmdexist) {
       let parameters = []
+      parser[command].times++
       if (messagepayload.pokemon.length < parser[command].requires.pokemon) cmdexist = false
       if (parser[command].requires.question && !containsquestion) cmdexist = false
       if (parser[command].requires.modonly && !modmessage) cmdexist = false
@@ -237,7 +238,7 @@ let image = parseurl.image
         parameters: 2,
         modonly: false
       },
-      action: async function (obj) {
+      action: async function (obj) {  //needs some cleanup
         let response
         var fc = []
         var validfc = true
@@ -262,7 +263,7 @@ let image = parseurl.image
             fc: fc
           }
           if (validfc) {
-            dbcall.newuser('Users', payload)
+            await dbcall.userexists('Users', obj.user.username.toLowerCase()) ? dbcall.updateuser('Users', payload) : dbcall.createuser('Users', payload)
             response = 'create: twitch username: ' + obj.user.username + ' IGN: ' + ign + ' fc: ' + fc.join('-')
           } else response = fc.join('-') + ' ' + ign + ' is invalid combination of fc and ign. Please include your ign and fc like this: !signup squilibob 3609-1058-1166'
         } else response = obj.message + ' invalid please include your ign and fc like this: !signup squilibob 3609-1058-1166'
@@ -289,12 +290,13 @@ let image = parseurl.image
           .map(async function (person) {
            return await dbcall.getfc('Users', person).catch(err => console.log(err))
           })
-          .concat([await dbcall.getfc('Users', obj.user.username.toLowerCase()).catch(err => console.log(err))])
+          // .concat([await dbcall.getfc('Users', obj.user.username.toLowerCase()).catch(err => console.log(err))])
+          !users.length && users.concat([await dbcall.getfc('Users', obj.user.username.toLowerCase()).catch(err => console.log(err))])
           return Promise.all(users)
             .then(found => {
               let response = 'user not found'
               if (found.length) {
-                if (found.length > 1) found = found.filter(user=> user !== obj.user.username.toLowerCase())
+                // if (found.length > 1) found = found.filter(user=> user !== obj.user.username.toLowerCase())
                 response = found
                   .filter(user => !!user.id)
                   .map(user => user.id + "'s friend code is " + user.fc[0] + '-' + user.fc[1] + '-' + user.fc[2] + ' IGN ' + user.ign)
@@ -339,7 +341,7 @@ let image = parseurl.image
         modonly: false
       },
       action: async function (obj) {
-        dbcall.manualraffle('Users', obj.user.username, true)
+        dbcall.modifyRaffleUser('Users', obj.user.username, true, 1)
         return false
       }
     },
@@ -357,7 +359,7 @@ let image = parseurl.image
         modonly: false
       },
       action: async function (obj) {
-        dbcall.manualraffle('Users', obj.user.username, false)
+        dbcall.modifyRaffleUser('Users', obj.user.username, false, 1)
         return false
       }
     },
@@ -474,24 +476,53 @@ let image = parseurl.image
         modonly: false
       },
       action: async function (obj) {
-        console.log('obj.participants', obj.participants)
+        let users = await dbcall.gettable('Users', 'Raffle')
+        if (users.filter(user => user.entered).length === 0) return 'The raffle is empty.'
+        let rafflettotal = users
+          .filter(user => user.entered)
+          .map(user => +user.chance)
+          .reduce((a, b) => a + b, 0)
         let response
-        if (Object.keys(obj.participants).length > 0) {
-          response = Object.keys(obj.participants).length + ' in the raffle: '
-          var totalraffle = 0
-          totalloop: for (person in obj.participants) {
-            totalraffle += obj.participants[person]
+        let requestingchatter = users.find(user => user.id.toLowerCase() === obj.user.username.toLowerCase())
+        if (!requestingchatter) {
+          if (users.length > 0) {
+            response =[users.length + ' in the raffle: ']
+            users
+              .filter(user => user.entered)
+              .forEach(person => response.push(person.id + ' (' + ~~(+person.chance / rafflettotal * 10000) / 100 + '%) '))
+          } else {
+            response = 'You must provide your Friend Code to join raffles and then use !enter. Signup page: ' + websiteurl + ' or use !signup'
           }
-          if (obj.participants[obj.user.username.toLowerCase()]) response = obj.user.username + ' has a ' + Math.floor(obj.participants[obj.user.username] / totalraffle * 10000) / 100 + '% chance to win the raffle'
-          else {
-            if (obj.self || obj.user.username === obj.channel) {
-              enteredloop: for (person in obj.participants) {
-                response = response + person + ' (' + Math.floor(obj.participants[person] / totalraffle * 10000) / 100 + '%) '
-              }
-            } else response = 'You must sign up to join raffles and then use !enter. Signup page: ' + websiteurl + ' or !signup'
-          }
+        } else {
+          response = obj.user.username + ' has a ' + ~~(requestingchatter.chance / rafflettotal * 10000) / 100 + '% chance to win the raffle'
         }
         return response
+      }
+    },
+    '!draw': {
+      altcmds: [],
+      help: 'draws a user from the raffle from those whom have entered it',
+      times: 0,
+      requires:
+      {
+        question: false,
+        display: true,
+        exclusive: false,
+        pokemon: 0,
+        parameters: 0,
+        modonly: true
+      },
+      action: async function (obj) {
+        let raffle = []
+        let users = await dbcall.gettable('Users', 'Raffle')
+        if (users.filter(user => user.entered).length === 0) return 'The raffle is empty.'
+        users = users
+          .filter(user => user.entered)
+          .map(user => new Array(+user.chance).fill(user.id))
+          .reduce((a,b) => b.concat(a))
+        let winner = users[~~(Math.random() * users.length)]
+        await dbcall.rafflewinner('Users', winner)
+        return winner + ' has won the raffle'
       }
     },
     'sound': {

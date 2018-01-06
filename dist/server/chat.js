@@ -31,7 +31,6 @@ class Store {
 
 module.exports = function(Twitch) {
   global.chatqueue[Twitch.id] = new Store(Twitch.backlog, ['chat'])
-  // global.participants = await dbcall.sendraffleupdate('Users').catch(err => console.log(err)) || {}
   global.botqueue[Twitch.id] = {
     channel: Twitch.channel,
     messages: [],
@@ -40,7 +39,7 @@ module.exports = function(Twitch) {
     responseSize: 12
   }
 
-  // dbcall.subscribetoraffle(Twitch)
+  dbcall.subscribetoraffle(Twitch)
 
   botDelay = 1, // Number of seconds between each bot message
   showConnectionNotices = true // Show messages like "Connected" and "Disconnected"
@@ -106,6 +105,7 @@ module.exports = function(Twitch) {
     joinAnnounced = []
     checkfollowers(Twitch, true)
     botqueue[Twitch.id].startTime = await getStart(Twitch.id).catch(err => console.log(err))
+    // client.getChannels().forEach(console.log)
   })
 
   client.addListener('disconnected', function (reason) {
@@ -114,11 +114,11 @@ module.exports = function(Twitch) {
   })
 
   client.addListener('join', function (channel, username) {
-    if (username == client.getUsername()) {
+    // if (username == client.getUsername()) {
       showConnectionNotices && chatqueue[Twitch.id].store('notice', {text:'Joined ' + capitalize(dehash(channel)), fadedelay:1000, level:-1, class: 'chat-room-join'})
       joinAnnounced.push(channel)
       getViewers(Twitch.id)
-    }
+    // }
   })
 
   client.addListener('part', function (channel, username) {
@@ -131,7 +131,7 @@ module.exports = function(Twitch) {
     setInterval(getViewers, 525000, Twitch.id),
     // setInterval(repeating_notice_website, 3000000),
     // setInterval(repeating_notice_signup, 7200000),
-    setInterval(checkfollowers, 18000, Twitch, false),
+    setInterval(checkfollowers, 180000, Twitch, false),
     setInterval(dequeue, 1000 * botDelay, botDelay, Twitch.id)
   ]
 }

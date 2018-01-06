@@ -31,6 +31,7 @@ exports.checkAvatar = function(username) {
         avatar = ~~(Math.random()*49)
       }
       resolve(avatar)
+      err && reject(err)
     })
   })
 }
@@ -67,6 +68,7 @@ exports.getStart = function(channel) {
       }
     }, function (err, res, body) {
       ((body || {}).data) && body.data.length ? body.data.forEach(field => resolve(new Date(field.started_at))) : err ? reject(err) : resolve(Date.now())
+      err && reject(err)
        // catches if the stream is not online when the users requests that the chatbot connect to irc
     })
   })
@@ -109,6 +111,7 @@ exports.checkfollowers = function(Twitch, hidenotify, current) {
         }
       }
     }
+    err && reject(err)
   })
 }
 

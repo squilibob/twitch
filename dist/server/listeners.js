@@ -7,19 +7,19 @@ module.exports = function(io, socket) {
     chatqueue[Twitch.id].store('bttv', Bttv)
   })
 
-  socket.on('request to connect', async function(msg){
-    if (msg.id != '' && msg.id != undefined) {
-      console.log('user: ' + msg.id, 'connecting...')
-      let connected = await dbcall.requesttoconnect('Users', msg.id.toLowerCase()).catch(err => console.log(err))
-      if (!connected) {
-        createanewuser(msg)
-      } else {
-        socket.emit('login accepted', connected)
-      }
-    } else {
-      console.log('undefined value sent', msg)
-    }
-  })
+  // socket.on('request to connect', async function(msg){
+  //   if (msg.id != '' && msg.id != undefined) {
+  //     console.log('user: ' + msg.id, 'connecting...')
+  //     let connected = await dbcall.requesttoconnect('Users', msg.id.toLowerCase()).catch(err => console.log(err))
+  //     if (!connected) {
+  //       createanewuser(msg)
+  //     } else {
+  //       socket.emit('login accepted', connected)
+  //     }
+  //   } else {
+  //     console.log('undefined value sent', msg)
+  //   }
+  // })
   // socket.on('log chat', function(payload){
   //  fs.appendFile('public/chatlog.html', '<li>'  + payload + '<li>\n', (err) => {
   //    if (err) console.log(err)
@@ -52,14 +52,14 @@ module.exports = function(io, socket) {
   socket.on('send emote', payload => io.emit('receive emote', payload))
   socket.on('update leaderboard', entry => dbcall.updateleaderboard('Users', entry))
   socket.on("Show vote", () => socket.emit("Vote options", result)) // wtf is this
-  socket.on('won raffle', person => dbcall.rafflewinner('Users', person)) // wtf is this
   socket.on('create new player', payload => socket.emit('receive new player', payload)) //wtf is this
   socket.on('clear leaderboard', () => dbcall.clearleaderboard('Users'))
   // socket.on('manually enter raffle', username => dbcall.manualraffle(username, true))
   // socket.on('manually leave raffle', username => dbcall.manualraffle(username, true))
-  socket.on('send raffle',  async function(db, raffle) {await dbcall.sendraffleupdate(db, raffle)
+  socket.on('send raffle',  async function(db, raffle) {await dbcall.gettable(db, raffle)
     .then(list => list.forEach(user => io.emit('raffle update', user)))
     .catch(err => console.log(err))})
+  socket.on('won raffle', async function(person){ await dbcall.rafflewinner('Users', person) })
   socket.on('Ask for pokedex',  async function(simple){ io.emit('Receive pokedex', await dbcall.gettable('Users', 'Pokedex').catch(err => console.log(err))) })
   socket.on("update vote", async function(){ io.emit('receive vote', await dbcall.gettable('Users', 'Vote').catch(err => console.log(err))) })
   socket.on('Request vote', async function(){ io.emit('receive vote', await dbcall.gettable('Users', 'Vote').catch(err => console.log(err))) })
@@ -96,13 +96,4 @@ module.exports = function(io, socket) {
 
   async function sendUserPokes (username) { io.emit('user pokes', await dbcall.senduserpokes('Users', username).catch(err => console.log(err))) }
 
-  async function createanewuser(payload) {
-    let starter = [198, 313, 314, 546, 661, 300, 431, 509, 677, 52, 352, 335, 619, 86, 283, 211, 296, 615, 165 , 167, 88]
-    // if (payload.id != '' && payload.id != undefined && payload.pokevalues[0] > 0 && payload.pokevalues[1] > 0 && payload.pokevalues[2] > 0 && payload.fc[0] >0 && payload.fc[0] < 10000 && payload.fc[1] >0 && payload.fc[1] < 10000  && payload.fc[2] >0 && payload.fc[2] < 10000  && payload.ign != '' && payload.ign != undefined) {
-    if (payload.id != '' && payload.id != undefined && payload.fc[0] >0 && payload.fc[0] < 10000 && payload.fc[1] >0 && payload.fc[1] < 10000  && payload.fc[2] >0 && payload.fc[2] < 10000  && payload.ign != '' && payload.ign != undefined) {
-      // payload.id = payload.id.split(' ')[0]
-      payload.id = payload.id.trim()
-      io.emit('someone signed up', await dbcall.createanewuser('Users', payload, starter[Math.floor(Math.random()*starter.length)]).catch(err => console.log(err)))
-    } else console.log('user not created, there was missing information')
-  }
 }
