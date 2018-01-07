@@ -322,9 +322,7 @@ let image = parseurl.image
       },
       action: async function (obj) {
         delete useravatars[obj.user.username]
-        useravatars[obj.user.username] = await dbcall.getavatar('Users', obj.user.username)
-        badges[obj.user.username] = await dbcall.getbadge('Users', obj.user.username)
-        return  obj.user.username + ': reloaded avatar image'
+        chatqueue[obj.twitchID].store('notice', {text:'reloaded ' + obj.user.username, fadedelay:1000, level:-4})
       }
     },
     '!enter': {
@@ -483,7 +481,9 @@ let image = parseurl.image
           .map(user => +user.chance)
           .reduce((a, b) => a + b, 0)
         let response
-        let requestingchatter = users.find(user => user.id.toLowerCase() === obj.user.username.toLowerCase())
+        let requestingchatter = users
+          .filter(user => user.entered)
+          .find(user => user.id.toLowerCase() === obj.user.username.toLowerCase())
         if (!requestingchatter) {
           if (users.length > 0) {
             response =[users.length + ' in the raffle: ']
@@ -661,15 +661,6 @@ let image = parseurl.image
           .filter(poke => locKeys.some(key => !!poke[key]))
           .map(poke => poke.Pokemon + ' ' + locKeys.find(key => !!poke[key])  + ' ' + poke[locKeys.find(key => !!poke[key])])
           .join(', ')  || 'No location for ' + obj.pokemon.map(poke => poke.Pokemon).join('  or ')
-          // .map(poke => Array.isArray(poke.Location) ? poke.Pokemon + ' USUM locations: ' + poke.Location.join(', ') : poke.Pokemon + ' SuMo locations: ' + poke.Location)
-        // var reply = ''
-        // if (obj.pokemon[0].Location) {
-        //   if (Array.isArray(obj.pokemon[0].Location)) reply += obj.pokemon[0].Pokemon + ' USUM locations: ' + obj.pokemon[0].Location.join(', ')
-        //   else reply += obj.pokemon[0].Pokemon + ' SuMo locations: ' + obj.pokemon[0].Location
-        // } else if (obj.pokemon[0].SuMo) reply += obj.pokemon[0].Pokemon + ' SuMo locations: ' + obj.pokemon[0].SuMo
-        // else if (obj.pokemon[0].locationORAS) reply += obj.pokemon[0].Pokemon + ' ORAS locations: ' + obj.pokemon[0].locationORAS
-        // else reply = 'No location for ' + obj.pokemon[0].Pokemon
-        // if (reply != obj.message && reply != '') { return reply }
       }
     },
    '!more': {
@@ -873,7 +864,7 @@ let image = parseurl.image
             return response.json().then(function (json) {
               if ((json || {}).emotes) {
                 for (key in json.emotes) {
-                  socket.emit('Insert bttv', json.emotes[key])
+                  dbcall.put('Users', 'Bttv', json.emotes[key]).catch(err => console.log(err))
                 }
                 chatqueue[obj.twitchID].store('notice', {text:'loaded ' + json.emotes.length + ' emotes', fadedelay:1000, level:-4})
                 socket.emit('Ask for table', 'Bttv')
@@ -907,7 +898,7 @@ let image = parseurl.image
             return response.json().then(function (json) {
               if ((json || {}).sets) {
                 for (key in json.sets) {
-                  socket.emit('Insert ffz', json.sets[key])
+                  dbcall.put('Users', 'Ffz', json.sets[key]).catch(err => console.log(err))
                   chatqueue[obj.twitchID].store('notice', {text:'loaded ' + json.sets[key].emoticons.length + ' emotes from ' + json.sets[key].title, fadedelay:1000, level:-4})
                 }
                 socket.emit('Ask for table', 'Ffz')

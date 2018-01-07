@@ -1,46 +1,24 @@
-exports.put = function(database, table, payload) {
-  return new Promise(function(resolve, reject) {
-    r.db(database).table(table)
+const unwrap = cursor => cursor.toArray().then(cursor => cursor.length ? cursor.shift() : null)
+
+exports.put = (database, table, payload) => r.db(database).table(table)
     .get(payload.id.toLowerCase())
     .replace(payload)
     .run(conn)
-    .then(result => resolve(result))
-    .catch(error => reject(error))
-  })
-}
 
-exports.gettable = function(database, dbname) {
-  return new Promise(function(resolve, reject) {
-    r.db(database).table(dbname)
+exports.gettable = (database, dbname) => r.db(database).table(dbname)
     .run(conn)
     .then(cursor => cursor.toArray())
-    .then(result => resolve(result || {}))
-    .catch(error => reject(error))
-  })
-}
 
-exports.getfc = function(database, username) {
-  return new Promise(function(resolve, reject) {
-    r.db(database).table('Users')
+exports.getfc = (database, username) => r.db(database).table('Users')
     .filter(r.row('id').eq(username.toLowerCase()))
     .pluck('id', 'fc', 'ign')
     .run(conn)
-    .then(cursor => cursor.toArray())
-    .then(result => resolve(result ? result[0] : null))
-    .catch(error => reject(error))
-  })
-}
+    .then(unwrap)
 
-exports.getavatar = function(database, username) {
-  return new Promise(function(resolve, reject) {
-    r.db(database).table('Users').filter(r.row('id').eq(username))
+exports.getavatar = (database, username) => r.db(database).table('Users').filter(r.row('id').eq(username))
     .getField('avatar')
     .run(conn)
-    .then(cursor => cursor.toArray())
-    .then(result =>  (result[0] == undefined || result == []) ? resolve(-1) : resolve(result[0]) )
-    .catch(error => reject(error))
-  })
-}
+    .then(unwrap)
 
 exports.updateavatar = function(database, username, newavatar) {
   r.db(database).table('Users')
@@ -58,16 +36,10 @@ exports.updatebadge = function(database, username, newbadge) {
   .catch(error => reject(error))
 }
 
-exports.getbadge = function(database, username) {
-  return new Promise(function(resolve, reject) {
-    r.db(database).table('Users').filter(r.row('id').eq(username.toLowerCase()))
+exports.getbadge = (database, username) => r.db(database).table('Users').filter(r.row('id').eq(username.toLowerCase()))
     .getField('badge')
     .run(conn)
-    .then(cursor => cursor.toArray())
-    .then(result => resolve(result ? result[0] : null))
-    .catch(error => reject(error))
-  })
-}
+    .then(unwrap)
 
 exports.votepoll = function(database, payload) {
   r.db(database).table('Vote')
@@ -85,15 +57,9 @@ exports.sendvote = function(database, payload) {
   .catch(error => reject(error))
 }
 
-exports.showvote = function(database) {
-  return new Promise(function(resolve, reject) {
-    r.db(database).table('Vote')
+exports.showvote = (database) => r.db(database).table('Vote')
     .get('system')
     .then(cursor => cursor.toArray())
-    .then(result => resolve(result))
-    .catch(error => reject(error))
-  })
-}
 
 exports.updateleaderboard = function(database, entry) {
   r.db(database).table('Leaderboard')
@@ -110,15 +76,10 @@ exports.clearleaderboard = function(database) {
   .catch(error => reject(error))
 }
 
-exports.userexists = function(database, username) {
-  return new Promise(function(resolve, reject) {
-    r.db(database).table('Users')
+exports.userexists = (database, username) => r.db(database).table('Users')
     .get(username.toLowerCase())
     .run(conn)
-    .then(cursor => resolve(!!cursor))
-    .catch(err => console.log(err))
-  })
-}
+    .then(cursor => !!cursor)
 
 exports.updateuser = function(database, payload) {
   r.db(database).table('Users')
@@ -167,20 +128,12 @@ exports.setcurrentteam = function(database, name, teamnumber) {
   .catch(error => reject(error))
 }
 
-exports.getcurrentteam = function(database, username) {
-  return new Promise(function(resolve, reject) {
-    r.db(database).table('Users')
+exports.getcurrentteam = (database, username) => r.db(database).table('Users')
     .filter(r.row('id').eq(username.toLowerCase()))
     .without('pokevalues')
     .run(conn)
     .then(cursor => cursor.toArray())
-    .then(result => {
-        let active = +result.active
-        resolve(result.teams[active])
-     })
-    .catch(error => reject(error))
-  })
-}
+    .then(result => result.teams[+result.active])
 
 exports.saveuserpokes = function(database, name, payload) {
     r.db(database).table('Users')
@@ -234,15 +187,10 @@ exports.modifyRaffleUser = function(database, username, entered) {
   .catch(error => reject(error))
 }
 
-exports.raffleUserExists = function(database, username) {
-  return new Promise(function(resolve, reject) {
-    r.db(database).table('Raffle')
+exports.raffleUserExists = (database, username) => r.db(database).table('Raffle')
     .get(username.toLowerCase())
     .run(conn)
-    .then(cursor => resolve(!!cursor))
-    .catch(err => reject(err))
-  })
-}
+    .then(cursor => !!cursor)
 
 exports.newRaffleUser = function(database, username, displayicon) {
   r.db(database).table('Users')
@@ -264,81 +212,11 @@ exports.rafflewinner = async function(database, username){
   .run(conn)
   .catch(err => console.log(err))
 
-  r.db(database).table('Raffle')
+  await r.db(database).table('Raffle')
   .filter(r.row('id').eq(username.toLowerCase()))
   .update({ winner: true, chance: 1, entered: false })
   .run(conn)
   .catch(err => console.log(err))
+
+  return await exports.getfc(username)
 }
-    // r.db(database).table('Raffle').get(username)
-    // .run(conn, function(err, result) {
-    //   if (err) throw err
-    //   if (result) {
-    //     if (result.errors) console.log(result.first_error)
-    //     else {
-    //       sendUserPokes (result.id)
-    //       r.db(database).table('Raffle').get(result.id).update({id: result.id, chance: 1, entered: false, displayicon: result.displayicon, winner: true})
-    //       .run(conn, function(err, result) {
-    //         if (err) throw err
-    //         if (result.errors) console.log(result.first_error)
-    //         r.db(database).table('Raffle').filter(r.row('id').ne(username))
-    //         .run(conn, function(err, cursor) {
-    //           cursor.toArray(function(err, result) {
-    //             for (loser in result){
-    //               if (result[loser].entered)
-    //                 r.db(database).table('Raffle').get(result[loser].id).update({winner: false, chance: result[loser].chance*2}).run(conn, function(err, temp) {
-    //                   //r.row("email").add("@stackoverflow.com")
-    //                 if (err) throw err
-    //               })
-    //             }
-    //           })
-    //         })
-    //         // sendRaffleUpdate()
-    //       })
-    //     }
-    //   }
-    // })
-
-
-
-  // async function sendRaffleUpdate(Twitch, needupdate){
-  //   let current = await dbcall.sendraffleupdate('Users', Twitch.raffle).catch(err => console.log(err))
-  //   let justentered = []
-  //   let updated = {}
-  //   for (person in current) {
-  //     if (participants[current[person].id] == undefined && current[person].entered) {
-  //       justentered.push(current[person].id)
-  //       updated[current[person].id] = current[person].chance
-  //     } else if (current[person].entered) {
-  //       updated[current[person].id] = current[person].chance
-  //     }
-  //   }
-  //   participants = updated
-  //   io.emit('receive raffle', current)
-  //   if (needupdate) io.emit('raffle update', {raffle: current, new: justentered})
-  // }
-
-// exports.raffleChangeUser = function(database, username, defaultchance, entered, displayicon){
-//   r.db(database).table('Raffle')
-//     .get(username)
-//     .run(conn, function(err, result) {
-//       if (err) throw err
-//       if (result) {
-//         if (result.errors) console.log(result.first_error)
-//         else exports.modifyRaffleUser(username, result.chance, entered, displayicon)
-//       }
-//       else {
-//         exports.modifyRaffleUser(username, defaultchance, entered, displayicon)
-//       }
-//     })
-//   }
-
-// exports.sendraffleupdate = function(database, table) {
-//   return new Promise(function(resolve, reject) {
-//     r.db(database).table(table)
-//     .run(conn)
-//     .then(cursor => cursor.toArray())
-//     .then(result => { resolve(result || {}) })
-//     .catch(error => reject(error))
-//   })
-// }

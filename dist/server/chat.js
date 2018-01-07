@@ -61,6 +61,7 @@ module.exports = function(Twitch) {
     if (user.username === 'mikuia') return false
     if (!useravatars[user.username]) {
       useravatars[user.username] = await dbcall.getavatar('Users', user.username).catch(err => console.log(err))
+      if (useravatars[user.username] == null) useravatars[user.username] = -1
       let obj = await checkstreamer(user['user-id']).catch(err => console.log(err))
       if (((user || {})['user-id'] || {}) !== Twitch.id && !self && obj.followers && obj.followers > Twitch.shoutout) {
         chatqueue[Twitch.id].store('displaystreamer', obj)
