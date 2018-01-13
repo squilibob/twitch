@@ -1,30 +1,32 @@
-const unwrap = cursor => cursor.toArray().then(cursor => cursor.length ? cursor.shift() : null)
-
 exports.put = (database, table, payload) => r.db(database).table(table)
-    .get(payload.id.toLowerCase())
-    .replace(payload)
-    .run(conn)
+  .get(payload.id.toLowerCase())
+  .replace(payload)
+  .run(conn)
 
 exports.gettable = (database, dbname) => r.db(database).table(dbname)
-    .run(conn)
-    .then(cursor => cursor.toArray())
+  .run(conn)
+  .then(cursor => cursor.toArray())
 
 exports.getfc = (database, username) => r.db(database).table('Users')
-    .filter(r.row('id').eq(username.toLowerCase()))
-    .pluck('id', 'fc', 'ign')
-    .run(conn)
-    .then(unwrap)
+  .filter(r.row('id').eq(username.toLowerCase()))
+  .pluck('id', 'fc', 'ign')
+  .nth(0)
+  .default(null)
+  .run(conn)
+  // .then(unwrap)
 
-exports.getavatar = (database, username) => r.db(database).table('Users').filter(r.row('id').eq(username))
-    .getField('avatar')
-    .run(conn)
-    .then(unwrap)
+exports.getavatar = (database, username) => r.db(database).table('Users')
+  .filter(r.row('id').eq(username))
+  .getField('avatar')
+  .nth(0)
+  .default(-1)
+  .run(conn)
 
 exports.updateavatar = function(database, username, newavatar) {
   r.db(database).table('Users')
   .get(username.toLowerCase())
   .update({"avatar": newavatar})
-  .run(conn)
+  .run(conn, {noreply: true})
   .catch(error => reject(error))
 }
 
@@ -32,20 +34,22 @@ exports.updatebadge = function(database, username, newbadge) {
   r.db(database).table('Users')
   .get(username.toLowerCase())
   .update({"badge": newbadge})
-  .run(conn)
+  .run(conn, {noreply: true})
   .catch(error => reject(error))
 }
 
-exports.getbadge = (database, username) => r.db(database).table('Users').filter(r.row('id').eq(username.toLowerCase()))
-    .getField('badge')
-    .run(conn)
-    .then(unwrap)
+exports.getbadge = (database, username) => r.db(database).table('Users')
+  .filter(r.row('id').eq(username.toLowerCase()))
+  .getField('badge')
+  .nth(0)
+  .default(null)
+  .run(conn)
 
 exports.votepoll = function(database, payload) {
   r.db(database).table('Vote')
   .get('system')
   .replace({id: 'system', options: payload.options, title: payload.title})
-  .run(conn)
+  .run(conn, {noreply: true})
   .catch(error => reject(error))
 }
 
@@ -53,33 +57,35 @@ exports.sendvote = function(database, payload) {
   r.db(database).table('Vote')
   .get(payload.id)
   .replace({id: payload.id, vote: payload.vote})
-  .run(conn)
+  .run(conn, {noreply: true})
   .catch(error => reject(error))
 }
 
 exports.showvote = (database) => r.db(database).table('Vote')
-    .get('system')
-    .then(cursor => cursor.toArray())
+  .get('system')
+  .nth(0)
+  .default(null)
+  .run(conn)
 
 exports.updateleaderboard = function(database, entry) {
   r.db(database).table('Leaderboard')
   .get(entry.id)
   .replace(entry)
-  .run(conn)
+  .run(conn, {noreply: true})
   .catch(error => reject(error))
 }
 
 exports.clearleaderboard = function(database) {
   r.db(database).table('Leaderboard')
   .delete()
-  .run(conn)
+  .run(conn, {noreply: true})
   .catch(error => reject(error))
 }
 
 exports.userexists = (database, username) => r.db(database).table('Users')
-    .get(username.toLowerCase())
-    .run(conn)
-    .then(cursor => !!cursor)
+  .get(username.toLowerCase())
+  .run(conn)
+  .then(cursor => !!cursor)
 
 exports.updateuser = function(database, payload) {
   r.db(database).table('Users')
@@ -88,7 +94,7 @@ exports.updateuser = function(database, payload) {
     ign: payload.ign,
     fc: payload.fc
   })
-  .run(conn)
+  .run(conn, {noreply: true})
   .catch(err => console.log(err))
 }
 
@@ -110,7 +116,7 @@ exports.createuser = function(database, payload) {
     active: 0,
     teams: [{"default": [0, 1, 2, 3, 4, 5]}]
   }, {conflict: 'error'})
-  .run(conn)
+  .run(conn, {noreply: true})
   .catch(error => console.log(error))
 }
 
@@ -124,16 +130,17 @@ exports.setcurrentteam = function(database, name, teamnumber) {
           "active": teamnumber
         })
    })
-  .run(conn)
+  .run(conn, {noreply: true})
   .catch(error => reject(error))
 }
 
 exports.getcurrentteam = (database, username) => r.db(database).table('Users')
-    .filter(r.row('id').eq(username.toLowerCase()))
-    .without('pokevalues')
-    .run(conn)
-    .then(cursor => cursor.toArray())
-    .then(result => result.teams[+result.active])
+  .filter(r.row('id').eq(username.toLowerCase()))
+  .without('pokevalues')
+  .nth(0)
+  .default(false)
+  .run(conn)
+  .then(result => !!result ? result.teams[+result.active] : null)
 
 exports.saveuserpokes = function(database, name, payload) {
     r.db(database).table('Users')
@@ -145,7 +152,7 @@ exports.saveuserpokes = function(database, name, payload) {
             "teams": payload
           })
        })
-  .run(conn)
+  .run(conn, {noreply: true})
   .catch(error => reject(error))
  }
 
@@ -169,7 +176,7 @@ exports.clearraffle = function(database) {
   r.db(database)
   .table('Raffle')
   .delete()
-  .run(conn)
+  .run(conn, {noreply: true})
   .catch(error => reject(error))
 }
 
@@ -183,14 +190,14 @@ exports.modifyRaffleUser = function(database, username, entered) {
           "entered": entered
         })
    })
-  .run(conn)
+  .run(conn, {noreply: true})
   .catch(error => reject(error))
 }
 
 exports.raffleUserExists = (database, username) => r.db(database).table('Raffle')
-    .get(username.toLowerCase())
-    .run(conn)
-    .then(cursor => !!cursor)
+  .get(username.toLowerCase())
+  .run(conn)
+  .then(cursor => !!cursor)
 
 exports.newRaffleUser = function(database, username, displayicon) {
   r.db(database).table('Users')
@@ -200,7 +207,7 @@ exports.newRaffleUser = function(database, username, displayicon) {
     entered: true,
     displayicon: displayicon
   }, {conflict: 'update'})
-  .run(conn)
+  .run(conn, {noreply: true})
   .catch(err => console.log(err))
 }
 

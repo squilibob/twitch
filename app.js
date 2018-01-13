@@ -40,6 +40,7 @@ async function init(c){
   global.abilities = await dbcall.gettable('Users', 'Abilities').catch(err => console.log(err))
   global.Bttv = await dbcall.gettable('Users', 'Bttv').catch(err => console.log(err))
   global.Ffz = await dbcall.gettable('Users', 'Ffz').catch(err => console.log(err))
+  global.apiqueue = {}
   global.chatqueue = {}
   global.botqueue = {}
   global.useravatars = {}

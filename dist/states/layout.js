@@ -147,15 +147,16 @@ project.Layout.prototype = {
       })
     }
     if (socket.hasListeners('texttopika') == false) {
-      socket.on('texttopika', function (meta, message) {
-        _this.guesspikas(meta, message)
+      socket.on('texttopika', function (obj) {
+        _this.guesspikas(obj)
       })
     }
   },
-  guesspikas: function (metaphone, message) {
+  guesspikas: function (obj) {
+    console.log('metaphone, message', obj)
     pikaemotion = 'Happy'
     pikamessage = []
-    for (phone of metaphone) {
+    for (phone of obj.chunks) {
       wordlength = phone
       while (!lengths[pikaemotion][wordlength]) wordlength--
       randomsound = lengths[pikaemotion][wordlength][Math.floor(Math.random() * lengths[pikaemotion][wordlength].length)]
@@ -169,7 +170,7 @@ project.Layout.prototype = {
       pikacharqueue.push(pikaword.join(' '))
       pikamessage.push(randomsound)
     }
-    overlayqueue.push({type: 'pika', value: pikamessage}, {type: 'message', value: message})
+    overlayqueue.push({type: 'pika', value: pikamessage}, {type: 'message', value: obj.message})
   },
   saypikas: function () {
     if (!pikachutalking && pikaqueue.length) {

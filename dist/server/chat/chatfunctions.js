@@ -34,12 +34,13 @@ exports.checkImageExists = function (imageUrl, callBack) {
 
 }
 
-exports.timeout = function (Twitch, username) {
-    console.log('username ', username, ' timed out')
+exports.timeout = function(channel, username, reason, duration, Twitch) {
+    console.log('...arguments', ...arguments)
+    console.log('username ', username, ' timed out on ', channel)
     chatqueue[Twitch.id].store('timeout', {username: username, channel:exports.dehash(channel)})
 }
 
-exports.clearChat = function (Twitch) {
+exports.clearChat = function (channel, Twitch) {
   chatqueue[Twitch.id].store('clear', exports.capitalize(exports.dehash(Twitch.channel)))
 }
 
@@ -112,13 +113,6 @@ exports.checkExist = function (checkstring, checkarray, separateword) {
 }
 
 exports.getChunks = function(message) {
-  return new Promise(function(resolve, reject) {
-    let chunks = message.split(' ').map(word => processmetaphone(word).length)
-    // let chunks = []
-    // for (word of message.split(' ')) {
-    //   chunks.push(process(word).length)
-    // }
-    resolve(chunks)
-  })
+    return message.split(' ').map(word => processmetaphone(word).length)
 }
 

@@ -62,7 +62,7 @@ project.Pokemotions.prototype = {
 
     if (socket.hasListeners('receive new player') == false) {
       socket.on('receive new player', function (payload) {
-        player.push(_this.createplayer(payload.poke, footergame.world.width / 2, footergame.world.height / 2, payload.name))
+        player.length < 144 && player.push(_this.createplayer(payload.poke, footergame.world.width / 2, footergame.world.height / 2, payload.name))
       })
     }
 

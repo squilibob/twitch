@@ -16,8 +16,10 @@ function chatbot () {
     //{ prime: true,
     // plan: 'Prime',
   // planName: 'Channel Subscription (squilibob)' }
-  socket.on('clear', payload => clearChat(Twitch, payload))
-  socket.on('timeout', payload =>  timeout(Twitch, payload))
+  socket.on('clear', clearChat)
+  socket.on('timeout', timeout)
+  // socket.on('clear', payload => clearChat(payload))
+  // socket.on('timeout', payload =>  timeout(payload))
 
 
   //justentered.length > 0 && submitchat(justentered.join(', ') + (justentered.length == 1 ? ' has' : ' have') + ' been entered into the raffle')

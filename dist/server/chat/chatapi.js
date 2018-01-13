@@ -1,5 +1,6 @@
 // api call functions
 function header (id, endpoint, extraparams, version) {
+  let clientOptions = require('./clientoptions')
   if (!version) version = 5
   let paramstring = ''
   if (id) paramstring += '/' + id
@@ -11,56 +12,74 @@ function header (id, endpoint, extraparams, version) {
   return paramstring
 }
 
-exports.checkAvatar = function(username) {
+function helix(options, Twitch) {
   return new Promise(function(resolve, reject) {
-    client.api({
-      url: 'https://api.twitch.tv/helix/users?id=' + username,
-      headers: {
-          "Client-ID":  clientOptions.options.clientId
+    const rate = 'ratelimit-'
+    let apireset = +Twitch.api.reset - +Date.now() / 1000
+    if (Twitch.api.remaining < 1 && apireset > 0) {
+      // if (!Twitch.queue) Twitch.queue = 0
+      // if (Twitch.queue < 0) Twitch.queue = 0
+      // if (Twitch.queue < Twitch.api.limit - Twitch.api.remaining) {
+      //   Twitch.queue++
+      //   console.log(apireset + ' seconds until API limit resets. Queueing: ', Twitch.queue)
+      //   setTimeout(() => {
+      //     console.log('dequeue ', Twitch.queue)
+      //     Twitch.api.remaining++
+      //     Twitch.queue--
+      //     resolve(helix(options, Twitch))
+      //   },  (Twitch.queue * 1000) + apireset * 1000)
+      // }
+      reject(new Error((+Twitch.api.reset - +Date.now() / 1000) + ' seconds until API limit resets'))
+    } else client.api(options, function (err, res, body) {
+      if ((res || {}).headers) {
+        Object.keys(res.headers)
+          .filter(key => key.includes(rate))
+          .forEach(key => Twitch.api[key.substr(rate.length)] = res.headers[key])
       }
-    // })
-  //   .then(result => resolve(body.data[0].profile_image_url ? body.data[0].profile_image_url : 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png'))
-  //   .catch(err => console.log(err))
-  // })
-    }, function (err, res, body) {
-      let avatar
-      if (((body || {}).data || {}).length) {
-        avatar = body.data[0].profile_image_url ? body.data[0].profile_image_url : 'http://www-cdn.jtvnw.net/images/xarth/footer_glitch.png'
-      }
-      if (!avatar || avatar.includes('user-default-pictures')) {
-        avatar = ~~(Math.random()*49)
-      }
-      resolve(avatar)
       err && reject(err)
+      resolve((((body || {}).data || {}).length) ? body.data.shift() : null)
     })
   })
 }
 
-exports.getViewers = function(Twitch, channel) {
-  client.api({
-    url: 'https://api.twitch.tv/helix/streams?user_login=' + channel,
+exports.checkAvatar = function(username, Twitch) {
+  return helix({
+    url: 'https://api.twitch.tv/helix/users?id=' + username,
     headers: {
-        "Client-ID":  clientOptions.options.clientId
+        "Client-ID":  Twitch.clientOptions.options.clientId
     }
-  }, function (err, res, body) {
-    if (((body || {}).data || {}).length) {
-      // Twitch.watching.viewers = body.data.length ? body.data[0].viewer_count : 0
-      if (((body || {}).data || {})[0].type) {
-        client.api({
-          url: 'http://tmi.twitch.tv/group/user' + header(body.data[0].user_login, 'chatters', null, 3)
-        }, function (err, res, tmibody) {
-          if ((tmibody || {}).data) {
-            // Twitch.watching.chatters = tmibody.data.chatters.viewers
-            chatqueue[Twitch.id].store('audience', {chatters: tmibody.data.chatters.viewers, watchers:body.data.length ? body.data[0].viewer_count : 0})
-          }
-        })
-      }
-    }
-  })
+  }, Twitch)
+  .then(data => data.profile_image_url ? data.profile_image_url : null)
+  .catch(data => null)
+  .then(data => !!data && !data.includes('user-default-pictures') ? data : 1 + ~~(Math.random()*48))
+  .catch(console.log)
 }
 
-exports.getStart = function(channel) {
+exports.getViewers = function(Twitch) {
+  helix({
+    url: 'https://api.twitch.tv/helix/streams?user_login=' + Twitch.id,
+    headers: {
+        "Client-ID":  Twitch.clientOptions.options.clientId
+    }
+  }, Twitch)
+  .then(data => {
+    if (!!data && !!data.type) { //if the streamer is live
+      client.api({
+        url: 'http://tmi.twitch.tv/group/user' + header(Twitch.channel, 'chatters', null, 3)
+      }, function (err, res, tmibody) {
+        if ((tmibody || {}).chatter_count) {
+          console.log('getViewers', data.viewer_count, tmibody.chatter_count)
+          chatqueue[Twitch.id].store('audience', {chatters: tmibody.chatter_count, watchers: !!data.viewer_count ? data.viewer_count : 0})
+        }
+      })
+    }
+  })
+  .catch(console.log)
+}
+
+exports.getStart = function(channel) {  // eventually this function will be replaced with a webhook for start time
   return new Promise(function(resolve, reject) {
+    let clientOptions = require('./clientoptions')
     client.api({
       url: 'https://api.twitch.tv/helix/streams?user_id=' + channel,
       headers: {
@@ -115,7 +134,7 @@ exports.checkfollowers = function(Twitch, hidenotify, current) {
   })
 }
 
-exports.checkstreamer = function(userId) {  // waiting for new API to have all this data
+exports.checkstreamer = function(userId) {  // waiting for new client.api to have all this data
   return new Promise(function(resolve, reject) {
     client.api({
       url: 'https://api.twitch.tv/kraken/channels' + header(userId)

@@ -417,9 +417,9 @@ let image = parseurl.image
       },
       action: async function (obj) {
         let response
-        let uptime = new Date() - await getStart(obj.twitchID)
-        let hours = Math.floor((uptime % 86400000) / 3600000)
-        let minutes = Math.floor(((uptime % 86400000) % 3600000) / 60000)
+        let uptime = +(new Date())- await getStart(obj.twitchID)
+        let hours = ~~((uptime % 86400000) / 3600000)
+        let minutes = ~~(((uptime % 86400000) % 3600000) / 60000)
         response = ('Stream has been live for ' + hours + (minutes < 10 ? ':0' : ':') + minutes)
         return response
       }
