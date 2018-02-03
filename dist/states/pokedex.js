@@ -624,7 +624,7 @@ project.Pokedex.prototype = {
   update: function () {
     // if (!bgcontainer.filters) bgcontainer.children[3].filters = [ filter ];
     filter.update()
-    if (!isNaN(+pokemoncontainer.children[2].text)) {
+    if (typeof (+pokemoncontainer.children[2].text) === 'number') {
       dexinfo = pokedex[+pokemoncontainer.children[2].text]
       this.change({frame: +pokemoncontainer.children[2].text - 1})
     }

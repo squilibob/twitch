@@ -1,4 +1,5 @@
- const processmetaphone = require('./metaphone')
+const processmetaphone = require('./metaphone')
+const {getName} = require('./chatapi')
 // Javascript helper functions
 exports.dehash = function (channel) {
   return typeof (channel) === 'string' ? channel.replace(/^#/, '') : channel
@@ -58,6 +59,7 @@ exports.dequeue = function (delay, channel) {
     }
     botqueue[channel].lastMessage = Date.now()
   }
+  // !!alerts[channel] && alerts[channel].length && showAlert(channel, alerts[channel].shift())
 }
 
 // Front End

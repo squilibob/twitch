@@ -4,8 +4,8 @@ expressServer.app = expressServer.module(),
 expressServer.server = require('http').Server(expressServer.app)
 expressServer.io = require('socket.io')(expressServer.server)
 expressServer.path = __dirname
-require('./dist/server/routes')(expressServer)
 require('./dist/js/polyfill')
+const EventEmitter = require('events')
 
 global.r = require('rethinkdb')
 
@@ -28,7 +28,15 @@ function db_id_to_duple(original) {
 
 async function init(c){
   global.conn = c
+  global.alerts = new EventEmitter()
+  global.apiqueue = {}
+  global.chatqueue = {}
+  global.botqueue = {}
+  global.useravatars = {}
+  global.badges = {}
+  global.streamers = {}
   global.dbcall = require('./dist/server/database')
+  require('./dist/server/routes')(expressServer)
   global.pokedex = await dbcall.gettable('Users', 'Pokedex').catch(err => console.log(err))
   pokedex.sort((a, b) => a.id - b.id)
   global.typechart = await dbcall.gettable('Users', 'TypeChart').catch(err => console.log(err))
@@ -40,12 +48,6 @@ async function init(c){
   global.abilities = await dbcall.gettable('Users', 'Abilities').catch(err => console.log(err))
   global.Bttv = await dbcall.gettable('Users', 'Bttv').catch(err => console.log(err))
   global.Ffz = await dbcall.gettable('Users', 'Ffz').catch(err => console.log(err))
-  global.apiqueue = {}
-  global.chatqueue = {}
-  global.botqueue = {}
-  global.useravatars = {}
-  global.badges = {}
-  global.streamers = []
 
   console.log('cache ready', pokedex.length)
   require('./dist/server/instances')(expressServer)

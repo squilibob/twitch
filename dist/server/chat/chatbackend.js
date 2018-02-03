@@ -18,8 +18,7 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
     self: self,
     pokemon: checkPoke(message, maxpokes),
     responseSize: botqueue[Twitch.id].responseSize,
-    followers: Twitch.followers,
-    participants: Twitch.participants
+    followers: Twitch.followers
   }
 
   let modmessage = isMod(user)
@@ -49,7 +48,7 @@ if (!self) {
       }
       messagepayload.parameters = parameters
       if (cmdexist) {
-        response = await parser[command].action(messagepayload).catch(err => console.log(err))
+        response = await parser[command].action(messagepayload).catch(console.log)
       }
       displaycommand = parser[command].requires.display
     }
@@ -288,10 +287,10 @@ let image = parseurl.image
           .map(person => person.toLowerCase())
           .filter(person => obj.message.toLowerCase().split(' ').includes(person))
           .map(async function (person) {
-           return await dbcall.getfc('Users', person).catch(err => console.log(err))
+           return await dbcall.getfc('Users', person).catch(console.log)
           })
-          // .concat([await dbcall.getfc('Users', obj.user.username.toLowerCase()).catch(err => console.log(err))])
-          !users.length && users.concat([await dbcall.getfc('Users', obj.user.username.toLowerCase()).catch(err => console.log(err))])
+          // .concat([await dbcall.getfc('Users', obj.user.username.toLowerCase()).catch(console.log)])
+          !users.length && users.concat([await dbcall.getfc('Users', obj.user.username.toLowerCase()).catch(console.log)])
           return Promise.all(users)
             .then(found => {
               let response = 'user not found'
@@ -304,7 +303,7 @@ let image = parseurl.image
               }
               return response
             })
-            .catch(err => console.log(err))
+            .catch(console.log)
       }
     },
     '!reload': {
@@ -864,7 +863,7 @@ let image = parseurl.image
             return response.json().then(function (json) {
               if ((json || {}).emotes) {
                 for (key in json.emotes) {
-                  dbcall.put('Users', 'Bttv', json.emotes[key]).catch(err => console.log(err))
+                  dbcall.put('Users', 'Bttv', json.emotes[key]).catch(console.log)
                 }
                 chatqueue[obj.twitchID].store('notice', {text:'loaded ' + json.emotes.length + ' emotes', fadedelay:1000, level:-4})
                 socket.emit('Ask for table', 'Bttv')
@@ -898,7 +897,7 @@ let image = parseurl.image
             return response.json().then(function (json) {
               if ((json || {}).sets) {
                 for (key in json.sets) {
-                  dbcall.put('Users', 'Ffz', json.sets[key]).catch(err => console.log(err))
+                  dbcall.put('Users', 'Ffz', json.sets[key]).catch(console.log)
                   chatqueue[obj.twitchID].store('notice', {text:'loaded ' + json.sets[key].emoticons.length + ' emotes from ' + json.sets[key].title, fadedelay:1000, level:-4})
                 }
                 socket.emit('Ask for table', 'Ffz')

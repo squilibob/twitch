@@ -95,7 +95,7 @@ exports.updateuser = function(database, payload) {
     fc: payload.fc
   })
   .run(conn, {noreply: true})
-  .catch(err => console.log(err))
+  .catch(console.log)
 }
 
 function startingcard() {
@@ -105,6 +105,7 @@ function startingcard() {
 }
 
 exports.createuser = function(database, payload) {
+  console.log('database, payload', database, payload)
   r.db(database).table('Users')
   .insert({
     id: payload.id,
@@ -112,11 +113,12 @@ exports.createuser = function(database, payload) {
     fc: payload.fc,
     avatar: -1,
     validated: false,
-    cards: [{'poke': startingcard, 'level': 1}],
+    cards: [{'poke': startingcard(), 'level': 1}],
     active: 0,
     teams: [{"default": [0, 1, 2, 3, 4, 5]}]
   }, {conflict: 'error'})
   .run(conn, {noreply: true})
+  .then(console.log)
   .catch(error => console.log(error))
 }
 
@@ -161,7 +163,7 @@ exports.subscribetoraffle = function(Twitch) {
     .changes({includeInitial: true})
     .run(conn)
     .then(stream => stream.each((err, cursor) => getrafflechanges(cursor).id && chatqueue[Twitch.id].store('raffle update', getrafflechanges(cursor))))
-    .catch(err => console.log(err))
+    .catch(console.log)
 }
 
 function getrafflechanges(cursor) {
@@ -208,7 +210,7 @@ exports.newRaffleUser = function(database, username, displayicon) {
     displayicon: displayicon
   }, {conflict: 'update'})
   .run(conn, {noreply: true})
-  .catch(err => console.log(err))
+  .catch(console.log)
 }
 
 exports.rafflewinner = async function(database, username){
@@ -217,13 +219,13 @@ exports.rafflewinner = async function(database, username){
   .filter(r.row('entered').eq(true))
   .update({ winner: false, chance: r.row("chance").mul(2).default(1) })
   .run(conn)
-  .catch(err => console.log(err))
+  .catch(console.log)
 
   await r.db(database).table('Raffle')
   .filter(r.row('id').eq(username.toLowerCase()))
   .update({ winner: true, chance: 1, entered: false })
   .run(conn)
-  .catch(err => console.log(err))
+  .catch(console.log)
 
   return await exports.getfc(username)
 }

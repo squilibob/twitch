@@ -41,6 +41,28 @@ router.get('/consts.js', function (req, res) {
   res.sendFile(path.join(dirname, '/dist','consts.js'))
 })
 
+router.post('/webhook', expressServer.module.json(), function(req, res, next) {
+  res.sendStatus(202)
+  let obj = req.body
+  let types = {
+      'started_at': 'online',
+      'to_id': 'follower'
+  }
+
+  for (key in types) {
+     (((obj || {}).data  || []).length) && obj.data.forEach(body => !!body[key] && alerts.emit(types[key], body))
+  }
+})
+
+router.get('/webhook', expressServer.module.json(), function(req, res){
+  if (((req || {}).query || {})['hub.challenge']) {
+    res.send(req.query['hub.challenge'])
+  }
+  else{
+    res.sendStatus(200)
+  }
+})
+
 router.get('/', function (req, res) {
   console.log(dirname + ' client connect with params: ', req.query)
   res.sendFile(path.join(dirname, '/dist','index.html'))

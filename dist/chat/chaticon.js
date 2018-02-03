@@ -6,7 +6,7 @@ function pokify (text) {
   location = text.toLowerCase().indexOf('mewtwo')
   if (location >= 0) {
     let xpos = spritesheet.rowlen * spritesheet.x - ((149 % spritesheet.rowlen) * spritesheet.x),
-      ypos = Math.ceil(pokedex.length / spritesheet.rowlen) * spritesheet.y - (Math.floor(149 / spritesheet.rowlen) * spritesheet.y)
+      ypos = Math.floor(pokedex.length / spritesheet.rowlen) * spritesheet.y - (Math.floor(149 / spritesheet.rowlen) * spritesheet.y)
     text = text.slice(0, location) + '<span class="w3-tooltip sprsheet" style="background-position: ' + xpos + 'px ' + ypos + 'px;"><span class="w3-text">M&#8203;ewtwo</span></span>' + text.slice(location + 6)
   }
   location = text.toLowerCase().indexOf('nature')
@@ -19,7 +19,7 @@ function pokify (text) {
       let location = text.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()),
         namelength = pokedex[pokes].Pokemon.length
       let xpos = spritesheet.rowlen * spritesheet.x - ((pokes % spritesheet.rowlen) * spritesheet.x),
-        ypos = Math.ceil(pokedex.length / spritesheet.rowlen) * spritesheet.y - (Math.floor(pokes / spritesheet.rowlen) * spritesheet.y)
+        ypos = Math.floor(pokedex.length / spritesheet.rowlen) * spritesheet.y - (Math.floor(pokes / spritesheet.rowlen) * spritesheet.y)
       text = text.slice(0, location) + '<span class="w3-tooltip sprsheet" style="background-position: ' + xpos + 'px ' + ypos + 'px;"><span class="w3-text">' + pokedex[pokes].Pokemon.slice(0, pokedex[pokes].Pokemon.length - 1) + '&#8203;' + pokedex[pokes].Pokemon.slice(pokedex[pokes].Pokemon.length - 1, pokedex[pokes].Pokemon.length) + '</span></span>' + text.slice(location + namelength, text.length)
       pokes++
     }
@@ -60,28 +60,27 @@ function parseEmotes (text, emotes) {
   return text
 }
 
-function formatEmotes2 (text, emotes) {
-  console.log('text', text, emotes)
-  let splitText = text.split('')
+// function formatEmotes (text, emotes) {
+//   let splitText = text.split('')
 
-  for (let i in emotes) {
-    let e = emotes[i]
-    for (let j in e) {
-      let mote = e[j]
-      if (typeof mote === 'string') {
-        mote = mote.split('-')
-        mote = [+mote[0], +mote[1]]
-        let length = mote[1] - mote[0],
-          empty = Array.apply(null, new Array(length + 1)).map(function () {
-            return ''
-          })
-        splitText = splitText.slice(0, mote[0]).concat(empty).concat(splitText.slice(mote[1] + 1, splitText.length))
-        splitText.splice(mote[0], 1, '<img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + i + '/3.0">')
-      }
-    }
-  }
-  return htmlEntities(splitText).join('')
-}
+//   for (let i in emotes) {
+//     let e = emotes[i]
+//     for (let j in e) {
+//       let mote = e[j]
+//       if (typeof mote === 'string') {
+//         mote = mote.split('-')
+//         mote = [+mote[0], +mote[1]]
+//         let length = mote[1] - mote[0],
+//           empty = Array.apply(null, new Array(length + 1)).map(function () {
+//             return ''
+//           })
+//         splitText = splitText.slice(0, mote[0]).concat(empty).concat(splitText.slice(mote[1] + 1, splitText.length))
+//         splitText.splice(mote[0], 1, '<img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + i + '/3.0">')
+//       }
+//     }
+//   }
+//   return htmlEntities(splitText).join('')
+// }
 
 function createBadge (name) {
   let badge = document.createElement('div')

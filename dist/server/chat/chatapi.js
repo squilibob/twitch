@@ -42,9 +42,9 @@ function helix(options, Twitch) {
   })
 }
 
-exports.checkAvatar = function(username, Twitch) {
+exports.checkAvatar = function(id, Twitch) {
   return helix({
-    url: 'https://api.twitch.tv/helix/users?id=' + username,
+    url: 'https://api.twitch.tv/helix/users?id=' + id,
     headers: {
         "Client-ID":  Twitch.clientOptions.options.clientId
     }
@@ -52,6 +52,17 @@ exports.checkAvatar = function(username, Twitch) {
   .then(data => data.profile_image_url ? data.profile_image_url : null)
   .catch(data => null)
   .then(data => !!data && !data.includes('user-default-pictures') ? data : 1 + ~~(Math.random()*48))
+  .catch(console.log)
+}
+
+exports.getName = function(id, Twitch) {
+  return helix({
+    url: 'https://api.twitch.tv/helix/users?id=' + id,
+    headers: {
+        "Client-ID":  Twitch.clientOptions.options.clientId
+    }
+  }, Twitch)
+  .then(data => !!data ? data.login : id)
   .catch(console.log)
 }
 
@@ -86,8 +97,9 @@ exports.getStart = function(channel) {  // eventually this function will be repl
           "Client-ID":  clientOptions.options.clientId
       }
     }, function (err, res, body) {
-      ((body || {}).data) && body.data.length ? body.data.forEach(field => resolve(new Date(field.started_at))) : err ? reject(err) : resolve(Date.now())
+      console.log('body', body);
       err && reject(err)
+      ((body || {}).data || {}).length ? body.data.forEach(field => resolve(new Date(field.started_at))) : resolve(false)
        // catches if the stream is not online when the users requests that the chatbot connect to irc
     })
   })
@@ -119,10 +131,10 @@ exports.checkfollowers = function(Twitch, hidenotify, current) {
     if ((body || {}).follows) {
       if (current + body.follows.length < body._total) exports.checkfollowers(Twitch, hidenotify, current + body.follows.length)
       followerloop: for (viewer in body.follows) {
-        if (!Twitch.followers[body.follows[viewer].user.name]) {
+        if (!streamers[Twitch.id].followers[body.follows[viewer].user.name]) {
           let datefollowed = new Date(body.follows[viewer].created_at)
      // followers[body.follows[viewer].user.name] = {logo: body.follows[viewer].user.logo, followed: Math.floor((Date.now() - datefollowed))/8.64e7) + ' days ago (' + body.follows[viewer].created_at.split('T').shift().split('-').reverse().join('/') + ')'};
-          Twitch.followers[body.follows[viewer].user.name] = {logo: body.follows[viewer].user.logo, followed: Math.floor((Date.now() - datefollowed) / 8.64e7) + ' days ago (' + datefollowed.toDateString() + ')'}
+          streamers[Twitch.id].followers[body.follows[viewer].user.name] = {logo: body.follows[viewer].user.logo, followed: Math.floor((Date.now() - datefollowed) / 8.64e7) + ' days ago (' + datefollowed.toDateString() + ')'}
           if (!hidenotify) {
             chatqueue[Twitch.id].store('follower', {username: body.follows[viewer].user.name, number:Object.keys(Twitch.followers).length.toLocaleString()})
             chatqueue[Twitch.id].store('notice', {text: body.follows[viewer].user.name + ' is now following (follower #' + Object.keys(Twitch.followers).length.toLocaleString()+ ')', fadedelay: 20000, level:1})

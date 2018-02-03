@@ -1,6 +1,6 @@
 const Presets = {
   width: 1600,
-  height: 958,
+  height: 900,
   bgcolor: '#1c0f0c',
   selectedcolor: '#604040',
   font: 'Extra-Cool',
@@ -16,7 +16,7 @@ const Presets = {
   externalteams: true,
   scalingallowed: false,
   simple: false,
-  cors: 'https://cors-anywhere.herokuapp.com/'
+  cors: 'https://crossorigin.me/' //'https://cors-anywhere.herokuapp.com/'
 }
 const preloadscripts = [
   'consts',

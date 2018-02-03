@@ -344,6 +344,11 @@ project.Pokemotions.prototype = {
         .clear()
         .lineStyle(1, 0xffffff, 0.5)
         .beginFill(Phaser.Color.getColor32(255, 80, Math.floor(health / 100 * 255), 80))
+        // var color = { r: 186, g: 218, b: 85 };
+
+        // var rgb2hex = function(r, g, b) {
+        //   return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        // }
         .drawRect(-16 * health / 100, -20, 32 * health / 100, 6)
         .endFill()
   },

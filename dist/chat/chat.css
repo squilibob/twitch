@@ -350,19 +350,19 @@ ul {
 	background-image: url(https://static-cdn.jtvnw.net/badges/v1/df9095f6-a8a0-4cc2-bb33-d908c0adffb8/2);
 }
 .chat-badge-bit1 {
-	background-image: url(https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/1/1.gif);
+	background-image: url(/img/1.gif);
 }
 .chat-badge-bit100 {
-	background-image: url(https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/100/1.gif);
+	background-image: url(/img/100.gif);
 }
 .chat-badge-bit1000 {
-	background-image: url(https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/1000/1.gif);
+	background-image: url(/img/1000.gif);
 }
 .chat-badge-bit5000 {
-	background-image: url(https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/5000/1.gif);
+	background-image: url(/img/5000.gif);
 }
 .chat-badge-bit10000 {
-	background-image: url(https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/10000/1.gif);
+	background-image: url(/img/10000.gif);
 }
 .chat-badge-sun {
 	background-image: url(/img/sun.png);

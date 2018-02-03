@@ -170,7 +170,7 @@ exports.compoundCheck = function (obj, movelist) {
   if (moves) moves = moves.length > 1 ? moves.reduce((a, b) =>  a.filter(x => b.includes(x))) : moves.shift()
   let fields = multipleSplitCheck(obj, movelist)
   fields && fields.length && compound.push(fields)
-  if ((!fields || !fields.length) && moves && moves.length) return moves.join(', ')
+  if ((!fields || !fields.length) && moves && moves.length) return pruneArray(moves, obj)
   moves && moves.length && compound.push(moves)
   compound = compound.length > 1 ? compound.reduce((a, b) =>  a.filter(x => b.includes(x))) : compound.shift()
   return (!compound || !compound.length) ? 'No pokemon' : pruneArray(compound, obj)
@@ -210,8 +210,8 @@ exports.getMoveList =function(obj) {
 }
 
 function pruneArray(arr, obj) {
-  if (!arr.length) return false
-  arrSize = obj.responseSize
+  if (!arr.length) return arr
+  arrSize = +obj.responseSize
   botqueue[obj.twitchID].more = arr.slice(arrSize)
   return arr.slice(0, arrSize).join(', ') + (' ' + arr.length > arrSize ? '... ' + (arr.length - arrSize) + ' more' : '')
 }

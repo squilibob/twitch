@@ -13,16 +13,9 @@ function chatbot () {
   // socket.on('follower', payload => chatNotice({text: payload.username +  ' is now following (follower #' + payload.number.toString() + ')', fadedelay: 20000, level:1}))
   socket.on('host', payload => host(payload))
   socket.on('subscriber', payload => chatNotice({text: payload.username + ' has subscribed (' + payload.method.plan + ') ' + payload.method.planName, fadedelay: 20000, level:1}))
-    //{ prime: true,
-    // plan: 'Prime',
-  // planName: 'Channel Subscription (squilibob)' }
   socket.on('clear', clearChat)
   socket.on('timeout', timeout)
-  // socket.on('clear', payload => clearChat(payload))
-  // socket.on('timeout', payload =>  timeout(payload))
 
-
-  //justentered.length > 0 && submitchat(justentered.join(', ') + (justentered.length == 1 ? ' has' : ' have') + ' been entered into the raffle')
       // command -
 /*
     Ban - Username has been banned on a channel.

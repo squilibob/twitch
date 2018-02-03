@@ -280,7 +280,7 @@ let selector = {
   },
   update: function (child) {
     if (child.value) {
-      let value = (child.frame ? child.frame + 1 : (isNaN(+child.value) ? value = this.validatename(child.value) : child.value))
+      let value = (child.frame ? child.frame + 1 : (typeof (+child.value) !=  'number' ? value = this.validatename(child.value) : child.value))
       this.set(child.parent.children, value)
     }
     return child.parent
@@ -477,8 +477,8 @@ let overlayselect = {
 }
 
 Math.sign = Math.sign || function (x) {
-  x = +x // convert to a number
-  if (x === 0 || isNaN(x)) {
+  x = +x
+  if (x === 0 || typeof x != 'number') {
     return Number(x)
   }
   return x > 0 ? 1 : -1

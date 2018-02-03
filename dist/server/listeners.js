@@ -29,27 +29,27 @@ module.exports = function(io, socket) {
   socket.on('clear leaderboard', () => dbcall.clearleaderboard('Users'))
   // socket.on('manually enter raffle', username => dbcall.manualraffle(username, true))
   // socket.on('manually leave raffle', username => dbcall.manualraffle(username, true))
-  socket.on("Show vote", async function(){ socket.emit("Vote options", await dbcall.showvote()).catch(err => console.log(err)) })
+  socket.on("Show vote", async function(){ socket.emit("Vote options", await dbcall.showvote()).catch(console.log) })
   socket.on('send raffle',  async function(db, raffle) {await dbcall.gettable(db, raffle)
     .then(list => list.forEach(user => io.emit('raffle update', user)))
-    .catch(err => console.log(err))})
-  socket.on('won raffle', async function(person){ await dbcall.rafflewinner('Users', person).catch(err => console.log(err)) })
-  socket.on('Ask for pokedex',  async function(simple){ io.emit('Receive pokedex', await dbcall.gettable('Users', 'Pokedex').catch(err => console.log(err))) })
-  socket.on("update vote", async function(){ io.emit('receive vote', await dbcall.gettable('Users', 'Vote').catch(err => console.log(err))) })
-  socket.on('Request vote', async function(){ io.emit('receive vote', await dbcall.gettable('Users', 'Vote').catch(err => console.log(err))) })
-  socket.on('request user fc', async function(username) { socket.emit('user fc', await dbcall.getfc('Users', username.toLowerCase()).catch(err => console.log(err))) })
-  // socket.on('request avatar', async function(channel, user, message, self) { socket.emit('receive avatar', channel, user, message, self, await dbcall.getavatar('Users', user.username.toLowerCase()).catch(err => console.log(err))) })
-  // socket.on('request badge', async function(user) { socket.emit('receive badge', username, await dbcall.getbadge('Users', user.username.toLowerCase()).catch(err => console.log(err))) })
-  socket.on('send leaderboard', async function(){ io.emit('receive leaderboard', await dbcall.gettable('Users', 'Leaderboard')).catch(err => console.log(err)) })
+    .catch(console.log)})
+  socket.on('won raffle', async function(person){ await dbcall.rafflewinner('Users', person).catch(console.log) })
+  socket.on('Ask for pokedex',  async function(simple){ io.emit('Receive pokedex', await dbcall.gettable('Users', 'Pokedex').then(dex => dex.sort((a, b) => a.id - b.id)).catch(console.log)) })
+  socket.on("update vote", async function(){ io.emit('receive vote', await dbcall.gettable('Users', 'Vote').catch(console.log)) })
+  socket.on('Request vote', async function(){ io.emit('receive vote', await dbcall.gettable('Users', 'Vote').catch(console.log)) })
+  socket.on('request user fc', async function(username) { socket.emit('user fc', await dbcall.getfc('Users', username.toLowerCase()).catch(console.log)) })
+  // socket.on('request avatar', async function(channel, user, message, self) { socket.emit('receive avatar', channel, user, message, self, await dbcall.getavatar('Users', user.username.toLowerCase()).catch(console.log)) })
+  // socket.on('request badge', async function(user) { socket.emit('receive badge', username, await dbcall.getbadge('Users', user.username.toLowerCase()).catch(console.log)) })
+  socket.on('send leaderboard', async function(){ io.emit('receive leaderboard', await dbcall.gettable('Users', 'Leaderboard')).catch(console.log) })
 
-  async function sendUserPokes (username) { io.emit('user pokes', await dbcall.senduserpokes('Users', username).catch(err => console.log(err))) }
+  async function sendUserPokes (username) { io.emit('user pokes', await dbcall.senduserpokes('Users', username).catch(console.log)) }
 
 }
 
   // socket.on('request to connect', async function(msg){
   //   if (msg.id != '' && msg.id != undefined) {
   //     console.log('user: ' + msg.id, 'connecting...')
-  //     let connected = await dbcall.requesttoconnect('Users', msg.id.toLowerCase()).catch(err => console.log(err))
+  //     let connected = await dbcall.requesttoconnect('Users', msg.id.toLowerCase()).catch(console.log)
   //     if (!connected) {
   //       createanewuser(msg)
   //     } else {
@@ -69,4 +69,4 @@ module.exports = function(io, socket) {
   //   .changes()
   //   .run(expressServer.connection)
   //   .then(result => sendVoteUpdate())
-  //   .catch(err => console.log(err))
+  //   .catch(console.log)
