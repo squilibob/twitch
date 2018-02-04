@@ -29,12 +29,10 @@ function db_id_to_duple(original) {
 async function init(c){
   global.conn = c
   global.alerts = new EventEmitter()
-  global.apiqueue = {}
   global.chatqueue = {}
   global.botqueue = {}
   global.useravatars = {}
   global.badges = {}
-  global.streamers = {}
   global.dbcall = require('./dist/server/database')
   require('./dist/server/routes')(expressServer)
   global.pokedex = await dbcall.gettable('Users', 'Pokedex').catch(err => console.log(err))

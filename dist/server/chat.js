@@ -50,9 +50,6 @@ module.exports = function(Twitch) {
 
   let joinAnnounced = []
 
-  chatqueue[Twitch.id].store('notice', {text: 'followers ' + await followerhook(Twitch.id).catch(console.log), fadedelay:2000, level:-2, class:'chat-connection-good-connecting'})
-  chatqueue[Twitch.id].store('notice', {text: 'online check ' + await streaminghook(Twitch.id).catch(console.log), fadedelay:2000, level:-3, class:'chat-connection-good-connecting'})
-
   alerts.on('follower', async function(obj) {
       chatqueue[Twitch.id].store('follower', {username: await getName(obj.from_id, Twitch), number:Object.keys(Twitch.followers).length.toLocaleString()})
       chatqueue[Twitch.id].store('notice', {text: await getName(obj.from_id, Twitch) + ' is now following (follower #' + Object.keys(Twitch.followers).length.toLocaleString()+ ')', fadedelay: 20000, level:1})
@@ -116,6 +113,9 @@ module.exports = function(Twitch) {
   client.addListener('connected', async function (address, port) {
     showConnectionNotices && chatqueue[Twitch.id].store('notice', {text:'Connected', fadedelay:1000, level:-2, class: 'chat-connection-good-connected'})
     joinAnnounced = []
+    chatqueue[Twitch.id].store('notice', {text: 'followers ' + await followerhook(Twitch.id).catch(console.log), fadedelay:2000, level:-2, class:'chat-connection-good-connecting'})
+    chatqueue[Twitch.id].store('notice', {text: 'online check ' + await streaminghook(Twitch.id).catch(console.log), fadedelay:2000, level:-3, class:'chat-connection-good-connecting'})
+
     // checkfollowers(Twitch, true)
     // client.getChannels().forEach(console.log)
   })

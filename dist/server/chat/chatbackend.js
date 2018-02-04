@@ -1,6 +1,6 @@
 const {dehash, capitalize, checkImageExists, timeout, hosting, submitchat, dequeue, parseraffle, urlDecode, isMod, checkExist} = require('./chatfunctions')
 const {checkPoke, checkDb, getMoveList, checkMoves, compoundCheck, describeMove} = require('./fieldparse')
-const {checkAvatar, getViewers, getStart, checkfollowers, checkstreamer} = require('./chatapi')
+const {checkAvatar, getViewers, getStart, checkfollowers, checkstreamer, getFollowDate} = require('./chatapi')
 const {typeMatchup, effective} = require('./pokemonparse')
 
 let started,
@@ -18,8 +18,9 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
     self: self,
     pokemon: checkPoke(message, maxpokes),
     responseSize: botqueue[Twitch.id].responseSize,
-    followers: Twitch.followers
   }
+
+        console.log('obj.user', obj.user)
 
   let modmessage = isMod(user)
   let question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which'] // 'who ', 'why ', 'did ',
@@ -416,7 +417,7 @@ let image = parseurl.image
       },
       action: async function (obj) {
         let response
-        let uptime = +(new Date())- await getStart(obj.twitchID)
+        let uptime = +(new Date()) - await getStart(obj.twitchID)
         let hours = ~~((uptime % 86400000) / 3600000)
         let minutes = ~~(((uptime % 86400000) % 3600000) / 60000)
         response = ('Stream has been live for ' + hours + (minutes < 10 ? ':0' : ':') + minutes)
@@ -454,9 +455,11 @@ let image = parseurl.image
         modonly: false
       },
       action: async function (obj) {
-        let response = obj.user.username + ' is not a follower'
-        if (obj.followers[obj.user.username.toLowerCase()]) response = obj.user.username + ' followed ' + obj.followers[obj.user.username.toLowerCase()].followed
-        return response
+        let followtime = await getFollowDate(obj.user['user-id'], obj.twitchID)
+        return !!followtime ? obj.user.username + ' followed ' + ~~((Date.now() - datefollowed) / 8.64e7) + ' days ago (' + datefollowed.toDateString() + ')' : obj.user.username + ' is not a follower'
+        // let response = obj.user.username + ' is not a follower'
+        // if (obj.followers[obj.user.username.toLowerCase()]) response = obj.user.username + ' followed ' + obj.followers[obj.user.username.toLowerCase()].followed
+        // return response
       }
     },
     '!raffle': {
@@ -694,7 +697,7 @@ let image = parseurl.image
         modonly: false
       },
       action: async function (obj) {
-        return 'We do raffles for battles. You must sign up to join raffles and then use !enter. Signup webpage: squi.li or !signup. !raffle will show if you are entered'
+        return 'We do raffles for battles. You must s!signup to join raffles and then use !enter. !raffle will show if you are entered'
       }
     },
     'nature': {
