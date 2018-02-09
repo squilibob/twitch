@@ -16,10 +16,4 @@ let started,
  abilities = {},
  moves = {},
  recentTimeouts = {},
- emoticons = { bttv: [], ffz:[] },
- watching = {chatters: [], viewers: 0},
- queue = {
-  channel: channels[0],
-  messages: [],
-  lastMessage: Date.now()
- }
+ emoticons = { bttv: [], ffz:[] }
