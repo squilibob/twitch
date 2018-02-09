@@ -29,7 +29,7 @@ function chatbot () {
     Unmod - Someone got unmodded on a channel.
 */
 
-  socket.emit('chatbot', {  id: TwitchID,  channel: clientOptions.channels[0]  })
+  socket.emit('chatbot', {  id: TwitchID,  channel: 'squilibob'  })
   // client.on('hosted', function (channel, username, total, autohost) {
   //   let chan = dehash(channel)
   //   chan = capitalize(chan)
