@@ -35,8 +35,8 @@ const preloadscripts = [
   // {'Vote': '/states/vote'},
   // {'Cards': '/states/cards'},
   // {'Pokedex': '/states/pokedex'},
-  {'Layout': '/states/layout'},
-  // {'Blank': '/states/blank'},
+  // {'Layout': '/states/layout'},
+  {'Blank': '/states/blank'},
   '/chat/clientoptions',
   // '/chat/tmi.min',
   '/chat/chatvariables',
@@ -53,7 +53,7 @@ const preloadscripts = [
   '/chat/chat'
 ]
 
-const firststate = 'Layout'
+const firststate = 'Blank'
 
 const pokedexoptions = {
   scoring: true,
