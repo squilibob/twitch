@@ -24,7 +24,7 @@ const preloadscripts = [
   '/js/localstorage',
   '/js/polyfill',
   // '/js/dex',
-  // '/js/phaser-input',
+  '/js/phaser-input',
   '/js/helperfunctions',
   // {'Login': '/states/login'},
   // {'Avatar': '/states/avatar'},
@@ -66,15 +66,3 @@ const pokedexoptions = {
     y: 620
   }
 }
-
-let fragmentSrc = [
-  'precision mediump float;',
-  'uniform vec2      resolution;',
-  'uniform float     time;',
-  '#define PI 90',
-  'void main( void ) {',
-  'vec2 p = ( gl_FragCoord.xy / resolution.xy ) - 0.5;',
-  'float sx = 0.3 * (p.x + 0.8) * sin( 900.0 * p.x - 1. * pow(time, 0.55)*5.);',
-  'float dy = 4./ ( 500.0 * abs(p.y - sx));',
-  'gl_FragColor = vec4( (p.x + 0.1) * dy, 0.3 * dy, dy, 1.1 );',
-  '}']
