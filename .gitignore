@@ -8,11 +8,6 @@
 node_modules/
 
 clientoptions.js
-chatlog.html
-chat.html
-bundle.js.map
-1.bundle.js.map
-2.bundle.js.map
 serverip.js
 
 # ignore OS generated files

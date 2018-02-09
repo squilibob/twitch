@@ -20,8 +20,8 @@ const Presets = {
 }
 const preloadscripts = [
   'consts',
-  // '/js/phaser-super-storage.min',
-  // '/js/localstorage',
+  '/js/phaser-super-storage.min',
+  '/js/localstorage',
   '/js/polyfill',
   // '/js/dex',
   // '/js/phaser-input',
@@ -35,25 +35,17 @@ const preloadscripts = [
   // {'Vote': '/states/vote'},
   // {'Cards': '/states/cards'},
   // {'Pokedex': '/states/pokedex'},
-  // {'Layout': '/states/layout'},
-  {'Blank': '/states/blank'},
-  '/chat/clientoptions',
-  // '/chat/tmi.min',
+  {'Layout': '/states/layout'},
+  // {'Blank': '/states/blank'},
   '/chat/chatvariables',
-  // '/chat/tm',
-  // '/chat/natures',
-  // '/chat/hiddenpowers',
   '/chat/twemoji.min',
   '/chat/chatfunctions',
-  // '/chat/chatapi',
   '/chat/chaticon',
-  // '/chat/chatsocket',
-  // '/chat/pokemonparse',
   '/chat/chatfrontend',
   '/chat/chat'
 ]
 
-const firststate = 'Blank'
+const firststate = 'Layout'
 
 const pokedexoptions = {
   scoring: true,
