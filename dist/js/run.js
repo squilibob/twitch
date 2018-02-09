@@ -77,7 +77,7 @@ project.Init.prototype = {
     pokeball_loader()
     let script
     for (testscript in preloadscripts) {
-      // console.log(preloadscripts[testscript])
+      console.log(preloadscripts[testscript])
       if (typeof (preloadscripts[testscript]) === 'object') {
         for (key in preloadscripts[testscript]) {
           script = preloadscripts[testscript][key]
@@ -100,7 +100,7 @@ project.Init.prototype = {
     game.audioJSON = {}
     game.stage.disableVisibilityChange = true
     // game.plugins.add(Fabrique.Plugins.InputField)
-    game.plugins.add(Fabrique.Plugins.SuperStorage)
+    // game.plugins.add(Fabrique.Plugins.SuperStorage)
     // game.plugins.add( Phaser.Plugin.StateTransition)
 
     for (statename in states) { game.state.add(statename, project[statename]) }

@@ -20,11 +20,11 @@ const Presets = {
 }
 const preloadscripts = [
   'consts',
-  '/js/phaser-super-storage.min',
-  '/js/localstorage',
+  // '/js/phaser-super-storage.min',
+  // '/js/localstorage',
   '/js/polyfill',
   // '/js/dex',
-  '/js/phaser-input',
+  // '/js/phaser-input',
   '/js/helperfunctions',
   // {'Login': '/states/login'},
   // {'Avatar': '/states/avatar'},
