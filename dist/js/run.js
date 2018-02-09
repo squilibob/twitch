@@ -104,21 +104,22 @@ project.Init.prototype = {
     for (statename in states) { game.state.add(statename, project[statename]) }
     this.socketready = new Phaser.Signal()
     this.socketready.add(this.ready, this)
-    pokedex = JSON.parse(game.storage.getItem('pokedex'))
-    typechart = JSON.parse(game.storage.getItem('typechart'))
-    if (pokedex && typechart) {
-      typechart.length != 19 && this.populatetypechart()
-      pokedex.length < maxpokes && this.populatedata()
-    } else {
-      typechart = []
-      pokedex = []
-      this.populatetypechart()
-      this.populatedata()
-    }
+    // pokedex = JSON.parse(game.storage.getItem('pokedex'))
+    // typechart = JSON.parse(game.storage.getItem('typechart'))
+    // if (pokedex && typechart) {
+    //   typechart.length != 19 && this.populatetypechart()
+    //   pokedex.length < maxpokes && this.populatedata()
+    // } else {
+    //   typechart = []
+    //   pokedex = []
+    //   this.populatetypechart()
+    //   this.populatedata()
+    // }
   },
 
   update: function () {
-    pokedex && pokedex.length >= maxpokes && this.socketready.dispatch()
+    //pokedex && pokedex.length >= maxpokes &&
+    this.socketready.dispatch()
   },
 
   populatetypechart: function () {

@@ -200,10 +200,10 @@ project.Pokemotions.prototype = {
   },
   fusionshow: function (fusions) {
     runningfusionanimation = true
-    leftfuse = this.redrawsprite(this.newbody(Array(3).fill(fusions[0])).children)
-    rightfuse = this.redrawsprite(this.newbody(Array(3).fill(fusions[1])).children)
+    leftfuse = this.redrawsprite(this.newbody(Array(2).fill(fusions[0])), fusions[0].Color)
+    rightfuse = this.redrawsprite(this.newbody(Array(2).fill(fusions[1])), fusions[1].Color)
     rightfuse.x = footergame.width - 96
-    fusion = this.redrawsprite(this.newbody(fusions).children)
+    fusion = this.redrawsprite(this.newbody(fusions), fusions.last.Color)
     fusion.x = footergame.world.centerX - 144
     this.headcorrect(fusion.children[1], fusions)
     fusion.alpha = 0
@@ -216,28 +216,28 @@ project.Pokemotions.prototype = {
     let face = footergame.add.sprite(0, 0,'faces')
     let body = footergame.add.sprite(0, 0,'bodies')
     let skin = footergame.add.sprite(0, 0,'bodies')
-    face.frame = which[0]
-    body.frame = which[1]
-    skin.frame = which.last
+    face.frame = which[0].id - 1
+    body.frame = which[1].id - 1
+    skin.frame = which.last.id - 1
     fusiongroup.addChild(body)
     fusiongroup.addChild(face)
     fusiongroup.addChild(skin)
     fusiongroup.visible = false
-    return fusiongroup
+    return fusiongroup.children
   },
-  redrawsprite: function(original) {
+  redrawsprite: function(original, newColor) {
     let redrawn = footergame.add.group()
-    redrawn.addChild(footergame.add.sprite(0,0, this.recolor(this.bitmap(original[0], 0, 0), original.last.frame)))
-    redrawn.addChild(footergame.head = footergame.add.sprite(0,0, this.recolor(this.bitmap(original[1], 0, 0), original.last.frame)))
+    redrawn.addChild(footergame.add.sprite(0,0, this.recolor(this.bitmap(original[0], 0, 0), newColor)))
+    redrawn.addChild(footergame.head = footergame.add.sprite(0,0, this.recolor(this.bitmap(original[1], 0, 0), newColor)))
     redrawn.scale.setTo(2.75)
     return redrawn
   },
   headcorrect: function(obj, which) {
-    let head = which[0]
-    let body = which[1]
-    obj.scale.x = obj.scale.y = pokedex[head].Faces[0].scale/pokedex[body].Faces[0].scale
-    obj.x = pokedex[head].Faces[0].x - pokedex[body].Faces[0].x
-    obj.y = pokedex[head].Faces[0].y - pokedex[body].Faces[0].y
+    let head = which[0].id - 1
+    let body = which[1].id - 1
+    obj.scale.x = obj.scale.y = which[0].Faces[0].scale/which[1].Faces[0].scale
+    obj.x = which[0].Faces[0].x - which[1].Faces[0].x
+    obj.y = which[0].Faces[0].y - which[1].Faces[0].y
   },
   bitmap: function(bitmapdata, x, y) {
     footergame.bmds.push(footergame.make.bitmapData())
@@ -249,12 +249,12 @@ project.Pokemotions.prototype = {
       bmd.pop().destroy()
     }
   },
-  recolor: function(img, thisfuse) {
-    console.log('thisfuse', thisfuse, pokedex[thisfuse].Color, pokedex[thisfuse].id)
+  recolor: function(img, newColor) {
+    console.log('thisfuse', newColor)
     for (let colorindex = 0; colorindex < footergame.mask.length; colorindex+= 3) {
       let colarr
-      for (col in pokedex[thisfuse].Color) {
-        colarr = pokedex[thisfuse].Color[col]
+      for (col in newColor) {
+        colarr = newColor[col]
       }
       img.replaceRGB(footergame.mask[colorindex], footergame.mask[colorindex+1], footergame.mask[colorindex+2], 255, colarr[colorindex], colarr[colorindex+1], colarr[colorindex+2], 255)
     }

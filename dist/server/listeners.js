@@ -34,7 +34,7 @@ module.exports = function(io, socket) {
     .then(list => list.forEach(user => io.emit('raffle update', user)))
     .catch(console.log)})
   socket.on('won raffle', async function(person){ await dbcall.rafflewinner('Users', person).catch(console.log) })
-  socket.on('Ask for pokedex',  async function(simple){ io.emit('Receive pokedex', await dbcall.gettable('Users', 'Pokedex').then(dex => dex.sort((a, b) => a.id - b.id)).catch(console.log)) })
+  socket.on('Ask for pokedex',  async function(simple){ socket.emit('Receive pokedex', pokedex) })
   socket.on("update vote", async function(){ io.emit('receive vote', await dbcall.gettable('Users', 'Vote').catch(console.log)) })
   socket.on('Request vote', async function(){ io.emit('receive vote', await dbcall.gettable('Users', 'Vote').catch(console.log)) })
   socket.on('request user fc', async function(username) { socket.emit('user fc', await dbcall.getfc('Users', username.toLowerCase()).catch(console.log)) })

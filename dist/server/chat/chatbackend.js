@@ -20,7 +20,7 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
     responseSize: botqueue[Twitch.id].responseSize,
   }
 
-        console.log('obj.user', obj.user)
+        // console.log('messagepayload.user', messagepayload.user)
 
   let modmessage = isMod(user)
   let question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which'] // 'who ', 'why ', 'did ',
@@ -807,9 +807,9 @@ let image = parseurl.image
         let fused = []
         if (typeof (obj.pokemon[0].id) === 'number' && typeof (obj.pokemon[1].id) === 'number') {
           if (obj.pokemon[0].id > 0 && obj.pokemon[0].id < 493 && obj.pokemon[1].id > 0 && obj.pokemon[1].id < 493) {
-             fused.push(obj.pokemon[0].id - 1)
-             obj.pokemon[1] && fused.push(obj.pokemon[1].id - 1)
-             obj.pokemon[2] && fused.push(obj.pokemon[2].id - 1)
+             fused.push(obj.pokemon[0])
+             obj.pokemon[1] && fused.push(obj.pokemon[1])
+             obj.pokemon[2] && fused.push(obj.pokemon[2])
              chatqueue[obj.twitchID].store('show fusion', fused)
            }
         }

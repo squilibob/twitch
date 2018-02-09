@@ -14,7 +14,7 @@ function header (id, endpoint, extraparams, version) {
 
 function helix(options, Twitch) {
   return new Promise(function(resolve, reject) {
-    // const rate = 'ratelimit-'
+    const rate = 'ratelimit-'
     // let apireset = +Twitch.api.reset - +Date.now() / 1000
     // if (Twitch.api.remaining < 1 && apireset > 0) {
       // if (!Twitch.queue) Twitch.queue = 0
