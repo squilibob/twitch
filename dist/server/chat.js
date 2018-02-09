@@ -40,13 +40,11 @@ module.exports = function(Twitch) {
     more: [],
     responseSize: 12
   }
-  // global.streamers[Twitch.id].startTime = await getStart(Twitch).catch(console.log)
 
   dbcall.subscribetoraffle(Twitch)
 
   botDelay = 1, // Number of seconds between each bot message
   showConnectionNotices = true // Show messages like "Connected" and "Disconnected"
-  //('56648155') // twitch plays pokemon
 
   let joinAnnounced = []
 
@@ -95,7 +93,6 @@ module.exports = function(Twitch) {
   client.addListener("cheer", function (channel, userstate, message) {
     console.log(userstate, message)
     chatqueue[Twitch.id].store('bits', {userstate: userstate, message: message})
-    // Object { badges: Object, bits: "50", color: "#FF0000", display-name: "jennluv69", emotes: null, id: "9ff6f821-6419-4f9a-a4ab-f4c638012ae2", mod: false, room-id: "39392583", subscriber: false, tmi-sent-ts: "1498980326580", turbo, user-id, user-type, username}
     chatqueue[Twitch.id].store('texttopika', {chunks: getChunks(message), message: 'pikachu said:\n' + message + '\n(from ' + userstate['display-name'] + ')'})
   })
 
@@ -103,9 +100,6 @@ module.exports = function(Twitch) {
     if (!userstate) userstate = username
     if (!message) message = 'new subscriber'
       console.log(username, method, message, userstate)
-    //{ prime: true,
-    // plan: 'Prime',
-  // planName: 'Channel Subscription (squilibob)' }
       chatqueue[Twitch.id].store('subscriber', {username: username, method: method, message: message})
       chatqueue[Twitch.id].store('texttopika', {chunks: getChunks(message), message: 'pikachu said:\n' + message + '\n(from ' + username + ' new subscriber)'})
   })
@@ -113,11 +107,8 @@ module.exports = function(Twitch) {
   client.addListener('connected', async function (address, port) {
     showConnectionNotices && chatqueue[Twitch.id].store('notice', {text:'Connected', fadedelay:1000, level:-2, class: 'chat-connection-good-connected'})
     joinAnnounced = []
-    // chatqueue[Twitch.id].store('notice', {text: 'followers ' + await followerhook(Twitch.id).catch(console.log), fadedelay:2000, level:-2, class:'chat-connection-good-connecting'})
-    // chatqueue[Twitch.id].store('notice', {text: 'online check ' + await streaminghook(Twitch.id).catch(console.log), fadedelay:2000, level:-3, class:'chat-connection-good-connecting'})
-
-    // checkfollowers(Twitch, true)
-    // client.getChannels().forEach(console.log)
+    chatqueue[Twitch.id].store('notice', {text: 'followers ' + await followerhook(Twitch.id).catch(console.log), fadedelay:2000, level:-2, class:'chat-connection-good-connecting'})
+    chatqueue[Twitch.id].store('notice', {text: 'online check ' + await streaminghook(Twitch.id).catch(console.log), fadedelay:2000, level:-3, class:'chat-connection-good-connecting'})
   })
 
   client.addListener('disconnected', function (reason) {
@@ -129,7 +120,6 @@ module.exports = function(Twitch) {
     if (!joinAnnounced.includes(channel)) {// (username == client.getUsername()) {
       showConnectionNotices && chatqueue[Twitch.id].store('notice', {text:'Joined ' + capitalize(dehash(channel)), fadedelay:1000, level:-1, class: 'chat-room-join'})
       joinAnnounced.push(channel)
-      // getViewers(Twitch)
     }
   })
 
@@ -140,10 +130,6 @@ module.exports = function(Twitch) {
   client.connect()
 
   let timers = [
-    // setInterval(getViewers, 525000, Twitch),
-    // setInterval(repeating_notice_website, 3000000),
-    // setInterval(repeating_notice_signup, 7200000),
-    // setInterval(checkfollowers, 180000, Twitch, false),
     setInterval(dequeue, 1000 * botDelay, botDelay, Twitch.id)
   ]
 }
