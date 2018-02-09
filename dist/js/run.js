@@ -77,7 +77,7 @@ project.Init.prototype = {
     pokeball_loader()
     let script
     for (testscript in preloadscripts) {
-      console.log(testscript)
+      // console.log(preloadscripts[testscript])
       if (typeof (preloadscripts[testscript]) === 'object') {
         for (key in preloadscripts[testscript]) {
           script = preloadscripts[testscript][key]
@@ -96,6 +96,7 @@ project.Init.prototype = {
   },
 
   create: function () {
+    console.log('preload finished')
     game.audioJSON = {}
     game.stage.disableVisibilityChange = true
     // game.plugins.add(Fabrique.Plugins.InputField)
@@ -116,6 +117,7 @@ project.Init.prototype = {
     //   this.populatetypechart()
     //   this.populatedata()
     // }
+    console.log('create finished')
   },
 
   update: function () {

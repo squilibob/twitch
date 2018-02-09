@@ -10,10 +10,9 @@
   "author": "squilibob",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.16.2",
+    "express": "^4.16.x",
     "rethinkdb": "2.3.x",
     "socket.io": "2.0.x",
     "socket.io-client": "2.0.x",
-    "tmi.js": "^1.2.1"
   }
 }
