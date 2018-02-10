@@ -1,29 +1,13 @@
 
 // chat icon display functions
-function pokify (text) {
-  let location
-  let skippoke = -1
-  location = text.toLowerCase().indexOf('mewtwo')
-  if (location >= 0) {
-    let xpos = spritesheet.rowlen * spritesheet.x - ((149 % spritesheet.rowlen) * spritesheet.x),
-      ypos = Math.floor(pokedex.length / spritesheet.rowlen) * spritesheet.y - (Math.floor(149 / spritesheet.rowlen) * spritesheet.y)
-    text = text.slice(0, location) + '<span class="w3-tooltip sprsheet" style="background-position: ' + xpos + 'px ' + ypos + 'px;"><span class="w3-text">M&#8203;ewtwo</span></span>' + text.slice(location + 6)
-  }
-  location = text.toLowerCase().indexOf('nature')
-  if (location >= 0) {
-    skippoke = 177
-  }
-  pokifyloop: for (let pokes = pokedex.length - 1; pokes >= 0; pokes--) {
-    if (pokes != skippoke - 1 && text.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) {
-      if (autocry) socket.emit('pokemon cry', pokes + 1)
-      let location = text.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()),
-        namelength = pokedex[pokes].Pokemon.length
-      let xpos = spritesheet.rowlen * spritesheet.x - ((pokes % spritesheet.rowlen) * spritesheet.x),
-        ypos = Math.floor(pokedex.length / spritesheet.rowlen) * spritesheet.y - (Math.floor(pokes / spritesheet.rowlen) * spritesheet.y)
-      text = text.slice(0, location) + '<span class="w3-tooltip sprsheet" style="background-position: ' + xpos + 'px ' + ypos + 'px;"><span class="w3-text">' + pokedex[pokes].Pokemon.slice(0, pokedex[pokes].Pokemon.length - 1) + '&#8203;' + pokedex[pokes].Pokemon.slice(pokedex[pokes].Pokemon.length - 1, pokedex[pokes].Pokemon.length) + '</span></span>' + text.slice(location + namelength, text.length)
-      pokes++
-    }
-  }
+function pokify (text, pokes) {
+  pokes.forEach(poke => {
+    let location = text.toLowerCase().indexOf(poke.Pokemon.toLowerCase())
+    let xpos = spritesheet.rowlen * spritesheet.x - (((poke.id - 1) % spritesheet.rowlen) * spritesheet.x)
+    let ypos = Math.ceil(maxpokes / spritesheet.rowlen) * spritesheet.y - (~~((poke.id - 1) / (spritesheet.rowlen)) * spritesheet.y)
+    text = text.slice(0, location) + '<span class="w3-tooltip sprsheet" style="background-position: ' + xpos + 'px ' + ypos + 'px;"><span class="w3-text">' + poke.Pokemon.slice(0, poke.Pokemon.length - 1) + '&#8203;' + poke.Pokemon.slice(poke.Pokemon.length - 1, poke.Pokemon.length) + '</span></span>' + text.slice(location + poke.Pokemon.length, text.length)
+  })
+
   return text
 }
 

@@ -19,7 +19,6 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
     pokemon: checkPoke(message, maxpokes),
     responseSize: botqueue[Twitch.id].responseSize,
   }
-
         // console.log('messagepayload.user', messagepayload.user)
 
   let modmessage = isMod(user)
@@ -72,7 +71,7 @@ let image = parseurl.image
     }
   }
 
-  displaycommand && chatqueue[Twitch.id].store('chat', {channel:messagepayload.channel, message: messagepayload.message, user: messagepayload.user, self: messagepayload.self, avatar: avatar, badge: badge, image: image})
+  displaycommand && chatqueue[Twitch.id].store('chat', {channel:messagepayload.channel, message: messagepayload.message, user: messagepayload.user, self: messagepayload.self, avatar: avatar, badge: badge, image: image, pokemon: messagepayload.pokemon})
   response && submitchat(response, Twitch.id)
 }
 

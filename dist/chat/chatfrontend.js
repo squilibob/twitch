@@ -45,6 +45,7 @@
       self = obj.self,
       avatar = obj.avatar,
       image = obj.image,
+      pokes = obj.pokemon,
       chan = dehash(obj.channel),
       chatLine = document.createElement('li'),
       chatAlignment = document.createElement('div'),
@@ -119,7 +120,7 @@
     chatAvatar.style.border = '6px solid ' + color
     chatTime.className = 'chat-time'
     chatTime.innerHTML = String.fromCodePoint(date.getHours() > 12 ? 128323 + date.getHours() : (date.getHours() < 1 ? 128347 : 128335 + date.getHours())) + ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) // (not using seconds right now) + '.' + ('0' + date.getSeconds()).slice(-2) ;
-
+//1F550
     chatName.className = 'chat-name'
     chatName.style.color = color
     chatName.innerHTML = user['display-name'] || name
@@ -153,7 +154,7 @@
     chatMessage.dataset.hide = ''
    // chatMessage.style.background = color;
     chatMessage.innerHTML = showEmotes ? parseEmotes(message, user.emotes) : htmlEntities(message)
-    chatMessage.innerHTML = pokify(chatMessage.innerHTML)
+    chatMessage.innerHTML = pokify(chatMessage.innerHTML, obj.pokemon)
     chatMessage.innerHTML = ffz(chatMessage.innerHTML)
     chatMessage.innerHTML = bttv(chatMessage.innerHTML)
     chatMessage.innerHTML = twemoji.parse(chatMessage.innerHTML)
