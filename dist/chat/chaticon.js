@@ -1,8 +1,11 @@
 
 // chat icon display functions
 function pokify (text, pokes) {
+  console.log('pokify', text)
+
   pokes.forEach(poke => {
     let location = text.toLowerCase().indexOf(poke.Pokemon.toLowerCase())
+    if (location < 0) return
     let xpos = spritesheet.rowlen * spritesheet.x - (((poke.id - 1) % spritesheet.rowlen) * spritesheet.x)
     let ypos = Math.ceil(maxpokes / spritesheet.rowlen) * spritesheet.y - (~~((poke.id - 1) / (spritesheet.rowlen)) * spritesheet.y)
     text = text.slice(0, location) + '<span class="w3-tooltip sprsheet" style="background-position: ' + xpos + 'px ' + ypos + 'px;"><span class="w3-text">' + poke.Pokemon.slice(0, poke.Pokemon.length - 1) + '&#8203;' + poke.Pokemon.slice(poke.Pokemon.length - 1, poke.Pokemon.length) + '</span></span>' + text.slice(location + poke.Pokemon.length, text.length)
@@ -41,6 +44,7 @@ function parseEmotes (text, emotes) {
   for (emoticon in list) {
     text = text.replace(new RegExp(list[emoticon], 'g'), '<img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + emoticon + '/4.0">')
   }
+  console.log('emotes', text)
   return text
 }
 

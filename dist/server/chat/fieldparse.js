@@ -105,7 +105,7 @@ function keyValuePair(poke, key) {
 }
 
 function formatDbmessage(pokename, keys, movelist) {
-  let response = [pokename + "'s"]
+  let response = []
   keys.forEach(item => {
       response.push(item.key)
       if (Array.isArray(item.value)){
@@ -113,6 +113,7 @@ function formatDbmessage(pokename, keys, movelist) {
         response.push(item.value.join(', '))
       } else response.push('is', item.value === -1 ? 'none' : item.value)
   })
+  response.length && response.unshift(pokename + "'s")
   if (movelist.length) {
     response = response.concat(movelist
       .filter(move => Object.keys(move.Pokemon).includes(pokename))
@@ -183,7 +184,13 @@ exports.checkDb = function (obj, movelist) {
       .filter(item => conflictCheck(item, movelist))
       .map(item => keyValuePair(poke, item)),
     movelist)
-  return response.length > 1 ? response.join(' ') : false
+  return response.length > 1
+    ? response.join(' ')
+    : movelist.length && !response.length
+    ? poke.Pokemon + ' cannot learn ' + movelist.map(move => move.id).join(' or ')
+    : response.length
+    ? response.pop()
+    : false
 }
 
 function messageWithoutPokes(pokes, message) {

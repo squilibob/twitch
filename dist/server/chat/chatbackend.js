@@ -338,7 +338,7 @@ let image = parseurl.image
         modonly: false
       },
       action: async function (obj) {
-        dbcall.modifyRaffleUser('Users', obj.user.username, true, 1)
+        await dbcall.raffleUserExists('Users', obj.user.username) ? dbcall.modifyRaffleUser('Users', obj.user.username, true) : dbcall.newRaffleUser('Users', obj.user.username, 1)
         return false
       }
     },
@@ -417,6 +417,7 @@ let image = parseurl.image
       action: async function (obj) {
         let response
         let uptime = +(new Date()) - await getStart(obj.twitchID)
+        console.log('uptime', uptime)
         let hours = ~~((uptime % 86400000) / 3600000)
         let minutes = ~~(((uptime % 86400000) % 3600000) / 60000)
         response = ('Stream has been live for ' + hours + (minutes < 10 ? ':0' : ':') + minutes)
@@ -455,6 +456,7 @@ let image = parseurl.image
       },
       action: async function (obj) {
         let followtime = await getFollowDate(obj.user['user-id'], obj.twitchID)
+        console.log('followtime', followtime)
         return !!followtime ? obj.user.username + ' followed ' + ~~((Date.now() - datefollowed) / 8.64e7) + ' days ago (' + datefollowed.toDateString() + ')' : obj.user.username + ' is not a follower'
         // let response = obj.user.username + ' is not a follower'
         // if (obj.followers[obj.user.username.toLowerCase()]) response = obj.user.username + ' followed ' + obj.followers[obj.user.username.toLowerCase()].followed
@@ -487,10 +489,12 @@ let image = parseurl.image
           .find(user => user.id.toLowerCase() === obj.user.username.toLowerCase())
         if (!requestingchatter) {
           if (users.length > 0) {
-            response =[users.length + ' in the raffle: ']
-            users
+            response = users
               .filter(user => user.entered)
-              .forEach(person => response.push(person.id + ' (' + ~~(+person.chance / rafflettotal * 10000) / 100 + '%) '))
+              .length + ' in the raffle: ' + users
+              .filter(user => user.entered)
+              .map(person => person.id + ' (' + ~~(+person.chance / rafflettotal * 10000) / 100 + '%)')
+              .join(', ')
           } else {
             response = 'You must provide your Friend Code to join raffles and then use !enter. Signup page: ' + websiteurl + ' or use !signup'
           }
@@ -841,74 +845,74 @@ let image = parseurl.image
         return response
       }
     },
-    '!bttv': {
-      altcmds: [],
-      help: 'this command incorporates the users bttv emotes into the database',
-      times: 0,
-      requires:
-      {
-        question: false,
-        display: true,
-        exclusive: false,
-        pokemon: 0,
-        parameters: 1,
-        modonly: true
-      },
-      action: async function (obj) {
-        if (!self.fetch) {
-          return
-        }
-        var bttvurl = obj.parameters.length ? 'https://betterttv.net/2/channels/' + obj.parameters[0] : bttvemotesurl
-        fetch(bttvurl).then(function (response) {
-          var contentType = response.headers.get('content-type')
-          if (contentType && contentType.indexOf('application/json') !== -1) {
-            return response.json().then(function (json) {
-              if ((json || {}).emotes) {
-                for (key in json.emotes) {
-                  dbcall.put('Users', 'Bttv', json.emotes[key]).catch(console.log)
-                }
-                chatqueue[obj.twitchID].store('notice', {text:'loaded ' + json.emotes.length + ' emotes', fadedelay:1000, level:-4})
-                socket.emit('Ask for table', 'Bttv')
-              }
-            })
-          }
-        })
-      }
-    },
-    '!ffz': {
-      altcmds: [],
-      help: 'this command incorporates the users ffz emotes into the database',
-      times: 0,
-      requires:
-      {
-        question: false,
-        display: true,
-        exclusive: false,
-        pokemon: 0,
-        parameters: 1,
-        modonly: true
-      },
-      action: async function (obj) {
-        if (!self.fetch) {
-          return
-        }
-        var ffzurl = obj.parameters.length ? 'https://frankerfacez.com/v1/room/' + obj.parameters[0] : ffzemotesurl
-        fetch(ffzurl).then(function (response) {
-          var contentType = response.headers.get('content-type')
-          if (contentType && contentType.indexOf('application/json') !== -1) {
-            return response.json().then(function (json) {
-              if ((json || {}).sets) {
-                for (key in json.sets) {
-                  dbcall.put('Users', 'Ffz', json.sets[key]).catch(console.log)
-                  chatqueue[obj.twitchID].store('notice', {text:'loaded ' + json.sets[key].emoticons.length + ' emotes from ' + json.sets[key].title, fadedelay:1000, level:-4})
-                }
-                socket.emit('Ask for table', 'Ffz')
-              }
-            })
-          }
-        })
-      }
-    },
+    // '!bttv': {
+    //   altcmds: [],
+    //   help: 'this command incorporates the users bttv emotes into the database',
+    //   times: 0,
+    //   requires:
+    //   {
+    //     question: false,
+    //     display: true,
+    //     exclusive: false,
+    //     pokemon: 0,
+    //     parameters: 1,
+    //     modonly: true
+    //   },
+    //   action: async function (obj) {
+    //     if (!self.fetch) {
+    //       return
+    //     }
+    //     var bttvurl = obj.parameters.length ? 'https://api.betterttv.net/2/channels/' + obj.parameters[0] : bttvemotesurl
+    //     fetch(bttvurl).then(function (response) {
+    //       var contentType = response.headers.get('content-type')
+    //       if (contentType && contentType.indexOf('application/json') !== -1) {
+    //         return response.json().then(function (json) {
+    //           if ((json || {}).emotes) {
+    //             for (key in json.emotes) {
+    //               dbcall.put('Users', 'Bttv', json.emotes[key]).catch(console.log)
+    //             }
+    //             chatqueue[obj.twitchID].store('notice', {text:'loaded ' + json.emotes.length + ' emotes', fadedelay:1000, level:-4})
+    //             socket.emit('Ask for table', 'Bttv')
+    //           }
+    //         })
+    //       }
+    //     })
+    //   }
+    // },
+    // '!ffz': {
+    //   altcmds: [],
+    //   help: 'this command incorporates the users ffz emotes into the database',
+    //   times: 0,
+    //   requires:
+    //   {
+    //     question: false,
+    //     display: true,
+    //     exclusive: false,
+    //     pokemon: 0,
+    //     parameters: 1,
+    //     modonly: true
+    //   },
+    //   action: async function (obj) {
+    //     if (!self.fetch) {
+    //       return
+    //     }
+    //     var ffzurl = obj.parameters.length ? 'https://frankerfacez.com/v1/room/' + obj.parameters[0] : ffzemotesurl
+    //     fetch(ffzurl).then(function (response) {
+    //       var contentType = response.headers.get('content-type')
+    //       if (contentType && contentType.indexOf('application/json') !== -1) {
+    //         return response.json().then(function (json) {
+    //           if ((json || {}).sets) {
+    //             for (key in json.sets) {
+    //               dbcall.put('Users', 'Ffz', json.sets[key]).catch(console.log)
+    //               chatqueue[obj.twitchID].store('notice', {text:'loaded ' + json.sets[key].emoticons.length + ' emotes from ' + json.sets[key].title, fadedelay:1000, level:-4})
+    //             }
+    //             socket.emit('Ask for table', 'Ffz')
+    //           }
+    //         })
+    //       }
+    //     })
+    //   }
+    // },
     '!poll': {
       altcmds: [],
       help: 'this command sets up a poll based on the vote options given',

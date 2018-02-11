@@ -202,7 +202,7 @@ exports.raffleUserExists = (database, username) => r.db(database).table('Raffle'
   .then(cursor => !!cursor)
 
 exports.newRaffleUser = function(database, username, displayicon) {
-  r.db(database).table('Users')
+  r.db(database).table('Raffle')
   .insert({
     id: username.toLowerCase(),
     chance: 12,
