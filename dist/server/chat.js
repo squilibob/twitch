@@ -49,7 +49,7 @@ module.exports = function(Twitch) {
   let joinAnnounced = []
 
   alerts.on('follower', async function(obj) {
-      chatqueue[Twitch.id].store('follower', {username: await getName(obj.from_id, Twitch), number:Object.keys(Twitch.followers).length.toLocaleString()})
+      chatqueue[Twitch.id].store('follower', {username: await getName(obj.from_id, Twitch), number:Twitch.followers || 0})
       chatqueue[Twitch.id].store('notice', {text: await getName(obj.from_id, Twitch) + ' is now following (follower #' + Object.keys(Twitch.followers).length.toLocaleString()+ ')', fadedelay: 20000, level:1})
   })
 
@@ -121,6 +121,7 @@ module.exports = function(Twitch) {
       showConnectionNotices && chatqueue[Twitch.id].store('notice', {text:'Joined ' + capitalize(dehash(channel)), fadedelay:1000, level:-1, class: 'chat-room-join'})
       joinAnnounced.push(channel)
     }
+    Twitch.followers = checkfollowers(Twitch)
   })
 
   client.addListener('part', function (channel, username) {
