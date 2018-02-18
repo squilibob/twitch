@@ -106,7 +106,12 @@ exports.checkfollowers = function(Twitch) {
     let apireset = +Twitch.api.reset - +Date.now() / 1000
     if (Twitch.api.remaining < 1 && apireset > 0) {
       reject(new Error((+Twitch.api.reset - +Date.now() / 1000) + ' seconds until API limit resets'))
-    } else client.api(options, function (err, res, body) {
+    } else client.api({
+    url: 'https://api.twitch.tv/helix/users/follows?to_id=' + Twitch.id,
+    headers: {
+        "Client-ID":  Twitch.clientOptions.options.clientId
+    }
+  }, function (err, res, body) {
       if ((res || {}).headers) {
         Object.keys(res.headers)
           .filter(key => key.includes(rate))

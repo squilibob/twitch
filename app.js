@@ -9,6 +9,9 @@ const EventEmitter = require('events')
 
 global.r = require('rethinkdb')
 
+process.on('unhandledRejection', (reason, promise) => console.log('Unhandled Rejection at:', reason.stack || reason))
+process.on('warning', (warning), console.warn)
+
 r.connect(defaultDB)
 .then((c) => init(c))
 .catch(err => console.log(err))

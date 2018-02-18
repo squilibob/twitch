@@ -1,8 +1,6 @@
 
 // chat icon display functions
 function pokify (text, pokes) {
-  console.log('pokify', text)
-
   pokes.forEach(poke => {
     let location = text.toLowerCase().indexOf(poke.Pokemon.toLowerCase())
     if (location < 0) return
