@@ -22,7 +22,7 @@ exports.getavatar = (database, username) => r.db(database).table('Users')
   .default(-1)
   .run(conn)
 
-exports.updateavatar = function(database, username, newavatar) {
+exports.updateavatar = function (database, username, newavatar) {
   r.db(database).table('Users')
   .get(username.toLowerCase())
   .update({"avatar": newavatar})
@@ -30,10 +30,25 @@ exports.updateavatar = function(database, username, newavatar) {
   .catch(error => reject(error))
 }
 
-exports.updatebadge = function(database, username, newbadge) {
+exports.updatebadge = function (database, username, newbadge) {
   r.db(database).table('Users')
   .get(username.toLowerCase())
   .update({"badge": newbadge})
+  .run(conn, {noreply: true})
+  .catch(error => reject(error))
+}
+
+exports.getcards = (database, username) => r.db(database).table('Users')
+  .filter(r.row('id').eq(username.toLowerCase()))
+  .getField('cards')
+  .nth(0)
+  .default(null)
+  .run(conn)
+
+exports.updatecard = function (database, username, poke) {
+  r.db(database).table('Users')
+  .get(username.toLowerCase())
+  .update({"cards": [{poke: poke, level: 1}]})
   .run(conn, {noreply: true})
   .catch(error => reject(error))
 }
@@ -45,7 +60,7 @@ exports.getbadge = (database, username) => r.db(database).table('Users')
   .default(null)
   .run(conn)
 
-exports.votepoll = function(database, payload) {
+exports.votepoll = function (database, payload) {
   r.db(database).table('Vote')
   .get('system')
   .replace({id: 'system', options: payload.options, title: payload.title})
@@ -53,7 +68,7 @@ exports.votepoll = function(database, payload) {
   .catch(error => reject(error))
 }
 
-exports.sendvote = function(database, payload) {
+exports.sendvote = function (database, payload) {
   r.db(database).table('Vote')
   .get(payload.id)
   .replace({id: payload.id, vote: payload.vote})
@@ -67,7 +82,7 @@ exports.showvote = (database) => r.db(database).table('Vote')
   .default(null)
   .run(conn)
 
-exports.updateleaderboard = function(database, entry) {
+exports.updateleaderboard = function (database, entry) {
   r.db(database).table('Leaderboard')
   .get(entry.id)
   .replace(entry)
@@ -75,7 +90,7 @@ exports.updateleaderboard = function(database, entry) {
   .catch(error => reject(error))
 }
 
-exports.clearleaderboard = function(database) {
+exports.clearleaderboard = function (database) {
   r.db(database).table('Leaderboard')
   .delete()
   .run(conn, {noreply: true})
@@ -87,7 +102,7 @@ exports.userexists = (database, username) => r.db(database).table('Users')
   .run(conn)
   .then(cursor => !!cursor)
 
-exports.updateuser = function(database, payload) {
+exports.updateuser = function (database, payload) {
   r.db(database).table('Users')
   .get(payload.id.toLowerCase())
   .update({
@@ -95,7 +110,7 @@ exports.updateuser = function(database, payload) {
     fc: payload.fc
   })
   .run(conn, {noreply: true})
-  .catch(console.log)
+  .catch(console.error)
 }
 
 function startingcard() {
@@ -104,7 +119,7 @@ function startingcard() {
   return starter[~~(Math.random()*starter.length)]
 }
 
-exports.createuser = function(database, payload) {
+exports.createuser = function (database, payload) {
   console.log('database, payload', database, payload)
   r.db(database).table('Users')
   .insert({
@@ -122,10 +137,10 @@ exports.createuser = function(database, payload) {
   .catch(error => console.log(error))
 }
 
-exports.setcurrentteam = function(database, name, teamnumber) {
+exports.setcurrentteam = function (database, name, teamnumber) {
   r.db(database).table('Users')
   .get(name.toLowerCase())
-  .replace(function(row) {
+  .replace(function (row) {
       return row
         .without("active")
         .merge({
@@ -144,10 +159,10 @@ exports.getcurrentteam = (database, username) => r.db(database).table('Users')
   .run(conn)
   .then(result => !!result ? result.teams[+result.active] : null)
 
-exports.saveuserpokes = function(database, name, payload) {
+exports.saveuserpokes = function (database, name, payload) {
     r.db(database).table('Users')
     .get(name.toLowerCase())
-    .replace(function(row) {
+    .replace(function (row) {
         return row
           .without("teams")
           .merge({
@@ -158,12 +173,12 @@ exports.saveuserpokes = function(database, name, payload) {
   .catch(error => reject(error))
  }
 
-exports.subscribetoraffle = function(Twitch) {
+exports.subscribetoraffle = function (Twitch) {
   r.table(Twitch.raffle)
     .changes({includeInitial: true})
     .run(conn)
     .then(stream => stream.each((err, cursor) => getrafflechanges(cursor).id && chatqueue[Twitch.id].store('raffle update', getrafflechanges(cursor))))
-    .catch(console.log)
+    .catch(console.error)
 }
 
 function getrafflechanges(cursor) {
@@ -174,7 +189,7 @@ function getrafflechanges(cursor) {
   return {id: false, entered: false, chance: 0, displayicon: 1}
 }
 
-exports.clearraffle = function(database) {
+exports.clearraffle = function (database) {
   r.db(database)
   .table('Raffle')
   .delete()
@@ -182,10 +197,10 @@ exports.clearraffle = function(database) {
   .catch(error => reject(error))
 }
 
-exports.modifyRaffleUser = function(database, username, entered) {
+exports.modifyRaffleUser = function (database, username, entered) {
   r.db(database).table('Raffle')
   .get(username.toLowerCase())
-  .replace(function(row) {
+  .replace(function (row) {
       return row
         .without("entered")
         .merge({
@@ -201,7 +216,7 @@ exports.raffleUserExists = (database, username) => r.db(database).table('Raffle'
   .run(conn)
   .then(cursor => !!cursor)
 
-exports.newRaffleUser = function(database, username, displayicon) {
+exports.newRaffleUser = function (database, username, displayicon) {
   r.db(database).table('Raffle')
   .insert({
     id: username.toLowerCase(),
@@ -210,22 +225,22 @@ exports.newRaffleUser = function(database, username, displayicon) {
     displayicon: displayicon
   }, {conflict: 'update'})
   .run(conn, {noreply: true})
-  .catch(console.log)
+  .catch(console.error)
 }
 
-exports.rafflewinner = async function(database, username){
+exports.rafflewinner = async function (database, username){
   await r.db(database).table('Raffle')
   .filter(r.row.hasFields('entered'))
   .filter(r.row('entered').eq(true))
   .update({ winner: false, chance: r.row("chance").mul(2).default(1) })
   .run(conn)
-  .catch(console.log)
+  .catch(console.error)
 
   await r.db(database).table('Raffle')
   .filter(r.row('id').eq(username.toLowerCase()))
   .update({ winner: true, chance: 1, entered: false })
   .run(conn)
-  .catch(console.log)
+  .catch(console.error)
 
   return await exports.getfc(username)
 }

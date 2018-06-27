@@ -1,6 +1,6 @@
 const Presets = {
-  width: 1600,
-  height: 900,
+  width: 1920,
+  height: 1100,
   bgcolor: '#1c0f0c',
   selectedcolor: '#604040',
   font: 'Extra-Cool',
@@ -18,34 +18,6 @@ const Presets = {
   simple: false,
   cors: 'https://crossorigin.me/' //'https://cors-anywhere.herokuapp.com/'
 }
-const preloadscripts = [
-  'consts',
-  '/js/phaser-super-storage.min',
-  '/js/localstorage',
-  '/js/polyfill',
-  // '/js/dex',
-  // '/js/phaser-input',
-  '/js/helperfunctions',
-  // {'Login': '/states/login'},
-  // {'Avatar': '/states/avatar'},
-  // {'Teams': '/states/teams'},
-  // {'Raffle': '/states/raffle'},
-  // {'Pokemotions': '/states/pokemotions'},
-  // {'Battle': '/states/battle'},
-  // {'Vote': '/states/vote'},
-  // {'Cards': '/states/cards'},
-  // {'Pokedex': '/states/pokedex'},
-  {'Layout': '/states/layout'},
-  // {'Blank': '/states/blank'},
-  '/chat/chatvariables',
-  '/chat/twemoji.min',
-  '/chat/chatfunctions',
-  '/chat/chaticon',
-  '/chat/chatfrontend',
-  '/chat/chat'
-]
-
-const firststate = 'Layout'
 
 const pokedexoptions = {
   scoring: true,
@@ -57,4 +29,15 @@ const pokedexoptions = {
     x: 1002,
     y: 620
   }
+}
+
+if (!Array.prototype.hasOwnProperty('last')) {
+    Object.defineProperty(Array.prototype, 'last', {
+      get: function last() {
+        return this[this.length - 1]
+      },
+      set: function last(newValue) {
+        this[this.length - 1] = newValue
+      }
+    })
 }

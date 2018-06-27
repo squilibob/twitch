@@ -6,7 +6,8 @@ exports.dehash = function (channel) {
 }
 
 exports.capitalize = function (str) {
-  return str === undefined ? '' : str.replace(/^./,  i => i.toUpperCase())
+  // return !!str ? str : str.replace(/^./,  String.prototype.toUpperCase.call)
+  return !!str ? str.replace(/^./,  s => s.toUpperCase()) : str
 }
 
 exports.htmlEntities = function (html) {
@@ -31,18 +32,17 @@ exports.htmlEntities = function (html) {
   return isArray ? html.join('') : html
 }
 
+exports.isMod = function (user) {
+  if ((user || {}).badges) {
+    if ('broadcaster' in user.badges) return true
+    return user.mod
+  }
+  return false
+}
+
+
 exports.checkImageExists = function (imageUrl, callBack) {
 
-}
-
-exports.timeout = function(channel, username, reason, duration, Twitch) {
-    console.log('...arguments', ...arguments)
-    console.log('username ', username, ' timed out on ', channel)
-    chatqueue[Twitch.id].store('timeout', {username: username, channel:exports.dehash(channel)})
-}
-
-exports.clearChat = function (channel, Twitch) {
-  chatqueue[Twitch.id].store('clear', exports.capitalize(exports.dehash(Twitch.channel)))
 }
 
 exports.submitchat = function (text, channel) {
@@ -94,14 +94,6 @@ exports.urlDecode = function (message) {
   }
 }
 
-exports.isMod = function (user) {
-  if ((user || {}).badges) {
-    if ('broadcaster' in user.badges) return true
-    return user.mod
-  }
-  return false
-}
-
 exports.checkExist = function (checkstring, checkarray, separateword) {
   let exist = false
   if (separateword) {
@@ -114,7 +106,34 @@ exports.checkExist = function (checkstring, checkarray, separateword) {
   return exist
 }
 
-exports.getChunks = function(message) {
+exports.getChunks = function (message) {
     return message.split(' ').map(word => processmetaphone(word).length)
 }
 
+exports.splitMessage = function (user, message) {
+  let twitchemotes = new Map()
+  user.emotes && Object.entries(user.emotes)
+    .forEach(emote => {
+      let [id, location] = emote
+      let [start, end] = location.shift().split('-')
+      let text = message.substring(+start, +end + 1)
+      twitchemotes.set(text, +id)
+    })
+
+  message = message
+    .split(' ')
+    // .map(text => )
+    .map(text => Bttv.has(text)
+      ? {emote: `https://cdn.betterttv.net/emote/${Bttv.get(text)}/1x`, name:text}
+      : Ffz.has(text)
+      ?  {emote: `http://cdn.frankerfacez.com/emoticon/${Ffz.get(text)}/1`, name:text}
+      : twitchemotes.has(text)
+      ?  {emote: `http://static-cdn.jtvnw.net/emoticons/v1/${twitchemotes.get(text)}/1.0`, name:text}
+      : pokedex
+        .filter(item => text.toLowerCase().includes(item.Pokemon.toLowerCase()))
+        .sort((a, b) => a.Pokemon.length - b.Pokemon.length)
+        .map(item => ({pokemon: item.id, name:item.Pokemon}))
+        .pop() || {text: text})
+
+  return message
+}

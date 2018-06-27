@@ -1,14 +1,16 @@
-const {dehash, capitalize, checkImageExists, timeout, hosting, submitchat, dequeue, parseraffle, urlDecode, isMod, checkExist} = require('./chatfunctions')
+const {dehash, capitalize, checkImageExists, timeout, hosting, submitchat, dequeue, parseraffle, urlDecode, isMod, checkExist, splitMessage} = require('./chatfunctions')
 const {checkPoke, checkDb, getMoveList, checkMoves, compoundCheck, describeMove} = require('./fieldparse')
 const {checkAvatar, getViewers, getStart, checkfollowers, checkstreamer, getFollowDate} = require('./chatapi')
 const {typeMatchup, effective} = require('./pokemonparse')
+const {bttvapi, ffzapi} = require('./externalapi')
+const {parseUser} = require('./user')
 
 let started,
-  maxpokes = 802,
+  // maxpokes = 802,
   botDelay = 1, // Number of seconds between each bot message
   autocry = false // Play the pokemon's cry sound whenever it is mentioned in chat
 
-exports.parseMessage = async function(Twitch, user, channel, message, self, avatar, badge) {
+exports.parseMessage = async function (Twitch, user, channel, message, self, userdata) {
   if (user['message-type'] != 'chat' && user['message-type'] != 'action') return false
   let messagepayload = {
     channel: dehash(channel),
@@ -16,11 +18,10 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
     user: user,
     message: message,
     self: self,
-    pokemon: checkPoke(message, maxpokes),
+    pokemon: checkPoke(message),
     responseSize: botqueue[Twitch.id].responseSize,
   }
-        // console.log('messagepayload.user', messagepayload.user)
-
+  messagepayload.user = parseUser(messagepayload.user, userdata)
   let modmessage = isMod(user)
   let question = ['?', 'do', 'what', 'when', 'where', 'how', 'does', 'can', 'will', 'are', 'which'] // 'who ', 'why ', 'did ',
   // let containsquestion = checkExist(message, question, true)
@@ -29,36 +30,27 @@ exports.parseMessage = async function(Twitch, user, channel, message, self, avat
   let response
   let displaycommand = true
 
-if (!self) {
-  for (command in parser) {
-    let cmdexist = false
-    let cmdarr = parser[command].altcmds ? [command].concat(parser[command].altcmds) : [command]
-    cmdexist = checkExist(message, cmdarr, parser[command].requires.exclusive)
-
-    if (cmdexist) {
-      let parameters = []
-      parser[command].times++
-      if (messagepayload.pokemon.length < parser[command].requires.pokemon) cmdexist = false
-      if (parser[command].requires.question && !containsquestion) cmdexist = false
-      if (parser[command].requires.modonly && !modmessage) cmdexist = false
-      if (parser[command].requires.parameters) {
-        fillparaloop: for (let fill = 1; fill <= parser[command].requires.parameters; fill++) {
-         if (message.split(' ').length > fill) parameters.push(message.toLowerCase().split(' ')[fill])
-       }
-      }
-      messagepayload.parameters = parameters
+  if (!self) {
+    for (command in parser) {
+      let cmdexist = false
+      let cmdarr = parser[command].altcmds ? [command].concat(parser[command].altcmds) : [command]
+      cmdexist = checkExist(message, cmdarr, parser[command].requires.exclusive)
       if (cmdexist) {
-        response = await parser[command].action(messagepayload).catch(console.log)
+        if (messagepayload.pokemon.length < parser[command].requires.pokemon) cmdexist = false
+        if (parser[command].requires.question && !containsquestion) cmdexist = false
+        if (parser[command].requires.modonly && !modmessage) cmdexist = false
+      }
+      if (cmdexist) {
+        messagepayload.parameters = message.split(' ').filter(item => !!item).splice(1, parser[command].requires.parameters)
+        parser[command].times += 1
+        response = await parser[command].action(messagepayload).catch(console.error)
       }
       displaycommand = parser[command].requires.display
     }
   }
-}
-
-let parseurl = urlDecode(messagepayload.message)
-messagepayload.message = parseurl.message
-let image = parseurl.image
-
+  let parseurl = urlDecode(messagepayload.message)
+  messagepayload.message = parseurl.message
+  let image = parseurl.image
   if (!self && containsquestion && !response) {
     if (messagepayload.pokemon.length) {
       response = checkDb(messagepayload, containsmoves)
@@ -70,8 +62,8 @@ let image = parseurl.image
       }
     }
   }
-
-  displaycommand && chatqueue[Twitch.id].store('chat', {channel:messagepayload.channel, message: messagepayload.message, user: messagepayload.user, self: messagepayload.self, avatar: avatar, badge: badge, image: image, pokemon: messagepayload.pokemon})
+  let messagearr = splitMessage(messagepayload.user, messagepayload.message)
+  displaycommand && chatqueue[Twitch.id].store('message', {channel:messagepayload.channel, message: messagearr, user: messagepayload.user, self: messagepayload.self, image: image})
   response && submitchat(response, Twitch.id)
 }
 
@@ -176,32 +168,32 @@ let image = parseurl.image
         return response
       }
     },
-    'hm': {
-      altcmds: [],
-      help: 'this command displays what a HM is based on its name or number',
-      times: 0,
-      requires:
-      {
-        question: true,
-        display: true,
-        exclusive: false,
-        pokemon: 0,
-        parameters: 1, // refactor
-        modonly: false
-      },
-      action: async function (obj) {
-        let response
-        if (obj.message.toLowerCase().indexOf('hm') >= 0) {
-          let findtm = +obj.message.slice(obj.message.toLowerCase().indexOf('hm') + 2, obj.message.toLowerCase().indexOf('hm') + 5)
-          if (findtm > 0 && findtm < 8) { hmloop: for (var key in hm[findtm - 1]) response = 'HM' + findtm + ' ' + key + ' can be obtained in ORAS at ' + hm[findtm - 1][key] } else {
-            hmnumberloop: for (num = 1; num < 8; num++) {
-              hmnamefromnumberloop: for (var key in hm[num - 1]) { if (obj.message.toLowerCase().indexOf(key.toLowerCase()) >= 0) response = 'HM' + num + ' ' + key + ' can be obtained at ' + hm[num - 1][key] }
-            }
-          }
-        }
-        return response
-      }
-    },
+    // 'hm': {
+    //   altcmds: [],
+    //   help: 'this command displays what a HM is based on its name or number',
+    //   times: 0,
+    //   requires:
+    //   {
+    //     question: true,
+    //     display: true,
+    //     exclusive: false,
+    //     pokemon: 0,
+    //     parameters: 1, // refactor
+    //     modonly: false
+    //   },
+    //   action: async function (obj) {
+    //     let response
+    //     if (obj.message.toLowerCase().indexOf('hm') >= 0) {
+    //       let findtm = +obj.message.slice(obj.message.toLowerCase().indexOf('hm') + 2, obj.message.toLowerCase().indexOf('hm') + 5)
+    //       if (findtm > 0 && findtm < 8) { hmloop: for (var key in hm[findtm - 1]) response = 'HM' + findtm + ' ' + key + ' can be obtained in ORAS at ' + hm[findtm - 1][key] } else {
+    //         hmnumberloop: for (num = 1; num < 8; num++) {
+    //           hmnamefromnumberloop: for (var key in hm[num - 1]) { if (obj.message.toLowerCase().indexOf(key.toLowerCase()) >= 0) response = 'HM' + num + ' ' + key + ' can be obtained at ' + hm[num - 1][key] }
+    //         }
+    //       }
+    //     }
+    //     return response
+    //   }
+    // },
     'hidden power': {
       altcmds: [],
       help: 'this command shows the IVs required to get a hidden power based on its type',
@@ -283,27 +275,28 @@ let image = parseurl.image
         modonly: false
       },
       action: async function (obj) {
-        let users = await Object.keys(useravatars)
+        let users = await [...usercache.keys()]
           .map(person => person.toLowerCase())
           .filter(person => obj.message.toLowerCase().split(' ').includes(person))
           .map(async function (person) {
-           return await dbcall.getfc('Users', person).catch(console.log)
+           return await dbcall.getfc('Users', person).catch(console.error)
           })
-          // .concat([await dbcall.getfc('Users', obj.user.username.toLowerCase()).catch(console.log)])
-          !users.length && users.concat([await dbcall.getfc('Users', obj.user.username.toLowerCase()).catch(console.log)])
+          // .concat([await dbcall.getfc('Users', obj.user.username.toLowerCase()).catch(console.error)])
+          !users.length && users.concat([await dbcall.getfc('Users', obj.user.username.toLowerCase()).catch(console.error)])
           return Promise.all(users)
             .then(found => {
               let response = 'user not found'
               if (found.length) {
                 // if (found.length > 1) found = found.filter(user=> user !== obj.user.username.toLowerCase())
                 response = found
+                  .filter(user => !!user)
                   .filter(user => !!user.id)
                   .map(user => user.id + "'s friend code is " + user.fc[0] + '-' + user.fc[1] + '-' + user.fc[2] + ' IGN ' + user.ign)
                   .join(', ')
               }
               return response
             })
-            .catch(console.log)
+            .catch(console.error)
       }
     },
     '!reload': {
@@ -320,7 +313,7 @@ let image = parseurl.image
         modonly: false
       },
       action: async function (obj) {
-        delete useravatars[obj.user.username]
+        usercache.delete(obj.user.username)
         chatqueue[obj.twitchID].store('notice', {text:'reloaded ' + obj.user.username, fadedelay:1000, level:-4})
       }
     },
@@ -523,7 +516,8 @@ let image = parseurl.image
         if (users.filter(user => user.entered).length === 0) return 'The raffle is empty.'
         users = users
           .filter(user => user.entered)
-          .map(user => new Array(+user.chance).fill(user.id))
+          // .map(user => new Array(+user.chance).fill(user.id))
+          .map(user => Array.from({length: +user.chance}, () => user.id))
           .reduce((a,b) => b.concat(a))
         let winner = users[~~(Math.random() * users.length)]
         await dbcall.rafflewinner('Users', winner)
@@ -680,7 +674,7 @@ let image = parseurl.image
        parameters: 0,
        modonly: false
      },
-     action: async function(obj){
+     action: async function (obj){
         let more = botqueue[obj.twitchID].more.length > botqueue[obj.twitchID].responseSize ? '... ' + (botqueue[obj.twitchID].more.length - botqueue[obj.twitchID].responseSize) + ' more' : ''
         let response = botqueue[obj.twitchID].more.splice(0, botqueue[obj.twitchID].responseSize).join(', ')
         return response + more
@@ -845,20 +839,37 @@ let image = parseurl.image
         return response
       }
     },
-    // '!bttv': {
-    //   altcmds: [],
-    //   help: 'this command incorporates the users bttv emotes into the database',
-    //   times: 0,
-    //   requires:
-    //   {
-    //     question: false,
-    //     display: true,
-    //     exclusive: false,
-    //     pokemon: 0,
-    //     parameters: 1,
-    //     modonly: true
-    //   },
-    //   action: async function (obj) {
+    '!bttv': {
+      altcmds: [],
+      help: 'this command incorporates the users bttv emotes into the database',
+      times: 0,
+      requires:
+      {
+        question: false,
+        display: true,
+        exclusive: false,
+        pokemon: 0,
+        parameters: 1,
+        modonly: true
+      },
+      action: async function (obj) {
+        let response = []
+        let room = await bttvapi(obj.parameters[0]).catch(console.error)
+        // console.log('room', Buffer.from(room, 'base64').length) //GIF89a+5188C4+/E7/4G/S+/94065838I4G8XBDU6IA=
+        if (room && room.size) {
+          let emotelist = {}
+          response.unshift('The following emotes were added to the channel:')
+          for (item of room.entries()) {
+            [key, value] = item
+            response.push(value)
+            emotelist[key] = value
+            Bttv.set(key, value)
+          }
+          //dbcall.put('Users', 'Ffz', emotelist)
+          console.log('Bttv', emotelist)
+        }
+        return response.join(' ')
+      }
     //     if (!self.fetch) {
     //       return
     //     }
@@ -869,7 +880,7 @@ let image = parseurl.image
     //         return response.json().then(function (json) {
     //           if ((json || {}).emotes) {
     //             for (key in json.emotes) {
-    //               dbcall.put('Users', 'Bttv', json.emotes[key]).catch(console.log)
+    //               dbcall.put('Users', 'Bttv', json.emotes[key]).catch(console.error)
     //             }
     //             chatqueue[obj.twitchID].store('notice', {text:'loaded ' + json.emotes.length + ' emotes', fadedelay:1000, level:-4})
     //             socket.emit('Ask for table', 'Bttv')
@@ -878,41 +889,37 @@ let image = parseurl.image
     //       }
     //     })
     //   }
-    // },
-    // '!ffz': {
-    //   altcmds: [],
-    //   help: 'this command incorporates the users ffz emotes into the database',
-    //   times: 0,
-    //   requires:
-    //   {
-    //     question: false,
-    //     display: true,
-    //     exclusive: false,
-    //     pokemon: 0,
-    //     parameters: 1,
-    //     modonly: true
-    //   },
-    //   action: async function (obj) {
-    //     if (!self.fetch) {
-    //       return
-    //     }
-    //     var ffzurl = obj.parameters.length ? 'https://frankerfacez.com/v1/room/' + obj.parameters[0] : ffzemotesurl
-    //     fetch(ffzurl).then(function (response) {
-    //       var contentType = response.headers.get('content-type')
-    //       if (contentType && contentType.indexOf('application/json') !== -1) {
-    //         return response.json().then(function (json) {
-    //           if ((json || {}).sets) {
-    //             for (key in json.sets) {
-    //               dbcall.put('Users', 'Ffz', json.sets[key]).catch(console.log)
-    //               chatqueue[obj.twitchID].store('notice', {text:'loaded ' + json.sets[key].emoticons.length + ' emotes from ' + json.sets[key].title, fadedelay:1000, level:-4})
-    //             }
-    //             socket.emit('Ask for table', 'Ffz')
-    //           }
-    //         })
-    //       }
-    //     })
-    //   }
-    // },
+    },
+    '!ffz': {
+      altcmds: [],
+      help: 'this command incorporates the users ffz emotes into the database',
+      times: 0,
+      requires:
+      {
+        question: false,
+        display: true,
+        exclusive: false,
+        pokemon: 0,
+        parameters: 1,
+        modonly: true
+      },
+      action: async function (obj) {
+        let response = []
+        let room = await ffzapi(obj.parameters[0]).catch(console.error)
+        if (room && room.size) {
+          let emotelist = {}
+          response.unshift('The following emotes were added to the channel:')
+          for (item of room.entries()) {
+            [key, value] = item
+            response.push(value)
+            emotelist[key] = value
+            Ffz.set(key, value)
+          }
+          dbcall.put('Users', 'Ffz', emotelist)
+        }
+        return response.join(' ')
+      }
+    },
     '!poll': {
       altcmds: [],
       help: 'this command sets up a poll based on the vote options given',
@@ -1058,7 +1065,28 @@ let image = parseurl.image
       action: async function (obj) {
         return "We don't use discord, join us on the twitch app chat server at https://invite.twitch.tv/EdlanMizliPaws"
       }
-    }
+    },
+   '!give': {
+     altcmds: [],
+     help: 'this command ',
+     requires :
+     {
+       question: false,
+       exclusive: false,
+       display: true,
+       pokemon: 1,
+       parameters: 2,
+       modonly: false
+     },
+     action: async function (obj){
+      let poke = pokedex
+        .filter(item => item.Pokemon.toLowerCase() === obj.pokemon[0].Pokemon.toLowerCase())
+        .shift()
+        .id
+      dbcall.updatecard('Users', obj.parameters[0].toLowerCase(), poke - 1)
+      // return `Set ${obj.parameters[0]} card to ${obj.pokemon[0].Pokemon}.`
+     }
+   },
    // '!test': {
    //   altcmds: [],
    //   help: 'this command ',
@@ -1071,7 +1099,7 @@ let image = parseurl.image
    //     parameters: 1,
    //     modonly: false
    //   },
-   //   action: async function(obj){
+   //   action: async function (obj){
    //     let response;
 
    //     return response;

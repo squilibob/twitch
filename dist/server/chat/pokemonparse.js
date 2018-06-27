@@ -18,7 +18,7 @@ function compareTypeProperty(value, comparison) {
   }[comparison]
 }
 
-exports.typeMatchup = function(types, comparison) {
+exports.typeMatchup = function (types, comparison) {
   types = validatetype(types)
   return typechart
     .filter(type => compareTypeProperty(types
@@ -27,7 +27,7 @@ exports.typeMatchup = function(types, comparison) {
     .map(type => type.id)
 }
 
-exports.effective = function(types) {
+exports.effective = function (types) {
   types = validatetype(types)
   return types
     .map(type => typechart.find(item => item.id === type))

@@ -1,11 +1,11 @@
-exports.checkPoke = function (originalmessage, maxpokes) {
+exports.checkPoke = function (originalmessage) {
   let message = originalmessage.toLowerCase().replace('nature', '') // fixes Natu false positive
   let listofpokemon = []
   if (message.toLowerCase().indexOf('mewtwo') >= 0) {
     listofpokemon.push(pokedex[149])
     message = message.toLowerCase().replace('mewtwo', '')
   }
-  pokemonnameloop: for (let pokes = maxpokes - 1; pokes >= 0; pokes--) {
+  pokemonnameloop: for (let pokes = pokedex.length - 1; pokes >= 0; pokes--) {
     if (message.toLowerCase().indexOf(pokedex[pokes].Pokemon.toLowerCase()) >= 0) {
       if (pokedex[pokes].Forme) {
         let mergeforme
@@ -199,7 +199,7 @@ function messageWithoutPokes(pokes, message) {
   return msg
 }
 
-exports.getMoveList =function(obj) {
+exports.getMoveList =function (obj) {
   let message = obj.message
   let findmoves = []
   let sortmoves = moves

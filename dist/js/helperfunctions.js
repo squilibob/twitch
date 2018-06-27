@@ -316,11 +316,11 @@ function with_object (chain, params) {
   return chain
 }
 
-Phaser.Group.prototype.addGroup = function (children, silent) {
-  if (Array.isArray(children)) this.addMultiple(children, silent)
-  else this.addChild(children)
-  return this
-}
+// Phaser.Group.prototype.addGroup = function (children, silent) {
+//   if (Array.isArray(children)) this.addMultiple(children, silent)
+//   else this.addChild(children)
+//   return this
+// }
 
 function setScale (group, size) {
   group.scale.setTo(size)

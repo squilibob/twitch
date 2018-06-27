@@ -5,16 +5,16 @@ const leaseSeconds = 864000
 const mode = 'subscribe'
 const callback = 'http://squi.li/webhook'
 
-exports.followerhook = async function(id) {
-  return await hook(id, leaseSeconds, `https://api.twitch.tv/helix/users/follows?first=1%26to_id=${id}`)
+exports.followerhook = async function (id) {
+  return await hook(id, `https://api.twitch.tv/helix/users/follows?first=1%26to_id=${id}`, leaseSeconds)
 }
 
-exports.streaminghook = async function(id) {
-  return await hook(id, leaseSeconds, `https://api.twitch.tv/helix/streams?user_id=${id}`)
+exports.streaminghook = async function (id) {
+  return await hook(id, `https://api.twitch.tv/helix/streams?user_id=${id}`, leaseSeconds)
 }
 
-async function hook(id, lease, topic){
-  return new Promise(function(resolve, reject) {
+async function hook(id, topic, lease){
+  return new Promise(function (resolve, reject) {
     lease = lease || leaseSeconds
     let hub = [
       `hub.mode=${mode}`,

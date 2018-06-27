@@ -13,7 +13,7 @@ function header (id, endpoint, extraparams, version) {
 }
 
 function helix(options, Twitch) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     const rate = 'ratelimit-'
     // let apireset = +Twitch.api.reset - +Date.now() / 1000
     // if (Twitch.api.remaining < 1 && apireset > 0) {
@@ -43,7 +43,7 @@ function helix(options, Twitch) {
   })
 }
 
-exports.checkAvatar = function(id, Twitch) {
+exports.checkAvatar = function (id, Twitch) {
   return helix({
     url: 'https://api.twitch.tv/helix/users?id=' + id,
     headers: {
@@ -53,10 +53,10 @@ exports.checkAvatar = function(id, Twitch) {
   .then(data => data.profile_image_url ? data.profile_image_url : null)
   .catch(data => null)
   .then(data => !!data && !data.includes('user-default-pictures') ? data : 1 + ~~(Math.random()*48))
-  .catch(console.log)
+  .catch(console.error)
 }
 
-exports.getName = function(id, Twitch) {
+exports.getName = function (id, Twitch) {
   return helix({
     url: 'https://api.twitch.tv/helix/users?id=' + id,
     headers: {
@@ -64,10 +64,10 @@ exports.getName = function(id, Twitch) {
     }
   }, Twitch)
   .then(data => data.login || id)
-  .catch(console.log)
+  .catch(console.error)
 }
 
-exports.getViewers = function(Twitch) {
+exports.getViewers = function (Twitch) {
   helix({
     url: 'https://api.twitch.tv/helix/streams?user_login=' + Twitch.id,
     headers: {
@@ -86,10 +86,10 @@ exports.getViewers = function(Twitch) {
       })
     }
   })
-  .catch(console.log)
+  .catch(console.error)
 }
 
-exports.getStart = function(Twitch) {  // eventually this function will be replaced with a webhook for start time
+exports.getStart = function (Twitch) {  // eventually this function will be replaced with a webhook for start time
   return helix({
     url: 'https://api.twitch.tv/helix/streams?id=' + Twitch.id,
     headers: {
@@ -97,16 +97,21 @@ exports.getStart = function(Twitch) {  // eventually this function will be repla
     }
   }, Twitch)
   .then(data => new Date(data.started_at) || 0)
-  .catch(console.log)
+  .catch(console.error)
 }
 
-exports.checkfollowers = function(Twitch) {
-  return new Promise(function(resolve, reject) {
+exports.checkfollowers = function (Twitch) {
+  return new Promise(function (resolve, reject) {
     const rate = 'ratelimit-'
     let apireset = +Twitch.api.reset - +Date.now() / 1000
     if (Twitch.api.remaining < 1 && apireset > 0) {
       reject(new Error((+Twitch.api.reset - +Date.now() / 1000) + ' seconds until API limit resets'))
-    } else client.api(options, function (err, res, body) {
+    } else client.api({
+    url: 'https://api.twitch.tv/helix/users/follows?to_id=' + Twitch.id,
+    headers: {
+        "Client-ID":  Twitch.clientOptions.options.clientId
+    }
+  }, function (err, res, body) {
       if ((res || {}).headers) {
         Object.keys(res.headers)
           .filter(key => key.includes(rate))
@@ -118,7 +123,7 @@ exports.checkfollowers = function(Twitch) {
   })
 }
 
-exports.getFollowDate = function(id, Twitch) {
+exports.getFollowDate = function (id, Twitch) {
   return helix({
     url: 'https://api.twitch.tv/helix/users/follows?from_id=' + id + '&to_id=' + Twitch.id,
     headers: {
@@ -126,11 +131,11 @@ exports.getFollowDate = function(id, Twitch) {
     }
   }, Twitch)
   .then(data => new Date(data.followed_at) || 0)
-  .catch(console.log)
+  .catch(console.error)
 }
 
-exports.checkstreamer = function(userId) {  // waiting for new helix api to have all this data
-  return new Promise(function(resolve, reject) {
+exports.checkstreamer = function (userId) {  // waiting for new helix api to have all this data
+  return new Promise(function (resolve, reject) {
     client.api({
       url: 'https://api.twitch.tv/kraken/channels' + header(userId)
     }, function (err, res, body) {
@@ -138,8 +143,10 @@ exports.checkstreamer = function(userId) {  // waiting for new helix api to have
         resolve({
           username: body.name,
           banner: body.profile_banner ? body.profile_banner : body.logo,
-          followers: body.followers,
-          views: body.views,
+          metrics: {
+            followers: body.followers,
+            views: body.views
+          },
           url: body.url})
                   // socket.emit('send emote', {message: 'hi ' + body.name, picture: 9})
       }

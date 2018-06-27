@@ -1,4 +1,4 @@
-module.exports = function(expressServer) {
+module.exports = function (expressServer) {
 app = expressServer.app
 express = expressServer.module
 server = expressServer.server
@@ -8,7 +8,13 @@ let router = express.Router()
 
 app.set('port', (process.env.PORT || 80))
 
-server.listen(app.get('port'), function() {
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*")
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+  next()
+})
+
+server.listen(app.get('port'), function () {
   console.log('Server started: http://localhost:' + app.get('port') + '/ in base directory ' + dirname)
 })
 
@@ -41,7 +47,7 @@ router.get('/consts.js', function (req, res) {
   res.sendFile(path.join(dirname, '/dist','consts.js'))
 })
 
-router.post('/webhook', expressServer.module.json(), function(req, res, next) {
+router.post('/webhook', expressServer.module.json(), function (req, res, next) {
   res.sendStatus(202)
   let obj = req.body
   let types = {
@@ -54,7 +60,7 @@ router.post('/webhook', expressServer.module.json(), function(req, res, next) {
   }
 })
 
-router.get('/webhook', expressServer.module.json(), function(req, res){
+router.get('/webhook', expressServer.module.json(), function (req, res){
   if (((req || {}).query || {})['hub.challenge']) {
     res.send(req.query['hub.challenge'])
   }
@@ -71,7 +77,7 @@ router.get('/', function (req, res) {
 app.use('/js', express.static(dirname + '/dist/js'))
 app.use('/audio', express.static(dirname + '/dist/audio'))
 app.use('/img', express.static(dirname + '/dist/img'))
-app.use('/states', express.static(dirname + '/dist/states'))
+app.use('/scene', express.static(dirname + '/dist/scene'))
 app.use('/chat', express.static(dirname + '/dist/chat'))
 
 // app.get('editpokedex.html', function (req, res) {
@@ -85,13 +91,13 @@ app.use('/chat', express.static(dirname + '/dist/chat'))
 
 // app.get('/chat', function (req, res) {
 //  var chat1, chat2, chat3
-//  fs.readFile('./public/chat1.html', { encoding: 'utf8' }, function(error, buffer){
+//  fs.readFile('./public/chat1.html', { encoding: 'utf8' }, function (error, buffer){
 //    if(error) return res.status(404).end()
 //    chat1=buffer
-//    fs.readFile('./public/chat2.html', { encoding: 'utf8' }, function(error, buffer2){
+//    fs.readFile('./public/chat2.html', { encoding: 'utf8' }, function (error, buffer2){
 //      if(error) return res.status(404).end()
 //      chat3=buffer2
-//      fs.readFile('./public/chatlog.html', { encoding: 'utf8' }, function(error, buffer3){
+//      fs.readFile('./public/chatlog.html', { encoding: 'utf8' }, function (error, buffer3){
 //        if(error) return res.status(404).end()
 //        chat2=buffer3
 //        res.send(chat1+chat2+chat3)
