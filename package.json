@@ -4,7 +4,7 @@
     "url": "https://github.com/squilibob/twitch.git"
   },
   "name": "twitch",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "twitch",
   "main": "app.js",
   "author": "squilibob",

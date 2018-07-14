@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+      <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="user-scalable=no">
+            <meta name="apple-mobile-web-app-capable" content="yes">
+            <link rel="stylesheet" type="text/css" href="style.css"/>
+            <script src="presets.js"></script>
+            <script src="serverIP.js"></script>
+            <script src="/socket.io/socket.io.js"></script>
+            <script>let socket = io(serverIP);</script>
+            <script type="text/javascript" src="/js/phaser.js"></script>
+            <script type="text/javascript" src = "/js/phaser-state-transition.min.js"></script>
+            <script type="text/javascript" src="/js/run.js"></script>
+      </head>
+      <body>
+            <div id="content" style="position:absolute; z-index:2; top: 0px; left: 0px;"></div>
+      </body>
+</html>

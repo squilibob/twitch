@@ -1,0 +1,21 @@
+        @font-face {
+            font-family: 'Extra-Cool';
+            src: url('/extra-cool.ttf');
+        }
+    body {
+        background: #1c0f0c;
+        color: #dedede;
+    }
+    span {
+      white-space: nowrap;
+    }
+ /* disable auto-zoom on iphone input field focus */
+ @media screen and (-webkit-min-device-pixel-ratio:0) {
+   select,
+   textarea,
+   input,
+   input:focus,
+   input:hover {
+     font-size: 16px !important;
+   }
+ }

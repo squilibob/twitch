@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <meta charset="utf-8">
+    <head>
+    <link rel="stylesheet" type="text/css" href="./style.css">
+      <script src="serverIP.js"></script>
+      <script src="/socket.io/socket.io.js"></script>
+      <script>
+        let socket =io(serverIP)
+        let Scenes = new Map()
+      </script>
+      <script type="text/javascript" src="/js/phaser.js"></script>
+      <script type="text/javascript" src="/js/scenes/chat.js"></script>
+      <script type="text/javascript" src="/js/scenes/fuse.js"></script>
+      <script type="text/javascript" src="/js/run.js" type="module"></script>
+    </head>
+    <body>
+</head>
+<body>
+    <div id="content" style="position:absolute; top:0px; left: 0px;"></div>
+</body>
+</html>
